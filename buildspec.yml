@@ -8,6 +8,7 @@ phases:
       - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
   build:
     commands:
+      - chmod +x ./gradlew
       - ./gradlew build
       - docker build -t spring-boot-hms .
       - docker tag spring-boot-hms public.ecr.aws/f9s4g9c5/tarosuke777/spring-boot-hms
