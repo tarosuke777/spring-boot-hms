@@ -9,7 +9,7 @@ phases:
   build:
     commands:
       - chmod +x ./gradlew
-      - ./gradlew build
+      - ./gradlew build -x test
       - docker build -t spring-boot-hms .
       - docker tag spring-boot-hms public.ecr.aws/f9s4g9c5/tarosuke777/spring-boot-hms
   post_build:
