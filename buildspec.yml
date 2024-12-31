@@ -10,8 +10,11 @@ phases:
     commands:
       - chmod +x ./gradlew
       - ./gradlew build -x test
-      - docker build -t spring-boot-hms .
+      - docker build -t spring-boot-hms . -f ./docker/web-ap/Dockerfile
       - docker tag spring-boot-hms public.ecr.aws/f9s4g9c5/tarosuke777/spring-boot-hms
   post_build:
     commands:
        - docker push public.ecr.aws/f9s4g9c5/tarosuke777/spring-boot-hms
+       - echo "[{\"name\":\"ecs-hms-task\",\"imageUri\":\"public.ecr.aws/f9s4g9c5/tarosuke777/spring-boot-hms:latest\"}]" > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json
