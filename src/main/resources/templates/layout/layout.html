@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+    xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+	
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}">
+	
+	<script th:src="@{/webjars/jquery/jquery.min.js}" defer></script>
+	<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" defer></script>
+	
+	<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">HMS</title>
+</head>
+<body>
+	<nav layout:replace="~{layout/header::header}"></nav>
+	
+	<div class="container-fluid">
+		<div class="row">
+		  <nav sec:authorize="isAuthenticated()" class="col-sm-1 bg-light mt-3">
+				<div layout:replace="~{layout/menu::menu}"></div>
+		  </nav>
+		  <div class="col">
+              <div layout:fragment="content"></div>
+          </div>
+		</div>
+	</div>
+</body>
+</html>

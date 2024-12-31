@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+<head>
+<title>Artist</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="mt-3 mb-3 border-bottom">
+			<h1 class="h2">Artist</h1>
+		</div>
+		<div>
+			<div class="mb-2">
+				<a class="btn btn-primary" th:href="@{'/artist/register'}">Register</a>
+			</div>
+			<table class="table table-bordered table-hover align-middle">
+				<thead>
+					<tr class="table-primary">
+						<th>Artist Name</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="artist: ${artistList}">
+						<td th:text="${artist.artistName}"></td>
+						<td><a class="btn btn-primary"
+							th:href="@{'/artist/detail/' + ${artist.artistId}}">Detail</a>
+						</td>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

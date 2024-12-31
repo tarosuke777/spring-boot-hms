@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorate="~{layout/layout}">
+<head>
+</head>
+<body>
+	<nav layout:fragment="menu" class="nav nav-pills flex-column">
+		<label>Hobby</label>
+		<nav class="nav nav-pills flex-column">
+			<a class="nav-link ms-1" th:href="@{'/artist/list'}">Artist</a> <a
+				class="nav-link ms-1" th:href="@{'/music/list'}">Music</a>
+		</nav>
+        <span sec:authorize="hasAuthority('ROLE_ADMIN')">
+			<label>Manage</label>
+			<nav class="nav nav-pills flex-column">
+				<a class="nav-link ms-1" th:href="@{'/user/list'}">User</a>
+			</nav>
+		</span>
+	</nav>
+</body>
+</html>

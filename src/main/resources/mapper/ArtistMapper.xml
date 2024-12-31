@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tarosuke777.hms.repository.ArtistMapper">  
+    <select id="findMany" resultType="ArtistEntity" >
+        select 
+             artist_id
+            ,artist_name
+        from 
+            artist 
+    </select>
+    
+    <select id="findOne" resultType="ArtistEntity">
+        select 
+             artist_id
+            ,artist_name
+        from 
+            artist 
+        where artist_id = #{artistId}
+    </select>
+  
+    <insert id="insertOne">
+        insert into artist (artist_name) 
+        values (#{artistName})
+    </insert>
+  
+    <update id="updateOne">
+        update 
+            artist 
+        set
+             artist_name = #{artistName}
+        where
+            artist_id = #{artistId} 
+    </update>
+    
+    <delete id="deleteOne">
+        delete from
+            artist
+        where
+            artist_id = #{artistId}
+    </delete>
+  
+</mapper>

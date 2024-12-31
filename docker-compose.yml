@@ -1,0 +1,55 @@
+services:
+  db:
+    container_name: hms-mysql-db
+    image: mysql:8.4.3
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      MYSQL_DATABASE: hms
+      MYSQL_USER: hms
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password
+    secrets:
+      - mysql_root_password
+      - mysql_user_password
+    networks:
+      - home_network
+    healthcheck:
+      test: "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD"
+      timeout: 5s
+      interval: 5s
+      retries: 10
+  web-ap:
+    container_name: hms-web-ap
+    build:
+      context: .
+      dockerfile: ./docker/web-ap/Dockerfile
+    ports:
+      - "80:80"
+    restart: always
+    environment:
+        SPRING_PROFILES_ACTIVE: dev
+        SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hms
+    secrets:
+      - mysql_user_password
+    networks:
+      - home_network
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  db_data:
+secrets:
+  mysql_root_password:
+    file: ./docker/secrets/mysql_root_password.txt
+  mysql_user_password:
+    file: ./docker/secrets/mysql_user_password.txt
+    
+networks:
+  home_network:
+    driver: bridge
+    ipam:
+      driver: default
