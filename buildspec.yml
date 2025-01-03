@@ -15,6 +15,6 @@ phases:
   post_build:
     commands:
        - docker push public.ecr.aws/f9s4g9c5/tarosuke777/spring-boot-hms
-       - echo "[{\"name\":\"ecs-hms-task\",\"imageUri\":\"public.ecr.aws/f9s4g9c5/tarosuke777/spring-boot-hms:latest\"}]" > imagedefinitions.json
+       - echo "[{\"name\":\"HmsWebApTask\",\"imageUri\":\"public.ecr.aws/f9s4g9c5/tarosuke777/spring-boot-hms:latest\"}]" > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
