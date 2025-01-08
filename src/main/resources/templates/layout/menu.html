@@ -6,18 +6,25 @@
 <head>
 </head>
 <body>
-	<nav layout:fragment="menu" class="nav nav-pills flex-column">
-		<label>Hobby</label>
-		<nav class="nav nav-pills flex-column">
-			<a class="nav-link ms-1" th:href="@{'/artist/list'}">Artist</a> <a
-				class="nav-link ms-1" th:href="@{'/music/list'}">Music</a>
-		</nav>
-        <span sec:authorize="hasAuthority('ROLE_ADMIN')">
-			<label>Manage</label>
-			<nav class="nav nav-pills flex-column">
-				<a class="nav-link ms-1" th:href="@{'/user/list'}">User</a>
-			</nav>
-		</span>
-	</nav>
+	<ul layout:fragment="menu" class="list-unstyled">
+		<li class="my-2">
+			<button class="btn collapsed" data-bs-toggle="collapse"
+				aria-expanded="false" data-bs-target="#hobby-collapse"
+				aria-controls="hobby-collapse">Hobby</button>
+			<ul class="list-unstyled ps-3 collapse" id="hobby-collapse">
+				<li><a class="text-decoration-none" th:href="@{'/artist/list'}">Artist</a></li>
+				<li><a class="text-decoration-none" th:href="@{'/music/list'}">Music</a></li>
+			</ul>
+		</li>
+		<li sec:authorize="hasAuthority('ROLE_ADMIN')" class="my-2">
+			<button
+				class="btn d-inline-flex align-items-center border-0 collapsed"
+				data-bs-toggle="collapse" aria-expanded="false"
+				data-bs-target="#manage-collapse" aria-controls="manage-collapse">Manage</button>
+			<ul class="list-unstyled ps-3 collapse" id="manage-collapse" style="">
+				<li><a class="text-decoration-none" th:href="@{'/user/list'}">User</a></li>
+			</ul>
+		</li>
+	</ul>
 </body>
 </html>
