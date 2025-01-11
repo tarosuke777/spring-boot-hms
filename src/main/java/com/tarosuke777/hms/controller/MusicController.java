@@ -23,17 +23,24 @@ import com.tarosuke777.hms.repository.MusicMapper;
 import com.tarosuke777.hms.repository.entity.ArtistEntity;
 import com.tarosuke777.hms.repository.entity.MusicEntity;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
 @RequestMapping("/music")
+@RequiredArgsConstructor
 public class MusicController {
 
-  @Autowired private ArtistMapper artistMapper;
-  @Autowired private MusicMapper musicMapper;
+  private static final String REDIRECT_LIST = "redirect:/music/list";
+  private static final String LIST_VIEW = "music/list";
+  private static final String DETAIL_VIEW = "music/detail";
+  private static final String REGISTER_VIEW = "music/register";
 
-  @Autowired private ModelMapper modelMapper;
+  private final ArtistMapper artistMapper;
+  private final MusicMapper musicMapper;
+
+  private final ModelMapper modelMapper;
 
   @GetMapping("/list")
   public String getList(Model model) {
@@ -57,7 +64,7 @@ public class MusicController {
     model.addAttribute("artistMap", artistMap);
     model.addAttribute("musicList", musicList);
 
-    return "music/list";
+    return LIST_VIEW;
   }
 
   @GetMapping("/detail/{musicId}")
@@ -81,7 +88,7 @@ public class MusicController {
     model.addAttribute("musicForm", form);
     model.addAttribute("artistMap", artistMap);
 
-    return "music/detail";
+    return DETAIL_VIEW;
   }
 
   @GetMapping("/register")
@@ -101,7 +108,7 @@ public class MusicController {
     model.addAttribute("musicForm", form);
     model.addAttribute("artistMap", artistMap);
 
-    return "music/register";
+    return REGISTER_VIEW;
   }
 
   @PostMapping("/register")
@@ -114,7 +121,7 @@ public class MusicController {
 
     musicMapper.insertOne(form.getMusicName(), form.getArtistId());
 
-    return "redirect:/music/list";
+    return REDIRECT_LIST;
   }
 
   @PostMapping(value = "detail", params = "update")
@@ -122,7 +129,7 @@ public class MusicController {
 
     musicMapper.updateOne(form.getMusicId(), form.getMusicName(), form.getArtistId());
 
-    return "redirect:/music/list";
+    return REDIRECT_LIST;
   }
 
   @PostMapping(value = "/detail", params = "delete")
@@ -130,6 +137,6 @@ public class MusicController {
 
     musicMapper.deleteOne(form.getMusicId());
 
-    return "redirect:/music/list";
+    return REDIRECT_LIST;
   }
 }
