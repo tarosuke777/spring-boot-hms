@@ -25,6 +25,7 @@
 			music
 		left outer join artist 
 		on music.artist_id = artist.artist_id
+		order by music.music_id
 	</select>
 	
 	<select id="findOne" resultMap="music">

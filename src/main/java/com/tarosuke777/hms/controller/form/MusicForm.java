@@ -2,8 +2,12 @@ package com.tarosuke777.hms.controller.form;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class MusicForm {
   private Integer musicId;
