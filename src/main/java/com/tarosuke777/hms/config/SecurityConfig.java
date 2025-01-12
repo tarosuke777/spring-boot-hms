@@ -11,7 +11,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.tarosuke777.hms.domain.user.UserDetailServiceImpl;
+import com.tarosuke777.hms.domain.UserDetailServiceImpl;
 
 @Configuration
 @EnableWebSecurity

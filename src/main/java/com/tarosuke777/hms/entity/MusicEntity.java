@@ -1,4 +1,4 @@
-package com.tarosuke777.hms.repository.entity;
+package com.tarosuke777.hms.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

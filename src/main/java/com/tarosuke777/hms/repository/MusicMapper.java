@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.tarosuke777.hms.repository.entity.MusicEntity;
+import com.tarosuke777.hms.entity.MusicEntity;
 
 @Mapper
 public interface MusicMapper {

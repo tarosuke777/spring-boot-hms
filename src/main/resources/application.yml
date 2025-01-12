@@ -11,6 +11,6 @@ spring:
     basename: ValidationMessages
 mybatis:
   mapper-locations: classpath*:/mapper/*.xml
-  type-aliases-package: com.tarosuke777.hms.repository.entity
+  type-aliases-package: com.tarosuke777.hms.entity
   configuration:
     map-underscore-to-camel-case: true

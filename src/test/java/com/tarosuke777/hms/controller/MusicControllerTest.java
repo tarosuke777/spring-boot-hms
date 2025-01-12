@@ -28,10 +28,10 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.tarosuke777.hms.controller.form.MusicForm;
+import com.tarosuke777.hms.entity.ArtistEntity;
+import com.tarosuke777.hms.entity.MusicEntity;
+import com.tarosuke777.hms.form.MusicForm;
 import com.tarosuke777.hms.repository.MusicMapper;
-import com.tarosuke777.hms.repository.entity.ArtistEntity;
-import com.tarosuke777.hms.repository.entity.MusicEntity;
 
 @SpringBootTest
 @AutoConfigureMockMvc

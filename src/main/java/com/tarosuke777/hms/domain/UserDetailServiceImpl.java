@@ -1,4 +1,4 @@
-package com.tarosuke777.hms.domain.user;
+package com.tarosuke777.hms.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import com.tarosuke777.hms.entity.UserEntity;
 import com.tarosuke777.hms.repository.UserMapper;
-import com.tarosuke777.hms.repository.entity.UserEntity;
 
 public class UserDetailServiceImpl implements UserDetailsService {
 

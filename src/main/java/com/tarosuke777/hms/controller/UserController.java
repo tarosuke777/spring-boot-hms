@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.tarosuke777.hms.controller.form.UserForm;
+import com.tarosuke777.hms.entity.UserEntity;
+import com.tarosuke777.hms.form.UserForm;
 import com.tarosuke777.hms.repository.UserMapper;
-import com.tarosuke777.hms.repository.entity.UserEntity;
 
 import lombok.extern.slf4j.Slf4j;
 

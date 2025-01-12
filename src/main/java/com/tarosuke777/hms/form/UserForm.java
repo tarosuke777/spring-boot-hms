@@ -1,4 +1,4 @@
-package com.tarosuke777.hms.controller.form;
+package com.tarosuke777.hms.form;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
