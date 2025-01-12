@@ -61,7 +61,7 @@ public class MusicController {
 
     Map<Integer, String> artistMap = artistService.getArtistMap();
 
-    addAttributesToModel(model, musicForm, artistMap);
+    addAttributesToModel(model, artistMap);
 
     return REGISTER_VIEW;
   }
@@ -104,6 +104,10 @@ public class MusicController {
   private void addAttributesToModel(
       Model model, MusicForm musicForm, Map<Integer, String> artistMap) {
     model.addAttribute("musicForm", musicForm);
+    model.addAttribute("artistMap", artistMap);
+  }
+
+  private void addAttributesToModel(Model model, Map<Integer, String> artistMap) {
     model.addAttribute("artistMap", artistMap);
   }
 }

@@ -12,8 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,11 +21,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tarosuke777.hms.entity.ArtistEntity;
@@ -45,129 +47,174 @@ public class MusicControllerTest {
 
   @Autowired private MusicMapper musicMapper;
 
+  private static final String LIST_ENDPOINT = "/music/list";
+  private static final String LIST_VIEW = "music/list";
+  private static final String LIST_URL = "/music/list";
+
+  private static final String DETAIL_ENDPOINT = "/music/detail/{id}";
+  private static final String DETAIL_VIEW = "music/detail";
+
+  private static final String REGISTER_ENDPOINT = "/music/register";
+  private static final String REGISTER_VIEW = "music/register";
+
+  private static final String UPDATE_ENDPOINT = "/music/detail";
+  private static final String DELETE_ENDPOINT = "/music/detail";
+  
   @Test
-  void getListTest() throws Exception {
+  void getList_ShouldReturnMusicListAndArtistMap() throws Exception {
 
-    List<MusicForm> expMusicList = new ArrayList<>();
-    expMusicList.add(new MusicForm(1, "好きになってはいけない理由", 1));
-    expMusicList.add(new MusicForm(2, "ゆずれない", 1));
-    expMusicList.add(new MusicForm(3, "サクラメイキュウ", 2));
+    // Given
+    List<MusicForm> expectedMusicList =
+        Arrays.asList(
+            new MusicForm(1, "好きになってはいけない理由", 1),
+            new MusicForm(2, "ゆずれない", 1),
+            new MusicForm(3, "サクラメイキュウ", 2));
 
-    Map<Integer, String> expArtistMap = new HashMap<>();
-    expArtistMap.put(1, "藤川千愛");
-    expArtistMap.put(2, "分島花音");
+    Map<Integer, String> expectedArtistMap = new LinkedHashMap<>();
+    expectedArtistMap.put(1, "藤川千愛");
+    expectedArtistMap.put(2, "分島花音");
 
-    this.mockMvc
-        .perform(get("/music/list"))
-        .andDo(print())
+    // When & Then
+    performGetListRequest()
         .andExpect(status().isOk())
-        .andExpect(model().attribute("artistMap", expArtistMap))
-        .andExpect(model().attribute("musicList", expMusicList))
-        .andExpect(view().name("music/list"))
-        .andReturn();
+        .andExpect(model().attribute("artistMap", expectedArtistMap))
+        .andExpect(model().attribute("musicList", expectedMusicList))
+        .andExpect(view().name(LIST_VIEW));
+  }
+
+  private ResultActions performGetListRequest() throws Exception {
+    return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
   }
 
   @Test
-  void getDetailTest() throws Exception {
+  void getDetail_ShouldReturnMusicDetailAndArtistMap() throws Exception {
+    // Given
+    final Integer targetMusicId = 1;
+    MusicForm expectedMusicForm = new MusicForm(targetMusicId, "好きになってはいけない理由", 1);
+    Map<Integer, String> expectedArtistMap = new LinkedHashMap<>();
+    expectedArtistMap.put(1, "藤川千愛");
+    expectedArtistMap.put(2, "分島花音");
 
-    MusicForm musicForm = new MusicForm(1, "好きになってはいけない理由", 1);
-
-    Map<Integer, String> expArtistMap = new HashMap<>();
-    expArtistMap.put(1, "藤川千愛");
-    expArtistMap.put(2, "分島花音");
-
-    this.mockMvc
-        .perform(get("/music/detail/1"))
-        .andDo(print())
+    // When & Then
+    performGetDetailRequest(targetMusicId)
         .andExpect(status().isOk())
-        .andExpect(model().attribute("artistMap", expArtistMap))
-        .andExpect(model().attribute("musicForm", musicForm))
-        .andExpect(view().name("music/detail"))
-        .andReturn();
+        .andExpect(model().attribute("artistMap", expectedArtistMap))
+        .andExpect(model().attribute("musicForm", expectedMusicForm))
+        .andExpect(view().name(DETAIL_VIEW))
+        .andExpect(model().hasNoErrors());
   }
 
-  @Test
-  void getRegisterTest() throws Exception {
-
-    MusicForm musicForm = new MusicForm();
-
-    Map<Integer, String> expArtistMap = new HashMap<>();
-    expArtistMap.put(1, "藤川千愛");
-    expArtistMap.put(2, "分島花音");
-
-    this.mockMvc
-        .perform(get("/music/register"))
-        .andDo(print())
-        .andExpect(status().isOk())
-        .andExpect(model().attribute("artistMap", expArtistMap))
-        .andExpect(model().attribute("musicForm", musicForm))
-        .andExpect(view().name("music/register"))
-        .andReturn();
-  }
-
-  @Test
-  void registerTest() throws Exception {
-
-    List<MusicEntity> expMusicList = new ArrayList<>();
-    expMusicList.add(new MusicEntity(1, "好きになってはいけない理由", new ArtistEntity(1, "藤川千愛")));
-    expMusicList.add(new MusicEntity(2, "ゆずれない", new ArtistEntity(1, "藤川千愛")));
-    expMusicList.add(new MusicEntity(3, "サクラメイキュウ", new ArtistEntity(2, "分島花音")));
-    expMusicList.add(new MusicEntity(4, "test", new ArtistEntity(1, "藤川千愛")));
-
-    this.mockMvc
+  private ResultActions performGetDetailRequest(int musicId) throws Exception {
+    return mockMvc
         .perform(
-            post("/music/register").with(csrf()).param("musicName", "test").param("artistId", "1"))
-        .andDo(print())
+            get(DETAIL_ENDPOINT, musicId).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andDo(print());
+  }
+
+  @Test
+  void getRegister_ShouldReturnRegisterPageWithArtistMap() throws Exception {
+
+    // Given
+    Map<Integer, String> expectedArtistMap = new LinkedHashMap<>();
+    expectedArtistMap.put(1, "藤川千愛");
+    expectedArtistMap.put(2, "分島花音");
+ 
+    // When & Then
+    performGetRegisterRequest()
+        .andExpect(status().isOk())
+        .andExpect(model().attribute("artistMap", expectedArtistMap))
+        .andExpect(view().name(REGISTER_VIEW))
+        .andExpect(model().hasNoErrors());
+  }
+
+  private ResultActions performGetRegisterRequest() throws Exception {
+    return mockMvc
+        .perform(get(REGISTER_ENDPOINT).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andDo(print());
+  }
+
+  @Test
+  void register_WithValidData_ShouldRedirectToList() throws Exception {
+
+    // Given
+    MusicForm musicForm = new MusicForm(null, "test", 1);
+    List<MusicEntity> expectedMusicList =
+        Arrays.asList(
+            new MusicEntity(1, "好きになってはいけない理由", new ArtistEntity(1, "藤川千愛")),
+            new MusicEntity(2, "ゆずれない", new ArtistEntity(1, "藤川千愛")),
+            new MusicEntity(3, "サクラメイキュウ", new ArtistEntity(2, "分島花音")),
+            new MusicEntity(4, "test", new ArtistEntity(1, "藤川千愛")));
+
+    // When & Then
+    performRegisterRequest(musicForm)
         .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/music/list"))
-        .andReturn();
+        .andExpect(redirectedUrl(LIST_URL));
 
     List<MusicEntity> musicList = musicMapper.findMany();
-    assertIterableEquals(expMusicList, musicList);
+    assertIterableEquals(expectedMusicList, musicList);
+  }
+
+  private ResultActions performRegisterRequest(MusicForm form) throws Exception {
+    return mockMvc
+        .perform(
+            post(REGISTER_ENDPOINT)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("musicName", form.getMusicName())
+                .param("artistId", String.valueOf(form.getArtistId())))
+        .andDo(print());
   }
 
   @Test
-  void updateTest() throws Exception {
+  void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
-    MusicEntity expMusic = musicMapper.findOne(1);
-    expMusic.setMusicName("好きになってはいけない理由2");
+    // Given
+    MusicEntity expectedMusic = musicMapper.findOne(1);
+    expectedMusic.setMusicName("好きになってはいけない理由2");
 
-    this.mockMvc
+    // When & Then
+    performUpdateRequest(expectedMusic)
+        .andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
+
+    MusicEntity music = musicMapper.findOne(1);
+    assertEquals(music, expectedMusic);
+  }
+
+  private ResultActions performUpdateRequest(MusicEntity music) throws Exception {
+    return mockMvc
         .perform(
-            post("/music/detail")
+            post(UPDATE_ENDPOINT)
                 .with(csrf())
                 .param("update", "")
-                .param("musicId", expMusic.getMusicId().toString())
-                .param("musicName", expMusic.getMusicName())
-                .param("artistId", expMusic.getArtist().getArtistId().toString()))
-        .andDo(print())
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/music/list"))
-        .andReturn();
-
-    MusicEntity music = musicMapper.findOne(1);
-
-    assertEquals(music, expMusic);
+                .param("musicId", music.getMusicId().toString())
+                .param("musicName", music.getMusicName())
+                .param("artistId", music.getArtist().getArtistId().toString()))
+        .andDo(print());
   }
 
   @Test
-  void deleteTest() throws Exception {
+  void delete_ExistingMusic_ShouldDeleteAndRedirectToList() throws Exception {
 
+    // Given
     MusicEntity targetMusic = musicMapper.findOne(1);
 
-    this.mockMvc
-        .perform(
-            post("/music/detail")
-                .with(csrf())
-                .param("delete", "")
-                .param("musicId", targetMusic.getMusicId().toString()))
-        .andDo(print())
+    // When & Then
+    performDeleteRequest(targetMusic.getMusicId())
         .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/music/list"))
-        .andReturn();
+        .andExpect(redirectedUrl(LIST_URL));
 
     MusicEntity music = musicMapper.findOne(1);
-
     assertNull(music);
+  }
+
+  private ResultActions performDeleteRequest(int musicId) throws Exception {
+    return mockMvc
+        .perform(
+            post(DELETE_ENDPOINT)
+                .with(csrf())
+                .param("delete", "")
+                .param("musicId", String.valueOf(musicId)))
+        .andDo(print());
   }
 }
