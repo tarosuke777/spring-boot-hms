@@ -35,4 +35,14 @@ public class MusicService {
   public void registerMusic(MusicForm form) {
     musicMapper.insertOne(form.getMusicName(), form.getArtistId());
   }
+
+  @Transactional
+  public void updateMusic(MusicForm form) {
+    musicMapper.updateOne(form.getMusicId(), form.getMusicName(), form.getArtistId());
+  }
+
+  @Transactional
+  public void deleteMusic(Integer musicId) {
+    musicMapper.deleteOne(musicId);
+  }
 }

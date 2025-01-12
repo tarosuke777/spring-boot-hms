@@ -32,8 +32,6 @@ public class MusicController {
   private static final String DETAIL_VIEW = "music/detail";
   private static final String REGISTER_VIEW = "music/register";
 
-  private final MusicMapper musicMapper;
-
   private final MusicService musicService;
   private final ArtistService artistService;
 
@@ -85,7 +83,7 @@ public class MusicController {
   @PostMapping(value = "detail", params = "update")
   public String update(MusicForm form) {
 
-    musicMapper.updateOne(form.getMusicId(), form.getMusicName(), form.getArtistId());
+    musicService.updateMusic(form);
 
     return REDIRECT_LIST;
   }
@@ -93,7 +91,7 @@ public class MusicController {
   @PostMapping(value = "/detail", params = "delete")
   public String delete(MusicForm form, Model model) {
 
-    musicMapper.deleteOne(form.getMusicId());
+    musicService.deleteMusic(form.getMusicId());
 
     return REDIRECT_LIST;
   }
