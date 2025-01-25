@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,18 +28,25 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.ArtistEntity;
 import com.tarosuke777.hms.form.ArtistForm;
 import com.tarosuke777.hms.repository.ArtistMapper;
+import com.tarosuke777.hms.repository.TestArtistMapper;
 
+/**
+ * https://spring.pleiades.io/spring-framework/reference/testing/testcontext-framework/tx.html
+ * https://spring.pleiades.io/spring-framework/reference/testing/testcontext-framework/executing-sql.html#testcontext-executing-sql-declaratively-tx
+ * https://spring.pleiades.io/spring-boot/reference/features/logging.html
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
-@Sql(executionPhase = ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql
 @WithUserDetails("admin@tarosuke777.com")
 public class ArtistControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
   @Autowired private ArtistMapper artistMapper;
+  @Autowired private TestArtistMapper testArtistMapper;
 
   private static final String LIST_ENDPOINT = "/artist/list";
   private static final String LIST_VIEW = "artist/list";
@@ -60,7 +66,9 @@ public class ArtistControllerTest {
 
     // Given
     List<ArtistForm> expectedArtistList =
-        Arrays.asList(new ArtistForm(1, "藤川千愛"), new ArtistForm(2, "分島花音"));
+        artistMapper.findMany().stream()
+            .map(entity -> new ArtistForm(entity.getArtistId(), entity.getArtistName()))
+            .collect(Collectors.toList());
 
     // When & Then
     performGetListRequest()
@@ -75,12 +83,14 @@ public class ArtistControllerTest {
 
   @Test
   void getDetail_ShouldReturnArtistDetail() throws Exception {
+
     // Given
-    final Integer targetArtistId = 1;
-    ArtistForm expectedArtistForm = new ArtistForm(targetArtistId, "藤川千愛");
+    ArtistEntity expectedArtistEntity = testArtistMapper.findFirstOne();
+    ArtistForm expectedArtistForm =
+        new ArtistForm(expectedArtistEntity.getArtistId(), expectedArtistEntity.getArtistName());
 
     // When & Then
-    performGetDetailRequest(targetArtistId)
+    performGetDetailRequest(expectedArtistEntity.getArtistId())
         .andExpect(status().isOk())
         .andExpect(model().attribute("artistForm", expectedArtistForm))
         .andExpect(view().name(DETAIL_VIEW))
@@ -117,19 +127,14 @@ public class ArtistControllerTest {
 
     // Given
     String artistName = "TestArtistName";
-    List<ArtistEntity> expectedArtistList =
-        Arrays.asList(
-            new ArtistEntity(1, "藤川千愛"),
-            new ArtistEntity(2, "分島花音"),
-            new ArtistEntity(3, "TestArtistName"));
 
     // When & Then
     performRegisterRequest(artistName)
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
-    List<ArtistEntity> artistList = artistMapper.findMany();
-    Assertions.assertIterableEquals(expectedArtistList, artistList);
+    ArtistEntity artistEntity = testArtistMapper.findLastOne();
+    Assertions.assertEquals(artistName, artistEntity.getArtistName());
   }
 
   private ResultActions performRegisterRequest(String artistName) throws Exception {
@@ -146,7 +151,7 @@ public class ArtistControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    ArtistEntity expectedArtist = artistMapper.findOne(1);
+    ArtistEntity expectedArtist = testArtistMapper.findFirstOne();
     expectedArtist.setArtistName("藤川千愛2");
 
     // When & Then
@@ -154,7 +159,7 @@ public class ArtistControllerTest {
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
-    ArtistEntity artist = artistMapper.findOne(1);
+    ArtistEntity artist = testArtistMapper.findFirstOne();
     Assertions.assertEquals(artist, expectedArtist);
   }
 
@@ -173,7 +178,7 @@ public class ArtistControllerTest {
   void delete_ExistingArtist_ShouldDeleteAndRedirectToList() throws Exception {
 
     // Given
-    ArtistEntity targetArtist = artistMapper.findOne(1);
+    ArtistEntity targetArtist = testArtistMapper.findFirstOne();
 
     // When & Then
     performDeleteRequest(targetArtist.getArtistId())

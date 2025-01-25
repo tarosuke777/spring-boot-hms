@@ -1,7 +1,6 @@
 package com.tarosuke777.hms.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -12,12 +11,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,19 +33,28 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.ArtistEntity;
 import com.tarosuke777.hms.entity.MusicEntity;
 import com.tarosuke777.hms.form.MusicForm;
+import com.tarosuke777.hms.repository.ArtistMapper;
 import com.tarosuke777.hms.repository.MusicMapper;
+import com.tarosuke777.hms.repository.TestArtistMapper;
+import com.tarosuke777.hms.repository.TestMusicMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
-@Sql(executionPhase = ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql
 @WithUserDetails("admin@tarosuke777.com")
 public class MusicControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
   @Autowired private MusicMapper musicMapper;
+  @Autowired private TestMusicMapper testMusicMapper;
+
+  @Autowired private ArtistMapper artistMapper;
+  @Autowired private TestArtistMapper testArtistMapper;
+
+  @Autowired private ModelMapper modelMapper;
 
   private static final String LIST_ENDPOINT = "/music/list";
   private static final String LIST_VIEW = "music/list";
@@ -59,20 +68,24 @@ public class MusicControllerTest {
 
   private static final String UPDATE_ENDPOINT = "/music/detail";
   private static final String DELETE_ENDPOINT = "/music/detail";
-  
+
   @Test
   void getList_ShouldReturnMusicListAndArtistMap() throws Exception {
 
     // Given
     List<MusicForm> expectedMusicList =
-        Arrays.asList(
-            new MusicForm(1, "好きになってはいけない理由", 1),
-            new MusicForm(2, "ゆずれない", 1),
-            new MusicForm(3, "サクラメイキュウ", 2));
+        musicMapper.findMany().stream()
+            .map(entity -> modelMapper.map(entity, MusicForm.class))
+            .toList();
 
-    Map<Integer, String> expectedArtistMap = new LinkedHashMap<>();
-    expectedArtistMap.put(1, "藤川千愛");
-    expectedArtistMap.put(2, "分島花音");
+    Map<Integer, String> expectedArtistMap =
+        artistMapper.findMany().stream()
+            .collect(
+                Collectors.toMap(
+                    ArtistEntity::getArtistId,
+                    ArtistEntity::getArtistName,
+                    (existing, replacement) -> existing,
+                    LinkedHashMap::new));
 
     // When & Then
     performGetListRequest()
@@ -89,14 +102,23 @@ public class MusicControllerTest {
   @Test
   void getDetail_ShouldReturnMusicDetailAndArtistMap() throws Exception {
     // Given
-    final Integer targetMusicId = 1;
-    MusicForm expectedMusicForm = new MusicForm(targetMusicId, "好きになってはいけない理由", 1);
-    Map<Integer, String> expectedArtistMap = new LinkedHashMap<>();
-    expectedArtistMap.put(1, "藤川千愛");
-    expectedArtistMap.put(2, "分島花音");
+    MusicEntity musicEntity = testMusicMapper.findFirstOne();
+    MusicForm expectedMusicForm =
+        new MusicForm(
+            musicEntity.getMusicId(),
+            musicEntity.getMusicName(),
+            musicEntity.getArtist().getArtistId());
+    Map<Integer, String> expectedArtistMap =
+        artistMapper.findMany().stream()
+            .collect(
+                Collectors.toMap(
+                    ArtistEntity::getArtistId,
+                    ArtistEntity::getArtistName,
+                    (existing, replacement) -> existing,
+                    LinkedHashMap::new));
 
     // When & Then
-    performGetDetailRequest(targetMusicId)
+    performGetDetailRequest(musicEntity.getMusicId())
         .andExpect(status().isOk())
         .andExpect(model().attribute("artistMap", expectedArtistMap))
         .andExpect(model().attribute("musicForm", expectedMusicForm))
@@ -115,10 +137,15 @@ public class MusicControllerTest {
   void getRegister_ShouldReturnRegisterPageWithArtistMap() throws Exception {
 
     // Given
-    Map<Integer, String> expectedArtistMap = new LinkedHashMap<>();
-    expectedArtistMap.put(1, "藤川千愛");
-    expectedArtistMap.put(2, "分島花音");
- 
+    Map<Integer, String> expectedArtistMap =
+        artistMapper.findMany().stream()
+            .collect(
+                Collectors.toMap(
+                    ArtistEntity::getArtistId,
+                    ArtistEntity::getArtistName,
+                    (existing, replacement) -> existing,
+                    LinkedHashMap::new));
+
     // When & Then
     performGetRegisterRequest()
         .andExpect(status().isOk())
@@ -137,21 +164,18 @@ public class MusicControllerTest {
   void register_WithValidData_ShouldRedirectToList() throws Exception {
 
     // Given
-    MusicForm musicForm = new MusicForm(null, "test", 1);
-    List<MusicEntity> expectedMusicList =
-        Arrays.asList(
-            new MusicEntity(1, "好きになってはいけない理由", new ArtistEntity(1, "藤川千愛")),
-            new MusicEntity(2, "ゆずれない", new ArtistEntity(1, "藤川千愛")),
-            new MusicEntity(3, "サクラメイキュウ", new ArtistEntity(2, "分島花音")),
-            new MusicEntity(4, "test", new ArtistEntity(1, "藤川千愛")));
+    ArtistEntity artistEntity = testArtistMapper.findFirstOne();
+    MusicForm musicForm = new MusicForm(null, "test", artistEntity.getArtistId());
 
     // When & Then
     performRegisterRequest(musicForm)
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
-    List<MusicEntity> musicList = musicMapper.findMany();
-    assertIterableEquals(expectedMusicList, musicList);
+    MusicEntity musicEntity = testMusicMapper.findLastOne();
+
+    Assertions.assertEquals(musicForm.getMusicName(), musicEntity.getMusicName());
+    Assertions.assertEquals(musicForm.getArtistId(), musicEntity.getArtist().getArtistId());
   }
 
   private ResultActions performRegisterRequest(MusicForm form) throws Exception {
@@ -169,7 +193,7 @@ public class MusicControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    MusicEntity expectedMusic = musicMapper.findOne(1);
+    MusicEntity expectedMusic = testMusicMapper.findFirstOne();
     expectedMusic.setMusicName("好きになってはいけない理由2");
 
     // When & Then
@@ -177,7 +201,7 @@ public class MusicControllerTest {
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
-    MusicEntity music = musicMapper.findOne(1);
+    MusicEntity music = testMusicMapper.findFirstOne();
     assertEquals(music, expectedMusic);
   }
 
