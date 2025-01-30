@@ -18,7 +18,7 @@
 		
 	<div class="container-fluid">
 		<div class="row">
-		  <nav sec:authorize="isAuthenticated()" th:if="${fromLoginDisplay == null}" class="col-sm-1 bg-light mt-1 small">
+		  <nav sec:authorize="isAuthenticated()" th:if="${isNotDisplayMenu == null}" class="col-sm-1 bg-light mt-1 small">
 				<div layout:replace="~{layout/menu::menu}"></div>
 		  </nav>
 		  <div class="col">

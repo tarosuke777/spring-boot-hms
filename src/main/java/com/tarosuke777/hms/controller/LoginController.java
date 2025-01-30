@@ -12,7 +12,7 @@ public class LoginController {
 
 	@GetMapping("/login")
 	public String login(Model model) {
-		model.addAttribute("fromLoginDisplay", "1");
+		model.addAttribute("isNotDisplayMenu", true);
 		return "login";
 	}
 }
