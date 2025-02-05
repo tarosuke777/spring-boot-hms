@@ -19,6 +19,7 @@
 					<tr class="table-dark">
 						<th>Music Name</th>
 						<th>Artist Name</th>
+						<th>Link</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -26,6 +27,8 @@
 					<tr th:each="music: ${musicList}">
 						<td th:text="${music.musicName}"></td>
 						<td th:text="${music.artistId != null ? artistMap.get(music.artistId) : ''}"></td>
+						<td><a th:href="${music.link}" th:text="${music.link}" target="_blank"></a>
+						</td>
 						<td><a class="btn btn-dark"
 							th:href="@{'/music/detail/' + ${music.musicId}}">Detail</a>
 						</td>
