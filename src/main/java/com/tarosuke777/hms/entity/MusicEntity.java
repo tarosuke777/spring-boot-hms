@@ -12,4 +12,6 @@ public class MusicEntity {
   private Integer musicId;
   private String musicName;
   private ArtistEntity artist;
+  private String link;
+
 }

@@ -27,6 +27,14 @@
 					th:insert="~{parts/parts :: select(${artistMap}, artistId, 'artistId', true)}">
 				</div>
 			</div>
+			<div class="mb-3 row">
+				<label for="musicName" class="col-sm-2 col-form-label">Link</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" th:field="*{link}"
+						th:errorclass="is-invalid">
+					<div class="invalid-feedback" th:errors="*{link}"></div>
+				</div>
+			</div>
 			<div class="text-center">
 				<button class="btn btn-dark" type="submit">Register</button>
 			</div>

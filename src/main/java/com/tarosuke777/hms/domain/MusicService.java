@@ -33,7 +33,7 @@ public class MusicService {
 
   @Transactional
   public void registerMusic(MusicForm form) {
-    musicMapper.insertOne(form.getMusicName(), form.getArtistId());
+    musicMapper.insertOne(form.getMusicName(), form.getArtistId(), form.getLink());
   }
 
   @Transactional

@@ -43,8 +43,8 @@
 	</select>
 	
 	<insert id="insertOne">
-        insert into music (music_name, artist_id) 
-        values (#{musicName}, #{artistId})
+        insert into music (music_name, artist_id, link) 
+        values (#{musicName}, #{artistId}, #{link})
     </insert>
 	
 	<update id="updateOne">

@@ -107,7 +107,8 @@ public class MusicControllerTest {
         new MusicForm(
             musicEntity.getMusicId(),
             musicEntity.getMusicName(),
-            musicEntity.getArtist().getArtistId());
+            musicEntity.getArtist().getArtistId(),
+            musicEntity.getLink());
     Map<Integer, String> expectedArtistMap =
         artistMapper.findMany().stream()
             .collect(
@@ -165,7 +166,7 @@ public class MusicControllerTest {
 
     // Given
     ArtistEntity artistEntity = testArtistMapper.findFirstOne();
-    MusicForm musicForm = new MusicForm(null, "test", artistEntity.getArtistId());
+    MusicForm musicForm = new MusicForm(null, "test", artistEntity.getArtistId(),null);
 
     // When & Then
     performRegisterRequest(musicForm)

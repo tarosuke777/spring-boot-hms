@@ -17,4 +17,7 @@ public class MusicForm {
   private String musicName;
 
   private Integer artistId;
+  
+  private String link;
+
 }
