@@ -8,6 +8,7 @@
 	<resultMap type="MusicEntity" id="music">
 		<id column="music_id" property="musicId" />
 		<result column="music_name" property="musicName" />
+		<result column="link" property="link" />
 		<association property="artist" resultMap="artist" />
 	</resultMap>
 	<resultMap type="ArtistEntity" id="artist">
@@ -32,6 +33,7 @@
         select 
              music.music_id
             ,music.music_name
+            ,music.link
             ,artist.artist_id
             ,artist.artist_name
         from 
@@ -53,6 +55,7 @@
         set
               music_name = #{musicName}
              ,artist_id = #{artistId}
+             ,link = #{link}
         where
             music_id = #{musicId} 
     </update>

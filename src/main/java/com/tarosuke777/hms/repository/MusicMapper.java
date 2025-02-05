@@ -19,7 +19,8 @@ public interface MusicMapper {
   public void updateOne(
       @Param("musicId") Integer musicId,
       @Param("musicName") String musicName,
-      @Param("artistId") Integer artistId);
+      @Param("artistId") Integer artistId,
+      @Param("link") String link);
 
   public int deleteOne(@Param("musicId") Integer musicId);
 }

@@ -38,7 +38,7 @@ public class MusicService {
 
   @Transactional
   public void updateMusic(MusicForm form) {
-    musicMapper.updateOne(form.getMusicId(), form.getMusicName(), form.getArtistId());
+    musicMapper.updateOne(form.getMusicId(), form.getMusicName(), form.getArtistId(), form.getLink());
   }
 
   @Transactional

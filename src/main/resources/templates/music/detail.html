@@ -26,6 +26,12 @@
 					th:insert="~{parts/parts :: select(${artistMap}, artistId, 'artistId', true)}">
 				</div>
 			</div>
+			<div class="mb-3 row">
+				<label for="link" class="col-sm-2 col-form-label">Link</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" th:field="*{link}">
+				</div>
+			</div>
 			<div class="text-center">
 				<button class="btn btn-danger" type="submit" name="delete">
 					Delete</button>
