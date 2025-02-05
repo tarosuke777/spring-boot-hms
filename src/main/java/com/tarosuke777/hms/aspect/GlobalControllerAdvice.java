@@ -15,7 +15,7 @@ public class GlobalControllerAdvice {
 		model.addAttribute("stackTrace", stackTrace);
 		
 		model.addAttribute("isNotDisplayMenu", true);
-		return "/error";
+		return "error";
 	}
 
 }
