@@ -12,11 +12,11 @@
 		</div>
 		<div>
             <div class="mb-2">
-                <a class="btn btn-primary" th:href="@{'/user/signup'}">Register</a>
+                <a class="btn btn-dark" th:href="@{'/user/signup'}">Register</a>
             </div>
 			<table class="table table-bordered table-hover align-middle">
 				<thead>
-					<tr class="table-primary">
+					<tr class="table-dark">
 						<th>User Id</th>
 						<th>User Name</th>
                         <th>Email</th>
@@ -28,7 +28,7 @@
                         <td th:text="${user.userId}"></td>
 						<td th:text="${user.userName}"></td>
                         <td th:text="${user.email}"></td>
-						<td><a class="btn btn-primary"
+						<td><a class="btn btn-dark"
 							th:href="@{'/user/detail/' + ${user.userId}}">Detail</a>
 						</td>
 				</tbody>

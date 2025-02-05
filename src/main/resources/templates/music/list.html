@@ -12,11 +12,11 @@
 		</div>
 		<div>
 			<div class="mb-2">
-				<a class="btn btn-primary" th:href="@{'/music/register'}">Register</a>
+				<a class="btn btn-dark" th:href="@{'/music/register'}">Register</a>
 			</div>
 			<table class="table table-bordered table-hover align-middle">
 				<thead>
-					<tr class="table-primary">
+					<tr class="table-dark">
 						<th>Music Name</th>
 						<th>Artist Name</th>
 						<th></th>
@@ -26,7 +26,7 @@
 					<tr th:each="music: ${musicList}">
 						<td th:text="${music.musicName}"></td>
 						<td th:text="${music.artistId != null ? artistMap.get(music.artistId) : ''}"></td>
-						<td><a class="btn btn-primary"
+						<td><a class="btn btn-dark"
 							th:href="@{'/music/detail/' + ${music.musicId}}">Detail</a>
 						</td>
 				</tbody>
