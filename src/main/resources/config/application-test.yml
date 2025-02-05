@@ -17,8 +17,5 @@ spring:
       enabled: false
 #logging:
 #  level:
-# @SQLの投入データ確認時に有効
-#    org.springframework.jdbc.datasource.init: DEBUG
-# Rolling,Commit確認時に有効
-#    org.springframework.jdbc.support.JdbcTransactionManager: DEBUG
-    
+#    '[org.springframework.jdbc.datasource.init]': DEBUG
+#    '[org.springframework.jdbc.support.JdbcTransactionManager]': DEBUG
