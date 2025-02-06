@@ -1,5 +1,8 @@
 package com.tarosuke777.hms.controller;
 
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +24,22 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthorController {
 
   @Autowired private AuthorMapper authorMapper;
+  
+  @Autowired private ModelMapper modelMapper;
 
+  @GetMapping("/list")
+  public String getList(Model model) {
+
+    List<AuthorForm> authorList =
+    	authorMapper.findMany().stream()
+            .map(entity -> modelMapper.map(entity, AuthorForm.class))
+            .toList();
+
+    model.addAttribute("authorList", authorList);
+
+    return "author/list";
+  }
+  
   @GetMapping("/register")
   public String getRegister(AuthorForm form, Model model) {
 

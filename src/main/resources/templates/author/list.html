@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+<head>
+<title>author</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="mt-3 mb-3 border-bottom">
+			<h1 class="h2">author</h1>
+		</div>
+		<div>
+			<div class="mb-2">
+				<a class="btn btn-dark" th:href="@{'/author/register'}">Register</a>
+			</div>
+			<table class="table table-bordered table-hover align-middle">
+				<thead>
+					<tr class="table-dark">
+						<th>author Name</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="author: ${authorList}">
+						<td th:text="${author.authorName}"></td>
+						<td><a class="btn btn-dark"
+							th:href="@{'/author/detail/' + ${author.authorId}}">Detail</a>
+						</td>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

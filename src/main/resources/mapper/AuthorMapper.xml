@@ -5,6 +5,14 @@
 
 <mapper namespace="com.tarosuke777.hms.repository.AuthorMapper">  
 
+    <select id="findMany" resultType="AuthorEntity" >
+        select 
+             author_id
+            ,author_name
+        from 
+            author 
+    </select>
+
     <insert id="insertOne">
         insert into author (author_name) 
         values (#{authorName})
