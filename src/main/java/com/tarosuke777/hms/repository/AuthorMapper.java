@@ -11,7 +11,14 @@ import com.tarosuke777.hms.entity.AuthorEntity;
 public interface AuthorMapper {
 
   public List<AuthorEntity> findMany();
+  
+  public AuthorEntity findOne(Integer authorId);
 
   public void insertOne(@Param("authorName") String authorName);
 
+  public void updateOne(
+	      @Param("authorId") Integer authorId, @Param("authorName") String authorName);
+
+  public int deleteOne(@Param("authorId") Integer authorId);
+  
 }

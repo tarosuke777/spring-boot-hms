@@ -9,6 +9,6 @@ import lombok.RequiredArgsConstructor;
 @Data
 public class AuthorEntity {
 
-  private Integer authortId;
+  private Integer authorId;
   private String authorName;
 }

@@ -10,9 +10,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.tarosuke777.hms.entity.AuthorEntity;
 import com.tarosuke777.hms.form.AuthorForm;
 import com.tarosuke777.hms.repository.AuthorMapper;
 
@@ -57,6 +59,35 @@ public class AuthorController {
     }
 
     authorMapper.insertOne(form.getAuthorName());
+
+    return "redirect:/author/list";
+  }
+  
+  @GetMapping("/detail/{authorId}")
+  public String getDetail(
+		  AuthorForm form, Model model, @PathVariable("authorId") Integer authorId) {
+
+    AuthorEntity author = authorMapper.findOne(authorId);
+
+    form = modelMapper.map(author, AuthorForm.class);
+
+    model.addAttribute("authorForm", form);
+
+    return "author/detail";
+  }
+
+  @PostMapping(value = "detail", params = "update")
+  public String update(AuthorForm form) {
+
+    authorMapper.updateOne(form.getAuthorId(), form.getAuthorName());
+
+    return "redirect:/author/list";
+  }
+
+  @PostMapping(value = "/detail", params = "delete")
+  public String delete(AuthorForm form, Model model) {
+
+    authorMapper.deleteOne(form.getAuthorId());
 
     return "redirect:/author/list";
   }

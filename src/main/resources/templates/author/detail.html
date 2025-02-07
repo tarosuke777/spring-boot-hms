@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+<title>AuthorDetail</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="mt-3 mb-3 border-bottom">
+			<h1 class="h2">AuthorDetail</h1>
+		</div>
+		<form method="post" th:action="@{/author/detail}"
+			th:object="${authorForm}">
+			<input type="hidden" th:field="*{authorId}">
+			<div class="mb-3 row">
+				<label for="authorName" class="col-sm-2 col-form-label">Author
+					Name</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" th:field="*{authorName}">
+				</div>
+			</div>
+			<div class="text-center">
+				<button class="btn btn-danger" type="submit" name="delete">
+					Delete</button>
+				<button class="btn btn-dark" type="submit" name="update">
+					Update</button>
+			</div>
+		</form>
+	</div>
+</body>
+</html>
