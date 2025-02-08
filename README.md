@@ -1,4 +1,11 @@
 # GIT
+### Commit Message Template
+```
+vi ~/.gitcommit_template
+git config --global commit.template ~/.gitcommit_template
+```
+
+```
 ### Commit Message
 # ==== Commit Messages ====
 
@@ -14,6 +21,7 @@
 # refactor: リファクタリング
 # test: テストコードの追加や修正
 # chore: ビルドツールの導入や依存関係を更新など
+```
 
 # DB
 ### Generate Version 
