@@ -43,7 +43,7 @@ import com.tarosuke777.hms.repository.TestMusicMapper;
 @ActiveProfiles("test")
 @Transactional
 @Sql
-@WithUserDetails("admin@tarosuke777.com")
+@WithUserDetails("admin")
 public class MusicControllerTest {
 
   @Autowired private MockMvc mockMvc;

@@ -40,7 +40,7 @@ import com.tarosuke777.hms.repository.TestArtistMapper;
 @ActiveProfiles("test")
 @Transactional
 @Sql
-@WithUserDetails("admin@tarosuke777.com")
+@WithUserDetails("admin")
 public class ArtistControllerTest {
 
   @Autowired private MockMvc mockMvc;
