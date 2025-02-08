@@ -14,11 +14,11 @@
 				</div>
 				<div class="card-body">
 					<form method="post" th:action="@{/login}">
-						<p th:if="${param.error}" class="error">UserId or Password is
+						<p th:if="${param.error}" class="error">UserName or Password is
 							incorrect.</p>
 						<div class="mb-3">
-							<input type="text" class="form-control" placeholder="UserID"
-								name="userId">
+							<input type="text" class="form-control" placeholder="UserName"
+								name="userName">
 						</div>
 						<div class="mb-3">
 							<input type="password" class="form-control" placeholder="Password"

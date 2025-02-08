@@ -25,7 +25,7 @@ public class SecurityConfig {
             login
                 .loginProcessingUrl("/login")
                 .loginPage("/login")
-                .usernameParameter("userId")
+                .usernameParameter("userName")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/music/list",true)
                 .failureUrl("/login?error")
