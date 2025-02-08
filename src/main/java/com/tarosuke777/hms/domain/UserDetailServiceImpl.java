@@ -19,9 +19,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
   @Autowired private UserMapper mapper;
 
   @Override
-  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+  public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-    UserEntity loginUser = mapper.findLoginUser(email);
+    UserEntity loginUser = mapper.findLoginUser(userName);
 
     if (loginUser == null) {
       throw new UsernameNotFoundException("user not found.");
@@ -32,7 +32,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     authorities.add(authority);
 
     UserDetails userDetails =
-        (UserDetails) new User(loginUser.getEmail(), loginUser.getPassword(), authorities);
+        (UserDetails) new User(loginUser.getUserName(), loginUser.getPassword(), authorities);
 
     return userDetails;
   }

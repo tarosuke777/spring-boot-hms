@@ -15,7 +15,7 @@
         from
             user
         where
-            email = #{email}
+            user_name = #{userName}
     </select>
 
     <select id="findMany" resultType="UserEntity" >

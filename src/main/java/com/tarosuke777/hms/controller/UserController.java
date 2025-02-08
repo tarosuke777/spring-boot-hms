@@ -76,7 +76,7 @@ public class UserController {
   }
 
   @GetMapping("/detail/{userId}")
-  public String getDetail(UserForm form, Model model, @PathVariable Integer userId) {
+  public String getDetail(UserForm form, Model model, @PathVariable("userId") Integer userId) {
 
     UserEntity user = mapper.findOne(userId);
 
