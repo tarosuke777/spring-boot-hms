@@ -1,6 +1,5 @@
 package com.tarosuke777.hms.form;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -19,6 +18,4 @@ public class UserForm {
   @Size(min = 4, max = 20)
   @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Enter {0} in single-byte alphanumeric characters")
   private String password;
-
-  @NotBlank @Email private String email;
 }

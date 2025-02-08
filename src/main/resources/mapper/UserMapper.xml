@@ -11,7 +11,6 @@
             ,user_name
             ,password
             ,role
-            ,email
         from
             user
         where
@@ -23,7 +22,6 @@
              user_id
             ,user_name
             ,role
-            ,email
         from 
             user
     </select>
@@ -33,7 +31,6 @@
              user_id
             ,user_name
             ,role
-            ,email
         from 
             user
         where 
@@ -45,13 +42,11 @@
             password
            ,user_name
            ,role
-           ,email
         )
         values(
             #{password}
            ,#{userName}
            ,#{role}
-           ,#{email}
         )
     </insert>
 
@@ -63,7 +58,6 @@
                 password = #{password}
              </if>
             ,user_name = #{userName}
-            ,email = #{email}
         where
             user_id = #{userId} 
     </update>

@@ -19,7 +19,6 @@
 					<tr class="table-dark">
 						<th>User Id</th>
 						<th>User Name</th>
-                        <th>Email</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -27,7 +26,6 @@
 					<tr th:each="user: ${userList}">
                         <td th:text="${user.userId}"></td>
 						<td th:text="${user.userName}"></td>
-                        <td th:text="${user.email}"></td>
 						<td><a class="btn btn-dark"
 							th:href="@{'/user/detail/' + ${user.userId}}">Detail</a>
 						</td>
