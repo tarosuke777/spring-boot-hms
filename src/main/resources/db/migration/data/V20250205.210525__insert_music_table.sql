@@ -1,1 +1,1 @@
-INSERT INTO music(music_name, artist_id) VALUES('好きになってはいけない理由',1),('ゆずれない',1),('サクラメイキュウ',2);
+INSERT INTO music(music_name, artist_id) VALUES('音楽１',1),('音楽２',1),('音楽３',2);

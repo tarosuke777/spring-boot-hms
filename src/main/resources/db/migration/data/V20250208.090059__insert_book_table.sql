@@ -1,0 +1,1 @@
+INSERT INTO book(book_name, author_id) VALUES('本１',1),('本２',1),('本３',2);

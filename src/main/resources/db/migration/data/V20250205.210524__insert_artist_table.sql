@@ -1,1 +1,1 @@
-INSERT INTO artist(artist_name) VALUES('藤川千愛'),('分島花音');
+INSERT INTO artist(artist_name) VALUES('アーティスト１'),('アーティスト２');

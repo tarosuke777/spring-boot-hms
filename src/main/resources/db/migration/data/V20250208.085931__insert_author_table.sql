@@ -1,0 +1,1 @@
+INSERT INTO author(author_name) VALUES('著者１'),('著者２');

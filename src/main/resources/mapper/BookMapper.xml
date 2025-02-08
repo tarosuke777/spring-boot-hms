@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tarosuke777.hms.repository.BookMapper">
+
+	<resultMap type="BookEntity" id="book">
+		<id column="book_id" property="bookId" />
+		<result column="book_name" property="bookName" />
+		<result column="link" property="link" />
+		<result column="note" property="note" />		
+		<association property="author" resultMap="author" />
+	</resultMap>
+	<resultMap type="AuthorEntity" id="author">
+		<id column="author_id" property="authorId" />
+		<result column="author_name" property="authorName" />
+	</resultMap>
+		
+	<select id="findMany" resultMap="book" >
+		select 
+			 book.book_id
+			,book.book_name
+			,book.link
+			,book.note
+			,author.author_id
+			,author.author_name
+		from 
+			book
+		left outer join author 
+		on book.author_id = author.author_id
+		order by book.book_id
+	</select>
+	
+	<select id="findOne" resultMap="book">
+        select 
+             book.book_id
+            ,book.book_name
+            ,book.link
+            ,book.note
+            ,author.author_id
+            ,author.author_name
+        from 
+            book
+        left outer join author 
+        on book.author_id = author.author_id
+        where 
+			book.book_id = #{bookId}
+	</select>
+	
+	<insert id="insertOne">
+        insert into book (book_name, author_id, link, note) 
+        values (#{bookName}, #{authorId}, #{link}, #{note})
+    </insert>
+	
+	<update id="updateOne">
+        update 
+            book 
+        set
+              book_name = #{bookName}
+             ,author_id = #{authorId}
+             ,link = #{link}
+             ,note = #{note}
+        where
+            book_id = #{bookId} 
+    </update>
+    
+    <delete id="deleteOne">
+        delete from
+            book
+        where
+            book_id = #{bookId}
+    </delete>
+	
+</mapper> 
