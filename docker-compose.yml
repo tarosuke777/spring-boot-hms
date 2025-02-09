@@ -24,6 +24,7 @@ services:
       retries: 10
   web-ap:
     container_name: hms-web-ap
+    image: hms:1.0
     build:
       context: .
       dockerfile: ./docker/web-ap/Dockerfile
