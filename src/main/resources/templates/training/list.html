@@ -21,6 +21,7 @@
 						<th>Training Menu Name</th>
 						<th>Weight</th>
 						<th>Reps</th>
+						<th>Sets</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -30,6 +31,7 @@
 						<td th:text="${training.trainingMenuId != null ? trainingMenuMap.get(training.trainingMenuId) : ''}"></td>
 						<td th:text="${training.weight}"></td>
 						<td th:text="${training.reps}"></td>
+						<td th:text="${training.sets}">
 						</td>
 						<td><a class="btn btn-dark"
 							th:href="@{'/training/detail/' + ${training.trainingId}}">Detail</a>

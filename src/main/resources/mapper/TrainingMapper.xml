@@ -10,6 +10,7 @@
 		<result column="training_date" property="trainingDate" />
 		<result column="weight" property="weight" />
 		<result column="reps" property="reps" />
+		<result column="sets" property="sets" />
 		<association property="trainingMenu" resultMap="trainingMenu" />
 	</resultMap>
 	<resultMap type="TrainingMenuEntity" id="trainingMenu">
@@ -25,6 +26,7 @@
 			,training.training_date
 			,training.weight
 			,training.reps
+			,training.sets
 			,training_menu.training_menu_id
 			,training_menu.training_menu_name
 			,training_menu.target_area_id
@@ -42,6 +44,7 @@
 			,training.training_date
 			,training.weight
 			,training.reps
+			,training.sets
             ,training_menu.training_menu_id
             ,training_menu.training_menu_name
             ,training_menu.target_area_id
@@ -55,8 +58,8 @@
 	</select>
 	
 	<insert id="insertOne">
-        insert into training (training_date, training_menu_id, weight, reps) 
-        values (#{trainingDate}, #{trainingMenuId}, #{weight}, #{reps})
+        insert into training (training_date, training_menu_id, weight, reps, sets) 
+        values (#{trainingDate}, #{trainingMenuId}, #{weight}, #{reps}, #{sets})
     </insert>
 	
 	<update id="updateOne">
@@ -67,6 +70,7 @@
              ,training_menu_id = #{trainingMenuId}
              ,weight = #{weight}
              ,reps = #{reps}
+             ,sets = #{sets}
         where
             training_id = #{trainingId} 
     </update>

@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TrainingService {
 	private final TrainingMapper trainingMapper;
-	private final ModelMapper modelMapper;
 
 	public List<TrainingForm> getTrainingList() {
 
@@ -26,6 +25,7 @@ public class TrainingService {
 			form.setTrainingDate(entity.getTrainingDate());
 			form.setWeight(entity.getWeight());
 			form.setReps(entity.getReps());
+			form.setSets(entity.getSets());
 			form.setTrainingMenuId(entity.getTrainingMenu().getTrainingMenuId());
 			return form;
 		}).toList();
@@ -38,19 +38,21 @@ public class TrainingService {
 		trainingForm.setTrainingDate(training.getTrainingDate());
 		trainingForm.setWeight(training.getWeight());
 		trainingForm.setReps(training.getReps());
+		trainingForm.setSets(training.getSets());
 		trainingForm.setTrainingMenuId(training.getTrainingMenu().getTrainingMenuId());
 		return trainingForm;
 	}
 
 	@Transactional
 	public void registerTraining(TrainingForm form) {
-		trainingMapper.insertOne(form.getTrainingDate(), form.getTrainingMenuId(), form.getWeight(), form.getReps());
+		trainingMapper.insertOne(form.getTrainingDate(), form.getTrainingMenuId(), form.getWeight(), form.getReps(),
+				form.getSets());
 	}
 
 	@Transactional
 	public void updateTraining(TrainingForm form) {
 		trainingMapper.updateOne(form.getTrainingId(), form.getTrainingDate(), form.getTrainingMenuId(),
-				form.getWeight(), form.getReps());
+				form.getWeight(), form.getReps(), form.getSets());
 	}
 
 	@Transactional
