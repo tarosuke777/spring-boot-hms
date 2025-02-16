@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tarosuke777.hms.repository.TrainingMapper">
+
+	<resultMap type="TrainingEntity" id="training">
+		<id column="training_id" property="trainingId" />
+		<result column="training_date" property="trainingDate" />
+		<result column="weight" property="weight" />
+		<result column="reps" property="reps" />
+		<association property="trainingMenu" resultMap="trainingMenu" />
+	</resultMap>
+	<resultMap type="TrainingMenuEntity" id="trainingMenu">
+		<id column="training_menu_id" property="trainingMenuId" />
+		<result column="training_menu_name" property="trainingMenuName" />
+		<result column="target_area_id" property="targetAreaId" />
+		<result column="link" property="link" />
+	</resultMap>
+		
+	<select id="findMany" resultMap="training" >
+		select 
+			 training.training_id
+			,training.training_date
+			,training.weight
+			,training.reps
+			,training_menu.training_menu_id
+			,training_menu.training_menu_name
+			,training_menu.target_area_id
+			,training_menu.link	
+		from 
+			training
+		left outer join training_menu 
+		on training.training_menu_id = training_menu.training_menu_id
+		order by training.training_id
+	</select>
+	
+	<select id="findOne" resultMap="training">
+        select 
+             training.training_id
+			,training.training_date
+			,training.weight
+			,training.reps
+            ,training_menu.training_menu_id
+            ,training_menu.training_menu_name
+            ,training_menu.target_area_id
+			,training_menu.link
+        from 
+            training
+        left outer join training_menu 
+        on training.training_menu_id = training_menu.training_menu_id
+        where 
+			training.training_id = #{trainingId}
+	</select>
+	
+	<insert id="insertOne">
+        insert into training (training_date, training_menu_id, weight, reps) 
+        values (#{trainingDate}, #{trainingMenuId}, #{weight}, #{reps})
+    </insert>
+	
+	<update id="updateOne">
+        update 
+            training 
+        set
+              training_date = #{trainingDate}
+             ,training_menu_id = #{trainingMenuId}
+             ,weight = #{weight}
+             ,reps = #{reps}
+        where
+            training_id = #{trainingId} 
+    </update>
+    
+    <delete id="deleteOne">
+        delete from
+            training
+        where
+            training_id = #{trainingId}
+    </delete>
+	
+</mapper> 

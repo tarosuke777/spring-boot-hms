@@ -63,7 +63,7 @@ public class TrainingMenuController {
 			return getRegister(form, model);
 		}
 
-		trainingMenuMapper.insertOne(form.getTrainingMenuName(), form.getTrainingMenuId(), form.getLink());
+		trainingMenuMapper.insertOne(form.getTrainingMenuName(), form.getTargetAreaId(), form.getLink());
 
 		return "redirect:/trainingMenu/list";
 	}
