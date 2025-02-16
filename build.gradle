@@ -36,9 +36,9 @@ dependencies {
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
     implementation "io.awspring.cloud:spring-cloud-aws-starter:${springCloudAwsVersion}"
     implementation "io.awspring.cloud:spring-cloud-aws-starter-parameter-store:${springCloudAwsVersion}"
-	implementation 'org.modelmapper.extensions:modelmapper-spring:3.2.1'
-	implementation 'org.webjars:jquery:3.7.1'
-	implementation 'org.webjars:jquery-ui:1.14.1'
+    implementation 'org.modelmapper.extensions:modelmapper-spring:3.2.1'
+    implementation 'org.webjars:jquery:3.7.1'
+    implementation 'org.webjars:jquery-ui:1.14.1'
     implementation 'org.webjars:bootstrap:5.3.3'
     implementation 'org.webjars:webjars-locator:0.52'
     implementation 'org.flywaydb:flyway-core:11.3.0'
