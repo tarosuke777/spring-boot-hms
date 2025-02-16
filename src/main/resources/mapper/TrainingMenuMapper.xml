@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tarosuke777.hms.repository.TrainingMenuMapper">  
+    <select id="findMany" resultType="TrainingMenuEntity" >
+        select 
+             training_menu_id
+            ,training_menu_name
+            ,target_area_id
+            ,link
+        from 
+            training_menu 
+    </select>
+    
+    <select id="findOne" resultType="TrainingMenuEntity">
+        select 
+             training_menu_id
+            ,training_menu_name
+            ,target_area_id
+            ,link
+        from 
+            training_menu 
+        where training_menu_id = #{trainingMenuId}
+    </select>
+  
+    <insert id="insertOne">
+        insert into training_menu (training_menu_name, target_area_id, link) 
+        values (#{trainingMenuName}, #{targetAreaId}, #{link})
+    </insert>
+  
+    <update id="updateOne">
+        update 
+            training_menu 
+        set
+            training_menu_name = #{trainingMenuName}
+           ,target_area_id = #{targetAreaId}
+           ,link = #{link}
+        where
+            training_menu_id = #{trainingMenuId} 
+    </update>
+    
+    <delete id="deleteOne">
+        delete from
+            training_menu
+        where
+            training_menu_id = #{trainingMenuId}
+    </delete>
+  
+</mapper>
