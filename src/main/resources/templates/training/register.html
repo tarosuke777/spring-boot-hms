@@ -51,6 +51,14 @@ $(function() {
 					<div class="invalid-feedback" th:errors="*{reps}"></div>
 				</div>
 			</div>
+			<div class="mb-3 row">
+				<label for="sets" class="col-sm-2 col-form-label">Reps</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" th:field="*{sets}"
+						th:errorclass="is-invalid">
+					<div class="invalid-feedback" th:errors="*{sets}"></div>
+				</div>
+			</div>
 			<div class="text-center">
 				<button class="btn btn-dark" type="submit">Register</button>
 			</div>

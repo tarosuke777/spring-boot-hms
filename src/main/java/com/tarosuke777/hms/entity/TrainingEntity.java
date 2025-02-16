@@ -16,5 +16,6 @@ public class TrainingEntity {
 	private TrainingMenuEntity trainingMenu;
 	private Integer weight;
 	private Integer reps;
+	private Integer sets;
 
 }

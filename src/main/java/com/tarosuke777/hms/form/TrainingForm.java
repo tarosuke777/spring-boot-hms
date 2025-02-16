@@ -19,5 +19,7 @@ public class TrainingForm {
 	private Integer weight;
 
 	private Integer reps;
+	
+	private Integer sets;
 
 }
