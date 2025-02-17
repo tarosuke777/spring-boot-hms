@@ -18,12 +18,16 @@
 				<thead>
 					<tr class="table-dark">
 						<th>Training Menu Name</th>
+						<th>Target Area Name</th>
+						<th>Link</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="trainingMenu: ${trainingMenuList}">
 						<td th:text="${trainingMenu.trainingMenuName}"></td>
+						<td th:text="${trainingMenu.targetAreaId != null ? targetAreaMap.get(trainingMenu.targetAreaId) : ''}"></td>
+						<td th:text="${trainingMenu.link}"></td>
 						<td><a class="btn btn-dark"
 							th:href="@{'/trainingMenu/detail/' + ${trainingMenu.trainingMenuId}}">Detail</a>
 						</td>
