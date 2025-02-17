@@ -41,6 +41,10 @@ public class TrainingMenuController {
 
 		model.addAttribute("trainingMenuList", trainingMenuList);
 
+	    Map<Integer, String> targetAreaMap = TargetArea.getTargetAreaMap();
+
+	    model.addAttribute("targetAreaMap", targetAreaMap);
+		
 		return "trainingMenu/list";
 	}
 
@@ -78,6 +82,10 @@ public class TrainingMenuController {
 
 		model.addAttribute("trainingMenuForm", form);
 
+	    Map<Integer, String> targetAreaMap = TargetArea.getTargetAreaMap();
+
+	    model.addAttribute("targetAreaMap", targetAreaMap);
+		
 		return "trainingMenu/detail";
 	}
 
