@@ -25,7 +25,7 @@
 				<tbody>
 					<tr th:each="movie: ${movieList}">
 						<td th:text="${movie.movieName}"></td>
-						<td th:text="${movie.note}"></td>
+						<td style="white-space: pre-line;" th:text="${movie.note}"></td>
 						<td><a class="btn btn-dark"
 							th:href="@{'/movie/detail/' + ${movie.movieId}}">Detail</a>
 						</td>
