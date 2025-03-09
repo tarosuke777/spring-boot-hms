@@ -26,6 +26,7 @@ public class TrainingService {
 			form.setWeight(entity.getWeight());
 			form.setReps(entity.getReps());
 			form.setSets(entity.getSets());
+			form.setTrainingAreaId(entity.getTrainingMenu().getTargetAreaId());
 			form.setTrainingMenuId(entity.getTrainingMenu().getTrainingMenuId());
 			return form;
 		}).toList();

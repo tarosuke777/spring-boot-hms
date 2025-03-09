@@ -18,6 +18,7 @@
 				<thead>
 					<tr class="table-dark">
 						<th>Training Date</th>
+						<th>Training Area Name</th>
 						<th>Training Menu Name</th>
 						<th>Weight</th>
 						<th>Reps</th>
@@ -28,6 +29,7 @@
 				<tbody>
 					<tr th:each="training: ${trainingList}">
 						<td th:text="${training.trainingDate}"></td>
+						<td th:text="${training.trainingAreaId != null ? trainingAreaMap.get(training.trainingAreaId) : ''}"></td>
 						<td th:text="${training.trainingMenuId != null ? trainingMenuMap.get(training.trainingMenuId) : ''}"></td>
 						<td th:text="${training.weight}"></td>
 						<td th:text="${training.reps}"></td>

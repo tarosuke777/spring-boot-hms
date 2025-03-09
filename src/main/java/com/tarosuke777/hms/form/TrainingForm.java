@@ -14,6 +14,8 @@ public class TrainingForm {
 
 	private LocalDate trainingDate;
 
+	private Integer trainingAreaId;
+	
 	private Integer trainingMenuId;
 
 	private Integer weight;

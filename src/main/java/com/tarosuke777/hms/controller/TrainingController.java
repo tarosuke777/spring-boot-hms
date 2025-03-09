@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.tarosuke777.hms.domain.TrainingMenuService;
 import com.tarosuke777.hms.domain.TrainingService;
+import com.tarosuke777.hms.enums.TargetArea;
 import com.tarosuke777.hms.form.TrainingForm;
 
 import lombok.RequiredArgsConstructor;
@@ -26,88 +27,88 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class TrainingController {
 
-  private static final String REDIRECT_LIST = "redirect:/training/list";
-  private static final String LIST_VIEW = "training/list";
-  private static final String DETAIL_VIEW = "training/detail";
-  private static final String REGISTER_VIEW = "training/register";
+	private static final String REDIRECT_LIST = "redirect:/training/list";
+	private static final String LIST_VIEW = "training/list";
+	private static final String DETAIL_VIEW = "training/detail";
+	private static final String REGISTER_VIEW = "training/register";
 
-  private final TrainingService trainingService;
-  private final TrainingMenuService trainingMenuService;
+	private final TrainingService trainingService;
+	private final TrainingMenuService trainingMenuService;
 
-  @GetMapping("/list")
-  public String getList(Model model) {
+	@GetMapping("/list")
+	public String getList(Model model) {
 
-    List<TrainingForm> trainingList = trainingService.getTrainingList();
-    Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
+		List<TrainingForm> trainingList = trainingService.getTrainingList();
+		Map<Integer, String> trainingAreaMap = TargetArea.getTargetAreaMap();
+		Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
 
-    addAttributesToModel(model, trainingList, trainingMenuMap);
+		addAttributesToModel(model, trainingList, trainingMenuMap, trainingAreaMap);
 
-    return LIST_VIEW;
-  }
+		return LIST_VIEW;
+	}
 
-  @GetMapping("/detail/{trainingId}")
-  public String getDetail(@PathVariable("trainingId") Integer trainingId, Model model) {
+	@GetMapping("/detail/{trainingId}")
+	public String getDetail(@PathVariable("trainingId") Integer trainingId, Model model) {
 
-    TrainingForm trainingForm = trainingService.getTrainingDetails(trainingId);
-    Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
+		TrainingForm trainingForm = trainingService.getTrainingDetails(trainingId);
+		Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
 
-    addAttributesToModel(model, trainingForm, trainingMenuMap);
+		addAttributesToModel(model, trainingForm, trainingMenuMap);
 
-    return DETAIL_VIEW;
-  }
+		return DETAIL_VIEW;
+	}
 
-  @GetMapping("/register")
-  public String getRegister(TrainingForm trainingForm, Model model) {
+	@GetMapping("/register")
+	public String getRegister(TrainingForm trainingForm, Model model) {
 
-    Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
+		Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
 
-    addAttributesToModel(model, trainingMenuMap);
+		addAttributesToModel(model, trainingMenuMap);
 
-    return REGISTER_VIEW;
-  }
+		return REGISTER_VIEW;
+	}
 
-  @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated TrainingForm form, BindingResult bindingResult, Model model) {
+	@PostMapping("/register")
+	public String register(@ModelAttribute @Validated TrainingForm form, BindingResult bindingResult, Model model) {
 
-    if (bindingResult.hasErrors()) {
-      return getRegister(form, model);
-    }
+		if (bindingResult.hasErrors()) {
+			return getRegister(form, model);
+		}
 
-    trainingService.registerTraining(form);
+		trainingService.registerTraining(form);
 
-    return REDIRECT_LIST;
-  }
+		return REDIRECT_LIST;
+	}
 
-  @PostMapping(value = "detail", params = "update")
-  public String update(TrainingForm form) {
+	@PostMapping(value = "detail", params = "update")
+	public String update(TrainingForm form) {
 
-    trainingService.updateTraining(form);
+		trainingService.updateTraining(form);
 
-    return REDIRECT_LIST;
-  }
+		return REDIRECT_LIST;
+	}
 
-  @PostMapping(value = "/detail", params = "delete")
-  public String delete(TrainingForm form, Model model) {
+	@PostMapping(value = "/detail", params = "delete")
+	public String delete(TrainingForm form, Model model) {
 
-    trainingService.deleteTraining(form.getTrainingId());
+		trainingService.deleteTraining(form.getTrainingId());
 
-    return REDIRECT_LIST;
-  }
+		return REDIRECT_LIST;
+	}
 
-  private void addAttributesToModel(
-      Model model, List<TrainingForm> trainingList, Map<Integer, String> trainingMenuMap) {
-    model.addAttribute("trainingMenuMap", trainingMenuMap);
-    model.addAttribute("trainingList", trainingList);
-  }
+	private void addAttributesToModel(Model model, List<TrainingForm> trainingList,
+			Map<Integer, String> trainingMenuMap, Map<Integer, String> trainingAreaMap) {
+		model.addAttribute("trainingAreaMap", trainingAreaMap);
+		model.addAttribute("trainingMenuMap", trainingMenuMap);
+		model.addAttribute("trainingList", trainingList);
+	}
 
-  private void addAttributesToModel(
-      Model model, TrainingForm trainingForm, Map<Integer, String> trainingMenuMap) {
-    model.addAttribute("trainingForm", trainingForm);
-    model.addAttribute("trainingMenuMap", trainingMenuMap);
-  }
+	private void addAttributesToModel(Model model, TrainingForm trainingForm, Map<Integer, String> trainingMenuMap) {
+		model.addAttribute("trainingForm", trainingForm);
+		model.addAttribute("trainingMenuMap", trainingMenuMap);
+	}
 
-  private void addAttributesToModel(Model model, Map<Integer, String> trainingMenuMap) {
-    model.addAttribute("trainingMenuMap", trainingMenuMap);
-  }
+	private void addAttributesToModel(Model model, Map<Integer, String> trainingMenuMap) {
+		model.addAttribute("trainingMenuMap", trainingMenuMap);
+	}
 }
