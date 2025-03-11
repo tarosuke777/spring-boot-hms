@@ -9,6 +9,30 @@ $(function() {
   $("#jsiDatepicker").datepicker({
 	dateFormat: "yy-mm-dd"
   });
+  
+  const $children = $('#trainingMenuId');
+  const original = $children.html();
+   
+  $('#trainingAreaId').change(function() {
+   
+    const val1 = $(this).val();
+   
+    $children.html(original).find('option').each(function() {
+      const val2 = $(this).data('parentkey');
+   
+      if (val1 != val2) {
+        $(this).not(':first-child').remove();
+      }
+   
+    });
+   
+    if ($(this).val() == "") {
+      $children.attr('disabled', 'disabled');
+    } else {
+      $children.removeAttr('disabled');
+    }
+   
+  });
 });
 </script>
 </head>
@@ -29,10 +53,15 @@ $(function() {
 				</div>
 			</div>
 			<div class="mb-3 row">
-				<label for="trainingMenuName" class="col-sm-2 col-form-label">TrainingMenu
-					Name</label>
+				<label for="trainingTargetArea" class="col-sm-2 col-form-label">TrainingTargetArea</label>
 				<div class="col-sm-10"
-					th:insert="~{parts/parts :: select(${trainingMenuMap}, trainingMenuId, 'trainingMenuId', true)}">
+					th:insert="~{parts/parts :: select(${trainingTargetAreaMap}, trainingAreaId, 'trainingAreaId', true)}">
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<label for="trainingMenuName" class="col-sm-2 col-form-label">TrainingMenuName</label>
+				<div class="col-sm-10"
+					th:insert="~{parts/selectWithList :: selectWithList(${trainingMenuSelectList}, trainingMenuId, 'trainingMenuId', true)}">
 				</div>
 			</div>
 			<div class="mb-3 row">

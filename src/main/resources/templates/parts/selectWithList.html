@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>selectWithList</title>
+</head>
+<body>
+	<select
+		th:fragment="selectWithList(selectList, selectedKey, fieldName, hasBlank)"
+		class="form-select" th:field="*{__${fieldName}__}">
+		<option th:if="${hasBlank}" value=""></option>
+		<option th:each="item : ${selectList}" th:value="${item.key}" th:data-parentKey="${item.parentKey}"
+            th:text="${item.value}" th:selected="${item.key == selectedKey}"></option>
+	</select>
+
+</body>
+</html>

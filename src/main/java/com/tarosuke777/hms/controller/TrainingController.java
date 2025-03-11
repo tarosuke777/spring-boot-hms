@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.TrainingMenuService;
 import com.tarosuke777.hms.domain.TrainingService;
 import com.tarosuke777.hms.enums.TargetArea;
+import com.tarosuke777.hms.form.SelectOption;
 import com.tarosuke777.hms.form.TrainingForm;
 
 import lombok.RequiredArgsConstructor;
@@ -62,8 +63,10 @@ public class TrainingController {
 	public String getRegister(TrainingForm trainingForm, Model model) {
 
 		Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
+		List<SelectOption> trainingMenuSelectList = trainingMenuService.getTrainingMenuSelectList();
+		Map<Integer, String> trainingTargetAreaMap = TargetArea.getTargetAreaMap();	
 
-		addAttributesToModel(model, trainingMenuMap);
+		addAttributesToModel(model, trainingMenuMap, trainingMenuSelectList,trainingTargetAreaMap);
 
 		return REGISTER_VIEW;
 	}
@@ -108,7 +111,9 @@ public class TrainingController {
 		model.addAttribute("trainingMenuMap", trainingMenuMap);
 	}
 
-	private void addAttributesToModel(Model model, Map<Integer, String> trainingMenuMap) {
+	private void addAttributesToModel(Model model, Map<Integer, String> trainingMenuMap, List<SelectOption> trainingMenuSelectList, Map<Integer, String> trainingTargetAreaMap) {
 		model.addAttribute("trainingMenuMap", trainingMenuMap);
+		model.addAttribute("trainingMenuSelectList", trainingMenuSelectList);
+		model.addAttribute("trainingTargetAreaMap", trainingTargetAreaMap);
 	}
 }
