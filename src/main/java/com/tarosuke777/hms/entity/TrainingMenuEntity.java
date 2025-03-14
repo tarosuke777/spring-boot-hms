@@ -13,4 +13,7 @@ public class TrainingMenuEntity {
   private String trainingMenuName;
   private Integer targetAreaId;
   private String link;
+  private Integer maxWeight;
+  private Integer maxReps;
+  private Integer maxSets;
 }

@@ -15,11 +15,14 @@ public interface TrainingMenuMapper {
 	public TrainingMenuEntity findOne(Integer trainingMenuId);
 
 	public void insertOne(@Param("trainingMenuName") String trainingMenuName,
-			@Param("targetAreaId") Integer targetAreaId, @Param("link") String link);
+			@Param("targetAreaId") Integer targetAreaId, @Param("link") String link,
+			@Param("maxWeight") Integer maxWeight, @Param("maxReps") Integer maxReps,
+			@Param("maxSets") Integer maxSets);
 
 	public void updateOne(@Param("trainingMenuId") Integer trainingMenuId,
 			@Param("trainingMenuName") String trainingMenuName, @Param("targetAreaId") Integer targetAreaId,
-			@Param("link") String link);
+			@Param("link") String link, @Param("maxWeight") Integer maxWeight, @Param("maxReps") Integer maxReps,
+			@Param("maxSets") Integer maxSets);
 
 	public int deleteOne(@Param("trainingMenuId") Integer trainingMenuId);
 }

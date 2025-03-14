@@ -32,6 +32,24 @@
 					<input type="text" class="form-control" th:field="*{link}">
 				</div>
 			</div>
+			<div class="mb-3 row">
+                <label for="maxWeigth" class="col-sm-2 col-form-label">Max Weight</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{maxWeight}">
+                </div>
+			</div>
+			<div class="mb-3 row">
+                <label for="maxReps" class="col-sm-2 col-form-label">Max Reps</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{maxReps}">
+                </div>
+			</div>
+			<div class="mb-3 row">
+                <label for="maxSets" class="col-sm-2 col-form-label">Max Sets</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{maxSets}">
+                </div>
+			</div>
 			<div class="text-center">
 				<button class="btn btn-danger" type="submit" name="delete">
 					Delete</button>

@@ -41,10 +41,10 @@ public class TrainingMenuController {
 
 		model.addAttribute("trainingMenuList", trainingMenuList);
 
-	    Map<Integer, String> targetAreaMap = TargetArea.getTargetAreaMap();
+		Map<Integer, String> targetAreaMap = TargetArea.getTargetAreaMap();
 
-	    model.addAttribute("targetAreaMap", targetAreaMap);
-		
+		model.addAttribute("targetAreaMap", targetAreaMap);
+
 		return "trainingMenu/list";
 	}
 
@@ -53,10 +53,10 @@ public class TrainingMenuController {
 
 		model.addAttribute("trainingMenuForm", form);
 
-	    Map<Integer, String> targetAreaMap = TargetArea.getTargetAreaMap();
+		Map<Integer, String> targetAreaMap = TargetArea.getTargetAreaMap();
 
-	    model.addAttribute("targetAreaMap", targetAreaMap);
-		
+		model.addAttribute("targetAreaMap", targetAreaMap);
+
 		return "trainingMenu/register";
 	}
 
@@ -67,7 +67,8 @@ public class TrainingMenuController {
 			return getRegister(form, model);
 		}
 
-		trainingMenuMapper.insertOne(form.getTrainingMenuName(), form.getTargetAreaId(), form.getLink());
+		trainingMenuMapper.insertOne(form.getTrainingMenuName(), form.getTargetAreaId(), form.getLink(), form.getMaxWeight(),
+				form.getMaxReps(), form.getMaxSets());
 
 		return "redirect:/trainingMenu/list";
 	}
@@ -82,10 +83,10 @@ public class TrainingMenuController {
 
 		model.addAttribute("trainingMenuForm", form);
 
-	    Map<Integer, String> targetAreaMap = TargetArea.getTargetAreaMap();
+		Map<Integer, String> targetAreaMap = TargetArea.getTargetAreaMap();
 
-	    model.addAttribute("targetAreaMap", targetAreaMap);
-		
+		model.addAttribute("targetAreaMap", targetAreaMap);
+
 		return "trainingMenu/detail";
 	}
 
@@ -93,7 +94,7 @@ public class TrainingMenuController {
 	public String update(TrainingMenuForm form) {
 
 		trainingMenuMapper.updateOne(form.getTrainingMenuId(), form.getTrainingMenuName(), form.getTargetAreaId(),
-				form.getLink());
+				form.getLink(), form.getMaxWeight(), form.getMaxReps(), form.getMaxSets());
 
 		return "redirect:/trainingMenu/list";
 	}

@@ -10,6 +10,9 @@
             ,training_menu_name
             ,target_area_id
             ,link
+            ,max_weight
+            ,max_reps
+            ,max_sets
         from 
             training_menu 
     </select>
@@ -20,14 +23,17 @@
             ,training_menu_name
             ,target_area_id
             ,link
+            ,max_weight
+            ,max_reps
+            ,max_sets
         from 
             training_menu 
         where training_menu_id = #{trainingMenuId}
     </select>
   
     <insert id="insertOne">
-        insert into training_menu (training_menu_name, target_area_id, link) 
-        values (#{trainingMenuName}, #{targetAreaId}, #{link})
+        insert into training_menu (training_menu_name, target_area_id, link, max_weight, max_reps, max_sets) 
+        values (#{trainingMenuName}, #{targetAreaId}, #{link}, #{maxWeight}, #{maxReps}, #{maxSets})
     </insert>
   
     <update id="updateOne">
@@ -37,6 +43,9 @@
             training_menu_name = #{trainingMenuName}
            ,target_area_id = #{targetAreaId}
            ,link = #{link}
+           ,max_weight = #{maxWeight}
+           ,max_reps = #{maxReps}
+           ,max_sets = #{maxSets}
         where
             training_menu_id = #{trainingMenuId} 
     </update>

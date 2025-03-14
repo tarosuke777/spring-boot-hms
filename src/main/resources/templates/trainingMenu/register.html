@@ -35,6 +35,29 @@
 					<div class="invalid-feedback" th:errors="*{link}"></div>
 				</div>
 			</div>
+			<div class="mb-3 row">
+                <label for="description" class="col-sm-2 col-form-label">Max Weight</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{maxWeight}"
+                        th:errorclass="is-invalid"></textarea>
+                    <div class="invalid-feedback" th:errors="*{maxWeight}"></div>
+                </div>
+			</div>
+			<div class="mb-3 row">
+                <label for="description" class="col-sm-2 col-form-label">Max Reps</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{maxReps}"
+                        th:errorclass="is-invalid"></textarea>
+                    <div class="invalid-feedback" th:errors="*{maxReps}"></div>
+                </div>
+			</div>
+			<div class="mb-3 row">
+                <label for="description" class="col-sm-2 col-form-label">Max Sets</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{maxSets}"
+                        th:errorclass="is-invalid"></textarea>
+				</div>
+			</div>
 			<div class="text-center">
 				<button class="btn btn-dark" type="submit">Register</button>
 			</div>
