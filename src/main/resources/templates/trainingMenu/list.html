@@ -20,6 +20,9 @@
 						<th>Training Menu Name</th>
 						<th>Target Area Name</th>
 						<th>Link</th>
+						<th>Max Weight</th>
+						<th>Max Reps</th>
+						<th>Max Sets</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -28,6 +31,9 @@
 						<td th:text="${trainingMenu.trainingMenuName}"></td>
 						<td th:text="${trainingMenu.targetAreaId != null ? targetAreaMap.get(trainingMenu.targetAreaId) : ''}"></td>
 						<td th:text="${trainingMenu.link}"></td>
+						<td th:text="${trainingMenu.maxWeight}"></td>
+						<td th:text="${trainingMenu.maxReps}"></td>
+						<td th:text="${trainingMenu.maxSets}"></td>
 						<td><a class="btn btn-dark"
 							th:href="@{'/trainingMenu/detail/' + ${trainingMenu.trainingMenuId}}">Detail</a>
 						</td>
