@@ -18,7 +18,7 @@ $(function() {
     const val1 = $(this).val();
    
     $children.html(original).find('option').each(function() {
-      const val2 = $(this).data('parentkey');
+      const val2 = $(this).data('parent-key');
    
       if (val1 != val2) {
         $(this).not(':first-child').remove();
@@ -33,6 +33,18 @@ $(function() {
     }
    
   });
+  
+  $('#trainingMenuId').change(function() {
+      const selectedOption = $(this).find('option:selected');
+      const maxWeight = selectedOption.data('max-weight');
+      const maxReps = selectedOption.data('max-reps');
+      const maxSets = selectedOption.data('max-sets');
+
+      $('#weight').val(maxWeight || ''); // maxWeightが存在しない場合は空文字を設定
+      $('#reps').val(maxReps || ''); // maxRepsが存在しない場合は空文字を設定
+      $('#sets').val(maxSets || ''); // maxSetsが存在しない場合は空文字を設定
+  });
+  
 });
 </script>
 </head>
@@ -61,7 +73,7 @@ $(function() {
 			<div class="mb-3 row">
 				<label for="trainingMenuName" class="col-sm-2 col-form-label">TrainingMenuName</label>
 				<div class="col-sm-10"
-					th:insert="~{parts/selectWithList :: selectWithList(${trainingMenuSelectList}, trainingMenuId, 'trainingMenuId', true)}">
+					th:insert="~{parts/selectWithList :: selectTrainingMenu(${trainingMenuSelectList}, trainingMenuId, 'trainingMenuId', true)}">
 				</div>
 			</div>
 			<div class="mb-3 row">

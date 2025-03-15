@@ -18,6 +18,9 @@
 		<result column="training_menu_name" property="trainingMenuName" />
 		<result column="target_area_id" property="targetAreaId" />
 		<result column="link" property="link" />
+		<result column="max_weight" property="maxWeight" />
+		<result column="max_reps" property="maxReps" />
+		<result column="max_sets" property="maxSets" />
 	</resultMap>
 		
 	<select id="findMany" resultMap="training" >
@@ -31,6 +34,9 @@
 			,training_menu.training_menu_name
 			,training_menu.target_area_id
 			,training_menu.link	
+			,training_menu.max_weight
+			,training_menu.max_reps
+			,training_menu.max_sets
 		from 
 			training
 		left outer join training_menu 
@@ -49,6 +55,9 @@
             ,training_menu.training_menu_name
             ,training_menu.target_area_id
 			,training_menu.link
+			,training_menu.max_weight
+			,training_menu.max_reps
+			,training_menu.max_sets
         from 
             training
         left outer join training_menu 
