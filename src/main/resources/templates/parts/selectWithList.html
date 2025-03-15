@@ -6,11 +6,15 @@
 </head>
 <body>
 	<select
-		th:fragment="selectWithList(selectList, selectedKey, fieldName, hasBlank)"
+		th:fragment="selectTrainingMenu(selectList, selectedKey, fieldName, hasBlank)"
 		class="form-select" th:field="*{__${fieldName}__}">
 		<option th:if="${hasBlank}" value=""></option>
-		<option th:each="item : ${selectList}" th:value="${item.key}" th:data-parentKey="${item.parentKey}"
-            th:text="${item.value}" th:selected="${item.key == selectedKey}"></option>
+		<option th:each="item : ${selectList}" th:value="${item.key}" 
+			th:data-parent-key="${item.parentKey}"
+        	th:data-max-weight="${item.maxWeight}" 
+			th:data-max-reps="${item.maxReps}" 
+			th:data-max-sets="${item.maxSets}"     
+		th:text="${item.value}" th:selected="${item.key == selectedKey}"></option>
 	</select>
 
 </body>

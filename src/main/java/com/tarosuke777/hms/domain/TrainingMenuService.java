@@ -9,7 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.tarosuke777.hms.entity.TrainingMenuEntity;
-import com.tarosuke777.hms.form.SelectOption;
+import com.tarosuke777.hms.form.SelectOptionTrainingMenu;
 import com.tarosuke777.hms.repository.TrainingMenuMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -25,9 +25,11 @@ public class TrainingMenuService {
 				TrainingMenuEntity::getTrainingMenuName, (existing, replacement) -> existing, LinkedHashMap::new));
 	}
 
-	public List<SelectOption> getTrainingMenuSelectList() {
+	public List<SelectOptionTrainingMenu> getTrainingMenuSelectList() {
 		return trainingMenuMapper.findMany().stream()
-				.map(entity -> new SelectOption(entity.getTrainingMenuId().toString(), entity.getTrainingMenuName(), entity.getTargetAreaId().toString()))
+				.map(entity -> new SelectOptionTrainingMenu(entity.getTrainingMenuId().toString(),
+						entity.getTrainingMenuName(), entity.getTargetAreaId(), entity.getMaxWeight(),
+						entity.getMaxReps(), entity.getMaxSets()))
 				.collect(Collectors.toList());
 	}
 
