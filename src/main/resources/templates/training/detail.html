@@ -24,7 +24,7 @@
 				<label for="trainingMenuName" class="col-sm-2 col-form-label">TrainingMenu
 					Name</label>
 				<div class="col-sm-10"
-					th:insert="~{parts/parts :: select(${trainingMenuMap}, trainingMenuId, 'trainingMenuId', true)}">
+					th:insert="~{parts/parts :: commonSelect(${trainingMenuMap}, trainingMenuId, 'trainingMenuId', true)}">
 				</div>
 			</div>
 			<div class="mb-3 row">
