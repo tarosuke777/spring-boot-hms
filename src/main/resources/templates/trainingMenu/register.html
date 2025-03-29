@@ -24,7 +24,7 @@
 			<div class="mb-3 row">
 				<label for="sta" class="col-sm-2 col-form-label">Target Area Name</label>
 				<div class="col-sm-10"
-					th:insert="~{parts/parts :: select(${targetAreaMap}, targetAreaId, 'targetAreaId', true)}">
+					th:insert="~{parts/parts :: commonSelect(${targetAreaMap}, targetAreaId, 'targetAreaId', true)}">
 				</div>
 			</div>
 			<div class="mb-3 row">
