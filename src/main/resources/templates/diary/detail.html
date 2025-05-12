@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/layout}">
+<head>
+<title>DiaryDetail</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="mt-3 mb-3 border-bottom">
+            <h1 class="h2">Diary Detail</h1>
+        </div>
+        <form method="post" th:action="@{/diary/detail}"
+            th:object="${diaryForm}">
+            <input type="hidden" th:field="*{diaryId}">
+            <div class="mb-3 row">
+                <label for="diaryDate" class="col-sm-2 col-form-label">日付</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" th:field="*{diaryDate}" id="diaryDate">
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="todo" class="col-sm-2 col-form-label">やること</label>
+                <div class="col-sm-10 d-flex">
+                    <div class="col-md-6 me-2">
+                        <label for="todoPlan" class="form-label small">（予定）</label>
+                        <textarea class="form-control" th:field="*{todoPlan}" rows="4" id="todoPlan"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="todoActual" class="form-label small">（実績）</label>
+                        <textarea class="form-control" th:field="*{todoActual}" rows="4" id="todoActual"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="fun" class="col-sm-2 col-form-label">楽しさ度</label>
+                <div class="col-sm-10 d-flex">
+                    <div class="col-md-6 me-2">
+                        <label for="funPlan" class="form-label small">（予定）</label>
+                        <input type="number" class="form-control" th:field="*{funPlan}" max="5" id="funPlan">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="funActual" class="form-label small">（実績）</label>
+                        <input type="number" class="form-control" th:field="*{funActual}" max="5" id="funActual">
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="comment" class="col-sm-2 col-form-label">一言</label>
+                <div class="col-sm-10 d-flex">
+                    <div class="col-md-6 me-2">
+                        <label for="commentPlan" class="form-label small">（予定）</label>
+                        <textarea class="form-control" th:field="*{commentPlan}" rows="4" id="commentPlan"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="commentActual" class="form-label small">（実績）</label>
+                        <textarea class="form-control" th:field="*{commentActual}" rows="4" id="commentActual"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-danger" type="submit" name="delete">
+                    Delete</button>
+                <button class="btn btn-dark" type="submit" name="update">
+                    Update</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
