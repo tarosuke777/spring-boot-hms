@@ -66,7 +66,7 @@ public class DiaryController {
     }
 
     @PostMapping(value = "/detail", params = "delete")
-    public String delete(DiaryForm form, Model model) {
+    public String delete(DiaryForm form) {
         diaryService.deleteDiary(form.getDiaryId());
         return REDIRECT_LIST;
     }
