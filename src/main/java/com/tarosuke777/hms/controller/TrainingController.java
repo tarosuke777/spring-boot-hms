@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.TrainingMenuService;
 import com.tarosuke777.hms.domain.TrainingService;
 import com.tarosuke777.hms.enums.TargetArea;
-import com.tarosuke777.hms.form.SelectOption;
 import com.tarosuke777.hms.form.SelectOptionTrainingMenu;
 import com.tarosuke777.hms.form.TrainingForm;
 
