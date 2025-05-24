@@ -6,6 +6,10 @@ import org.thymeleaf.dialect.AbstractProcessorDialect;
 import org.thymeleaf.processor.IProcessor;
 import org.thymeleaf.standard.StandardDialect;
 
+/**
+ * HMSカスタムThymeleafダイアレクト。
+ * このダイアレクトは、カスタム属性プロセッサーを登録します。
+ */
 public class HmsDialect extends AbstractProcessorDialect {
 
     private static final String DIALECT_NAME = "Hms Dialect";
