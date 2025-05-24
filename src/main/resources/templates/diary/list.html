@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html
   xmlns:th="http://www.thymeleaf.org"
+  xmlns:hms="http://www.thymeleaf.org"
   xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
   layout:decorate="~{layout/layout}"
 >
@@ -32,12 +33,12 @@
           <tbody>
             <tr th:each="diary: ${diaryList}">
               <td th:text="${diary.diaryDate}"></td>
-              <td th:text="${diary.todoPlan}"></td>
-              <td th:text="${diary.todoActual}"></td>
+              <td hms:linebreak="${diary.todoPlan}"></td>
+              <td hms:linebreak="${diary.todoActual}"></td>
               <td th:text="${diary.funPlan}"></td>
               <td th:text="${diary.funActual}"></td>
-              <td th:text="${diary.commentPlan}"></td>
-              <td th:text="${diary.commentActual}"></td>
+              <td hms:linebreak="${diary.commentPlan}"></td>
+              <td hms:linebreak="${diary.commentActual}"></td>
               <td>
                 <a
                   class="btn btn-dark"
