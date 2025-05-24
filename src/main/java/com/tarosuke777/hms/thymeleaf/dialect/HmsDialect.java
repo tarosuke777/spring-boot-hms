@@ -16,6 +16,12 @@ public class HmsDialect extends AbstractProcessorDialect {
     }
 
     @Override
+    /**
+     * このダイアレクトが提供するプロセッサーのセットを返します。
+     * 
+     * @param dialectPrefix ダイアレクトのプレフィックス
+     * @return プロセッサーのセット
+     */
     public Set<IProcessor> getProcessors(final String dialectPrefix) {
         final Set<IProcessor> processors = new HashSet<>();
         processors.add(new LineBreakProcessor(dialectPrefix, getDialectProcessorPrecedence()));
