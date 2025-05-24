@@ -50,7 +50,7 @@ public class LineBreakProcessor extends AbstractStandardExpressionAttributeTagPr
                 sb.append("<br/>"); // Add <br/> tag for line breaks.
             }
         }
-        final String textWithLineBreaksAndCarriageReturns = sb.toString();
+        final String processedHtmlContent = sb.toString();
 
         final IModelFactory modelFactory = context.getModelFactory();
         final IModel model = modelFactory.createModel();
