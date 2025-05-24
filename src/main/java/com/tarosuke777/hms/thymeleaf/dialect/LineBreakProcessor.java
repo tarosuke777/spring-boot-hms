@@ -33,7 +33,10 @@ public class LineBreakProcessor extends AbstractStandardExpressionAttributeTagPr
      * @param expressionResult 属性値の評価結果
      * @param structureHandler 要素の構造ハンドラー
      */
+    @Override
     protected void doProcess(ITemplateContext context, IProcessableElementTag tag,
+            AttributeName attributeName, String attributeValue, Object expressionResult,
+            IElementTagStructureHandler structureHandler) {
             AttributeName attributeName, String attributeValue, Object expressionResult,
             IElementTagStructureHandler structureHandler) {
 
