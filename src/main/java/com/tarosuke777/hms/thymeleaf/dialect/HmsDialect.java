@@ -7,8 +7,7 @@ import org.thymeleaf.processor.IProcessor;
 import org.thymeleaf.standard.StandardDialect;
 
 /**
- * HMSカスタムThymeleafダイアレクト。
- * このダイアレクトは、カスタム属性プロセッサーを登録します。
+ * HMSカスタムThymeleafダイアレクト。 このダイアレクトは、カスタム属性プロセッサーを登録します。
  */
 public class HmsDialect extends AbstractProcessorDialect {
 
@@ -19,7 +18,6 @@ public class HmsDialect extends AbstractProcessorDialect {
         super(DIALECT_NAME, DIALECT_PREFIX, StandardDialect.PROCESSOR_PRECEDENCE);
     }
 
-    @Override
     /**
      * このダイアレクトが提供するプロセッサーのセットを返します。
      * 

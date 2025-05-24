@@ -21,7 +21,6 @@ public class LineBreakProcessor extends AbstractStandardExpressionAttributeTagPr
         super(TemplateMode.HTML, dialectPrefix, ATTRIBUTE_NAME, precedence, true);
     }
 
-    @Override
     /**
      * 属性が適用された要素を処理します。 属性値の評価結果を取得し、テキスト内の改行文字（\n）を&lt;br/&gt;タグに変換し、
      * キャリッジリターン（\r）を削除した上で、要素のボディとして設定します。
@@ -35,8 +34,6 @@ public class LineBreakProcessor extends AbstractStandardExpressionAttributeTagPr
      */
     @Override
     protected void doProcess(ITemplateContext context, IProcessableElementTag tag,
-            AttributeName attributeName, String attributeValue, Object expressionResult,
-            IElementTagStructureHandler structureHandler) {
             AttributeName attributeName, String attributeValue, Object expressionResult,
             IElementTagStructureHandler structureHandler) {
 
@@ -57,7 +54,7 @@ public class LineBreakProcessor extends AbstractStandardExpressionAttributeTagPr
 
         final IModelFactory modelFactory = context.getModelFactory();
         final IModel model = modelFactory.createModel();
-        model.add(modelFactory.createText(textWithLineBreaksAndCarriageReturns));
+        model.add(modelFactory.createText(processedHtmlContent));
         structureHandler.setBody(model, false);
 
     }
