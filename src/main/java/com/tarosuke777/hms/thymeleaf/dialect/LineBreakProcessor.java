@@ -41,8 +41,16 @@ public class LineBreakProcessor extends AbstractStandardExpressionAttributeTagPr
             return;
         }
 
-        final String textWithLineBreaks = expressionResult.toString().replace("\n", "<br/>");
-        final String textWithLineBreaksAndCarriageReturns = textWithLineBreaks.replace("\r", "");
+        final String rawText = expressionResult.toString();
+        String[] lines = rawText.split("\\R", -1);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < lines.length; i++) {
+            sb.append(org.unbescape.html.HtmlEscape.escapeHtml5(lines[i]));
+            if (i < lines.length - 1) {
+                sb.append("<br/>"); // Add <br/> tag for line breaks.
+            }
+        }
+        final String textWithLineBreaksAndCarriageReturns = sb.toString();
 
         final IModelFactory modelFactory = context.getModelFactory();
         final IModel model = modelFactory.createModel();
