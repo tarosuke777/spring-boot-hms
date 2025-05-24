@@ -7,7 +7,7 @@ import com.tarosuke777.hms.thymeleaf.dialect.HmsDialect;
 @Configuration
 public class ThymeleafConfig {
     @Bean
-    HmsDialect HmsDialect() {
+    HmsDialect hmsDialect() {
         return new HmsDialect();
     }
 }
