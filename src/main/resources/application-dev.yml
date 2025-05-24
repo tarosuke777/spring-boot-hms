@@ -1,5 +1,5 @@
 server:
-  port : 80
+  port: 80
 spring:
   config:
     import: optional:configtree:/run/secrets/
@@ -7,12 +7,12 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/hms}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: hms
-    password: ${mysql_user_password} 
-#  sql:
-#    init:
-#      encoding: UTF-8
-#      mode: always
-#      schema-locations: classpath:schema/schema.sql
+    password: ${mysql_user_password:hms-password2}
+  #  sql:
+  #    init:
+  #      encoding: UTF-8
+  #      mode: always
+  #      schema-locations: classpath:schema/schema.sql
   flyway:
     locations: classpath:db/migration/ddl
     baseline-on-migrate: true
@@ -22,4 +22,3 @@ spring:
   h2:
     console:
       enabled: false
- 
