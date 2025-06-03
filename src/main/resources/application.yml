@@ -10,9 +10,13 @@ spring:
   messages:
     basename: ValidationMessages
   flyway:
-    enabled: true 
+    enabled: true
 mybatis:
   mapper-locations: classpath*:/mapper/*.xml
   type-aliases-package: com.tarosuke777.hms.entity
   configuration:
     map-underscore-to-camel-case: true
+server:
+  servlet:
+    session:
+      timeout: 8h
