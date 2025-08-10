@@ -1,34 +1,17 @@
-name: Detect File Update
-
+name: Test GitHub Actions
 on:
-  push:
-    branches:
-      - '*'
-    paths:
-      - 'path/to/your/file.txt' # ここに監視したいファイルのパスを指定
   workflow_dispatch:
+      inputs:
+        branch:
+          description: '対象ブランチ'
+          required: true
+          default: 'main'
 jobs:
   check_branch:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Check branch and file
         run: |
           echo "Branch: ${{ github.ref }}"
-          echo "File updated: path/to/your/file.txt"
-          # ここに特定のブランチ以外で更新された場合の処理を記述
-          if [[ "${{ github.ref }}" != "refs/heads/main" && "${{ github.ref }}" != "refs/heads/develop" ]]; then
-            # ここに通知やSlackへの投稿などのアクションを追加
-            echo "特定のブランチ以外でファイルが更新されました！"
-            # 例: Slack通知を送信する
-            # uses: slackapi/slack-github-action@v1.23.0
-            # with:
-            #   payload: |
-            #     {
-            #       "text": "特定のブランチ以外でファイルが更新されました：${{ github.ref }}"
-            #     }
-            # env:
-            #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          fi
