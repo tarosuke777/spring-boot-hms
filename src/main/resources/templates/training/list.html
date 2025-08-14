@@ -28,6 +28,7 @@
 				</thead>
 				<tbody>
 					<tr th:each="training: ${trainingList}">
+						<td th:text="${#temporals.format(training.trainingDate, 'yyyy-MM-dd (E)')}"></td> 
 						<td th:text="${training.trainingDate}"></td>
 						<td th:text="${training.trainingAreaId != null ? trainingAreaMap.get(training.trainingAreaId) : ''}"></td>
 						<td th:text="${training.trainingMenuId != null ? trainingMenuMap.get(training.trainingMenuId) : ''}"></td>
