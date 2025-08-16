@@ -27,7 +27,7 @@
           </thead>
           <tbody>
             <tr th:each="diary: ${diaryList}" th:onclick="'window.location.href=\'' + @{/diary/detail/{id}(id=${diary.diaryId})} + '\''" style="cursor: pointer">
-              <td th:text="${diary.diaryDate}"></td>
+              <td th:text="${#temporals.format(diary.diaryDate, 'yyyy-MM-dd (E)')}"></td>
               <td hms:linebreak="${diary.todoPlan}"></td>
               <td hms:linebreak="${diary.todoActual}"></td>
               <td th:text="${diary.funPlan}"></td>
