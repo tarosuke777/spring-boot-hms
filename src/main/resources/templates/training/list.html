@@ -17,7 +17,11 @@
 			<table class="table table-bordered table-hover align-middle">
 				<thead>
 					<tr class="table-dark">
-						<th>Training Date</th>
+						<th>
+							<a th:href="@{/training/list(orderBy='training_date', sort='asc')}">▲</a>
+							Training Date
+							<a th:href="@{/training/list(orderBy='training_date', sort='desc')}">▼</a>
+						</th>
 						<th>Training Area Name</th>
 						<th>Training Menu Name</th>
 						<th>Weight</th>

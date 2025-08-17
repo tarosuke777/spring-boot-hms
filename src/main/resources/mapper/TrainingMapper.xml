@@ -41,7 +41,7 @@
 			training
 		left outer join training_menu 
 		on training.training_menu_id = training_menu.training_menu_id
-		order by training.training_id
+		order by ${orderBy} ${sort}
 	</select>
 	
 	<select id="findOne" resultMap="training">

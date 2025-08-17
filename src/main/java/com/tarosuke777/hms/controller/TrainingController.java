@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tarosuke777.hms.domain.TrainingMenuService;
 import com.tarosuke777.hms.domain.TrainingService;
@@ -37,9 +38,9 @@ public class TrainingController {
 	private final TrainingMenuService trainingMenuService;
 
 	@GetMapping("/list")
-	public String getList(Model model) {
+	public String getList(Model model, @RequestParam(name = "orderBy", defaultValue = "training_date") String orderBy, @RequestParam(name = "sort", defaultValue = "desc") String sort) {
 
-		List<TrainingForm> trainingList = trainingService.getTrainingList();
+		List<TrainingForm> trainingList = trainingService.getTrainingList(orderBy, sort);
 		Map<Integer, String> trainingAreaMap = TargetArea.getTargetAreaMap();
 		Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
 

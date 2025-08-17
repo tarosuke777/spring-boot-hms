@@ -16,9 +16,9 @@ import lombok.RequiredArgsConstructor;
 public class TrainingService {
 	private final TrainingMapper trainingMapper;
 
-	public List<TrainingForm> getTrainingList() {
+	public List<TrainingForm> getTrainingList(String orderBy, String sort) {
 
-		return trainingMapper.findMany().stream().map(entity -> {
+		return trainingMapper.findMany(orderBy, sort).stream().map(entity -> {
 			TrainingForm form = new TrainingForm();
 			form.setTrainingId(entity.getTrainingId());
 			form.setTrainingDate(entity.getTrainingDate());

@@ -11,7 +11,7 @@ import com.tarosuke777.hms.entity.TrainingEntity;
 @Mapper
 public interface TrainingMapper {
 
-	public List<TrainingEntity> findMany();
+	public List<TrainingEntity> findMany(@Param("orderBy") String orderBy, @Param("sort") String sort);
 
 	public TrainingEntity findOne(Integer trainingId);
 
