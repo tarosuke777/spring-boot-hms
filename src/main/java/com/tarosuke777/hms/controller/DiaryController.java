@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tarosuke777.hms.domain.DiaryService;
 import com.tarosuke777.hms.form.DiaryForm;
@@ -32,8 +33,8 @@ public class DiaryController {
     private final DiaryService diaryService;
 
     @GetMapping("/list")
-    public String getList(Model model) {
-        List<DiaryForm> diaryList = diaryService.getDiaryList();
+    public String getList(Model model, @RequestParam(name = "orderBy", defaultValue = "diary_date") String orderBy, @RequestParam(name = "sort", defaultValue = "desc") String sort) {
+        List<DiaryForm> diaryList = diaryService.getDiaryList(orderBy, sort);
         model.addAttribute("diaryList", diaryList);
         return LIST_VIEW;
     }

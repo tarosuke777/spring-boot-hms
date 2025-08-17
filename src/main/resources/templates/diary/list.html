@@ -15,7 +15,11 @@
         <table class="table table-bordered table-hover align-middle">
           <thead>
             <tr class="table-dark">
-              <th>日付</th>
+              <th>
+                <a th:href="@{/diary/list(orderBy='diary_date', sort='asc')}">▲</a>
+                日付
+                <a th:href="@{/diary/list(orderBy='diary_date', sort='desc')}">▼</a>
+              </th>
               <th>やること（予定）</th>
               <th>やること（実績）</th>
               <th>楽しさ度（予定）</th>

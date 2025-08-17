@@ -11,7 +11,7 @@ import com.tarosuke777.hms.entity.DiaryEntity;
 @Mapper
 public interface DiaryMapper {
 
-    public List<DiaryEntity> findMany();
+    public List<DiaryEntity> findMany(@Param("orderBy") String orderBy, @Param("sort") String sort);
 
     public DiaryEntity findOne(Integer diaryId);
 

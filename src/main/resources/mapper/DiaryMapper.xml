@@ -28,7 +28,7 @@
             ,comment_actual
         from
             diary
-        order by diary_id
+        order by ${orderBy} ${sort}
     </select>
 
     <select id="findOne" resultMap="diary">

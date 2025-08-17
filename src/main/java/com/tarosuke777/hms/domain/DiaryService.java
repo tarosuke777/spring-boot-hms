@@ -17,8 +17,8 @@ import lombok.RequiredArgsConstructor;
 public class DiaryService {
     private final DiaryMapper diaryMapper;
 
-    public List<DiaryForm> getDiaryList() {
-        return diaryMapper.findMany().stream()
+    public List<DiaryForm> getDiaryList(String orderBy, String sort) {
+        return diaryMapper.findMany(orderBy, sort).stream()
                 .map(entity -> {
                     DiaryForm form = new DiaryForm();
                     form.setDiaryId(entity.getDiaryId());
