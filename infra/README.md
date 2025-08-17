@@ -28,3 +28,4 @@ HMS を AWS で動かす場合の構成 及び 作成時の注意事項を記載
 ### その他
 
 1.buildspec.yml 内に ECS のタスク名があるため、タスク名を変更時は修正が必要
+2.パラメータストアに「MYSQL_ROOT_PASSWORD」、「MYSQL_PASSWORD」を追加
