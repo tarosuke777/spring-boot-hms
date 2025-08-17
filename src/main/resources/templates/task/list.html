@@ -15,35 +15,28 @@
         <p>No tasks found.</p>
       </div>
       <div th:unless="${#lists.isEmpty(tasks)}">
-        <table class="table table-hover align-middle">
-          <thead>
-            <tr class="table-dark">
-              <th style="width: 30%">Task Name</th>
-              <th style="width: 40%">Note</th>
-              <th style="width: 30%">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="task : ${tasks}">
-              <td>
-                <form method="post" th:action="@{/task/update}" th:id="${'updateForm-' + task.id}">
-                  <input type="hidden" name="id" th:value="${task.id}" />
-                  <input type="text" name="name" class="form-control" th:value="${task.name}" />
-                </form>
-              </td>
-              <td>
-                <textarea name="note" class="form-control" rows="5" th:form="${'updateForm-' + task.id}" th:text="${task.note}"></textarea>
-              </td>
-              <td>
-                <button type="submit" class="btn btn-primary btn-sm" th:form="${'updateForm-' + task.id}">Update</button>
-                <form method="post" th:action="@{/task/delete}" style="display: inline-block">
-                  <input type="hidden" name="id" th:value="${task.id}" />
-                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this task?');">Delete</button>
-                </form>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="row">
+            <div class="col-md-4 mb-4" th:each="task : ${tasks}">
+                <div class="card h-100">
+                    <form method="post" th:action="@{/task/update}" th:id="${'updateForm-' + task.id}">
+                        <div class="card-header">
+                            <input type="text" name="name" class="form-control" th:value="${task.name}" />
+                        </div>
+                        <div class="card-body">
+                            <input type="hidden" name="id" th:value="${task.id}" />
+                            <textarea name="note" class="form-control" rows="5" th:text="${task.note}"></textarea>
+                        </div>
+                    </form>
+                    <div class="card-footer text-center">
+                        <button type="submit" class="btn btn-primary btn-sm" th:form="${'updateForm-' + task.id}">Update</button>
+                        <form method="post" th:action="@{/task/delete}" style="display: inline-block;">
+                            <input type="hidden" name="id" th:value="${task.id}" />
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this task?');">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
       </div>
     </div>
   </body>
