@@ -19,15 +19,16 @@ public class MusicService {
   private final ModelMapper modelMapper;
 
   public List<MusicForm> getMusicList() {
-    return musicMapper.findMany().stream()
-        .map(entity -> modelMapper.map(entity, MusicForm.class))
+    return musicMapper.findMany().stream().map(entity -> modelMapper.map(entity, MusicForm.class))
         .toList();
   }
 
   public MusicForm getMusicDetails(Integer musicId) {
     MusicEntity music = musicMapper.findOne(musicId);
     MusicForm musicForm = modelMapper.map(music, MusicForm.class);
-    musicForm.setArtistId(music.getArtist().getArtistId());
+    if (music.getArtist() != null) {
+      musicForm.setArtistId(music.getArtist().getArtistId());
+    }
     return musicForm;
   }
 
@@ -38,7 +39,8 @@ public class MusicService {
 
   @Transactional
   public void updateMusic(MusicForm form) {
-    musicMapper.updateOne(form.getMusicId(), form.getMusicName(), form.getArtistId(), form.getLink());
+    musicMapper.updateOne(form.getMusicId(), form.getMusicName(), form.getArtistId(),
+        form.getLink());
   }
 
   @Transactional
