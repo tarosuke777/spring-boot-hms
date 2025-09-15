@@ -29,11 +29,11 @@ services:
       context: .
       dockerfile: ./docker/web-ap/Dockerfile
     ports:
-      - "28000:80"
+      - "28000:28000"
     restart: always
     environment:
-        SPRING_PROFILES_ACTIVE: dev
-        SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hms
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hms
     secrets:
       - mysql_user_password
     networks:
@@ -48,7 +48,7 @@ secrets:
     file: ./docker/secrets/mysql_root_password.txt
   mysql_user_password:
     file: ./docker/secrets/mysql_user_password.txt
-    
+
 networks:
   home_network:
     external: true
