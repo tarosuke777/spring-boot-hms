@@ -29,7 +29,7 @@ services:
       context: .
       dockerfile: ./docker/web-ap/Dockerfile
     ports:
-      - "80:80"
+      - "28000:80"
     restart: always
     environment:
         SPRING_PROFILES_ACTIVE: dev
@@ -51,6 +51,4 @@ secrets:
     
 networks:
   home_network:
-    driver: bridge
-    ipam:
-      driver: default
+    external: true
