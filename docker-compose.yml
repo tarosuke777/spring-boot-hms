@@ -1,6 +1,5 @@
 services:
-  db:
-    container_name: hms-mysql-db
+  hms-db-mysql:
     image: mysql:8.4.3
     volumes:
       - db_data:/var/lib/mysql
@@ -22,24 +21,21 @@ services:
       timeout: 5s
       interval: 5s
       retries: 10
-  web-ap:
-    container_name: hms-web-ap
+  hms-ap:
     image: hms:1.0
     build:
       context: .
       dockerfile: ./docker/web-ap/Dockerfile
-    ports:
-      - "28000:28000"
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/hms
+      SPRING_DATASOURCE_URL: jdbc:mysql://hms-db-mysql:3306/hms
     secrets:
       - mysql_user_password
     networks:
       - home_network
     depends_on:
-      db:
+      hms-db-mysql:
         condition: service_healthy
 volumes:
   db_data:

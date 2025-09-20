@@ -1,5 +1,3 @@
-server:
-  port: 28000
 spring:
   config:
     import: optional:configtree:/run/secrets/
