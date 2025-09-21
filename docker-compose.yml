@@ -39,6 +39,7 @@ services:
         condition: service_healthy
 volumes:
   db_data:
+    name: hms_db_data
 secrets:
   mysql_root_password:
     file: C:\\dev\\secrets\\mysql_root_password.txt
