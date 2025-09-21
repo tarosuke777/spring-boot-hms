@@ -41,9 +41,9 @@ volumes:
   db_data:
 secrets:
   mysql_root_password:
-    file: ./docker/secrets/mysql_root_password.txt
+    file: C:\\dev\\secrets\\mysql_root_password.txt
   mysql_user_password:
-    file: ./docker/secrets/mysql_user_password.txt
+    file: C:\\dev\\secrets\\mysql_user_password.txt
 
 networks:
   home_network:
