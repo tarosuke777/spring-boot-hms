@@ -37,6 +37,8 @@ services:
     depends_on:
       hms-db-mysql:
         condition: service_healthy
+      fluentd:
+        condition: service_started
     logging:
       driver: fluentd
       options:
