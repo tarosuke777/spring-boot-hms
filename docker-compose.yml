@@ -46,16 +46,15 @@ services:
     #     tag: docker.hms-app.{{.ID}}
   fluentd:
     build:
-      context: ./td-agent
+      context: ./fluentd
       dockerfile: Dockerfile
     volumes:
-      - ./td-agent/td-agent.conf:/etc/td-agent/td-agent.conf
-      - ./td-agent/log:/var/log/td-agent
+      - ./fluentd/fluent.conf:/fluentd/fluent.conf
+      - ./fluentd/log:/fluentd/log
     networks:
       - home_network
     expose:
       - "24224"
-    command: ["td-agent", "-c", "/etc/td-agent/td-agent.conf"]
 volumes:
   db_data:
     name: hms_db_data
