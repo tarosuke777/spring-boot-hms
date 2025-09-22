@@ -39,11 +39,11 @@ services:
         condition: service_healthy
       fluentd:
         condition: service_started
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: fluentd:24224
-        tag: docker.hms-app.{{.ID}}
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     fluentd-address: fluentd:24224
+    #     tag: docker.hms-app.{{.ID}}
   fluentd:
     build:
       context: ./td-agent
