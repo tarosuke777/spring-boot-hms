@@ -1,5 +1,5 @@
 # td-agent の公式イメージをベースにする
-FROM fluent/td-agent:v4
+FROM fluent/fluentd:v1.16-debian-td-agent-1.0
 USER root
 
 # 必要なプラグインをインストール
