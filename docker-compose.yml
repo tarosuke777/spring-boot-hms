@@ -43,8 +43,9 @@ services:
         fluentd-address: fluentd:24224
         tag: docker.hms-app.{{.ID}}
   fluentd:
-    context: ./fluentd
-    dockerfile: Dockerfile
+    build:
+      context: ./fluentd
+      dockerfile: Dockerfile
     volumes:
       - ./td-agent/td-agent.conf:/etc/td-agent/td-agent.conf
       - ./td-agent/log:/var/log/td-agent
