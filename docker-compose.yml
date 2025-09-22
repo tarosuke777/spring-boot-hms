@@ -37,6 +37,22 @@ services:
     depends_on:
       hms-db-mysql:
         condition: service_healthy
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: fluentd:24224
+        tag: docker.hms-app.{{.ID}}
+  fluentd:
+    context: ./fluentd
+    dockerfile: Dockerfile
+    volumes:
+      - ./td-agent/td-agent.conf:/etc/td-agent/td-agent.conf
+      - ./td-agent/log:/var/log/td-agent
+    networks:
+      - home_network
+    expose:
+      - "24224"
+    command: ["td-agent", "-c", "/etc/td-agent/td-agent.conf"]
 volumes:
   db_data:
     name: hms_db_data
