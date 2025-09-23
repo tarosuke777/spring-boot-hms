@@ -37,24 +37,12 @@ services:
     depends_on:
       hms-db-mysql:
         condition: service_healthy
-      fluentd:
-        condition: service_started
-    # logging:
-    #   driver: fluentd
-    #   options:
-    #     fluentd-address: fluentd:24224
-    #     tag: docker.hms-app.{{.ID}}
-  fluentd:
-    build:
-      context: ./fluentd
-      dockerfile: Dockerfile
-    volumes:
-      - ./fluentd/fluent.conf:/fluentd/fluent.conf
-      # - ./fluentd/log:/fluentd/log
-    networks:
-      - home_network
-    expose:
-      - "24224"
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:24224
+        tag: docker.hms-app.{{.ID}}
+        fluentd-async: "true"
 volumes:
   db_data:
     name: hms_db_data
