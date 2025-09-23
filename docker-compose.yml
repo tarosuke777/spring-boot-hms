@@ -50,7 +50,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./fluentd/fluent.conf:/fluentd/fluent.conf
-      - ./fluentd/log:/fluentd/log
+      # - ./fluentd/log:/fluentd/log
     networks:
       - home_network
     expose:
