@@ -1,33 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-	layout:decorate="~{layout/layout}">
-<head>
-</head>
-<body>
-	<ul layout:fragment="menu" class="list-unstyled">
-		<li class="my-2">
-			<button class="btn collapsed">Hobby</button>
-			<ul class="list-unstyled ps-3" >
-                <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/music/list'}">Music</a></li>
-				<li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/artist/list'}">Artist</a></li>
-				<li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/book/list'}">Book</a></li>
-				<li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/author/list'}">Author</a></li>
-				<li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/training/list'}">Training</a></li>
-                <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/trainingMenu/list'}">TrainingMenu</a></li>
-				<li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/movie/list'}">Movie</a></li>
-                <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/diary/list'}">Diary</a></li>
-                <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/task/list'}">Task</a></li>
-			</ul>
-		</li>
-		<li sec:authorize="hasAuthority('ROLE_ADMIN')" class="my-2">
-			<button
-				class="btn d-inline-flex align-items-center border-0">Manage</button>
-			<ul class="list-unstyled ps-3">
-				<li><a class="text-decoration-none link-dark" th:href="@{'/user/list'}">User</a></li>
-			</ul>
-		</li>
-	</ul>
-</body>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout/layout}">
+  <head> </head>
+  <body>
+    <ul layout:fragment="menu" class="list-unstyled">
+      <li class="my-2">
+        <button class="btn collapsed">Hobby</button>
+        <ul class="list-unstyled ps-3">
+          <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/music/list'}">Music</a></li>
+          <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/artist/list'}">Artist</a></li>
+          <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/book/list'}">Book</a></li>
+          <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/author/list'}">Author</a></li>
+          <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/training/list'}">Training</a></li>
+          <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/trainingMenu/list'}">TrainingMenu</a></li>
+          <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/movie/list'}">Movie</a></li>
+          <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/diary/list'}">Diary</a></li>
+          <li class="mb-2"><a class="text-decoration-none link-dark" th:href="@{'/task/list'}">Task</a></li>
+          <li class="mb-2"><a class="text-decoration-none link-dark" href="/hc/" target="_blank"></a>>Chat</a></li>
+        </ul>
+      </li>
+      <li sec:authorize="hasAuthority('ROLE_ADMIN')" class="my-2">
+        <button class="btn d-inline-flex align-items-center border-0">Manage</button>
+        <ul class="list-unstyled ps-3">
+          <li><a class="text-decoration-none link-dark" th:href="@{'/user/list'}">User</a></li>
+        </ul>
+      </li>
+    </ul>
+  </body>
 </html>
