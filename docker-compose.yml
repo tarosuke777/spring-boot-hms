@@ -1,56 +1,27 @@
 services:
-  hms-db-mysql:
-    image: mysql:8.4.3
-    volumes:
-      - db_data:/var/lib/mysql
-    restart: always
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
-      MYSQL_DATABASE: hms
-      MYSQL_USER: hms
-      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password
-    secrets:
-      - mysql_root_password
-      - mysql_user_password
-    networks:
-      - home_network
-    healthcheck:
-      test: "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD"
-      timeout: 5s
-      interval: 5s
-      retries: 10
   hms-ap:
     image: hms:1.0
     build:
       context: .
       dockerfile: ./docker/web-ap/Dockerfile
-    restart: always
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      SPRING_DATASOURCE_URL: jdbc:mysql://hms-db-mysql:3306/hms
+      SPRING_DATASOURCE_URL: jdbc:mysql://home-db-mysql:3306/hms
     secrets:
       - mysql_user_password
     networks:
       - home_network
-    depends_on:
-      hms-db-mysql:
-        condition: service_healthy
     logging:
       driver: fluentd
       options:
         fluentd-address: localhost:24224
         tag: docker.hms-app.{{.ID}}
         fluentd-async: "true"
-volumes:
-  db_data:
-    name: hms_db_data
 secrets:
   mysql_root_password:
     file: C:\\dev\\secrets\\mysql_root_password.txt
   mysql_user_password:
-    file: C:\\dev\\secrets\\mysql_user_password.txt
+    file: C:\\dev\\secrets\\mysql_hms_user_password.txt
 
 networks:
   home_network:
