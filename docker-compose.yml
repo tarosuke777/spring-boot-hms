@@ -11,6 +11,7 @@ services:
       - mysql_user_password
     networks:
       - home_network
+    restart: always
     logging:
       driver: fluentd
       options:
