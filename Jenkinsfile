@@ -1,18 +1,8 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Build with Gradle') {
-            steps {
-                echo 'Granting execute permission to gradlew...'
-                sh 'chmod +x gradlew'
-
-                echo 'Building application with Gradle...'
-                sh './gradlew clean build'
-            }
-        }
-        
-        stage('Prepare Docker and Deploy') { // ステージ名を変更
+    stages {       
+        stage('Prepare Docker and Deploy') { 
             steps {
                 echo 'Building Docker Compose services...'
                 sh 'sudo docker compose build'
