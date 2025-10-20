@@ -9,8 +9,13 @@
 	<nav layout:fragment="header" 
 		class="navbar sticky-top bg-dark" data-bs-theme="dark">
 		<div class="container-fluid">
+			<button class="navbar-toggler d-sm-none" type="button" 
+				data-bs-toggle="collapse" data-bs-target="#sidebarMenu"
+				aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
 			<a class="navbar-brand" href="/">HMS</a>
-			<form sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}">
+			<form sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}" class="ms-auto">
 				<button class="btn btn-link navbar-brand" type="submit">logout</button>
 			</form>
 		</div>
