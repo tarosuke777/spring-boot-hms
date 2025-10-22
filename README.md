@@ -55,7 +55,7 @@
     ```bash
     docker-compose up -d --build
     ```
-2.  Web ブラウザで `http://localhost` にアクセスします。
+2.  Web ブラウザで `http://localhost/hms/` にアクセスします。
 
 ### ローカル環境で直接実行する場合
 
@@ -65,7 +65,7 @@
     ```bash
     ./gradlew bootRun
     ```
-4.  Web ブラウザで `http://localhost:8080` にアクセスします。
+4.  Web ブラウザで `http://localhost:8080/hms/` にアクセスします。
 
 ## 5.補足
 
@@ -79,4 +79,4 @@ date '+%Y%m%d.%H%M%S'
 
 #### H2-DB ConsoleURL
 
-`http://localhost:8080/h2-console/login.jsp`
+`http://localhost:8080/hms/h2-console/login.jsp`
