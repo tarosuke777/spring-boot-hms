@@ -19,8 +19,7 @@ public class BookService {
   private final ModelMapper modelMapper;
 
   public List<BookForm> getBookList() {
-    return bookMapper.findMany().stream()
-        .map(entity -> modelMapper.map(entity, BookForm.class))
+    return bookMapper.findMany().stream().map(entity -> modelMapper.map(entity, BookForm.class))
         .toList();
   }
 
@@ -38,7 +37,8 @@ public class BookService {
 
   @Transactional
   public void updateBook(BookForm form) {
-    bookMapper.updateOne(form.getBookId(), form.getBookName(), form.getAuthorId(), form.getLink(), form.getNote());
+    bookMapper.updateOne(form.getBookId(), form.getBookName(), form.getAuthorId(), form.getLink(),
+        form.getNote());
   }
 
   @Transactional
