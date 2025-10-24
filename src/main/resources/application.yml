@@ -11,6 +11,11 @@ spring:
     basename: ValidationMessages
   flyway:
     enabled: true
+  ai:
+    mcp:
+      server:
+        base-url: /hms
+
 mybatis:
   mapper-locations: classpath*:/mapper/*.xml
   type-aliases-package: com.tarosuke777.hms.entity

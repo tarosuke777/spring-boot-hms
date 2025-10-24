@@ -12,6 +12,8 @@ import com.tarosuke777.hms.repository.MusicMapper;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.ai.tool.annotation.Tool;
+
 @Service
 @RequiredArgsConstructor
 public class MusicService {
@@ -47,4 +49,11 @@ public class MusicService {
   public void deleteMusic(Integer musicId) {
     musicMapper.deleteOne(musicId);
   }
+
+  @Tool(description = "好きな曲名の一覧を取得する")
+  public String getMusicListForMcp() {
+    var music = List.of("レペゼン", "花鳥風月", "ヴァーミリオン", "サクラメイキュウ", "ウィアートル");
+    return String.join(", ", music);
+  }
+
 }
