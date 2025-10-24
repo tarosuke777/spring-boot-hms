@@ -80,3 +80,7 @@ date '+%Y%m%d.%H%M%S'
 #### H2-DB ConsoleURL
 
 `http://localhost:8080/hms/h2-console/login.jsp`
+
+### Spring AI
+#### Doc
+https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html
