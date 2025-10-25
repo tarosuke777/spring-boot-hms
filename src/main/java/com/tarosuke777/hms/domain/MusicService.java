@@ -52,8 +52,7 @@ public class MusicService {
 
   @Tool(description = "好きな曲名の一覧を取得する")
   public String getMusicListForMcp() {
-    var music = List.of("レペゼン", "花鳥風月", "ヴァーミリオン", "サクラメイキュウ", "ウィアートル");
-    return String.join(", ", music);
+    return getMusicList().stream().map(MusicForm::getMusicName).reduce((a, b) -> a + ", " + b)
+        .orElse("No music available");
   }
-
 }
