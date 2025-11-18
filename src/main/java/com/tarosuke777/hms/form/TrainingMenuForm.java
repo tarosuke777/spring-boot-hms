@@ -16,14 +16,14 @@ public class TrainingMenuForm {
   @NotBlank
   @Size(min = 1, max = 50)
   private String trainingMenuName;
-  
+
   private Integer targetAreaId;
-  
+
   private String link;
-  
+
   private Integer maxWeight;
-  
+
   private Integer maxReps;
-  
+
   private Integer maxSets;
 }

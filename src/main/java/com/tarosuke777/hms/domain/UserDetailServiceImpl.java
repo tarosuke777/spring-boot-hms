@@ -16,7 +16,8 @@ import com.tarosuke777.hms.repository.UserMapper;
 
 public class UserDetailServiceImpl implements UserDetailsService {
 
-  @Autowired private UserMapper mapper;
+  @Autowired
+  private UserMapper mapper;
 
   @Override
   public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {

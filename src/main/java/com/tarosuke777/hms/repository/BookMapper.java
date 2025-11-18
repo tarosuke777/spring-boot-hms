@@ -14,14 +14,11 @@ public interface BookMapper {
 
   public BookEntity findOne(Integer bookId);
 
-  public void insertOne(@Param("bookName") String bookName, @Param("authorId") Integer authorId, @Param("link") String link, @Param("note") String note);
+  public void insertOne(@Param("bookName") String bookName, @Param("authorId") Integer authorId,
+      @Param("link") String link, @Param("note") String note);
 
-  public void updateOne(
-      @Param("bookId") Integer bookId,
-      @Param("bookName") String bookName,
-      @Param("authorId") Integer authorId,
-      @Param("link") String link,
-      @Param("note") String note);
+  public void updateOne(@Param("bookId") Integer bookId, @Param("bookName") String bookName,
+      @Param("authorId") Integer authorId, @Param("link") String link, @Param("note") String note);
 
   public int deleteOne(@Param("bookId") Integer bookId);
 }

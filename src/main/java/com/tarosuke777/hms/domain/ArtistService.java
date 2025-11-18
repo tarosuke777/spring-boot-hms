@@ -19,12 +19,7 @@ public class ArtistService {
 
   @Cacheable("artistMap")
   public Map<Integer, String> getArtistMap() {
-    return artistMapper.findMany().stream()
-        .collect(
-            Collectors.toMap(
-                ArtistEntity::getArtistId,
-                ArtistEntity::getArtistName,
-                (existing, replacement) -> existing,
-                LinkedHashMap::new));
+    return artistMapper.findMany().stream().collect(Collectors.toMap(ArtistEntity::getArtistId,
+        ArtistEntity::getArtistName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 }

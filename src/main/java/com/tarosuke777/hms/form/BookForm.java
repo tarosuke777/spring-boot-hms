@@ -17,9 +17,9 @@ public class BookForm {
   private String bookName;
 
   private Integer authorId;
-  
+
   private String link;
-  
+
   private String note;
 
 }

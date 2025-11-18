@@ -38,7 +38,9 @@ public class TrainingController {
 	private final TrainingMenuService trainingMenuService;
 
 	@GetMapping("/list")
-	public String getList(Model model, @RequestParam(name = "orderBy", defaultValue = "training_date") String orderBy, @RequestParam(name = "sort", defaultValue = "desc") String sort) {
+	public String getList(Model model,
+			@RequestParam(name = "orderBy", defaultValue = "training_date") String orderBy,
+			@RequestParam(name = "sort", defaultValue = "desc") String sort) {
 
 		List<TrainingForm> trainingList = trainingService.getTrainingList(orderBy, sort);
 		Map<Integer, String> trainingAreaMap = TargetArea.getTargetAreaMap();
@@ -64,16 +66,18 @@ public class TrainingController {
 	public String getRegister(TrainingForm trainingForm, Model model) {
 
 		Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
-		List<SelectOptionTrainingMenu> trainingMenuSelectList = trainingMenuService.getTrainingMenuSelectList();
-		Map<Integer, String> trainingTargetAreaMap = TargetArea.getTargetAreaMap();	
+		List<SelectOptionTrainingMenu> trainingMenuSelectList =
+				trainingMenuService.getTrainingMenuSelectList();
+		Map<Integer, String> trainingTargetAreaMap = TargetArea.getTargetAreaMap();
 
-		addAttributesToModel(model, trainingMenuMap, trainingMenuSelectList,trainingTargetAreaMap);
+		addAttributesToModel(model, trainingMenuMap, trainingMenuSelectList, trainingTargetAreaMap);
 
 		return REGISTER_VIEW;
 	}
 
 	@PostMapping("/register")
-	public String register(@ModelAttribute @Validated TrainingForm form, BindingResult bindingResult, Model model) {
+	public String register(@ModelAttribute @Validated TrainingForm form,
+			BindingResult bindingResult, Model model) {
 
 		if (bindingResult.hasErrors()) {
 			return getRegister(form, model);
@@ -107,12 +111,15 @@ public class TrainingController {
 		model.addAttribute("trainingList", trainingList);
 	}
 
-	private void addAttributesToModel(Model model, TrainingForm trainingForm, Map<Integer, String> trainingMenuMap) {
+	private void addAttributesToModel(Model model, TrainingForm trainingForm,
+			Map<Integer, String> trainingMenuMap) {
 		model.addAttribute("trainingForm", trainingForm);
 		model.addAttribute("trainingMenuMap", trainingMenuMap);
 	}
 
-	private void addAttributesToModel(Model model, Map<Integer, String> trainingMenuMap, List<SelectOptionTrainingMenu> trainingMenuSelectList, Map<Integer, String> trainingTargetAreaMap) {
+	private void addAttributesToModel(Model model, Map<Integer, String> trainingMenuMap,
+			List<SelectOptionTrainingMenu> trainingMenuSelectList,
+			Map<Integer, String> trainingTargetAreaMap) {
 		model.addAttribute("trainingMenuMap", trainingMenuMap);
 		model.addAttribute("trainingMenuSelectList", trainingMenuSelectList);
 		model.addAttribute("trainingTargetAreaMap", trainingTargetAreaMap);

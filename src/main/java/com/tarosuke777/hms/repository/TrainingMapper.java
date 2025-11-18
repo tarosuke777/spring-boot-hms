@@ -11,7 +11,8 @@ import com.tarosuke777.hms.entity.TrainingEntity;
 @Mapper
 public interface TrainingMapper {
 
-	public List<TrainingEntity> findMany(@Param("orderBy") String orderBy, @Param("sort") String sort);
+	public List<TrainingEntity> findMany(@Param("orderBy") String orderBy,
+			@Param("sort") String sort);
 
 	public TrainingEntity findOne(Integer trainingId);
 
@@ -19,7 +20,8 @@ public interface TrainingMapper {
 			@Param("trainingMenuId") Integer trainingMenuId, @Param("weight") Integer weight,
 			@Param("reps") Integer reps, @Param("sets") Integer sets);
 
-	public void updateOne(@Param("trainingId") Integer trainingId, @Param("trainingDate") LocalDate trainingDate,
+	public void updateOne(@Param("trainingId") Integer trainingId,
+			@Param("trainingDate") LocalDate trainingDate,
 			@Param("trainingMenuId") Integer trainingMenuId, @Param("weight") Integer weight,
 			@Param("reps") Integer reps, @Param("sets") Integer sets);
 

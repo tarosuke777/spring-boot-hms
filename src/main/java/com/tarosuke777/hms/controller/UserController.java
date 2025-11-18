@@ -28,11 +28,14 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/user")
 public class UserController {
 
-  @Autowired private UserMapper mapper;
+  @Autowired
+  private UserMapper mapper;
 
-  @Autowired private ModelMapper modelMapper;
+  @Autowired
+  private ModelMapper modelMapper;
 
-  @Autowired private PasswordEncoder passwordEncoder;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   @GetMapping("/signup")
   public String getSignup(Model model, @ModelAttribute UserForm form) {
@@ -41,11 +44,8 @@ public class UserController {
   }
 
   @PostMapping("/signup")
-  public String signup(
-      Model model,
-      @ModelAttribute @Validated UserForm form,
-      BindingResult bindingResult,
-      @CurrentSecurityContext SecurityContext context) {
+  public String signup(Model model, @ModelAttribute @Validated UserForm form,
+      BindingResult bindingResult, @CurrentSecurityContext SecurityContext context) {
 
     if (bindingResult.hasErrors()) {
       return getSignup(model, form);

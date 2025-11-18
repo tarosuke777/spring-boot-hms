@@ -21,15 +21,17 @@ public class TrainingMenuService {
 
 	@Cacheable("trainingMenuMap")
 	public Map<Integer, String> getTrainingMenuMap() {
-		return trainingMenuMapper.findMany().stream().collect(Collectors.toMap(TrainingMenuEntity::getTrainingMenuId,
-				TrainingMenuEntity::getTrainingMenuName, (existing, replacement) -> existing, LinkedHashMap::new));
+		return trainingMenuMapper.findMany().stream()
+				.collect(Collectors.toMap(TrainingMenuEntity::getTrainingMenuId,
+						TrainingMenuEntity::getTrainingMenuName,
+						(existing, replacement) -> existing, LinkedHashMap::new));
 	}
 
 	public List<SelectOptionTrainingMenu> getTrainingMenuSelectList() {
 		return trainingMenuMapper.findMany().stream()
 				.map(entity -> new SelectOptionTrainingMenu(entity.getTrainingMenuId().toString(),
-						entity.getTrainingMenuName(), entity.getTargetAreaId(), entity.getMaxWeight(),
-						entity.getMaxReps(), entity.getMaxSets()))
+						entity.getTrainingMenuName(), entity.getTargetAreaId(),
+						entity.getMaxWeight(), entity.getMaxReps(), entity.getMaxSets()))
 				.collect(Collectors.toList());
 	}
 

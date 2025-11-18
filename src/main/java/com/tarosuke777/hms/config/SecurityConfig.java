@@ -20,27 +20,16 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.formLogin(
-        login ->
-            login
-                .loginProcessingUrl("/login")
-                .loginPage("/login")
-                .usernameParameter("userName")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/music/list",true)
-                .failureUrl("/login?error")
-                .permitAll());
+    http.formLogin(login -> login.loginProcessingUrl("/login").loginPage("/login")
+        .usernameParameter("userName").passwordParameter("password")
+        .defaultSuccessUrl("/music/list", true).failureUrl("/login?error").permitAll());
 
     http.logout(logout -> logout.logoutSuccessUrl("/login"));
 
     http.authorizeHttpRequests(
-        (authz) ->
-            authz
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .requestMatchers("/user/signup").permitAll()
-                .requestMatchers("/user/**").hasAuthority("ROLE_ADMIN")
-                .anyRequest()
-                .authenticated());
+        (authz) -> authz.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+            .permitAll().requestMatchers("/user/signup").permitAll().requestMatchers("/user/**")
+            .hasAuthority("ROLE_ADMIN").anyRequest().authenticated());
 
     return http.build();
   }

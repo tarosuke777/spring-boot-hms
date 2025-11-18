@@ -22,13 +22,8 @@ public class LocalSecurityConfig {
   @Bean
   SecurityFilterChain h2ConsoleSecurityFilterChain(HttpSecurity http) throws Exception {
     http.securityMatcher(PathRequest.toH2Console());
-    http.authorizeHttpRequests(
-        (authz) ->
-            authz
-                .requestMatchers(PathRequest.toH2Console())
-                .permitAll()
-                .anyRequest()
-                .authenticated());
+    http.authorizeHttpRequests((authz) -> authz.requestMatchers(PathRequest.toH2Console())
+        .permitAll().anyRequest().authenticated());
     http.csrf(CsrfConfigurer::disable);
     http.headers((headers) -> headers.frameOptions(FrameOptionsConfig::sameOrigin));
     return http.build();

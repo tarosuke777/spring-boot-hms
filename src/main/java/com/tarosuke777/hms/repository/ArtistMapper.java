@@ -13,11 +13,11 @@ public interface ArtistMapper {
   public List<ArtistEntity> findMany();
 
   public ArtistEntity findOne(Integer artistId);
-  
+
   public void insertOne(@Param("artistName") String artistName);
 
-  public void updateOne(
-      @Param("artistId") Integer artistId, @Param("artistName") String artistName);
+  public void updateOne(@Param("artistId") Integer artistId,
+      @Param("artistName") String artistName);
 
   public int deleteOne(@Param("artistId") Integer artistId);
 }

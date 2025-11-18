@@ -25,17 +25,17 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/artist")
 public class ArtistController {
 
-  @Autowired private ArtistMapper artistMapper;
+  @Autowired
+  private ArtistMapper artistMapper;
 
-  @Autowired private ModelMapper modelMapper;
+  @Autowired
+  private ModelMapper modelMapper;
 
   @GetMapping("/list")
   public String getList(Model model) {
 
-    List<ArtistForm> artistList =
-        artistMapper.findMany().stream()
-            .map(entity -> modelMapper.map(entity, ArtistForm.class))
-            .toList();
+    List<ArtistForm> artistList = artistMapper.findMany().stream()
+        .map(entity -> modelMapper.map(entity, ArtistForm.class)).toList();
 
     model.addAttribute("artistList", artistList);
 
@@ -51,8 +51,8 @@ public class ArtistController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated ArtistForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated ArtistForm form, BindingResult bindingResult,
+      Model model) {
 
     if (bindingResult.hasErrors()) {
       return getRegister(form, model);
@@ -64,8 +64,8 @@ public class ArtistController {
   }
 
   @GetMapping("/detail/{artistId}")
-  public String getDetail(
-      ArtistForm form, Model model, @PathVariable("artistId") Integer artistId) {
+  public String getDetail(ArtistForm form, Model model,
+      @PathVariable("artistId") Integer artistId) {
 
     ArtistEntity artist = artistMapper.findOne(artistId);
 

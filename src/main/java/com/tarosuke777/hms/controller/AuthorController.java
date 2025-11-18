@@ -25,23 +25,23 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/author")
 public class AuthorController {
 
-  @Autowired private AuthorMapper authorMapper;
-  
-  @Autowired private ModelMapper modelMapper;
+  @Autowired
+  private AuthorMapper authorMapper;
+
+  @Autowired
+  private ModelMapper modelMapper;
 
   @GetMapping("/list")
   public String getList(Model model) {
 
-    List<AuthorForm> authorList =
-    	authorMapper.findMany().stream()
-            .map(entity -> modelMapper.map(entity, AuthorForm.class))
-            .toList();
+    List<AuthorForm> authorList = authorMapper.findMany().stream()
+        .map(entity -> modelMapper.map(entity, AuthorForm.class)).toList();
 
     model.addAttribute("authorList", authorList);
 
     return "author/list";
   }
-  
+
   @GetMapping("/register")
   public String getRegister(AuthorForm form, Model model) {
 
@@ -51,8 +51,8 @@ public class AuthorController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated AuthorForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated AuthorForm form, BindingResult bindingResult,
+      Model model) {
 
     if (bindingResult.hasErrors()) {
       return getRegister(form, model);
@@ -62,10 +62,10 @@ public class AuthorController {
 
     return "redirect:/author/list";
   }
-  
+
   @GetMapping("/detail/{authorId}")
-  public String getDetail(
-		  AuthorForm form, Model model, @PathVariable("authorId") Integer authorId) {
+  public String getDetail(AuthorForm form, Model model,
+      @PathVariable("authorId") Integer authorId) {
 
     AuthorEntity author = authorMapper.findOne(authorId);
 

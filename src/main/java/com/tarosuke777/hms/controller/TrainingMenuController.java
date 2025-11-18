@@ -61,14 +61,15 @@ public class TrainingMenuController {
 	}
 
 	@PostMapping("/register")
-	public String register(@ModelAttribute @Validated TrainingMenuForm form, BindingResult bindingResult, Model model) {
+	public String register(@ModelAttribute @Validated TrainingMenuForm form,
+			BindingResult bindingResult, Model model) {
 
 		if (bindingResult.hasErrors()) {
 			return getRegister(form, model);
 		}
 
-		trainingMenuMapper.insertOne(form.getTrainingMenuName(), form.getTargetAreaId(), form.getLink(), form.getMaxWeight(),
-				form.getMaxReps(), form.getMaxSets());
+		trainingMenuMapper.insertOne(form.getTrainingMenuName(), form.getTargetAreaId(),
+				form.getLink(), form.getMaxWeight(), form.getMaxReps(), form.getMaxSets());
 
 		return "redirect:/trainingMenu/list";
 	}
@@ -93,8 +94,9 @@ public class TrainingMenuController {
 	@PostMapping(value = "detail", params = "update")
 	public String update(TrainingMenuForm form) {
 
-		trainingMenuMapper.updateOne(form.getTrainingMenuId(), form.getTrainingMenuName(), form.getTargetAreaId(),
-				form.getLink(), form.getMaxWeight(), form.getMaxReps(), form.getMaxSets());
+		trainingMenuMapper.updateOne(form.getTrainingMenuId(), form.getTrainingMenuName(),
+				form.getTargetAreaId(), form.getLink(), form.getMaxWeight(), form.getMaxReps(),
+				form.getMaxSets());
 
 		return "redirect:/trainingMenu/list";
 	}

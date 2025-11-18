@@ -19,12 +19,7 @@ public class AuthorService {
 
   @Cacheable("authorMap")
   public Map<Integer, String> getAuthorMap() {
-    return authorMapper.findMany().stream()
-        .collect(
-            Collectors.toMap(
-                AuthorEntity::getAuthorId,
-                AuthorEntity::getAuthorName,
-                (existing, replacement) -> existing,
-                LinkedHashMap::new));
+    return authorMapper.findMany().stream().collect(Collectors.toMap(AuthorEntity::getAuthorId,
+        AuthorEntity::getAuthorName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 }

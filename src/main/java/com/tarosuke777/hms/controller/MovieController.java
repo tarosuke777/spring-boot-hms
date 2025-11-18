@@ -25,17 +25,17 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/movie")
 public class MovieController {
 
-  @Autowired private MovieMapper movieMapper;
+  @Autowired
+  private MovieMapper movieMapper;
 
-  @Autowired private ModelMapper modelMapper;
+  @Autowired
+  private ModelMapper modelMapper;
 
   @GetMapping("/list")
   public String getList(Model model) {
 
-    List<MovieForm> movieList =
-        movieMapper.findMany().stream()
-            .map(entity -> modelMapper.map(entity, MovieForm.class))
-            .toList();
+    List<MovieForm> movieList = movieMapper.findMany().stream()
+        .map(entity -> modelMapper.map(entity, MovieForm.class)).toList();
 
     model.addAttribute("movieList", movieList);
 
@@ -51,8 +51,8 @@ public class MovieController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated MovieForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated MovieForm form, BindingResult bindingResult,
+      Model model) {
 
     if (bindingResult.hasErrors()) {
       return getRegister(form, model);
@@ -64,8 +64,7 @@ public class MovieController {
   }
 
   @GetMapping("/detail/{movieId}")
-  public String getDetail(
-      MovieForm form, Model model, @PathVariable("movieId") Integer movieId) {
+  public String getDetail(MovieForm form, Model model, @PathVariable("movieId") Integer movieId) {
 
     MovieEntity movie = movieMapper.findOne(movieId);
 

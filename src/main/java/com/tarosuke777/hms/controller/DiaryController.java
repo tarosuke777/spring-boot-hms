@@ -33,7 +33,9 @@ public class DiaryController {
     private final DiaryService diaryService;
 
     @GetMapping("/list")
-    public String getList(Model model, @RequestParam(name = "orderBy", defaultValue = "diary_date") String orderBy, @RequestParam(name = "sort", defaultValue = "desc") String sort) {
+    public String getList(Model model,
+            @RequestParam(name = "orderBy", defaultValue = "diary_date") String orderBy,
+            @RequestParam(name = "sort", defaultValue = "desc") String sort) {
         List<DiaryForm> diaryList = diaryService.getDiaryList(orderBy, sort);
         model.addAttribute("diaryList", diaryList);
         return LIST_VIEW;
@@ -52,7 +54,8 @@ public class DiaryController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute @Validated DiaryForm form, BindingResult bindingResult, Model model) {
+    public String register(@ModelAttribute @Validated DiaryForm form, BindingResult bindingResult,
+            Model model) {
         if (bindingResult.hasErrors()) {
             return getRegister(form, model);
         }

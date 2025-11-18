@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum TargetArea {
-	CHEST(1, "胸"), SHOULDER(2, "肩"), TRICEPS(3, "上腕三頭筋"), BACK(4, "背中"), BICEPS(5, "上腕二頭筋"), OBLIQUES(6, "腹斜筋"),
-	QUADS_GLUTES(7, "太もも（大腿四頭筋）・お尻（大臀筋）"), LEGS(8, "太もも（大腿四頭筋／ハムストリングス／内転筋群）");
+	CHEST(1, "胸"), SHOULDER(2, "肩"), TRICEPS(3, "上腕三頭筋"), BACK(4, "背中"), BICEPS(5,
+			"上腕二頭筋"), OBLIQUES(6, "腹斜筋"), QUADS_GLUTES(7,
+					"太もも（大腿四頭筋）・お尻（大臀筋）"), LEGS(8, "太もも（大腿四頭筋／ハムストリングス／内転筋群）");
 
 	private final int id;
 	private final String label;

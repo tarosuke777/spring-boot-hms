@@ -67,8 +67,8 @@ public class MusicController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated MusicForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated MusicForm form, BindingResult bindingResult,
+      Model model) {
 
     if (bindingResult.hasErrors()) {
       return getRegister(form, model);
@@ -95,14 +95,14 @@ public class MusicController {
     return REDIRECT_LIST;
   }
 
-  private void addAttributesToModel(
-      Model model, List<MusicForm> musicList, Map<Integer, String> artistMap) {
+  private void addAttributesToModel(Model model, List<MusicForm> musicList,
+      Map<Integer, String> artistMap) {
     model.addAttribute("artistMap", artistMap);
     model.addAttribute("musicList", musicList);
   }
 
-  private void addAttributesToModel(
-      Model model, MusicForm musicForm, Map<Integer, String> artistMap) {
+  private void addAttributesToModel(Model model, MusicForm musicForm,
+      Map<Integer, String> artistMap) {
     model.addAttribute("musicForm", musicForm);
     model.addAttribute("artistMap", artistMap);
   }

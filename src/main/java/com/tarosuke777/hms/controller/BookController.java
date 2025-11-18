@@ -67,8 +67,8 @@ public class BookController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated BookForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated BookForm form, BindingResult bindingResult,
+      Model model) {
 
     if (bindingResult.hasErrors()) {
       return getRegister(form, model);
@@ -95,14 +95,14 @@ public class BookController {
     return REDIRECT_LIST;
   }
 
-  private void addAttributesToModel(
-      Model model, List<BookForm> bookList, Map<Integer, String> authorMap) {
+  private void addAttributesToModel(Model model, List<BookForm> bookList,
+      Map<Integer, String> authorMap) {
     model.addAttribute("authorMap", authorMap);
     model.addAttribute("bookList", bookList);
   }
 
-  private void addAttributesToModel(
-      Model model, BookForm bookForm, Map<Integer, String> authorMap) {
+  private void addAttributesToModel(Model model, BookForm bookForm,
+      Map<Integer, String> authorMap) {
     model.addAttribute("bookForm", bookForm);
     model.addAttribute("authorMap", authorMap);
   }
