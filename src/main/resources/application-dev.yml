@@ -13,7 +13,3 @@ spring:
   h2:
     console:
       enabled: false
-logging:
-  file:
-    name: hms-app.log
-    path: /var/log
