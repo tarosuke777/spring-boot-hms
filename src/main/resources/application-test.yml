@@ -9,7 +9,3 @@ spring:
   h2:
     console:
       enabled: false
-#logging:
-#  level:
-#    '[org.springframework.jdbc.datasource.init]': DEBUG
-#    '[org.springframework.jdbc.support.JdbcTransactionManager]': DEBUG
