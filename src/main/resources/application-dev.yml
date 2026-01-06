@@ -6,11 +6,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: hms
     password: ${mysql_user_password}
-  #  sql:
-  #    init:
-  #      encoding: UTF-8
-  #      mode: always
-  #      schema-locations: classpath:schema/schema.sql
   flyway:
     locations: classpath:db/migration/ddl
     baseline-on-migrate: true
