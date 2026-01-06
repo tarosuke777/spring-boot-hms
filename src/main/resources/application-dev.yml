@@ -15,8 +15,6 @@ spring:
     locations: classpath:db/migration/ddl
     baseline-on-migrate: true
     baseline-version: 0
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
   h2:
     console:
       enabled: false

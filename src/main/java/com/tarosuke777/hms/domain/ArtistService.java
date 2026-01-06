@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 public class ArtistService {
   private final ArtistMapper artistMapper;
 
-  @Cacheable("artistMap")
   public Map<Integer, String> getArtistMap() {
     return artistMapper.findMany().stream().collect(Collectors.toMap(ArtistEntity::getArtistId,
         ArtistEntity::getArtistName, (existing, replacement) -> existing, LinkedHashMap::new));

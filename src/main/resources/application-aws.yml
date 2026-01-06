@@ -12,8 +12,6 @@ spring:
 #      schema-locations: classpath:schema/schema.sql
   flyway:
     locations: classpath:db/migration/ddl
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
   h2:
     console:
       enabled: false

@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 public class TrainingMenuService {
 	private final TrainingMenuMapper trainingMenuMapper;
 
-	@Cacheable("trainingMenuMap")
 	public Map<Integer, String> getTrainingMenuMap() {
 		return trainingMenuMapper.findMany().stream()
 				.collect(Collectors.toMap(TrainingMenuEntity::getTrainingMenuId,

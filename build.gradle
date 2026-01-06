@@ -30,7 +30,6 @@ ext {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -78,6 +77,6 @@ tasks.named('test') {
 }
 
 dependencyCheck {
-    // CVSSスコアが3.0以上の脆弱性があればビルドを失敗させる例
+    // CVSSスコアが3.0以上の脆弱性があればビルドを失敗させる場合
     // failBuildOnCVSS = 3.0 
 }

@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 public class AuthorService {
   private final AuthorMapper authorMapper;
 
-  @Cacheable("authorMap")
   public Map<Integer, String> getAuthorMap() {
     return authorMapper.findMany().stream().collect(Collectors.toMap(AuthorEntity::getAuthorId,
         AuthorEntity::getAuthorName, (existing, replacement) -> existing, LinkedHashMap::new));
