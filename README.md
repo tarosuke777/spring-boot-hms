@@ -84,3 +84,12 @@ date '+%Y%m%d.%H%M%S'
 ### Spring AI
 #### Doc
 https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html
+
+### Thymeleaf
+#### DOC
+https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf_ja.html
+
+### Spring Boot
+#### DOC
+https://docs.spring.io/spring-boot/3.5/appendix/dependency-versions/coordinates.html
+
