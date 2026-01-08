@@ -32,6 +32,7 @@ ext {
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+		mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}"
 	}
 }
 dependencies {
@@ -43,8 +44,8 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
-    implementation "io.awspring.cloud:spring-cloud-aws-starter:${springCloudAwsVersion}"
-    implementation "io.awspring.cloud:spring-cloud-aws-starter-parameter-store:${springCloudAwsVersion}"
+    implementation "io.awspring.cloud:spring-cloud-aws-starter"
+    implementation "io.awspring.cloud:spring-cloud-aws-starter-parameter-store"
     implementation 'org.modelmapper.extensions:modelmapper-spring:3.2.1'
     implementation 'org.webjars:jquery:3.7.1'
     implementation 'org.webjars:jquery-ui:1.14.1'
