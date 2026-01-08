@@ -92,3 +92,7 @@ dependencyCheck {
 	failBuildOnCVSS = 7.0 // HIGH (高)の脆弱性のみビルドを失敗させる
 	suppressionFile = 'config/owasp/suppressions.xml' // 誤検知除外用ファイル
 }
+
+jar {
+    enabled = false  // 通常のJAR（-plain.jar）(ライブラリ用)は作らない
+}

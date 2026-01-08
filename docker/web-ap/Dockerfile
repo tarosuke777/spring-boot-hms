@@ -21,7 +21,7 @@ FROM eclipse-temurin:21-jre-alpine
 ENV TZ Asia/Tokyo 
 
 # ビルドステージから作成されたJARをコピー
-COPY --from=builder /app/build/libs/spring-boot-hms-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=builder /app/build/libs/*.jar app.jar
 
 # 実行
 ENTRYPOINT ["java", "-jar", "app.jar"]
