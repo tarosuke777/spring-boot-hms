@@ -36,38 +36,51 @@ dependencyManagement {
 	}
 }
 dependencies {
+	// --- Spring Boot Starters ---
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// --- AI & Cloud ---
 	implementation 'org.springframework.ai:spring-ai-starter-mcp-server-webmvc'
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
     implementation "io.awspring.cloud:spring-cloud-aws-starter"
     implementation "io.awspring.cloud:spring-cloud-aws-starter-parameter-store"
-    implementation 'org.modelmapper.extensions:modelmapper-spring:3.2.1'
+
+	// --- Template Engine & UI ---
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+    implementation 'org.webjars:webjars-locator-core'
+    implementation 'org.webjars:bootstrap:5.3.3'
     implementation 'org.webjars:jquery:3.7.1'
     implementation 'org.webjars:jquery-ui:1.14.1'
-    implementation 'org.webjars:bootstrap:5.3.3'
-    implementation 'org.webjars:webjars-locator-core'
+
+	// --- Persistence & Migration ---
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
-	testImplementation 'org.junit.jupiter:junit-jupiter'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// --- Utilities ---
+    implementation 'org.modelmapper.extensions:modelmapper-spring:3.2.1'
 	implementation('org.apache.commons:commons-lang3') {
         version {
             strictly '3.18.0'
         }
     }
+
+	// --- Annotation Processor ---
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// --- Testing ---
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	
 }
 
 tasks.named('test') {
