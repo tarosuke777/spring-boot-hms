@@ -26,7 +26,7 @@ repositories {
 
 ext {
 	springAiVersion = "1.0.1"
-	springCloudAwsVersion = "3.2.1"
+	springCloudAwsVersion = "3.4.0"
 }
 
 dependencyManagement {
