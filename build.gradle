@@ -20,7 +20,10 @@ repositories {
 
 def versions = [
     springAi: "1.0.1",
-	springCloudAws: "3.4.0"
+	springCloudAws: "3.4.0",
+	mybatis: "3.0.4",
+    modelMapper: "3.2.1",
+    commonsLang: "3.18.0"
 ]
 
 dependencyManagement {
@@ -52,15 +55,15 @@ dependencies {
     implementation 'org.webjars:jquery-ui:1.14.1'
 
 	// --- Persistence & Migration ---
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+	implementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:${versions.mybatis}"
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	// --- Utilities ---
-    implementation 'org.modelmapper.extensions:modelmapper-spring:3.2.1'
-	implementation 'org.apache.commons:commons-lang3:3.18.0'
+	implementation "org.modelmapper.extensions:modelmapper-spring:${versions.modelMapper}"
+    implementation "org.apache.commons:commons-lang3:${versions.commonsLang}"
 
 	// --- Annotation Processor ---
 	compileOnly 'org.projectlombok:lombok'
@@ -69,7 +72,7 @@ dependencies {
 	// --- Testing ---
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
+	testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${versions.mybatis}"
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
