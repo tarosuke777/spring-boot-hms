@@ -66,11 +66,7 @@ dependencies {
 
 	// --- Utilities ---
     implementation 'org.modelmapper.extensions:modelmapper-spring:3.2.1'
-	implementation('org.apache.commons:commons-lang3') {
-        version {
-            strictly '3.18.0'
-        }
-    }
+	implementation 'org.apache.commons:commons-lang3:3.18.0'
 
 	// --- Annotation Processor ---
 	annotationProcessor 'org.projectlombok:lombok'
