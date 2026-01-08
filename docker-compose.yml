@@ -3,7 +3,7 @@ services:
     image: hms:1.0
     build:
       context: .
-      dockerfile: ./docker/web-ap/Dockerfile
+      dockerfile: Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:mysql://home-db-mysql:3306/hms
