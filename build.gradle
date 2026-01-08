@@ -86,6 +86,6 @@ tasks.named('test') {
 }
 
 dependencyCheck {
-    // CVSSスコアが3.0以上の脆弱性があればビルドを失敗させる場合
-    // failBuildOnCVSS = 3.0 
+	failBuildOnCVSS = 7.0 // HIGH (高)の脆弱性のみビルドを失敗させる
+	suppressionFile = 'config/owasp/suppressions.xml' // 誤検知除外用ファイル
 }

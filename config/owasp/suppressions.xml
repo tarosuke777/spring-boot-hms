@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+    <suppress>
+        <notes><![CDATA[
+        file name: spring-ai-autoconfigure-mcp-server-1.0.1.jar
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.ai/spring-ai-autoconfigure-mcp-server@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:server</cpe>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+        file name: spring-ai-autoconfigure-mcp-server-1.0.1.jar
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.ai/spring-ai-autoconfigure-mcp-server@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:vmware_server</cpe>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+        file name: spring-ai-starter-mcp-server-webmvc-1.0.1.jar
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.ai/spring-ai-starter-mcp-server-webmvc@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:server</cpe>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+        file name: spring-ai-starter-mcp-server-webmvc-1.0.1.jar
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.ai/spring-ai-starter-mcp-server-webmvc@.*$</packageUrl>
+        <cpe>cpe:/a:vmware:vmware_server</cpe>
+    </suppress>
+
+</suppressions>
