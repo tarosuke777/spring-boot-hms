@@ -65,9 +65,11 @@ dependencies {
 	implementation "org.modelmapper.extensions:modelmapper-spring:${versions.modelMapper}"
     implementation "org.apache.commons:commons-lang3:${versions.commonsLang}"
 
-	// --- Annotation Processor ---
+	// --- Lombok & Annotation Processors ---
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
 	// --- Testing ---
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
