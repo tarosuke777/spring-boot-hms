@@ -24,17 +24,18 @@ repositories {
 	mavenCentral()
 }
 
-ext {
-	springAiVersion = "1.0.1"
-	springCloudAwsVersion = "3.4.0"
-}
+def versions = [
+    springAi: "1.0.1",
+	springCloudAws: "3.4.0"
+]
 
 dependencyManagement {
 	imports {
-		mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
-		mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}"
+		mavenBom "org.springframework.ai:spring-ai-bom:${versions.springAi}"
+		mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${versions.springCloudAws}"
 	}
 }
+
 dependencies {
 	// --- Spring Boot Starters ---
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -80,7 +81,7 @@ dependencies {
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	
+
 }
 
 tasks.named('test') {
