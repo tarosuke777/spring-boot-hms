@@ -1,14 +1,29 @@
 package com.tarosuke777.hms.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Entity
+@Table(name = "artist") // DBのテーブル名に合わせてください
+@Getter
+@Setter
+@NoArgsConstructor // JPAに必須
 @AllArgsConstructor
-@RequiredArgsConstructor
-@Data
 public class ArtistEntity {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "artist_id")
   private Integer artistId;
+
+  @Column(name = "artist_name")
   private String artistName;
 }
