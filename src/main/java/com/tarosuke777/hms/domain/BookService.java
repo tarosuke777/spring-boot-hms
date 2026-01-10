@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.AuthorEntity;
 import com.tarosuke777.hms.entity.BookEntity;
 import com.tarosuke777.hms.form.BookForm;
-import com.tarosuke777.hms.repository.BookMapper;
 import com.tarosuke777.hms.repository.BookRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
