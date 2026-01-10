@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "artist") // DBのテーブル名に合わせてください
+@Table(name = "artist")
 @Getter
 @Setter
-@NoArgsConstructor // JPAに必須
+@NoArgsConstructor
 @AllArgsConstructor
 public class ArtistEntity {
 
