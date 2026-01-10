@@ -23,7 +23,6 @@ def versions = [
 	springCloudAws: "3.4.0",
 	mybatis: "3.0.4",
     modelMapper: "3.2.1",
-    commonsLang: "3.18.0",
 	bootstrap: "5.3.3",
     jquery: "3.7.1",
     jqueryUi: "1.14.1"
@@ -67,7 +66,6 @@ dependencies {
 
 	// --- Utilities ---
 	implementation "org.modelmapper.extensions:modelmapper-spring:${versions.modelMapper}"
-    implementation "org.apache.commons:commons-lang3:${versions.commonsLang}"
 
 	// --- Lombok & Annotation Processors ---
 	compileOnly 'org.projectlombok:lombok'

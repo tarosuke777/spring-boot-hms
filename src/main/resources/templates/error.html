@@ -12,16 +12,13 @@
 		</div>
 		
 		<div class="mb-3 row">
-			<label class="col-sm-2">Exception</label>
+			<label class="col-sm-2">Error ID</label>
 			<div class="col-sm-10">
-				<span th:text="${exception}"></span>
+				<code th:text="${errorId}"></code>
 			</div>
 		</div>
-		<div class="mb-3 row">
-			<label class="col-sm-2 ">StackTrace</label>
-			<div class="col-sm-10">
-				<span th:text="${stackTrace}"></span>
-			</div>
+		<div class="alert alert-danger">
+			申し訳ございません。システムエラーが発生しました。上記のエラーIDを管理者にお伝えください。
 		</div>
 	</div>
 </body>
