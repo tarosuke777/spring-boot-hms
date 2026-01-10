@@ -11,6 +11,10 @@ spring:
     mcp:
       server:
         base-url: /hms
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
 
 mybatis:
   mapper-locations: classpath*:/mapper/*.xml
