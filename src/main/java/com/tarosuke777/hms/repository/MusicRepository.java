@@ -10,10 +10,6 @@ import com.tarosuke777.hms.entity.MusicEntity;
 @Repository
 public interface MusicRepository extends JpaRepository<MusicEntity, Integer> {
 
-    /**
-     * findMany に相当<br>
-     * ArtistEntity を Fetch Join して効率的に全件取得する
-     */
     @Override
     @NonNull
     @EntityGraph(attributePaths = {"artist"})
