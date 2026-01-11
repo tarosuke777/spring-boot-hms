@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.DiaryEntity;
 import com.tarosuke777.hms.form.DiaryForm;
-import com.tarosuke777.hms.repository.DiaryMapper;
 import com.tarosuke777.hms.repository.DiaryRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -17,8 +16,6 @@ public class DiaryService {
 
     private final DiaryRepository diaryRepository;
     private final ModelMapper modelMapper;
-
-    private final DiaryMapper diaryMapper;
 
     public List<DiaryForm> getDiaryList(String orderBy, String sortDirection) {
         Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by(orderBy).descending()
