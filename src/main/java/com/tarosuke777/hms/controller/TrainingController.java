@@ -39,7 +39,7 @@ public class TrainingController {
 
 	@GetMapping("/list")
 	public String getList(Model model,
-			@RequestParam(name = "orderBy", defaultValue = "training_date") String orderBy,
+			@RequestParam(name = "orderBy", defaultValue = "trainingDate") String orderBy,
 			@RequestParam(name = "sort", defaultValue = "desc") String sort) {
 
 		List<TrainingForm> trainingList = trainingService.getTrainingList(orderBy, sort);
