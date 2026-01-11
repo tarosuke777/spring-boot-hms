@@ -1,6 +1,5 @@
 package com.tarosuke777.hms.controller;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,11 +9,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import com.tarosuke777.hms.domain.TaskService;
-import com.tarosuke777.hms.entity.TaskEntity;
 import com.tarosuke777.hms.form.TaskForm;
-
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -26,7 +22,7 @@ public class TaskController {
 
     @GetMapping("/list")
     public String list(Model model) {
-        model.addAttribute("tasks", taskService.findAll());
+        model.addAttribute("tasks", taskService.getTaskList());
         return "task/list";
     }
 
@@ -36,15 +32,14 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String create(@Validated @ModelAttribute TaskForm taskForm, BindingResult bindingResult,
-            Model model) {
+    public String create(@Validated @ModelAttribute TaskForm taskForm,
+            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "task/register";
         }
 
-        TaskEntity taskEntity = new TaskEntity();
-        BeanUtils.copyProperties(taskForm, taskEntity);
-        taskService.create(taskEntity);
+        // 詰め替えはService内で行うので、Formをそのまま渡す
+        taskService.createTask(taskForm);
 
         return "redirect:/task/list";
     }
@@ -53,20 +48,20 @@ public class TaskController {
     public String update(@Validated @ModelAttribute TaskForm taskForm, BindingResult bindingResult,
             Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("tasks", taskService.findAll());
+            // エラー時は一覧を再取得して戻る
+            model.addAttribute("tasks", taskService.getTaskList());
             return "task/list";
         }
 
-        TaskEntity taskEntity = new TaskEntity();
-        BeanUtils.copyProperties(taskForm, taskEntity);
-        taskService.update(taskEntity);
+        // ServiceのupdateTask(TaskForm)を呼び出す
+        taskService.updateTask(taskForm);
 
         return "redirect:/task/list";
     }
 
     @PostMapping("/delete")
     public String delete(@RequestParam("id") Integer id) {
-        taskService.delete(id);
+        taskService.deleteTask(id);
         return "redirect:/task/list";
     }
 }
