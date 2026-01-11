@@ -34,7 +34,7 @@ public class DiaryController {
 
     @GetMapping("/list")
     public String getList(Model model,
-            @RequestParam(name = "orderBy", defaultValue = "diary_date") String orderBy,
+            @RequestParam(name = "orderBy", defaultValue = "diaryDate") String orderBy,
             @RequestParam(name = "sort", defaultValue = "desc") String sort) {
         List<DiaryForm> diaryList = diaryService.getDiaryList(orderBy, sort);
         model.addAttribute("diaryList", diaryList);
