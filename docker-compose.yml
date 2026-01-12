@@ -1,3 +1,5 @@
+name: hms
+
 services:
   hms-ap:
     image: hms:1.0
