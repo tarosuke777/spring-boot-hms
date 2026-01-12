@@ -21,9 +21,7 @@ public class ArtistEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "artist_id")
   private Integer artistId;
 
-  @Column(name = "artist_name")
   private String artistName;
 }

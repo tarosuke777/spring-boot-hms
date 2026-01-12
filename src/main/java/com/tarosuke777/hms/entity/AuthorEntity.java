@@ -21,9 +21,7 @@ public class AuthorEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "author_id")
   private Integer authorId;
 
-  @Column(name = "author_name")
   private String authorName;
 }

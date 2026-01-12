@@ -21,12 +21,9 @@ public class TrainingMenuEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "training_menu_id")
   private Integer trainingMenuId;
 
-  @Column(name = "training_menu_name")
   private String trainingMenuName;
-  @Column(name = "target_area_id")
   private Integer targetAreaId;
 
   private String link;

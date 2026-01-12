@@ -25,10 +25,8 @@ public class TrainingEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "training_id")
 	private Integer trainingId;
 
-	@Column(name = "training_date")
 	private LocalDate trainingDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)

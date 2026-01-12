@@ -24,10 +24,8 @@ public class MusicEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "music_id")
   private Integer musicId;
 
-  @Column(name = "music_name")
   private String musicName;
 
   @ManyToOne(fetch = FetchType.LAZY)

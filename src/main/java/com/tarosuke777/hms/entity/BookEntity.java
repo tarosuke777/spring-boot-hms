@@ -25,15 +25,14 @@ public class BookEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "book_id")
   private Integer bookId;
 
-  @Column(name = "book_name")
   private String bookName;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "author_id")
   private AuthorEntity author;
+
   private String link;
   private String note;
 }

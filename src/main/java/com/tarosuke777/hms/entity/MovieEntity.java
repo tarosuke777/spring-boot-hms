@@ -21,10 +21,8 @@ public class MovieEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "movie_id")
   private Integer movieId;
 
-  @Column(name = "movie_name")
   private String movieName;
 
   private String note;
