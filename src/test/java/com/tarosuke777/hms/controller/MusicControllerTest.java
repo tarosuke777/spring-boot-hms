@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.ArtistEntity;
-import com.tarosuke777.hms.entity.AuthorEntity;
 import com.tarosuke777.hms.entity.MusicEntity;
 import com.tarosuke777.hms.form.MusicForm;
 import com.tarosuke777.hms.repository.ArtistRepository;
