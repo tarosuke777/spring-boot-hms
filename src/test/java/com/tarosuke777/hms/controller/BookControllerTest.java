@@ -40,9 +40,9 @@ public class BookControllerTest {
   @Autowired
   private MockMvc mockMvc;
   @Autowired
-  private BookRepository bookRepository; // Repositoryへ変更
+  private BookRepository bookRepository;
   @Autowired
-  private AuthorRepository authorRepository; // Repositoryへ変更
+  private AuthorRepository authorRepository;
   @Autowired
   private ModelMapper modelMapper;
   @Autowired
@@ -77,9 +77,6 @@ public class BookControllerTest {
         .andExpect(view().name(LIST_VIEW));
   }
 
-  private ResultActions performGetListRequest() throws Exception {
-    return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
-  }
 
   @Test
   void getDetail_ShouldReturnBookDetailAndAuthorMap() throws Exception {
@@ -171,6 +168,10 @@ public class BookControllerTest {
   private Map<Integer, String> getAuthorMap() {
     return authorRepository.findAll().stream().collect(Collectors.toMap(AuthorEntity::getAuthorId,
         AuthorEntity::getAuthorName, (existing, replacement) -> existing, LinkedHashMap::new));
+  }
+
+  private ResultActions performGetListRequest() throws Exception {
+    return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
   }
 
   private ResultActions performGetDetailRequest(int bookId) throws Exception {
