@@ -1,21 +1,14 @@
 package com.tarosuke777.hms.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -29,14 +22,11 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.tarosuke777.hms.entity.AuthorEntity;
 import com.tarosuke777.hms.entity.BookEntity;
 import com.tarosuke777.hms.form.BookForm;
-import com.tarosuke777.hms.repository.AuthorMapper;
-import com.tarosuke777.hms.repository.BookMapper;
-import com.tarosuke777.hms.repository.TestAuthorMapper;
-import com.tarosuke777.hms.repository.TestBookMapper;
+import com.tarosuke777.hms.repository.AuthorRepository;
+import com.tarosuke777.hms.repository.BookRepository;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -47,167 +37,169 @@ import jakarta.persistence.EntityManager;
 @WithUserDetails("admin")
 public class BookControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private BookRepository bookRepository; // Repositoryへ変更
+  @Autowired
+  private AuthorRepository authorRepository; // Repositoryへ変更
+  @Autowired
+  private ModelMapper modelMapper;
+  @Autowired
+  private EntityManager entityManager;
 
-    @Autowired
-    private BookMapper bookMapper;
-    @Autowired
-    private TestBookMapper testBookMapper;
+  private static final String LIST_ENDPOINT = "/book/list";
+  private static final String LIST_VIEW = "book/list";
+  private static final String LIST_URL = "/book/list";
 
-    @Autowired
-    private AuthorMapper authorMapper;
-    @Autowired
-    private TestAuthorMapper testAuthorMapper;
+  private static final String DETAIL_ENDPOINT = "/book/detail/{id}";
+  private static final String DETAIL_VIEW = "book/detail";
 
-    @Autowired
-    private ModelMapper modelMapper;
+  private static final String REGISTER_ENDPOINT = "/book/register";
+  private static final String REGISTER_VIEW = "book/register";
 
-    @Autowired
-    private EntityManager entityManager;
+  private static final String UPDATE_ENDPOINT = "/book/detail";
+  private static final String DELETE_ENDPOINT = "/book/detail";
 
-    private static final String LIST_ENDPOINT = "/book/list";
-    private static final String LIST_VIEW = "book/list";
-    private static final String LIST_URL = "/book/list";
+  @Test
+  void getList_ShouldReturnBookListAndAuthorMap() throws Exception {
 
-    private static final String DETAIL_ENDPOINT = "/book/detail/{id}";
-    private static final String DETAIL_VIEW = "book/detail";
+    // Given
+    List<BookForm> expectedBookList = bookRepository.findAll().stream()
+        .map(entity -> modelMapper.map(entity, BookForm.class)).toList();
 
-    private static final String REGISTER_ENDPOINT = "/book/register";
-    private static final String REGISTER_VIEW = "book/register";
+    Map<Integer, String> expectedAuthorMap = getAuthorMap();
 
-    private static final String UPDATE_ENDPOINT = "/book/detail";
-    private static final String DELETE_ENDPOINT = "/book/detail";
+    // When & Then
+    performGetListRequest().andExpect(status().isOk())
+        .andExpect(model().attribute("authorMap", expectedAuthorMap))
+        .andExpect(model().attribute("bookList", expectedBookList))
+        .andExpect(view().name(LIST_VIEW));
+  }
 
-    @Test
-    void getList_ShouldReturnBookListAndAuthorMap() throws Exception {
+  private ResultActions performGetListRequest() throws Exception {
+    return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
+  }
 
-        // Given
-        List<BookForm> expectedBookList = bookMapper.findMany().stream()
-                .map(entity -> modelMapper.map(entity, BookForm.class)).toList();
+  @Test
+  void getDetail_ShouldReturnBookDetailAndAuthorMap() throws Exception {
+    // Given
+    BookEntity bookEntity = bookRepository.findAll().get(0);
+    BookForm expectedBookForm = modelMapper.map(bookEntity, BookForm.class);
+    expectedBookForm.setAuthorId(bookEntity.getAuthor().getAuthorId());
+    Map<Integer, String> expectedAuthorMap = getAuthorMap();
 
-        Map<Integer, String> expectedAuthorMap = authorMapper.findMany().stream()
-                .collect(Collectors.toMap(AuthorEntity::getAuthorId, AuthorEntity::getAuthorName,
-                        (existing, replacement) -> existing, LinkedHashMap::new));
+    // When & Then
+    performGetDetailRequest(bookEntity.getBookId()).andExpect(status().isOk())
+        .andExpect(model().attribute("authorMap", expectedAuthorMap))
+        .andExpect(model().attribute("bookForm", expectedBookForm))
+        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
+  }
 
-        // When & Then
-        performGetListRequest().andExpect(status().isOk())
-                .andExpect(model().attribute("authorMap", expectedAuthorMap))
-                .andExpect(model().attribute("bookList", expectedBookList))
-                .andExpect(view().name(LIST_VIEW));
-    }
 
-    private ResultActions performGetListRequest() throws Exception {
-        return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
-    }
+  @Test
+  void getRegister_ShouldReturnRegisterPageWithAuthorMap() throws Exception {
 
-    @Test
-    void getDetail_ShouldReturnBookDetailAndAuthorMap() throws Exception {
-        // Given
-        BookEntity bookEntity = testBookMapper.findFirstOne();
-        BookForm expectedBookForm = new BookForm(bookEntity.getBookId(), bookEntity.getBookName(),
-                bookEntity.getAuthor().getAuthorId(), bookEntity.getLink(), bookEntity.getNote());
-        Map<Integer, String> expectedAuthorMap = authorMapper.findMany().stream()
-                .collect(Collectors.toMap(AuthorEntity::getAuthorId, AuthorEntity::getAuthorName,
-                        (existing, replacement) -> existing, LinkedHashMap::new));
+    // Given
+    Map<Integer, String> expectedAuthorMap = getAuthorMap();
+    // When & Then
+    performGetRegisterRequest().andExpect(status().isOk())
+        .andExpect(model().attribute("authorMap", expectedAuthorMap))
+        .andExpect(view().name(REGISTER_VIEW)).andExpect(model().hasNoErrors());
+  }
 
-        // When & Then
-        performGetDetailRequest(bookEntity.getBookId()).andExpect(status().isOk())
-                .andExpect(model().attribute("authorMap", expectedAuthorMap))
-                .andExpect(model().attribute("bookForm", expectedBookForm))
-                .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
-    }
 
-    private ResultActions performGetDetailRequest(int bookId) throws Exception {
-        return mockMvc.perform(
-                get(DETAIL_ENDPOINT, bookId).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
-                .andDo(print());
-    }
+  @Test
+  void register_WithValidData_ShouldRedirectToList() throws Exception {
 
-    @Test
-    void getRegister_ShouldReturnRegisterPageWithAuthorMap() throws Exception {
+    // Given
+    AuthorEntity authorEntity = authorRepository.findAll().get(0);
+    BookForm bookForm = new BookForm(null, "test", authorEntity.getAuthorId(), null, null);
 
-        // Given
-        Map<Integer, String> expectedAuthorMap = authorMapper.findMany().stream()
-                .collect(Collectors.toMap(AuthorEntity::getAuthorId, AuthorEntity::getAuthorName,
-                        (existing, replacement) -> existing, LinkedHashMap::new));
+    // When & Then
+    performRegisterRequest(bookForm).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
 
-        // When & Then
-        performGetRegisterRequest().andExpect(status().isOk())
-                .andExpect(model().attribute("authorMap", expectedAuthorMap))
-                .andExpect(view().name(REGISTER_VIEW)).andExpect(model().hasNoErrors());
-    }
+    entityManager.flush();
+    entityManager.clear();
 
-    private ResultActions performGetRegisterRequest() throws Exception {
-        return mockMvc.perform(
-                get(REGISTER_ENDPOINT).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
-                .andDo(print());
-    }
+    List<BookEntity> books = bookRepository.findAll();
+    BookEntity savedBook = books.get(books.size() - 1);
 
-    @Test
-    void register_WithValidData_ShouldRedirectToList() throws Exception {
+    Assertions.assertEquals(bookForm.getBookName(), savedBook.getBookName());
+    Assertions.assertEquals(bookForm.getAuthorId(), savedBook.getAuthor().getAuthorId());
+  }
 
-        // Given
-        AuthorEntity authorEntity = testAuthorMapper.findFirstOne();
-        BookForm bookForm = new BookForm(null, "test", authorEntity.getAuthorId(), null, null);
 
-        // When & Then
-        performRegisterRequest(bookForm).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(LIST_URL));
+  @Test
+  void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
-        BookEntity bookEntity = testBookMapper.findLastOne();
+    // Given
+    BookEntity expectedBook = bookRepository.findAll().get(0);
+    expectedBook.setBookName("更新後の本タイトル");
 
-        Assertions.assertEquals(bookForm.getBookName(), bookEntity.getBookName());
-        Assertions.assertEquals(bookForm.getAuthorId(), bookEntity.getAuthor().getAuthorId());
-    }
+    // When & Then
+    performUpdateRequest(expectedBook).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
 
-    private ResultActions performRegisterRequest(BookForm form) throws Exception {
-        return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("bookName", form.getBookName())
-                .param("authorId", String.valueOf(form.getAuthorId()))).andDo(print());
-    }
+    entityManager.flush();
+    entityManager.clear();
 
-    @Test
-    void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
+    BookEntity book = bookRepository.findById(expectedBook.getBookId()).orElse(null);
+    assertEquals(book.getBookName(), expectedBook.getBookName());
+  }
 
-        // Given
-        BookEntity expectedBook = testBookMapper.findFirstOne();
-        expectedBook.setBookName("本１２");
 
-        // When & Then
-        performUpdateRequest(expectedBook).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(LIST_URL));
+  @Test
+  void delete_ExistingBook_ShouldDeleteAndRedirectToList() throws Exception {
 
-        BookEntity book = testBookMapper.findFirstOne();
-        assertEquals(book, expectedBook);
-    }
+    // Given
+    BookEntity expectedBook = bookRepository.findAll().get(0);
 
-    private ResultActions performUpdateRequest(BookEntity book) throws Exception {
-        return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-                .param("bookId", book.getBookId().toString()).param("bookName", book.getBookName())
-                .param("authorId", book.getAuthor().getAuthorId().toString())).andDo(print());
-    }
+    // When & Then
+    performDeleteRequest(expectedBook.getBookId()).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
 
-    @Test
-    void delete_ExistingBook_ShouldDeleteAndRedirectToList() throws Exception {
+    entityManager.flush();
+    entityManager.clear();
 
-        // Given
-        BookEntity targetBook = testBookMapper.findFirstOne();
+    BookEntity book = bookRepository.findById(expectedBook.getBookId()).orElse(null);
+    assertNull(book);
+  }
 
-        // When & Then
-        performDeleteRequest(targetBook.getBookId()).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(LIST_URL));
+  // --- Helper Methods ---
+  private Map<Integer, String> getAuthorMap() {
+    return authorRepository.findAll().stream().collect(Collectors.toMap(AuthorEntity::getAuthorId,
+        AuthorEntity::getAuthorName, (existing, replacement) -> existing, LinkedHashMap::new));
+  }
 
-        entityManager.flush(); // 未処理のSQLを全部出す
-        entityManager.clear(); // キャッシュをクリア
+  private ResultActions performGetDetailRequest(int bookId) throws Exception {
+    return mockMvc
+        .perform(
+            get(DETAIL_ENDPOINT, bookId).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andDo(print());
+  }
 
-        BookEntity book = bookMapper.findOne(targetBook.getBookId());
-        assertNull(book);
-    }
+  private ResultActions performGetRegisterRequest() throws Exception {
+    return mockMvc
+        .perform(get(REGISTER_ENDPOINT).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andDo(print());
+  }
 
-    private ResultActions performDeleteRequest(int bookId) throws Exception {
-        return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "")
-                .param("bookId", String.valueOf(bookId))).andDo(print());
-    }
+  private ResultActions performRegisterRequest(BookForm form) throws Exception {
+    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("bookName", form.getBookName())
+        .param("authorId", String.valueOf(form.getAuthorId()))).andDo(print());
+  }
+
+  private ResultActions performUpdateRequest(BookEntity book) throws Exception {
+    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
+        .param("bookId", book.getBookId().toString()).param("bookName", book.getBookName())
+        .param("authorId", book.getAuthor().getAuthorId().toString())).andDo(print());
+  }
+
+  private ResultActions performDeleteRequest(int bookId) throws Exception {
+    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("bookId",
+        String.valueOf(bookId))).andDo(print());
+  }
 }
