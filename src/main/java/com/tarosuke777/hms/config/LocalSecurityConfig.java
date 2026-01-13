@@ -15,9 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @Order(2)
-/**
- * https://spring.pleiades.io/spring-boot/reference/data/sql.html#data.sql.h2-web-console
- */
 public class LocalSecurityConfig {
   @Bean
   SecurityFilterChain h2ConsoleSecurityFilterChain(HttpSecurity http) throws Exception {
