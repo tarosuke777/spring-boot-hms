@@ -2,6 +2,7 @@ package com.tarosuke777.hms.config;
 
 import java.util.Optional;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Component;
 public class AuditorAwareImpl implements AuditorAware<String> {
 
     @Override
+    @NonNull
     public Optional<String> getCurrentAuditor() {
-        System.out.println("★AuditorAwareが呼ばれました！");
         // 1. セキュリティコンテキスト（ログイン情報が詰まった箱）を取得
         return Optional.ofNullable(SecurityContextHolder.getContext())
                 // 2. 認証オブジェクトを取得
