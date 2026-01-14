@@ -7,12 +7,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.TestSecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -120,6 +123,7 @@ public class ArtistControllerTest {
     performUpdateRequest(expectedArtist).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
+    TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
     entityManager.clear();
 
@@ -128,6 +132,29 @@ public class ArtistControllerTest {
     Assertions.assertEquals(updatedEntity.getArtistName(), expectedArtist.getArtistName());
   }
 
+  @Test
+  void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
+
+    // Given: データベースから現在のデータを取得
+    ArtistEntity artist = artistRepository.findAll().get(0);
+    Integer currentId = artist.getArtistId();
+    Integer currentVersion = artist.getVersion(); // 現在のバージョンを取得
+
+    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、
+    // 意図的に古いバージョン（currentVersion - 1 など）をリクエストに含める
+    // もしくは、リクエストを送る直前にDB側のバージョンだけを上げておく
+    artist.setArtistName("Concurrent Update");
+    artistRepository.saveAndFlush(artist); // これでDB上のバージョンが上がる
+    entityManager.clear();
+
+    // When & Then
+    mockMvc
+        .perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
+            .param("artistId", currentId.toString()).param("artistName", "Try to Update")
+            .param("version", currentVersion.toString())) // 古いバージョンを送信
+        .andExpect(status().isOk()).andExpect(view().name("error"))
+        .andExpect(model().attribute("isOptimisticLockError", true));
+  }
 
   @Test
   void delete_ExistingArtist_ShouldDeleteAndRedirectToList() throws Exception {
@@ -176,7 +203,8 @@ public class ArtistControllerTest {
   private ResultActions performUpdateRequest(ArtistEntity artist) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
         .param("artistId", artist.getArtistId().toString())
-        .param("artistName", artist.getArtistName())).andDo(print());
+        .param("artistName", artist.getArtistName())
+        .param("version", artist.getVersion().toString())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int artistId) throws Exception {

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.ArtistService;
 import com.tarosuke777.hms.form.ArtistForm;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,7 +52,8 @@ public class ArtistController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@ModelAttribute @Validated ArtistForm form, BindingResult bindingResult) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) ArtistForm form,
+      BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
       return "artist/detail";
     }

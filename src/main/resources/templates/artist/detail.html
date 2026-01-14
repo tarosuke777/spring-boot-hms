@@ -13,6 +13,7 @@
 		<form method="post" th:action="@{/artist/detail}"
 			th:object="${artistForm}">
 			<input type="hidden" th:field="*{artistId}">
+			<input type="hidden" th:field="*{version}" />
 			<div class="mb-3 row">
 				<label for="artistName" class="col-sm-2 col-form-label">Artist
 					Name</label>

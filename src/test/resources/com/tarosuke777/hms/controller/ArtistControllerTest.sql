@@ -14,4 +14,7 @@ INSERT INTO user(
     ,'ROLE_USER'
 );
 
-INSERT INTO artist(artist_name) VALUES('藤川千愛'),('分島花音');
+INSERT INTO artist (artist_name, created_at, updated_at, created_by, updated_by, version) 
+VALUES ('Sample1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+INSERT INTO artist (artist_name, created_at, updated_at, created_by, updated_by, version) 
+VALUES ('Sample2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
