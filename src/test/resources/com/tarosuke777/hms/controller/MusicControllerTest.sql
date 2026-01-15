@@ -14,8 +14,21 @@ INSERT INTO user(
     ,'ROLE_USER'
 );
 
-INSERT INTO artist(artist_name) VALUES('藤川千愛'),('分島花音');
+INSERT INTO artist (artist_name, created_at, updated_at, created_by, updated_by, version) 
+VALUES 
+('Test Artist A', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), 'TEST_USER', 'TEST_USER', 0),
+('Test Artist B', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), 'TEST_USER', 'TEST_USER', 0);
 
-INSERT INTO music(music_name, artist_id) select '好きになってはいけない理由', artist_id from artist LIMIT 1, 1;
-INSERT INTO music(music_name, artist_id) select 'ゆずれない', artist_id from artist LIMIT 1, 1;
-INSERT INTO music(music_name, artist_id) select 'サクラメイキュウ', artist_id from artist LIMIT 2, 1;
+-- Test Artist A に紐づく曲
+INSERT INTO music (music_name, artist_id, created_at, updated_at, created_by, updated_by, version)
+SELECT 'Test Track 01 - A', artist_id, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), 'TEST_USER', 'TEST_USER', 0 
+FROM artist WHERE artist_name = 'Test Artist A';
+
+INSERT INTO music (music_name, artist_id, created_at, updated_at, created_by, updated_by, version)
+SELECT 'Test Track 02 - A', artist_id, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), 'TEST_USER', 'TEST_USER', 0 
+FROM artist WHERE artist_name = 'Test Artist A';
+
+-- Test Artist B に紐づく曲
+INSERT INTO music (music_name, artist_id, created_at, updated_at, created_by, updated_by, version)
+SELECT 'Test Track 03 - B', artist_id, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), 'TEST_USER', 'TEST_USER', 0 
+FROM artist WHERE artist_name = 'Test Artist B';

@@ -13,6 +13,7 @@
 		<form method="post" th:action="@{/music/detail}"
 			th:object="${musicForm}">
 			<input type="hidden" th:field="*{musicId}">
+			<input type="hidden" th:field="*{version}" />
 			<div class="mb-3 row">
 				<label for="musicName" class="col-sm-2 col-form-label">Music
 					Name</label>
