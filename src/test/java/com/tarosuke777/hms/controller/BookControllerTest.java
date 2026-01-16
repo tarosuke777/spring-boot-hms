@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.TestSecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -111,7 +112,7 @@ public class BookControllerTest {
 
     // Given
     AuthorEntity authorEntity = authorRepository.findAll().get(0);
-    BookForm bookForm = new BookForm(null, "test", authorEntity.getAuthorId(), null, null);
+    BookForm bookForm = new BookForm(null, "test", authorEntity.getAuthorId(), null, null, null);
 
     // When & Then
     performRegisterRequest(bookForm).andExpect(status().is3xxRedirection())
@@ -139,6 +140,7 @@ public class BookControllerTest {
     performUpdateRequest(expectedBook).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
+    TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
     entityManager.clear();
 
@@ -196,7 +198,8 @@ public class BookControllerTest {
   private ResultActions performUpdateRequest(BookEntity book) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
         .param("bookId", book.getBookId().toString()).param("bookName", book.getBookName())
-        .param("authorId", book.getAuthor().getAuthorId().toString())).andDo(print());
+        .param("authorId", book.getAuthor().getAuthorId().toString())
+        .param("version", book.getVersion().toString())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int bookId) throws Exception {

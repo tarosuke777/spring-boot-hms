@@ -1,6 +1,8 @@
 package com.tarosuke777.hms.form;
 
+import com.tarosuke777.hms.validation.UpdateGroup;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class BookForm {
+
+  @NotNull(groups = UpdateGroup.class)
   private Integer bookId;
 
   @NotBlank
@@ -21,5 +25,8 @@ public class BookForm {
   private String link;
 
   private String note;
+
+  @NotNull(groups = UpdateGroup.class)
+  private Integer version;
 
 }
