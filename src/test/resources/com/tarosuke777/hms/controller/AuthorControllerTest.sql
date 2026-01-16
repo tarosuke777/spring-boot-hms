@@ -14,4 +14,7 @@ INSERT INTO user(
     ,'ROLE_USER'
 );
 
-INSERT INTO author(author_name) VALUES('著者１'),('著者２');
+INSERT INTO author (author_name, created_at, updated_at, created_by, updated_by, version) 
+VALUES ('Sample1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+INSERT INTO author (author_name, created_at, updated_at, created_by, updated_by, version) 
+VALUES ('Sample2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
