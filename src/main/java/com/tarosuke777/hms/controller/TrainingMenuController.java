@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.TrainingMenuService;
 import com.tarosuke777.hms.enums.TargetArea;
 import com.tarosuke777.hms.form.TrainingMenuForm;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,7 +56,7 @@ public class TrainingMenuController {
 	}
 
 	@PostMapping(value = "detail", params = "update")
-	public String update(@ModelAttribute @Validated TrainingMenuForm form,
+	public String update(@ModelAttribute @Validated(UpdateGroup.class) TrainingMenuForm form,
 			BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
 			return "trainingMenu/detail";

@@ -39,11 +39,7 @@ public class TrainingMenuService {
 
 	@Transactional
 	public void updateTrainingMenu(TrainingMenuForm form) {
-		// 既存データの存在確認を兼ねて取得し、上書きマッピング
-		TrainingMenuEntity entity = trainingMenuRepository.findById(form.getTrainingMenuId())
-				.orElseThrow(() -> new RuntimeException("Menu not found"));
-
-		modelMapper.map(form, entity);
+		TrainingMenuEntity entity = modelMapper.map(form, TrainingMenuEntity.class);
 		trainingMenuRepository.save(entity);
 	}
 
