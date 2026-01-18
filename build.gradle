@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.5.9'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'org.owasp.dependencycheck' version '12.1.9'
+	id 'jacoco'
 }
 
 group = 'com.tarosuke777.hms'
@@ -79,16 +80,26 @@ dependencies {
 
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-	systemProperty 'spring.profiles.active', 'test'
-}
-
 dependencyCheck {
 	failBuildOnCVSS = 7.0 // HIGH (高)の脆弱性のみビルドを失敗させる
 	suppressionFile = 'config/owasp/suppressions.xml' // 誤検知除外用ファイル
 }
 
-jar {
-    enabled = false  // 通常のJAR（-plain.jar）(ライブラリ用)は作らない
+tasks.named('jar') {
+    enabled = false // 通常のJAR（-plain.jar）(ライブラリ用)は作らない
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+	systemProperty 'spring.profiles.active', 'test'
+	finalizedBy 'jacocoTestReport'
+}
+
+tasks.named('jacocoTestReport') {
+	dependsOn tasks.named('test')
+
+	reports {
+        html.required = true
+        xml.required = false
+    }
 }
