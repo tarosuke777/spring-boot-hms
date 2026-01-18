@@ -65,12 +65,11 @@ public class TrainingController {
 	@GetMapping("/register")
 	public String getRegister(TrainingForm trainingForm, Model model) {
 
-		Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
 		List<SelectOptionTrainingMenu> trainingMenuSelectList =
 				trainingMenuService.getTrainingMenuSelectList();
 		Map<Integer, String> trainingTargetAreaMap = TargetArea.getTargetAreaMap();
 
-		addAttributesToModel(model, trainingMenuMap, trainingMenuSelectList, trainingTargetAreaMap);
+		addAttributesToModel(model, trainingMenuSelectList, trainingTargetAreaMap);
 
 		return REGISTER_VIEW;
 	}
@@ -117,10 +116,9 @@ public class TrainingController {
 		model.addAttribute("trainingMenuMap", trainingMenuMap);
 	}
 
-	private void addAttributesToModel(Model model, Map<Integer, String> trainingMenuMap,
+	private void addAttributesToModel(Model model,
 			List<SelectOptionTrainingMenu> trainingMenuSelectList,
 			Map<Integer, String> trainingTargetAreaMap) {
-		model.addAttribute("trainingMenuMap", trainingMenuMap);
 		model.addAttribute("trainingMenuSelectList", trainingMenuSelectList);
 		model.addAttribute("trainingTargetAreaMap", trainingTargetAreaMap);
 	}
