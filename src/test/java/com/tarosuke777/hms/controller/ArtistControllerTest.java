@@ -72,7 +72,7 @@ public class ArtistControllerTest {
   void getDetail_ShouldReturnArtistDetail() throws Exception {
 
     // Given
-    ArtistEntity expectedArtistEntity = artistRepository.findAll().get(0);
+    ArtistEntity expectedArtistEntity = artistRepository.findAll().getFirst();
     ArtistForm expectedArtistForm = modelMapper.map(expectedArtistEntity, ArtistForm.class);
 
     // When & Then
@@ -114,7 +114,7 @@ public class ArtistControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    ArtistEntity expectedArtist = artistRepository.findAll().get(0);
+    ArtistEntity expectedArtist = artistRepository.findAll().getFirst();
     expectedArtist.setArtistName("UpdatedName");
 
     // When & Then
@@ -134,7 +134,7 @@ public class ArtistControllerTest {
   void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
 
     // Given: データベースから現在のデータを取得
-    ArtistEntity artist = artistRepository.findAll().get(0);
+    ArtistEntity artist = artistRepository.findAll().getFirst();
     Integer currentId = artist.getArtistId();
     Integer currentVersion = artist.getVersion(); // 現在のバージョンを取得
 
@@ -158,7 +158,7 @@ public class ArtistControllerTest {
   void delete_ExistingArtist_ShouldDeleteAndRedirectToList() throws Exception {
 
     // Given
-    ArtistEntity targetArtist = artistRepository.findAll().get(0);
+    ArtistEntity targetArtist = artistRepository.findAll().getFirst();
     Integer targetArtistId = targetArtist.getArtistId();
 
     // When & Then

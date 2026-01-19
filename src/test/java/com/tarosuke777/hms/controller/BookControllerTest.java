@@ -82,7 +82,7 @@ public class BookControllerTest {
   @Test
   void getDetail_ShouldReturnBookDetailAndAuthorMap() throws Exception {
     // Given
-    BookEntity bookEntity = bookRepository.findAll().get(0);
+    BookEntity bookEntity = bookRepository.findAll().getFirst();
     BookForm expectedBookForm = modelMapper.map(bookEntity, BookForm.class);
     expectedBookForm.setAuthorId(bookEntity.getAuthor().getAuthorId());
     Map<Integer, String> expectedAuthorMap = getAuthorMap();

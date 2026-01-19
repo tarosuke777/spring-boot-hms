@@ -82,7 +82,7 @@ public class MusicControllerTest {
   @Test
   void getDetail_ShouldReturnMusicDetailAndArtistMap() throws Exception {
     // Given
-    MusicEntity musicEntity = musicRepository.findAll().get(0);
+    MusicEntity musicEntity = musicRepository.findAll().getFirst();
     MusicForm expectedMusicForm = modelMapper.map(musicEntity, MusicForm.class);
     expectedMusicForm.setArtistId(musicEntity.getArtist().getArtistId());
     Map<Integer, String> expectedArtistMap = getArtistMap();
@@ -112,7 +112,7 @@ public class MusicControllerTest {
   void register_WithValidData_ShouldRedirectToList() throws Exception {
 
     // Given
-    ArtistEntity artistEntity = artistRepository.findAll().get(0);
+    ArtistEntity artistEntity = artistRepository.findAll().getFirst();
     MusicForm musicForm = new MusicForm(null, "test", artistEntity.getArtistId(), null, null);
 
     // When & Then
@@ -122,8 +122,7 @@ public class MusicControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    List<MusicEntity> musicEntities = musicRepository.findAll();
-    MusicEntity musicEntity = musicEntities.get(musicEntities.size() - 1);
+    MusicEntity musicEntity = musicRepository.findAll().getLast();
 
     Assertions.assertEquals(musicForm.getMusicName(), musicEntity.getMusicName());
     Assertions.assertEquals(musicForm.getArtistId(), musicEntity.getArtist().getArtistId());
@@ -133,7 +132,7 @@ public class MusicControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    MusicEntity expectedMusic = musicRepository.findAll().get(0);
+    MusicEntity expectedMusic = musicRepository.findAll().getFirst();
     expectedMusic.setMusicName("更新後の曲名");
 
     // When & Then
@@ -152,7 +151,7 @@ public class MusicControllerTest {
   void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
 
     // Given: データベースから現在のデータを取得
-    MusicEntity music = musicRepository.findAll().get(0);
+    MusicEntity music = musicRepository.findAll().getFirst();
     Integer currentId = music.getMusicId();
     Integer currentVersion = music.getVersion(); // 現在のバージョンを取得
 
@@ -177,7 +176,7 @@ public class MusicControllerTest {
   void delete_ExistingMusic_ShouldDeleteAndRedirectToList() throws Exception {
 
     // Given
-    MusicEntity targetMusic = musicRepository.findAll().get(0);
+    MusicEntity targetMusic = musicRepository.findAll().getFirst();
 
     // When & Then
     performDeleteRequest(targetMusic.getMusicId()).andExpect(status().is3xxRedirection())

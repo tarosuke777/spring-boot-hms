@@ -71,7 +71,7 @@ public class TrainingMenuControllerTest {
   void getDetail_ShouldReturnTrainingMenuDetail() throws Exception {
 
     // Given
-    TrainingMenuEntity entity = TrainingMenuRepository.findAll().get(0);
+    TrainingMenuEntity entity = TrainingMenuRepository.findAll().getFirst();
     TrainingMenuForm expectedTrainingMenuForm = modelMapper.map(entity, TrainingMenuForm.class);
 
     // When & Then
@@ -103,8 +103,7 @@ public class TrainingMenuControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    List<TrainingMenuEntity> TrainingMenus = TrainingMenuRepository.findAll();
-    TrainingMenuEntity lastTrainingMenu = TrainingMenus.get(TrainingMenus.size() - 1);
+    TrainingMenuEntity lastTrainingMenu = TrainingMenuRepository.findAll().getLast();
     Assertions.assertEquals(TrainingMenuName, lastTrainingMenu.getTrainingMenuName());
   }
 
@@ -112,7 +111,7 @@ public class TrainingMenuControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    TrainingMenuEntity expectedTrainingMenu = TrainingMenuRepository.findAll().get(0);
+    TrainingMenuEntity expectedTrainingMenu = TrainingMenuRepository.findAll().getFirst();
     expectedTrainingMenu.setTrainingMenuName("著者２");
 
     // When & Then
@@ -133,7 +132,7 @@ public class TrainingMenuControllerTest {
   void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
 
     // Given: データベースから現在のデータを取得
-    TrainingMenuEntity TrainingMenu = TrainingMenuRepository.findAll().get(0);
+    TrainingMenuEntity TrainingMenu = TrainingMenuRepository.findAll().getFirst();
     Integer currentId = TrainingMenu.getTrainingMenuId();
     Integer currentVersion = TrainingMenu.getVersion(); // 現在のバージョンを取得
 
@@ -157,7 +156,7 @@ public class TrainingMenuControllerTest {
   void delete_ExistingTrainingMenu_ShouldDeleteAndRedirectToList() throws Exception {
 
     // Given
-    TrainingMenuEntity targetTrainingMenu = TrainingMenuRepository.findAll().get(0);
+    TrainingMenuEntity targetTrainingMenu = TrainingMenuRepository.findAll().getFirst();
     Integer targetTrainingMenuId = targetTrainingMenu.getTrainingMenuId();
 
     // When & Then

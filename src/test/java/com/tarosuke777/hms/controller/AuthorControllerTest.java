@@ -72,7 +72,7 @@ public class AuthorControllerTest {
   void getDetail_ShouldReturnAuthorDetail() throws Exception {
 
     // Given
-    AuthorEntity entity = authorRepository.findAll().get(0);
+    AuthorEntity entity = authorRepository.findAll().getFirst();
     AuthorForm expectedAuthorForm = modelMapper.map(entity, AuthorForm.class);
 
     // When & Then
@@ -106,8 +106,7 @@ public class AuthorControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    List<AuthorEntity> authors = authorRepository.findAll();
-    AuthorEntity lastAuthor = authors.get(authors.size() - 1);
+    AuthorEntity lastAuthor = authorRepository.findAll().getLast();
     Assertions.assertEquals(authorName, lastAuthor.getAuthorName());
   }
 
@@ -115,7 +114,7 @@ public class AuthorControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    AuthorEntity expectedAuthor = authorRepository.findAll().get(0);
+    AuthorEntity expectedAuthor = authorRepository.findAll().getFirst();
     expectedAuthor.setAuthorName("著者２");
 
     // When & Then
@@ -134,7 +133,7 @@ public class AuthorControllerTest {
   void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
 
     // Given: データベースから現在のデータを取得
-    AuthorEntity author = authorRepository.findAll().get(0);
+    AuthorEntity author = authorRepository.findAll().getFirst();
     Integer currentId = author.getAuthorId();
     Integer currentVersion = author.getVersion(); // 現在のバージョンを取得
 
@@ -158,7 +157,7 @@ public class AuthorControllerTest {
   void delete_ExistingAuthor_ShouldDeleteAndRedirectToList() throws Exception {
 
     // Given
-    AuthorEntity targetAuthor = authorRepository.findAll().get(0);
+    AuthorEntity targetAuthor = authorRepository.findAll().getFirst();
     Integer targetAuthorId = targetAuthor.getAuthorId();
 
     // When & Then

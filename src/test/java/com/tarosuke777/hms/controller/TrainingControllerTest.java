@@ -117,7 +117,7 @@ public class TrainingControllerTest {
   void register_WithValidData_ShouldRedirectToList() throws Exception {
 
     // Given
-    TrainingMenuEntity trainingMenuEntity = trainingMenuRepository.findAll().get(0);
+    TrainingMenuEntity trainingMenuEntity = trainingMenuRepository.findAll().getFirst();
 
     // LocalDateを使用するため、テスト用の日付を準備します
     LocalDate testDate = LocalDate.now();
@@ -138,8 +138,7 @@ public class TrainingControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    List<TrainingEntity> trainings = trainingRepository.findAll();
-    TrainingEntity savedTraining = trainings.get(trainings.size() - 1);
+    TrainingEntity savedTraining = trainingRepository.findAll().getLast();
 
     Assertions.assertEquals(trainingForm.getTrainingDate(), savedTraining.getTrainingDate());
     Assertions.assertEquals(trainingForm.getTrainingMenuId(),
@@ -154,7 +153,7 @@ public class TrainingControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    TrainingEntity expectedTraining = trainingRepository.findAll().get(0);
+    TrainingEntity expectedTraining = trainingRepository.findAll().getFirst();
     LocalDate newDate = expectedTraining.getTrainingDate().plusDays(1);
     Integer newWeight = 100; // 例: 重量を100に更新
 
@@ -179,7 +178,7 @@ public class TrainingControllerTest {
   void delete_ExistingTraining_ShouldDeleteAndRedirectToList() throws Exception {
 
     // Given
-    TrainingEntity expectedTraining = trainingRepository.findAll().get(0);
+    TrainingEntity expectedTraining = trainingRepository.findAll().getFirst();
 
     // When & Then
     performDeleteRequest(expectedTraining.getTrainingId()).andExpect(status().is3xxRedirection())
