@@ -20,17 +20,27 @@ INSERT INTO training_menu (training_menu_name, target_area_id, link, created_at,
 VALUES ('Squat', 2, 'https://example.com/squat', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
 
 -- 1件目: 'Push Up' という名前のメニューIDを取得して記録
-INSERT INTO training (training_date, training_menu_id, weight, reps, sets)
+INSERT INTO training (training_date, training_menu_id, weight, reps, sets, created_at, updated_at, created_by, updated_by, version)
 VALUES (
     CURRENT_DATE,
     (SELECT training_menu_id FROM training_menu WHERE training_menu_name = 'Push Up' LIMIT 1), 
-    60, 10, 3
+    60, 10, 3,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'SYSTEM',
+    'SYSTEM',
+    0
 );
 
 -- 2件目: 'Squat' という名前のメニューIDを取得して記録
-INSERT INTO training (training_date, training_menu_id, weight, reps, sets)
+INSERT INTO training (training_date, training_menu_id, weight, reps, sets, created_at, updated_at, created_by, updated_by, version)
 VALUES (
     CURRENT_DATE,
     (SELECT training_menu_id FROM training_menu WHERE training_menu_name = 'Squat' LIMIT 1), 
-    80, 12, 3
+    80, 12, 3,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP,
+    'SYSTEM',
+    'SYSTEM',
+    0
 );

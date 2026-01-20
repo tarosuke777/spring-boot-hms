@@ -127,7 +127,8 @@ public class TrainingControllerTest {
         trainingMenuEntity.getTrainingMenuId(), // trainingMenuId
         60, // weight (例: 60kg)
         10, // reps (例: 10回)
-        3 // sets (例: 3セット)
+        3, // sets (例: 3セット)
+        0 // version (例: 0)
     );
 
 
@@ -255,7 +256,8 @@ public class TrainingControllerTest {
         .param("trainingMenuId", training.getTrainingMenu().getTrainingMenuId().toString())
         .param("weight", String.valueOf(training.getWeight()))
         .param("reps", String.valueOf(training.getReps()))
-        .param("sets", String.valueOf(training.getSets()))).andDo(print());
+        .param("sets", String.valueOf(training.getSets()))
+        .param("version", String.valueOf(training.getVersion()))).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int trainingId) throws Exception {
