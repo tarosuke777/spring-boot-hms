@@ -5,6 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.MovieEntity;
+import com.tarosuke777.hms.entity.MusicEntity;
 import com.tarosuke777.hms.form.MovieForm;
 import com.tarosuke777.hms.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,10 +40,7 @@ public class MovieService {
     /** 更新 */
     @Transactional
     public void updateMovie(MovieForm form) {
-        MovieEntity entity = movieRepository.findById(form.getMovieId())
-                .orElseThrow(() -> new RuntimeException("Movie not found"));
-
-        modelMapper.map(form, entity);
+        MovieEntity entity = modelMapper.map(form, MovieEntity.class);
         movieRepository.save(entity);
     }
 
