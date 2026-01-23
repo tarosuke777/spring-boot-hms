@@ -18,4 +18,6 @@ public class DiaryForm {
     private Integer funActual;
     private String commentPlan;
     private String commentActual;
+
+    private Integer version;
 }
