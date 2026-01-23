@@ -18,7 +18,7 @@ public class GlobalControllerAdvice {
 
 		// 排他制御エラーであることを示すフラグやメッセージを渡す
 		model.addAttribute("isOptimisticLockError", true);
-		model.addAttribute("isNotDisplayMenu", true);
+		model.addAttribute("isNotDisplayMenu", false);
 
 		return "error";
 	}
