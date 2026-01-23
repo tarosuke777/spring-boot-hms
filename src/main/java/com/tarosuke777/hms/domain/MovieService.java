@@ -5,7 +5,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.MovieEntity;
-import com.tarosuke777.hms.entity.MusicEntity;
 import com.tarosuke777.hms.form.MovieForm;
 import com.tarosuke777.hms.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
