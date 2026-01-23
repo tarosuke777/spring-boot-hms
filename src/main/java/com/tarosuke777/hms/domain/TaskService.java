@@ -34,10 +34,7 @@ public class TaskService {
 
     @Transactional
     public void updateTask(TaskForm form) {
-        TaskEntity entity = taskRepository.findById(form.getId())
-                .orElseThrow(() -> new RuntimeException("Task not found"));
-
-        modelMapper.map(form, entity);
+        TaskEntity entity = modelMapper.map(form, TaskEntity.class);
         taskRepository.save(entity);
     }
 

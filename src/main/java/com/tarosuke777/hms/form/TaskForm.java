@@ -15,4 +15,6 @@ public class TaskForm implements Serializable {
     private String name;
 
     private String note;
+
+    private Integer version;
 }

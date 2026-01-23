@@ -19,11 +19,12 @@
           <div class="col-md-4 mb-4" draggable="true" th:each="task : ${tasks}" th:id="${'task-' + task.id}">
             <div class="card h-100">
               <form method="post" th:action="@{/task/update}" th:id="${'updateForm-' + task.id}">
+                <input type="hidden" name="id" th:value="${task.id}" />
+                <input type="hidden" name="version" th:value="${task.version}" />
                 <div class="card-header">
                   <input type="text" name="name" class="form-control" th:value="${task.name}" />
                 </div>
                 <div class="card-body">
-                  <input type="hidden" name="id" th:value="${task.id}" />
                   <textarea name="note" class="form-control" rows="5" th:text="${task.note}"></textarea>
                 </div>
               </form>
