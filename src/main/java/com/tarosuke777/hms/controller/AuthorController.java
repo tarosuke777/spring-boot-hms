@@ -1,5 +1,7 @@
 package com.tarosuke777.hms.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,8 +25,8 @@ public class AuthorController {
   private final AuthorService authorService;
 
   @GetMapping("/list")
-  public String getList(Model model) {
-    model.addAttribute("authorList", authorService.getAuthorList());
+  public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
+    model.addAttribute("authorList", authorService.getAuthorList(user.getUsername()));
     return "author/list";
   }
 
@@ -44,24 +46,26 @@ public class AuthorController {
   }
 
   @GetMapping("/detail/{authorId}")
-  public String getDetail(@PathVariable("authorId") Integer authorId, Model model) {
-    AuthorForm form = authorService.getAuthor(authorId);
+  public String getDetail(@PathVariable("authorId") Integer authorId, Model model,
+      @AuthenticationPrincipal UserDetails user) {
+    AuthorForm form = authorService.getAuthor(authorId, user.getUsername());
     model.addAttribute("authorForm", form);
     return "author/detail";
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@ModelAttribute @Validated AuthorForm form, BindingResult bindingResult) {
+  public String update(@ModelAttribute @Validated AuthorForm form, BindingResult bindingResult,
+      @AuthenticationPrincipal UserDetails user) {
     if (bindingResult.hasErrors()) {
       return "author/detail";
     }
-    authorService.updateAuthor(form);
+    authorService.updateAuthor(form, user.getUsername());
     return "redirect:/author/list";
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(AuthorForm form) {
-    authorService.deleteAuthor(form.getAuthorId());
+  public String delete(AuthorForm form, @AuthenticationPrincipal UserDetails user) {
+    authorService.deleteAuthor(form.getAuthorId(), user.getUsername());
     return "redirect:/author/list";
   }
 

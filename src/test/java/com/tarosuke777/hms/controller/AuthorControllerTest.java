@@ -58,7 +58,7 @@ public class AuthorControllerTest {
   void getList_ShouldReturnAuthorList() throws Exception {
 
     // Given
-    List<AuthorForm> expectedAuthorList = authorRepository.findAll().stream()
+    List<AuthorForm> expectedAuthorList = authorRepository.findByCreatedBy("admin").stream()
         .map(entity -> modelMapper.map(entity, AuthorForm.class)).toList();
 
     // When & Then
@@ -114,41 +114,43 @@ public class AuthorControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    AuthorEntity expectedAuthor = authorRepository.findAll().getFirst();
-    expectedAuthor.setAuthorName("著者２");
+    AuthorEntity targetEntity = authorRepository.findAll().getFirst();
+
+    AuthorForm form = modelMapper.map(targetEntity, AuthorForm.class);
+    form.setAuthorName("著者２");
 
     // When & Then
-    performUpdateRequest(expectedAuthor).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
     entityManager.clear();
 
-    AuthorEntity author = authorRepository.findById(expectedAuthor.getAuthorId()).orElse(null);
-    Assertions.assertEquals(author.getAuthorName(), expectedAuthor.getAuthorName());
+    AuthorEntity updatedEntity = authorRepository.findById(form.getAuthorId()).orElse(null);
+    Assertions.assertEquals(form.getAuthorName(), updatedEntity.getAuthorName());
   }
 
   @Test
   void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
 
     // Given: データベースから現在のデータを取得
-    AuthorEntity author = authorRepository.findAll().getFirst();
-    Integer currentId = author.getAuthorId();
-    Integer currentVersion = author.getVersion(); // 現在のバージョンを取得
+    AuthorEntity targetEntity = authorRepository.findAll().getFirst();
+    Integer currentId = targetEntity.getAuthorId();
+    Integer currentVersion = targetEntity.getVersion(); // 現在のバージョンを取得
 
     // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
-    author.setAuthorName("Concurrent Update");
-    authorRepository.saveAndFlush(author); // これでDB上のバージョンが上がる
+    targetEntity.setAuthorName("Concurrent Update");
+    authorRepository.saveAndFlush(targetEntity); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    AuthorEntity authorToUpdate = new AuthorEntity();
-    authorToUpdate.setAuthorId(currentId);
-    authorToUpdate.setAuthorName("Try to Update");
-    authorToUpdate.setVersion(currentVersion); // 古いバージョンをセット
+    AuthorForm form = new AuthorForm();
+    form.setAuthorId(currentId);
+    form.setAuthorName("Try to Update");
+    form.setVersion(currentVersion); // 古いバージョンをセット
 
     // When & Then
-    performUpdateRequest(authorToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -156,7 +158,7 @@ public class AuthorControllerTest {
   void delete_ExistingAuthor_ShouldDeleteAndRedirectToList() throws Exception {
 
     // Given
-    AuthorEntity targetAuthor = authorRepository.findAll().getFirst();
+    AuthorEntity targetAuthor = authorRepository.findByCreatedBy("admin").getFirst();
     Integer targetAuthorId = targetAuthor.getAuthorId();
 
     // When & Then
@@ -196,11 +198,10 @@ public class AuthorControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performUpdateRequest(AuthorEntity author) throws Exception {
+  private ResultActions performUpdateRequest(AuthorForm form) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("authorId", author.getAuthorId().toString())
-        .param("authorName", author.getAuthorName())
-        .param("version", author.getVersion().toString())).andDo(print());
+        .param("authorId", form.getAuthorId().toString()).param("authorName", form.getAuthorName())
+        .param("version", form.getVersion().toString())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int authorId) throws Exception {

@@ -15,6 +15,6 @@ INSERT INTO user(
 );
 
 INSERT INTO author (author_name, created_at, updated_at, created_by, updated_by, version) 
-VALUES ('Sample1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+VALUES ('Sample1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin', 0);
 INSERT INTO author (author_name, created_at, updated_at, created_by, updated_by, version) 
-VALUES ('Sample2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+VALUES ('Sample2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'user', 'user', 0);

@@ -19,13 +19,13 @@ public class AuthorService {
   private final AuthorRepository authorRepository;
   private final ModelMapper modelMapper;
 
-  public List<AuthorForm> getAuthorList() {
-    return authorRepository.findAll().stream()
+  public List<AuthorForm> getAuthorList(String currentUserId) {
+    return authorRepository.findByCreatedBy(currentUserId).stream()
         .map(entity -> modelMapper.map(entity, AuthorForm.class)).toList();
   }
 
-  public AuthorForm getAuthor(Integer authorId) {
-    AuthorEntity author = authorRepository.findById(authorId)
+  public AuthorForm getAuthor(Integer authorId, String currentUserId) {
+    AuthorEntity author = authorRepository.findByAuthorIdAndCreatedBy(authorId, currentUserId)
         .orElseThrow(() -> new RuntimeException("Author not found"));
     return modelMapper.map(author, AuthorForm.class);
   }
@@ -37,9 +37,10 @@ public class AuthorService {
   }
 
   @Transactional
-  public void updateAuthor(AuthorForm form) {
-    AuthorEntity existEntity = authorRepository.findById(form.getAuthorId())
-        .orElseThrow(() -> new RuntimeException("Author not found"));
+  public void updateAuthor(AuthorForm form, String currentUserId) {
+    AuthorEntity existEntity =
+        authorRepository.findByAuthorIdAndCreatedBy(form.getAuthorId(), currentUserId)
+            .orElseThrow(() -> new RuntimeException("Author not found"));
     AuthorEntity entity = new AuthorEntity();
     modelMapper.map(existEntity, entity);
     modelMapper.map(form, entity);
@@ -47,7 +48,10 @@ public class AuthorService {
   }
 
   @Transactional
-  public void deleteAuthor(Integer authorId) {
+  public void deleteAuthor(Integer authorId, String currentUserId) {
+    if (!authorRepository.existsByAuthorIdAndCreatedBy(authorId, currentUserId)) {
+      throw new RuntimeException("Author not found or access denied");
+    }
     authorRepository.deleteById(authorId);
   }
 
