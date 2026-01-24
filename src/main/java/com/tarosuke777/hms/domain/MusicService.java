@@ -50,8 +50,16 @@ public class MusicService {
 
   @Transactional
   public void updateMusic(MusicForm form) {
-    MusicEntity entity = modelMapper.map(form, MusicEntity.class);
+    MusicEntity existEntity = musicRepository.findById(form.getMusicId())
+        .orElseThrow(() -> new RuntimeException("Music not found"));
+    MusicEntity entity = new MusicEntity();
+    modelMapper.map(existEntity, entity);
+    if (existEntity.getArtist() != null) {
+      entity.setArtist(
+          entityManager.getReference(ArtistEntity.class, existEntity.getArtist().getArtistId()));
+    }
 
+    modelMapper.map(form, entity);
     if (form.getArtistId() != null) {
       entity.setArtist(entityManager.getReference(ArtistEntity.class, form.getArtistId()));
     }
