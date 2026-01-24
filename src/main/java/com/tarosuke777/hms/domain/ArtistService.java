@@ -38,7 +38,11 @@ public class ArtistService {
 
   @Transactional
   public void updateArtist(ArtistForm form) {
-    ArtistEntity entity = modelMapper.map(form, ArtistEntity.class);
+    ArtistEntity existEntity = artistRepository.findById(form.getArtistId())
+        .orElseThrow(() -> new RuntimeException("Artist not found"));
+    ArtistEntity entity = new ArtistEntity();
+    modelMapper.map(existEntity, entity);
+    modelMapper.map(form, entity);
     artistRepository.save(entity);
   }
 
