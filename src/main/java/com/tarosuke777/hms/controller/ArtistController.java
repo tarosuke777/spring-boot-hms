@@ -26,8 +26,8 @@ public class ArtistController {
   private final ArtistService artistService;
 
   @GetMapping("/list")
-  public String getList(Model model) {
-    model.addAttribute("artistList", artistService.getArtistList());
+  public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
+    model.addAttribute("artistList", artistService.getArtistList(user.getUsername()));
     return "artist/list";
   }
 
@@ -47,8 +47,9 @@ public class ArtistController {
   }
 
   @GetMapping("/detail/{artistId}")
-  public String getDetail(@PathVariable("artistId") Integer artistId, Model model) {
-    ArtistForm form = artistService.getArtist(artistId);
+  public String getDetail(@PathVariable("artistId") Integer artistId, Model model,
+      @AuthenticationPrincipal UserDetails user) {
+    ArtistForm form = artistService.getArtist(artistId, user.getUsername());
     model.addAttribute("artistForm", form);
     return "artist/detail";
   }
@@ -65,8 +66,8 @@ public class ArtistController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(ArtistForm form) {
-    artistService.deleteArtist(form.getArtistId());
+  public String delete(ArtistForm form, @AuthenticationPrincipal UserDetails user) {
+    artistService.deleteArtist(form.getArtistId(), user.getUsername());
     return "redirect:/artist/list";
   }
 }

@@ -59,7 +59,7 @@ public class ArtistControllerTest {
   void getList_ShouldReturnArtistList() throws Exception {
 
     // Given
-    List<ArtistForm> expectedArtistList = artistRepository.findAll().stream()
+    List<ArtistForm> expectedArtistList = artistRepository.findByCreatedBy("admin").stream()
         .map(entity -> modelMapper.map(entity, ArtistForm.class)).collect(Collectors.toList());
 
     // When & Then

@@ -19,13 +19,13 @@ public class ArtistService {
   private final ArtistRepository artistRepository;
   private final ModelMapper modelMapper;
 
-  public List<ArtistForm> getArtistList() {
-    return artistRepository.findAll().stream()
+  public List<ArtistForm> getArtistList(String currentUserId) {
+    return artistRepository.findByCreatedBy(currentUserId).stream()
         .map(entity -> modelMapper.map(entity, ArtistForm.class)).toList();
   }
 
-  public ArtistForm getArtist(Integer artistId) {
-    ArtistEntity artist = artistRepository.findById(artistId)
+  public ArtistForm getArtist(Integer artistId, String currentUserId) {
+    ArtistEntity artist = artistRepository.findByArtistIdAndCreatedBy(artistId, currentUserId)
         .orElseThrow(() -> new RuntimeException("Artist not found"));
     return modelMapper.map(artist, ArtistForm.class);
   }
@@ -48,7 +48,10 @@ public class ArtistService {
   }
 
   @Transactional
-  public void deleteArtist(Integer artistId) {
+  public void deleteArtist(Integer artistId, String currentUserId) {
+    if (!artistRepository.existsByArtistIdAndCreatedBy(artistId, currentUserId)) {
+      throw new RuntimeException("Artist not found or access denied");
+    }
     artistRepository.deleteById(artistId);
   }
 
