@@ -142,13 +142,13 @@ public class AuthorControllerTest {
     authorRepository.saveAndFlush(author); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    author = new AuthorEntity();
-    author.setAuthorId(currentId);
-    author.setAuthorName("Try to Update");
-    author.setVersion(currentVersion); // 古いバージョンをセット
+    AuthorEntity authorToUpdate = new AuthorEntity();
+    authorToUpdate.setAuthorId(currentId);
+    authorToUpdate.setAuthorName("Try to Update");
+    authorToUpdate.setVersion(currentVersion); // 古いバージョンをセット
 
     // When & Then
-    performUpdateRequest(author).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(authorToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 

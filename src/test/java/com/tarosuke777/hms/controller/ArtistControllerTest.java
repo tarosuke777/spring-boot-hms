@@ -143,13 +143,13 @@ public class ArtistControllerTest {
     artistRepository.saveAndFlush(artist); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    artist = new ArtistEntity();
-    artist.setArtistId(currentId);
-    artist.setArtistName("Try to Update");
-    artist.setVersion(currentVersion); // 古いバージョンをセット
+    ArtistEntity artistToUpdate = new ArtistEntity();
+    artistToUpdate.setArtistId(currentId);
+    artistToUpdate.setArtistName("Try to Update");
+    artistToUpdate.setVersion(currentVersion); // 古いバージョンをセット
 
     // When & Then
-    performUpdateRequest(artist).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(artistToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 

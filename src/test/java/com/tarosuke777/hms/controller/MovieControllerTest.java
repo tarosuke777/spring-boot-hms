@@ -142,13 +142,13 @@ public class MovieControllerTest {
     movieRepository.saveAndFlush(movie); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    movie = new MovieEntity();
-    movie.setMovieId(currentId);
-    movie.setMovieName("Try to Update");
-    movie.setVersion(currentVersion);
+    MovieEntity movieToUpdate = new MovieEntity();
+    movieToUpdate.setMovieId(currentId);
+    movieToUpdate.setMovieName("Try to Update");
+    movieToUpdate.setVersion(currentVersion);
 
     // When & Then
-    performUpdateRequest(movie).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(movieToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
