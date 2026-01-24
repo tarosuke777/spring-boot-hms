@@ -137,19 +137,18 @@ public class MovieControllerTest {
     Integer currentId = movie.getMovieId();
     Integer currentVersion = movie.getVersion(); // 現在のバージョンを取得
 
-    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、
-    // 意図的に古いバージョン（currentVersion - 1 など）をリクエストに含める
-    // もしくは、リクエストを送る直前にDB側のバージョンだけを上げておく
+    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
     movie.setMovieName("Concurrent Update");
     movieRepository.saveAndFlush(movie); // これでDB上のバージョンが上がる
     entityManager.clear();
 
+    movie = new MovieEntity();
+    movie.setMovieId(currentId);
+    movie.setMovieName("Try to Update");
+    movie.setVersion(currentVersion);
+
     // When & Then
-    mockMvc
-        .perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-            .param("movieId", currentId.toString()).param("movieName", "Try to Update")
-            .param("version", currentVersion.toString())) // 古いバージョンを送信
-        .andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(movie).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 

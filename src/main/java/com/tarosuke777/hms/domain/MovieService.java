@@ -39,7 +39,11 @@ public class MovieService {
     /** 更新 */
     @Transactional
     public void updateMovie(MovieForm form) {
-        MovieEntity entity = modelMapper.map(form, MovieEntity.class);
+        MovieEntity existEntity = movieRepository.findById(form.getMovieId())
+                .orElseThrow(() -> new RuntimeException("Movie not found"));
+        MovieEntity entity = new MovieEntity();
+        modelMapper.map(existEntity, entity);
+        modelMapper.map(form, entity);
         movieRepository.save(entity);
     }
 
