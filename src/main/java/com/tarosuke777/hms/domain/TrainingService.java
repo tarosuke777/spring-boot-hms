@@ -37,7 +37,10 @@ public class TrainingService {
 	@Transactional
 	public void registerTraining(TrainingForm form) {
 		TrainingEntity entity = modelMapper.map(form, TrainingEntity.class);
-		resolveRelations(entity, form);
+		if (form.getTrainingMenuId() != null) {
+			entity.setTrainingMenu(
+					entityManager.getReference(TrainingMenuEntity.class, form.getTrainingMenuId()));
+		}
 		trainingRepository.save(entity);
 	}
 
@@ -73,14 +76,6 @@ public class TrainingService {
 			form.setTrainingAreaId(entity.getTrainingMenu().getTargetAreaId());
 		}
 		return form;
-	}
-
-	/** フォームのIDからリレーション先の参照を取得する共通処理 */
-	private void resolveRelations(TrainingEntity entity, TrainingForm form) {
-		if (form.getTrainingMenuId() != null) {
-			entity.setTrainingMenu(
-					entityManager.getReference(TrainingMenuEntity.class, form.getTrainingMenuId()));
-		}
 	}
 
 	@Tool(description = "日付でトレーニングを取得する", name = "getTraining")
