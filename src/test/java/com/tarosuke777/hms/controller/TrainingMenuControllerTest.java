@@ -136,19 +136,19 @@ public class TrainingMenuControllerTest {
     Integer currentId = TrainingMenu.getTrainingMenuId();
     Integer currentVersion = TrainingMenu.getVersion(); // 現在のバージョンを取得
 
-    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、
-    // 意図的に古いバージョン（currentVersion - 1 など）をリクエストに含める
-    // もしくは、リクエストを送る直前にDB側のバージョンだけを上げておく
+    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
     TrainingMenu.setTrainingMenuName("Concurrent Update");
     TrainingMenuRepository.saveAndFlush(TrainingMenu); // これでDB上のバージョンが上がる
     entityManager.clear();
 
+    TrainingMenuEntity trainingMenuToUpdate = new TrainingMenuEntity();
+    trainingMenuToUpdate.setTrainingMenuId(currentId);
+    trainingMenuToUpdate.setTrainingMenuName("Try to Update");
+    trainingMenuToUpdate.setVersion(currentVersion);
+
     // When & Then
-    mockMvc
-        .perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-            .param("trainingMenuId", currentId.toString())
-            .param("trainingMenuName", "Try to Update").param("version", currentVersion.toString())) // 古いバージョンを送信
-        .andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(trainingMenuToUpdate).andExpect(status().isOk())
+        .andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 

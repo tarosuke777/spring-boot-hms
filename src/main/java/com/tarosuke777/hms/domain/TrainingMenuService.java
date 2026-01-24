@@ -39,7 +39,11 @@ public class TrainingMenuService {
 
 	@Transactional
 	public void updateTrainingMenu(TrainingMenuForm form) {
-		TrainingMenuEntity entity = modelMapper.map(form, TrainingMenuEntity.class);
+		TrainingMenuEntity existEntity = trainingMenuRepository.findById(form.getTrainingMenuId())
+				.orElseThrow(() -> new RuntimeException("Menu not found"));
+		TrainingMenuEntity entity = new TrainingMenuEntity();
+		modelMapper.map(existEntity, entity);
+		modelMapper.map(form, entity);
 		trainingMenuRepository.save(entity);
 	}
 
