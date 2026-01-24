@@ -1,5 +1,7 @@
 package com.tarosuke777.hms.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -53,12 +55,12 @@ public class ArtistController {
 
   @PostMapping(value = "detail", params = "update")
   public String update(@ModelAttribute @Validated(UpdateGroup.class) ArtistForm form,
-      BindingResult bindingResult) {
+      BindingResult bindingResult, @AuthenticationPrincipal UserDetails user) {
     if (bindingResult.hasErrors()) {
       return "artist/detail";
     }
 
-    artistService.updateArtist(form);
+    artistService.updateArtist(form, user.getUsername());
     return "redirect:/artist/list";
   }
 

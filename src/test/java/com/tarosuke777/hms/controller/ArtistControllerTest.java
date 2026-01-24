@@ -114,20 +114,21 @@ public class ArtistControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    ArtistEntity expectedArtist = artistRepository.findAll().getFirst();
-    expectedArtist.setArtistName("UpdatedName");
+    ArtistEntity targetArtist = artistRepository.findAll().getFirst();
+
+    ArtistForm artistForm = modelMapper.map(targetArtist, ArtistForm.class);
+    artistForm.setArtistName("UpdatedName");
 
     // When & Then
-    performUpdateRequest(expectedArtist).andExpect(status().is3xxRedirection())
+    performUpdateRequest(artistForm).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
     entityManager.clear();
 
-    ArtistEntity updatedEntity =
-        artistRepository.findById(expectedArtist.getArtistId()).orElse(null);
-    Assertions.assertEquals(updatedEntity.getArtistName(), expectedArtist.getArtistName());
+    ArtistEntity updatedEntity = artistRepository.findById(targetArtist.getArtistId()).orElse(null);
+    Assertions.assertEquals(updatedEntity.getArtistName(), artistForm.getArtistName());
   }
 
   @Test
@@ -143,13 +144,13 @@ public class ArtistControllerTest {
     artistRepository.saveAndFlush(artist); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    ArtistEntity artistToUpdate = new ArtistEntity();
-    artistToUpdate.setArtistId(currentId);
-    artistToUpdate.setArtistName("Try to Update");
-    artistToUpdate.setVersion(currentVersion); // 古いバージョンをセット
+    ArtistForm artistForm = modelMapper.map(artist, ArtistForm.class);
+    artistForm.setArtistId(currentId);
+    artistForm.setArtistName("Try to Update");
+    artistForm.setVersion(currentVersion); // 古いバージョンをセット
 
     // When & Then
-    performUpdateRequest(artistToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(artistForm).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -197,11 +198,11 @@ public class ArtistControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performUpdateRequest(ArtistEntity artist) throws Exception {
+  private ResultActions performUpdateRequest(ArtistForm artistForm) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("artistId", artist.getArtistId().toString())
-        .param("artistName", artist.getArtistName())
-        .param("version", artist.getVersion().toString())).andDo(print());
+        .param("artistId", artistForm.getArtistId().toString())
+        .param("artistName", artistForm.getArtistName())
+        .param("version", artistForm.getVersion().toString())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int artistId) throws Exception {

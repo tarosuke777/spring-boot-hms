@@ -37,9 +37,10 @@ public class ArtistService {
   }
 
   @Transactional
-  public void updateArtist(ArtistForm form) {
-    ArtistEntity existEntity = artistRepository.findById(form.getArtistId())
-        .orElseThrow(() -> new RuntimeException("Artist not found"));
+  public void updateArtist(ArtistForm form, String currentUserId) {
+    ArtistEntity existEntity =
+        artistRepository.findByArtistIdAndCreatedBy(form.getArtistId(), currentUserId)
+            .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
     ArtistEntity entity = new ArtistEntity();
     modelMapper.map(existEntity, entity);
     modelMapper.map(form, entity);
