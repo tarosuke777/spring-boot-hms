@@ -121,19 +121,18 @@ public class TaskControllerTest {
     Integer currentId = task.getId();
     Integer currentVersion = task.getVersion(); // 現在のバージョンを取得
 
-    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、
-    // 意図的に古いバージョン（currentVersion - 1 など）をリクエストに含める
-    // もしくは、リクエストを送る直前にDB側のバージョンだけを上げておく
+    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
     task.setName("Concurrent Update");
     taskRepository.saveAndFlush(task); // これでDB上のバージョンが上がる
     entityManager.clear();
 
+    TaskEntity taskToUpdate = new TaskEntity();
+    taskToUpdate.setId(currentId);
+    taskToUpdate.setName("Try to Update");
+    taskToUpdate.setVersion(currentVersion);
+
     // When & Then
-    mockMvc
-        .perform(
-            post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", currentId.toString())
-                .param("name", "Try to Update").param("version", currentVersion.toString())) // 古いバージョンを送信
-        .andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(taskToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
