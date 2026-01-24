@@ -39,7 +39,11 @@ public class DiaryService {
 
     @Transactional
     public void updateDiary(DiaryForm form) {
-        DiaryEntity entity = modelMapper.map(form, DiaryEntity.class);
+        DiaryEntity existEntity = diaryRepository.findById(form.getDiaryId())
+                .orElseThrow(() -> new RuntimeException("Diary not found"));
+        DiaryEntity entity = new DiaryEntity();
+        modelMapper.map(existEntity, entity);
+        modelMapper.map(form, entity);
         diaryRepository.save(entity);
     }
 

@@ -34,198 +34,199 @@ import jakarta.persistence.EntityManager;
 @WithUserDetails("admin")
 public class DiaryControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private DiaryRepository diaryRepository; // Repositoryへ変更
-    @Autowired
-    private ModelMapper modelMapper; // ModelMapper追加
-    @Autowired
-    private EntityManager entityManager; // キャッシュクリア用
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private DiaryRepository diaryRepository; // Repositoryへ変更
+  @Autowired
+  private ModelMapper modelMapper; // ModelMapper追加
+  @Autowired
+  private EntityManager entityManager; // キャッシュクリア用
 
-    private static final String LIST_ENDPOINT = "/diary/list";
-    private static final String LIST_VIEW = "diary/list";
-    private static final String LIST_URL = "/diary/list";
+  private static final String LIST_ENDPOINT = "/diary/list";
+  private static final String LIST_VIEW = "diary/list";
+  private static final String LIST_URL = "/diary/list";
 
-    private static final String DETAIL_ENDPOINT = "/diary/detail/{id}";
-    private static final String DETAIL_VIEW = "diary/detail";
+  private static final String DETAIL_ENDPOINT = "/diary/detail/{id}";
+  private static final String DETAIL_VIEW = "diary/detail";
 
-    private static final String REGISTER_ENDPOINT = "/diary/register";
-    private static final String REGISTER_VIEW = "diary/register";
+  private static final String REGISTER_ENDPOINT = "/diary/register";
+  private static final String REGISTER_VIEW = "diary/register";
 
-    private static final String UPDATE_ENDPOINT = "/diary/detail";
-    private static final String DELETE_ENDPOINT = "/diary/detail";
+  private static final String UPDATE_ENDPOINT = "/diary/detail";
+  private static final String DELETE_ENDPOINT = "/diary/detail";
 
-    @Test
-    void getList_ShouldReturnDiaryList() throws Exception {
+  @Test
+  void getList_ShouldReturnDiaryList() throws Exception {
 
-        // Given
-        List<DiaryForm> expectedDiaryList = diaryRepository.findAll().stream()
-                .sorted(Comparator.comparing(DiaryEntity::getDiaryDate).reversed())
-                .map(entity -> modelMapper.map(entity, DiaryForm.class)).toList();
+    // Given
+    List<DiaryForm> expectedDiaryList = diaryRepository.findAll().stream()
+        .sorted(Comparator.comparing(DiaryEntity::getDiaryDate).reversed())
+        .map(entity -> modelMapper.map(entity, DiaryForm.class)).toList();
 
-        // When & Then
-        performGetListRequest().andExpect(status().isOk())
-                .andExpect(model().attribute("diaryList", expectedDiaryList))
-                .andExpect(view().name(LIST_VIEW));
-    }
-
-
-    @Test
-    void getDetail_ShouldReturnDiaryDetail() throws Exception {
-
-        // Given
-        DiaryEntity entity = diaryRepository.findAll().get(0);
-        DiaryForm expectedDiaryForm = modelMapper.map(entity, DiaryForm.class);
-
-        // When & Then
-        performGetDetailRequest(entity.getDiaryId()).andExpect(status().isOk())
-                .andExpect(model().attribute("diaryForm", expectedDiaryForm))
-                .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
-    }
+    // When & Then
+    performGetListRequest().andExpect(status().isOk())
+        .andExpect(model().attribute("diaryList", expectedDiaryList))
+        .andExpect(view().name(LIST_VIEW));
+  }
 
 
-    @Test
-    void getRegister_ShouldReturnRegisterPage() throws Exception {
+  @Test
+  void getDetail_ShouldReturnDiaryDetail() throws Exception {
 
-        // Given
+    // Given
+    DiaryEntity entity = diaryRepository.findAll().get(0);
+    DiaryForm expectedDiaryForm = modelMapper.map(entity, DiaryForm.class);
 
-        // When & Then
-        performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
-                .andExpect(model().hasNoErrors());
-    }
+    // When & Then
+    performGetDetailRequest(entity.getDiaryId()).andExpect(status().isOk())
+        .andExpect(model().attribute("diaryForm", expectedDiaryForm))
+        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
+  }
 
 
-    @Test
-    void register_WithValidData_ShouldRedirectToList() throws Exception {
+  @Test
+  void getRegister_ShouldReturnRegisterPage() throws Exception {
 
-        // Given
-        DiaryForm form = new DiaryForm();
-        form.setDiaryDate(LocalDate.of(2026, 1, 23));
-        form.setTodoPlan("Java学習");
-        form.setTodoActual("完了");
-        form.setFunPlan(5);
-        form.setFunActual(4);
-        form.setCommentPlan("集中する");
-        form.setCommentActual("頑張った");
+    // Given
 
-        // When & Then
-        performRegisterRequest(form).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(LIST_URL));
+    // When & Then
+    performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
+        .andExpect(model().hasNoErrors());
+  }
 
-        entityManager.flush();
-        entityManager.clear();
 
-        DiaryEntity lastDiary = diaryRepository.findAll().getLast();
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(form.getDiaryDate(), lastDiary.getDiaryDate()),
-                () -> Assertions.assertEquals(form.getTodoPlan(), lastDiary.getTodoPlan()),
-                () -> Assertions.assertEquals(form.getTodoActual(), lastDiary.getTodoActual()),
-                () -> Assertions.assertEquals(form.getFunPlan(), lastDiary.getFunPlan()),
-                () -> Assertions.assertEquals(form.getFunActual(), lastDiary.getFunActual()),
-                () -> Assertions.assertEquals(form.getCommentPlan(), lastDiary.getCommentPlan()),
-                () -> Assertions.assertEquals(form.getCommentActual(),
-                        lastDiary.getCommentActual()));
-    }
+  @Test
+  void register_WithValidData_ShouldRedirectToList() throws Exception {
 
-    @Test
-    void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
+    // Given
+    DiaryForm form = new DiaryForm();
+    form.setDiaryDate(LocalDate.of(2026, 1, 23));
+    form.setTodoPlan("Java学習");
+    form.setTodoActual("完了");
+    form.setFunPlan(5);
+    form.setFunActual(4);
+    form.setCommentPlan("集中する");
+    form.setCommentActual("頑張った");
 
-        // Given
-        DiaryEntity expectedDiary = diaryRepository.findAll().get(0);
-        expectedDiary.setTodoPlan("update Todo Plan");
+    // When & Then
+    performRegisterRequest(form).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
 
-        // When & Then
-        performUpdateRequest(expectedDiary).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(LIST_URL));
+    entityManager.flush();
+    entityManager.clear();
 
-        TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
-        entityManager.flush();
-        entityManager.clear();
+    DiaryEntity lastDiary = diaryRepository.findAll().getLast();
+    Assertions.assertAll(
+        () -> Assertions.assertEquals(form.getDiaryDate(), lastDiary.getDiaryDate()),
+        () -> Assertions.assertEquals(form.getTodoPlan(), lastDiary.getTodoPlan()),
+        () -> Assertions.assertEquals(form.getTodoActual(), lastDiary.getTodoActual()),
+        () -> Assertions.assertEquals(form.getFunPlan(), lastDiary.getFunPlan()),
+        () -> Assertions.assertEquals(form.getFunActual(), lastDiary.getFunActual()),
+        () -> Assertions.assertEquals(form.getCommentPlan(), lastDiary.getCommentPlan()),
+        () -> Assertions.assertEquals(form.getCommentActual(), lastDiary.getCommentActual()));
+  }
 
-        DiaryEntity diary = diaryRepository.findById(expectedDiary.getDiaryId()).orElse(null);
-        Assertions.assertEquals(diary.getTodoPlan(), expectedDiary.getTodoPlan());
-    }
+  @Test
+  void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
-    @Test
-    void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
+    // Given
+    DiaryEntity expectedDiary = diaryRepository.findAll().get(0);
+    expectedDiary.setTodoPlan("update Todo Plan");
 
-        // Given: データベースから現在のデータを取得
-        DiaryEntity diary = diaryRepository.findAll().get(0);
-        Integer currentId = diary.getDiaryId();
-        Integer currentVersion = diary.getVersion(); // 現在のバージョンを取得
+    // When & Then
+    performUpdateRequest(expectedDiary).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
 
-        // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、
-        // 意図的に古いバージョン（currentVersion - 1 など）をリクエストに含める
-        // もしくは、リクエストを送る直前にDB側のバージョンだけを上げておく
-        diary.setTodoPlan("Concurrent Update");
-        diaryRepository.saveAndFlush(diary); // これでDB上のバージョンが上がる
-        entityManager.clear();
+    TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
+    entityManager.flush();
+    entityManager.clear();
 
-        // When & Then
-        mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-                .param("diaryId", currentId.toString()).param("todoPlan", "Try to Update")
-                .param("version", currentVersion.toString())) // 古いバージョンを送信
-                .andExpect(status().isOk()).andExpect(view().name("error"))
-                .andExpect(model().attribute("isOptimisticLockError", true));
-    }
+    DiaryEntity diary = diaryRepository.findById(expectedDiary.getDiaryId()).orElse(null);
+    Assertions.assertEquals(diary.getTodoPlan(), expectedDiary.getTodoPlan());
+  }
 
-    @Test
-    void delete_ExistingDiary_ShouldDeleteAndRedirectToList() throws Exception {
+  @Test
+  void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
 
-        // Given
-        DiaryEntity targetDiary = diaryRepository.findAll().get(0);
-        Integer targetDiaryId = targetDiary.getDiaryId();
+    // Given: データベースから現在のデータを取得
+    DiaryEntity diary = diaryRepository.findAll().get(0);
+    Integer currentId = diary.getDiaryId();
+    Integer currentVersion = diary.getVersion(); // 現在のバージョンを取得
 
-        // When & Then
-        performDeleteRequest(targetDiary.getDiaryId()).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(LIST_URL));
+    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
+    diary.setTodoPlan("Concurrent Update");
+    diaryRepository.saveAndFlush(diary); // これでDB上のバージョンが上がる
+    entityManager.clear();
 
-        entityManager.flush();
-        entityManager.clear();
+    DiaryEntity diaryToUpdate = new DiaryEntity();
+    diaryToUpdate.setDiaryId(currentId);
+    diaryToUpdate.setTodoPlan("Try to Update");
+    diaryToUpdate.setVersion(currentVersion);
 
-        DiaryEntity diary = diaryRepository.findById(targetDiaryId).orElse(null);
-        Assertions.assertNull(diary);
-    }
+    // When & Then
+    performUpdateRequest(diaryToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
+        .andExpect(model().attribute("isOptimisticLockError", true));
+  }
 
-    // --- Helper Methods ---
+  @Test
+  void delete_ExistingDiary_ShouldDeleteAndRedirectToList() throws Exception {
 
-    private ResultActions performGetListRequest() throws Exception {
-        return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
-    }
+    // Given
+    DiaryEntity targetDiary = diaryRepository.findAll().get(0);
+    Integer targetDiaryId = targetDiary.getDiaryId();
 
-    private ResultActions performGetDetailRequest(int diaryId) throws Exception {
-        return mockMvc.perform(get(DETAIL_ENDPOINT, diaryId).accept(MediaType.TEXT_HTML)
-                .characterEncoding("UTF-8")).andDo(print());
-    }
+    // When & Then
+    performDeleteRequest(targetDiary.getDiaryId()).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
 
-    private ResultActions performGetRegisterRequest() throws Exception {
-        return mockMvc.perform(
-                get(REGISTER_ENDPOINT).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
-                .andDo(print());
-    }
+    entityManager.flush();
+    entityManager.clear();
 
-    private ResultActions performRegisterRequest(DiaryForm form) throws Exception {
-        return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("diaryDate", form.getDiaryDate().toString())
-                .param("todoPlan", form.getTodoPlan()).param("todoActual", form.getTodoActual())
-                .param("funPlan", String.valueOf(form.getFunPlan()))
-                .param("funActual", String.valueOf(form.getFunActual()))
-                .param("commentPlan", form.getCommentPlan())
-                .param("commentActual", form.getCommentActual())).andDo(print());
-    }
+    DiaryEntity diary = diaryRepository.findById(targetDiaryId).orElse(null);
+    Assertions.assertNull(diary);
+  }
 
-    private ResultActions performUpdateRequest(DiaryEntity diary) throws Exception {
-        return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-                .param("diaryId", diary.getDiaryId().toString())
-                .param("todoPlan", diary.getTodoPlan())
-                .param("version", diary.getVersion().toString())).andDo(print());
-    }
+  // --- Helper Methods ---
 
-    private ResultActions performDeleteRequest(int diaryId) throws Exception {
-        return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "")
-                .param("diaryId", String.valueOf(diaryId))).andDo(print());
-    }
+  private ResultActions performGetListRequest() throws Exception {
+    return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
+  }
+
+  private ResultActions performGetDetailRequest(int diaryId) throws Exception {
+    return mockMvc
+        .perform(
+            get(DETAIL_ENDPOINT, diaryId).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andDo(print());
+  }
+
+  private ResultActions performGetRegisterRequest() throws Exception {
+    return mockMvc
+        .perform(get(REGISTER_ENDPOINT).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andDo(print());
+  }
+
+  private ResultActions performRegisterRequest(DiaryForm form) throws Exception {
+    return mockMvc.perform(
+        post(REGISTER_ENDPOINT).with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("diaryDate", form.getDiaryDate().toString())
+            .param("todoPlan", form.getTodoPlan()).param("todoActual", form.getTodoActual())
+            .param("funPlan", String.valueOf(form.getFunPlan()))
+            .param("funActual", String.valueOf(form.getFunActual()))
+            .param("commentPlan", form.getCommentPlan())
+            .param("commentActual", form.getCommentActual()))
+        .andDo(print());
+  }
+
+  private ResultActions performUpdateRequest(DiaryEntity diary) throws Exception {
+    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
+        .param("diaryId", diary.getDiaryId().toString()).param("todoPlan", diary.getTodoPlan())
+        .param("version", diary.getVersion().toString())).andDo(print());
+  }
+
+  private ResultActions performDeleteRequest(int diaryId) throws Exception {
+    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("diaryId",
+        String.valueOf(diaryId))).andDo(print());
+  }
 
 }
