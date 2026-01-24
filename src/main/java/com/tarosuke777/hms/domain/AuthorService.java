@@ -38,8 +38,11 @@ public class AuthorService {
 
   @Transactional
   public void updateAuthor(AuthorForm form) {
-    // JPAではIDがあればsaveでupdateになる
-    AuthorEntity entity = modelMapper.map(form, AuthorEntity.class);
+    AuthorEntity existEntity = authorRepository.findById(form.getAuthorId())
+        .orElseThrow(() -> new RuntimeException("Author not found"));
+    AuthorEntity entity = new AuthorEntity();
+    modelMapper.map(existEntity, entity);
+    modelMapper.map(form, entity);
     authorRepository.save(entity);
   }
 

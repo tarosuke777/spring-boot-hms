@@ -137,19 +137,18 @@ public class AuthorControllerTest {
     Integer currentId = author.getAuthorId();
     Integer currentVersion = author.getVersion(); // 現在のバージョンを取得
 
-    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、
-    // 意図的に古いバージョン（currentVersion - 1 など）をリクエストに含める
-    // もしくは、リクエストを送る直前にDB側のバージョンだけを上げておく
+    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
     author.setAuthorName("Concurrent Update");
     authorRepository.saveAndFlush(author); // これでDB上のバージョンが上がる
     entityManager.clear();
 
+    author = new AuthorEntity();
+    author.setAuthorId(currentId);
+    author.setAuthorName("Try to Update");
+    author.setVersion(currentVersion); // 古いバージョンをセット
+
     // When & Then
-    mockMvc
-        .perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-            .param("authorId", currentId.toString()).param("authorName", "Try to Update")
-            .param("version", currentVersion.toString())) // 古いバージョンを送信
-        .andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(author).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
