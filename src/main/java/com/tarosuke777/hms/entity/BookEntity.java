@@ -27,7 +27,7 @@ import lombok.Setter;
 @Table(name = "book")
 @EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
 @Setter
 public class BookEntity {

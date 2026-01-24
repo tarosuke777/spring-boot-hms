@@ -148,6 +148,30 @@ public class BookControllerTest {
     assertEquals(book.getBookName(), expectedBook.getBookName());
   }
 
+  @Test
+  void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
+
+    // Given: データベースから現在のデータを取得
+    BookEntity book = bookRepository.findAll().getFirst();
+    Integer currentId = book.getBookId();
+    Integer currentVersion = book.getVersion(); // 現在のバージョンを取得
+    AuthorEntity currentAuthor = book.getAuthor();
+
+    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
+    book.setBookName("Concurrent Update");
+    bookRepository.saveAndFlush(book); // これでDB上のバージョンが上がる
+    entityManager.clear();
+
+    BookEntity bookToUpdate = new BookEntity();
+    bookToUpdate.setBookId(currentId);
+    bookToUpdate.setBookName("Try to Update");
+    bookToUpdate.setVersion(currentVersion);
+    bookToUpdate.setAuthor(currentAuthor);
+
+    // When & Then
+    performUpdateRequest(bookToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
+        .andExpect(model().attribute("isOptimisticLockError", true));
+  }
 
   @Test
   void delete_ExistingBook_ShouldDeleteAndRedirectToList() throws Exception {

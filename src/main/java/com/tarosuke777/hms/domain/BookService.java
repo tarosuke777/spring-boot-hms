@@ -34,24 +34,34 @@ public class BookService {
 
   @Transactional
   public void registerBook(BookForm form) {
-    save(form);
-  }
-
-  @Transactional
-  public void updateBook(BookForm form) {
-    save(form);
-  }
-
-  @Transactional
-  public void deleteBook(Integer bookId) {
-    bookRepository.deleteById(bookId);
-  }
-
-  private void save(BookForm form) {
     BookEntity entity = modelMapper.map(form, BookEntity.class);
     if (form.getAuthorId() != null) {
       entity.setAuthor(entityManager.getReference(AuthorEntity.class, form.getAuthorId()));
     }
     bookRepository.save(entity);
+  }
+
+  @Transactional
+  public void updateBook(BookForm form) {
+    BookEntity existEntity = bookRepository.findById(form.getBookId())
+        .orElseThrow(() -> new RuntimeException("Book not found"));
+
+    BookEntity entity = new BookEntity();
+    modelMapper.map(existEntity, entity);
+    if (existEntity.getAuthor() != null) {
+      entity.setAuthor(
+          entityManager.getReference(AuthorEntity.class, existEntity.getAuthor().getAuthorId()));
+    }
+
+    modelMapper.map(form, entity);
+    if (form.getAuthorId() != null) {
+      entity.setAuthor(entityManager.getReference(AuthorEntity.class, form.getAuthorId()));
+    }
+    bookRepository.save(entity);
+  }
+
+  @Transactional
+  public void deleteBook(Integer bookId) {
+    bookRepository.deleteById(bookId);
   }
 }
