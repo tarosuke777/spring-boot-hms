@@ -24,9 +24,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+import com.tarosuke777.hms.entity.TrainingEntity;
 import com.tarosuke777.hms.entity.TrainingMenuEntity;
 import com.tarosuke777.hms.enums.TargetArea;
-import com.tarosuke777.hms.entity.TrainingEntity;
 import com.tarosuke777.hms.form.SelectOptionTrainingMenu;
 import com.tarosuke777.hms.form.TrainingForm;
 import com.tarosuke777.hms.repository.TrainingMenuRepository;
@@ -174,6 +174,34 @@ public class TrainingControllerTest {
     Assertions.assertEquals(newWeight, training.getWeight());
   }
 
+  @Test
+  void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
+
+    // Given: データベースから現在のデータを取得
+    TrainingEntity trainingEntity = trainingRepository.findAll().getFirst();
+    Integer currentId = trainingEntity.getTrainingId();
+    Integer currentVersion = trainingEntity.getVersion(); // 現在のバージョンを取得
+    TrainingMenuEntity currentTrainingMenu = trainingEntity.getTrainingMenu();
+
+    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
+    trainingEntity.setTrainingDate(trainingEntity.getTrainingDate().plusDays(1));
+    trainingRepository.saveAndFlush(trainingEntity); // これでDB上のバージョンが上がる
+    entityManager.clear();
+
+    TrainingEntity trainingToUpdate = new TrainingEntity();
+    trainingToUpdate.setTrainingId(currentId);
+    trainingToUpdate.setTrainingDate(trainingEntity.getTrainingDate().plusDays(1));
+    trainingToUpdate.setVersion(currentVersion);
+    trainingToUpdate.setTrainingMenu(currentTrainingMenu);
+    trainingToUpdate.setWeight(999);
+    trainingToUpdate.setReps(999);
+    trainingToUpdate.setSets(999);
+
+    // When & Then
+    performUpdateRequest(trainingToUpdate).andExpect(status().isOk())
+        .andExpect(view().name("error"))
+        .andExpect(model().attribute("isOptimisticLockError", true));
+  }
 
   @Test
   void delete_ExistingTraining_ShouldDeleteAndRedirectToList() throws Exception {

@@ -43,10 +43,19 @@ public class TrainingService {
 
 	@Transactional
 	public void updateTraining(TrainingForm form) {
-		TrainingEntity entity = trainingRepository.findById(form.getTrainingId())
+		TrainingEntity existingEntity = trainingRepository.findById(form.getTrainingId())
 				.orElseThrow(() -> new RuntimeException("Training not found"));
+		TrainingEntity entity = new TrainingEntity();
+		modelMapper.map(existingEntity, entity);
+		if (existingEntity.getTrainingMenu() != null) {
+			entity.setTrainingMenu(entityManager.getReference(TrainingMenuEntity.class,
+					existingEntity.getTrainingMenu().getTrainingMenuId()));
+		}
 		modelMapper.map(form, entity);
-		resolveRelations(entity, form);
+		if (form.getTrainingMenuId() != null) {
+			entity.setTrainingMenu(
+					entityManager.getReference(TrainingMenuEntity.class, form.getTrainingMenuId()));
+		}
 		trainingRepository.save(entity);
 	}
 
