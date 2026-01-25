@@ -1,7 +1,8 @@
 package com.tarosuke777.hms.controller;
 
 import java.util.List;
-
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,15 +36,17 @@ public class DiaryController {
     @GetMapping("/list")
     public String getList(Model model,
             @RequestParam(name = "orderBy", defaultValue = "diaryDate") String orderBy,
-            @RequestParam(name = "sort", defaultValue = "desc") String sort) {
-        List<DiaryForm> diaryList = diaryService.getDiaryList(orderBy, sort);
+            @RequestParam(name = "sort", defaultValue = "desc") String sort,
+            @AuthenticationPrincipal UserDetails user) {
+        List<DiaryForm> diaryList = diaryService.getDiaryList(orderBy, sort, user.getUsername());
         model.addAttribute("diaryList", diaryList);
         return LIST_VIEW;
     }
 
     @GetMapping("/detail/{diaryId}")
-    public String getDetail(@PathVariable("diaryId") Integer diaryId, Model model) {
-        DiaryForm diaryForm = diaryService.getDiaryDetails(diaryId);
+    public String getDetail(@PathVariable("diaryId") Integer diaryId, Model model,
+            @AuthenticationPrincipal UserDetails user) {
+        DiaryForm diaryForm = diaryService.getDiaryDetails(diaryId, user.getUsername());
         model.addAttribute("diaryForm", diaryForm);
         return DETAIL_VIEW;
     }
@@ -64,14 +67,14 @@ public class DiaryController {
     }
 
     @PostMapping(value = "/detail", params = "update")
-    public String update(DiaryForm form) {
-        diaryService.updateDiary(form);
+    public String update(DiaryForm form, @AuthenticationPrincipal UserDetails user) {
+        diaryService.updateDiary(form, user.getUsername());
         return REDIRECT_LIST;
     }
 
     @PostMapping(value = "/detail", params = "delete")
-    public String delete(DiaryForm form) {
-        diaryService.deleteDiary(form.getDiaryId());
+    public String delete(DiaryForm form, @AuthenticationPrincipal UserDetails user) {
+        diaryService.deleteDiary(form.getDiaryId(), user.getUsername());
         return REDIRECT_LIST;
     }
 }

@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.TestSecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -60,9 +61,9 @@ public class DiaryControllerTest {
   void getList_ShouldReturnDiaryList() throws Exception {
 
     // Given
-    List<DiaryForm> expectedDiaryList = diaryRepository.findAll().stream()
-        .sorted(Comparator.comparing(DiaryEntity::getDiaryDate).reversed())
-        .map(entity -> modelMapper.map(entity, DiaryForm.class)).toList();
+    List<DiaryForm> expectedDiaryList =
+        diaryRepository.findByCreatedBy("admin", Sort.by("diaryDate").descending()).stream()
+            .map(entity -> modelMapper.map(entity, DiaryForm.class)).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
@@ -75,7 +76,7 @@ public class DiaryControllerTest {
   void getDetail_ShouldReturnDiaryDetail() throws Exception {
 
     // Given
-    DiaryEntity entity = diaryRepository.findAll().get(0);
+    DiaryEntity entity = diaryRepository.findAll().getFirst();
     DiaryForm expectedDiaryForm = modelMapper.map(entity, DiaryForm.class);
 
     // When & Then
@@ -131,26 +132,28 @@ public class DiaryControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    DiaryEntity expectedDiary = diaryRepository.findAll().get(0);
-    expectedDiary.setTodoPlan("update Todo Plan");
+    DiaryEntity diary = diaryRepository.findAll().getFirst();
+
+    DiaryForm form = modelMapper.map(diary, DiaryForm.class);
+    form.setTodoPlan("update Todo Plan");
 
     // When & Then
-    performUpdateRequest(expectedDiary).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
     entityManager.clear();
 
-    DiaryEntity diary = diaryRepository.findById(expectedDiary.getDiaryId()).orElse(null);
-    Assertions.assertEquals(diary.getTodoPlan(), expectedDiary.getTodoPlan());
+    DiaryEntity updatedDiary = diaryRepository.findById(form.getDiaryId()).orElse(null);
+    Assertions.assertEquals(form.getTodoPlan(), updatedDiary.getTodoPlan());
   }
 
   @Test
   void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
 
     // Given: データベースから現在のデータを取得
-    DiaryEntity diary = diaryRepository.findAll().get(0);
+    DiaryEntity diary = diaryRepository.findAll().getFirst();
     Integer currentId = diary.getDiaryId();
     Integer currentVersion = diary.getVersion(); // 現在のバージョンを取得
 
@@ -159,13 +162,13 @@ public class DiaryControllerTest {
     diaryRepository.saveAndFlush(diary); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    DiaryEntity diaryToUpdate = new DiaryEntity();
-    diaryToUpdate.setDiaryId(currentId);
-    diaryToUpdate.setTodoPlan("Try to Update");
-    diaryToUpdate.setVersion(currentVersion);
+    DiaryForm form = new DiaryForm();
+    form.setDiaryId(currentId);
+    form.setTodoPlan("Try to Update");
+    form.setVersion(currentVersion);
 
     // When & Then
-    performUpdateRequest(diaryToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -173,7 +176,7 @@ public class DiaryControllerTest {
   void delete_ExistingDiary_ShouldDeleteAndRedirectToList() throws Exception {
 
     // Given
-    DiaryEntity targetDiary = diaryRepository.findAll().get(0);
+    DiaryEntity targetDiary = diaryRepository.findAll().getFirst();
     Integer targetDiaryId = targetDiary.getDiaryId();
 
     // When & Then
@@ -218,10 +221,10 @@ public class DiaryControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performUpdateRequest(DiaryEntity diary) throws Exception {
+  private ResultActions performUpdateRequest(DiaryForm form) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("diaryId", diary.getDiaryId().toString()).param("todoPlan", diary.getTodoPlan())
-        .param("version", diary.getVersion().toString())).andDo(print());
+        .param("diaryId", form.getDiaryId().toString()).param("todoPlan", form.getTodoPlan())
+        .param("version", form.getVersion().toString())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int diaryId) throws Exception {
