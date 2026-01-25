@@ -2,7 +2,8 @@ package com.tarosuke777.hms.controller;
 
 import java.util.List;
 import java.util.Map;
-
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,9 +36,9 @@ public class MusicController {
   private final ArtistService artistService;
 
   @GetMapping("/list")
-  public String getList(Model model) {
+  public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
 
-    List<MusicForm> musicList = musicService.getMusicList();
+    List<MusicForm> musicList = musicService.getMusicList(user.getUsername());
     Map<Integer, String> artistMap = artistService.getArtistMap();
 
     addAttributesToModel(model, musicList, artistMap);
@@ -46,9 +47,10 @@ public class MusicController {
   }
 
   @GetMapping("/detail/{musicId}")
-  public String getDetail(@PathVariable("musicId") Integer musicId, Model model) {
+  public String getDetail(@PathVariable("musicId") Integer musicId, Model model,
+      @AuthenticationPrincipal UserDetails user) {
 
-    MusicForm musicForm = musicService.getMusicDetails(musicId);
+    MusicForm musicForm = musicService.getMusicDetails(musicId, user.getUsername());
     Map<Integer, String> artistMap = artistService.getArtistMap();
 
     addAttributesToModel(model, musicForm, artistMap);
@@ -80,17 +82,17 @@ public class MusicController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(MusicForm form) {
+  public String update(MusicForm form, @AuthenticationPrincipal UserDetails user) {
 
-    musicService.updateMusic(form);
+    musicService.updateMusic(form, user.getUsername());
 
     return REDIRECT_LIST;
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(MusicForm form, Model model) {
+  public String delete(MusicForm form, Model model, @AuthenticationPrincipal UserDetails user) {
 
-    musicService.deleteMusic(form.getMusicId());
+    musicService.deleteMusic(form.getMusicId(), user.getUsername());
 
     return REDIRECT_LIST;
   }

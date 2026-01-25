@@ -66,8 +66,8 @@ public class MusicControllerTest {
   void getList_ShouldReturnMusicListAndArtistMap() throws Exception {
 
     // Given
-    List<MusicForm> expectedMusicList = musicRepository.findAll().stream()
-        .map(entity -> modelMapper.map(entity, MusicForm.class)).toList();
+    List<MusicForm> expectedMusicList = musicRepository.findByCreatedByOrderByMusicIdAsc("admin")
+        .stream().map(entity -> modelMapper.map(entity, MusicForm.class)).toList();
 
     Map<Integer, String> expectedArtistMap = getArtistMap();
 
@@ -132,19 +132,22 @@ public class MusicControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    MusicEntity expectedMusic = musicRepository.findAll().getFirst();
-    expectedMusic.setMusicName("更新後の曲名");
+    MusicEntity music = musicRepository.findAll().getFirst();
+
+    MusicForm form = modelMapper.map(music, MusicForm.class);
+    form.setArtistId(music.getArtist().getArtistId());
+    form.setMusicName("更新後の曲名");
 
     // When & Then
-    performUpdateRequest(expectedMusic).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
     entityManager.clear();
 
-    MusicEntity music = musicRepository.findById(expectedMusic.getMusicId()).orElse(null);
-    assertEquals(music.getMusicName(), expectedMusic.getMusicName());
+    MusicEntity updatedEntity = musicRepository.findById(form.getMusicId()).orElse(null);
+    assertEquals(form.getMusicName(), updatedEntity.getMusicName());
   }
 
   @Test
@@ -161,14 +164,14 @@ public class MusicControllerTest {
     musicRepository.saveAndFlush(music); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    MusicEntity bookToUpdate = new MusicEntity();
-    bookToUpdate.setMusicId(currentId);
-    bookToUpdate.setMusicName("Try to Update");
-    bookToUpdate.setVersion(currentVersion);
-    bookToUpdate.setArtist(currentArtist);
+    MusicForm form = new MusicForm();
+    form.setMusicId(currentId);
+    form.setMusicName("Try to Update");
+    form.setVersion(currentVersion);
+    form.setArtistId(currentArtist.getArtistId());
 
     // When & Then
-    performUpdateRequest(bookToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -219,11 +222,11 @@ public class MusicControllerTest {
         .param("artistId", String.valueOf(form.getArtistId()))).andDo(print());
   }
 
-  private ResultActions performUpdateRequest(MusicEntity music) throws Exception {
+  private ResultActions performUpdateRequest(MusicForm form) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("musicId", music.getMusicId().toString()).param("musicName", music.getMusicName())
-        .param("artistId", music.getArtist().getArtistId().toString())
-        .param("version", music.getVersion().toString())).andDo(print());
+        .param("musicId", form.getMusicId().toString()).param("musicName", form.getMusicName())
+        .param("artistId", String.valueOf(form.getArtistId()))
+        .param("version", form.getVersion().toString())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int musicId) throws Exception {

@@ -1,17 +1,21 @@
 package com.tarosuke777.hms.repository;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import com.tarosuke777.hms.entity.MusicEntity;
 
 @Repository
 public interface MusicRepository extends JpaRepository<MusicEntity, Integer> {
 
-    @Override
-    @NonNull
     @EntityGraph(attributePaths = {"artist"})
-    List<MusicEntity> findAll();
+    Optional<MusicEntity> findByMusicIdAndCreatedBy(Integer musicId, String createdBy);
+
+    @EntityGraph(attributePaths = {"artist"})
+    List<MusicEntity> findByCreatedByOrderByMusicIdAsc(String createdBy);
+
+    boolean existsByMusicIdAndCreatedBy(Integer musicId, String createdBy);
+
 }

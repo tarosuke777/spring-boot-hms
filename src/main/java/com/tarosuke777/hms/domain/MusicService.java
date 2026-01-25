@@ -20,13 +20,13 @@ public class MusicService {
   private final EntityManager entityManager;
   private final ModelMapper modelMapper;
 
-  public List<MusicForm> getMusicList() {
-    return musicRepository.findAll().stream()
+  public List<MusicForm> getMusicList(String currentUserId) {
+    return musicRepository.findByCreatedByOrderByMusicIdAsc(currentUserId).stream()
         .map(entity -> modelMapper.map(entity, MusicForm.class)).toList();
   }
 
-  public MusicForm getMusicDetails(Integer musicId) {
-    MusicEntity music = musicRepository.findById(musicId)
+  public MusicForm getMusicDetails(Integer musicId, String currentUserId) {
+    MusicEntity music = musicRepository.findByMusicIdAndCreatedBy(musicId, currentUserId)
         .orElseThrow(() -> new RuntimeException("Music not found"));
     MusicForm musicForm = modelMapper.map(music, MusicForm.class);
     if (music.getArtist() != null) {
@@ -49,9 +49,10 @@ public class MusicService {
   }
 
   @Transactional
-  public void updateMusic(MusicForm form) {
-    MusicEntity existEntity = musicRepository.findById(form.getMusicId())
-        .orElseThrow(() -> new RuntimeException("Music not found"));
+  public void updateMusic(MusicForm form, String currentUserId) {
+    MusicEntity existEntity =
+        musicRepository.findByMusicIdAndCreatedBy(form.getMusicId(), currentUserId)
+            .orElseThrow(() -> new RuntimeException("Music not found"));
     MusicEntity entity = new MusicEntity();
     modelMapper.map(existEntity, entity);
     if (existEntity.getArtist() != null) {
@@ -68,13 +69,16 @@ public class MusicService {
   }
 
   @Transactional
-  public void deleteMusic(Integer musicId) {
+  public void deleteMusic(Integer musicId, String currentUserId) {
+    if (!musicRepository.existsByMusicIdAndCreatedBy(musicId, currentUserId)) {
+      throw new RuntimeException("Music not found");
+    }
     musicRepository.deleteById(musicId);
   }
 
   @Tool(description = "好きな曲名の一覧を取得する")
-  public String getMusicListForMcp() {
-    return getMusicList().stream().map(MusicForm::getMusicName).reduce((a, b) -> a + ", " + b)
-        .orElse("No music available");
+  public String getMusicListForMcp(String currentUserId) {
+    return musicRepository.findAll().stream().map(MusicEntity::getMusicName)
+        .reduce((a, b) -> a + ", " + b).orElse("No music available");
   }
 }
