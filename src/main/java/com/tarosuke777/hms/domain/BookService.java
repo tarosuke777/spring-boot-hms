@@ -19,14 +19,14 @@ public class BookService {
   private final EntityManager entityManager;
   private final ModelMapper modelMapper;
 
-  public List<BookForm> getBookList() {
-    return bookRepository.findAllByOrderByBookIdAsc().stream()
+  public List<BookForm> getBookList(String currentUserId) {
+    return bookRepository.findByCreatedByOrderByBookIdAsc(currentUserId).stream()
         .map(entity -> modelMapper.map(entity, BookForm.class)).toList();
   }
 
-  public BookForm getBookDetails(Integer bookId) {
-    BookEntity book =
-        bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
+  public BookForm getBookDetails(Integer bookId, String currentUserId) {
+    BookEntity book = bookRepository.findByBookIdAndCreatedBy(bookId, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Book not found"));
     BookForm bookForm = modelMapper.map(book, BookForm.class);
     bookForm.setAuthorId(book.getAuthor().getAuthorId());
     return bookForm;
@@ -42,9 +42,10 @@ public class BookService {
   }
 
   @Transactional
-  public void updateBook(BookForm form) {
-    BookEntity existEntity = bookRepository.findById(form.getBookId())
-        .orElseThrow(() -> new RuntimeException("Book not found"));
+  public void updateBook(BookForm form, String currentUserId) {
+    BookEntity existEntity =
+        bookRepository.findByBookIdAndCreatedBy(form.getBookId(), currentUserId)
+            .orElseThrow(() -> new RuntimeException("Book not found"));
 
     BookEntity entity = new BookEntity();
     modelMapper.map(existEntity, entity);
@@ -61,7 +62,10 @@ public class BookService {
   }
 
   @Transactional
-  public void deleteBook(Integer bookId) {
+  public void deleteBook(Integer bookId, String currentUserId) {
+    if (!bookRepository.existsByBookIdAndCreatedBy(bookId, currentUserId)) {
+      throw new RuntimeException("Book not found or access denied");
+    }
     bookRepository.deleteById(bookId);
   }
 }

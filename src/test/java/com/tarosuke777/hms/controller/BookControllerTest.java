@@ -66,8 +66,8 @@ public class BookControllerTest {
   void getList_ShouldReturnBookListAndAuthorMap() throws Exception {
 
     // Given
-    List<BookForm> expectedBookList = bookRepository.findAll().stream()
-        .map(entity -> modelMapper.map(entity, BookForm.class)).toList();
+    List<BookForm> expectedBookList = bookRepository.findByCreatedByOrderByBookIdAsc("admin")
+        .stream().map(entity -> modelMapper.map(entity, BookForm.class)).toList();
 
     Map<Integer, String> expectedAuthorMap = getAuthorMap();
 
@@ -133,19 +133,21 @@ public class BookControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    BookEntity expectedBook = bookRepository.findAll().get(0);
-    expectedBook.setBookName("更新後の本タイトル");
+    BookEntity book = bookRepository.findAll().get(0);
+    BookForm form = modelMapper.map(book, BookForm.class);
+    form.setAuthorId(book.getAuthor().getAuthorId());
+    form.setBookName("更新後の本タイトル");
 
     // When & Then
-    performUpdateRequest(expectedBook).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
     entityManager.clear();
 
-    BookEntity book = bookRepository.findById(expectedBook.getBookId()).orElse(null);
-    assertEquals(book.getBookName(), expectedBook.getBookName());
+    BookEntity updatedBook = bookRepository.findById(form.getBookId()).orElse(null);
+    assertEquals(form.getBookName(), updatedBook.getBookName());
   }
 
   @Test
@@ -162,14 +164,13 @@ public class BookControllerTest {
     bookRepository.saveAndFlush(book); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    BookEntity bookToUpdate = new BookEntity();
-    bookToUpdate.setBookId(currentId);
-    bookToUpdate.setBookName("Try to Update");
-    bookToUpdate.setVersion(currentVersion);
-    bookToUpdate.setAuthor(currentAuthor);
-
+    BookForm form = new BookForm();
+    form.setBookId(currentId);
+    form.setBookName("Try to Update");
+    form.setVersion(currentVersion);
+    form.setAuthorId(currentAuthor.getAuthorId());
     // When & Then
-    performUpdateRequest(bookToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -219,11 +220,11 @@ public class BookControllerTest {
         .param("authorId", String.valueOf(form.getAuthorId()))).andDo(print());
   }
 
-  private ResultActions performUpdateRequest(BookEntity book) throws Exception {
+  private ResultActions performUpdateRequest(BookForm form) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("bookId", book.getBookId().toString()).param("bookName", book.getBookName())
-        .param("authorId", book.getAuthor().getAuthorId().toString())
-        .param("version", book.getVersion().toString())).andDo(print());
+        .param("bookId", form.getBookId().toString()).param("bookName", form.getBookName())
+        .param("authorId", String.valueOf(form.getAuthorId()))
+        .param("version", form.getVersion().toString())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int bookId) throws Exception {

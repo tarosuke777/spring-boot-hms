@@ -2,7 +2,8 @@ package com.tarosuke777.hms.controller;
 
 import java.util.List;
 import java.util.Map;
-
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,11 +13,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.tarosuke777.hms.domain.AuthorService;
 import com.tarosuke777.hms.domain.BookService;
 import com.tarosuke777.hms.form.BookForm;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,9 +34,9 @@ public class BookController {
   private final AuthorService authorService;
 
   @GetMapping("/list")
-  public String getList(Model model) {
+  public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
 
-    List<BookForm> bookList = bookService.getBookList();
+    List<BookForm> bookList = bookService.getBookList(user.getUsername());
     Map<Integer, String> authorMap = authorService.getAuthorMap();
 
     addAttributesToModel(model, bookList, authorMap);
@@ -46,9 +45,10 @@ public class BookController {
   }
 
   @GetMapping("/detail/{bookId}")
-  public String getDetail(@PathVariable("bookId") Integer bookId, Model model) {
+  public String getDetail(@PathVariable("bookId") Integer bookId, Model model,
+      @AuthenticationPrincipal UserDetails user) {
 
-    BookForm bookForm = bookService.getBookDetails(bookId);
+    BookForm bookForm = bookService.getBookDetails(bookId, user.getUsername());
     Map<Integer, String> authorMap = authorService.getAuthorMap();
 
     addAttributesToModel(model, bookForm, authorMap);
@@ -80,17 +80,17 @@ public class BookController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(BookForm form) {
+  public String update(BookForm form, @AuthenticationPrincipal UserDetails user) {
 
-    bookService.updateBook(form);
+    bookService.updateBook(form, user.getUsername());
 
     return REDIRECT_LIST;
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(BookForm form, Model model) {
+  public String delete(BookForm form, Model model, @AuthenticationPrincipal UserDetails user) {
 
-    bookService.deleteBook(form.getBookId());
+    bookService.deleteBook(form.getBookId(), user.getUsername());
 
     return REDIRECT_LIST;
   }
