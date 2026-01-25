@@ -26,7 +26,7 @@ public class ArtistService {
 
   public ArtistForm getArtist(Integer artistId, String currentUserId) {
     ArtistEntity artist = artistRepository.findByArtistIdAndCreatedBy(artistId, currentUserId)
-        .orElseThrow(() -> new RuntimeException("Artist not found"));
+        .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
     return modelMapper.map(artist, ArtistForm.class);
   }
 

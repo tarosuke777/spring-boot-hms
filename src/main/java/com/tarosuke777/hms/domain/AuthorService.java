@@ -26,7 +26,7 @@ public class AuthorService {
 
   public AuthorForm getAuthor(Integer authorId, String currentUserId) {
     AuthorEntity author = authorRepository.findByAuthorIdAndCreatedBy(authorId, currentUserId)
-        .orElseThrow(() -> new RuntimeException("Author not found"));
+        .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
     return modelMapper.map(author, AuthorForm.class);
   }
 
@@ -40,7 +40,7 @@ public class AuthorService {
   public void updateAuthor(AuthorForm form, String currentUserId) {
     AuthorEntity existEntity =
         authorRepository.findByAuthorIdAndCreatedBy(form.getAuthorId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Author not found"));
+            .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
     AuthorEntity entity = new AuthorEntity();
     modelMapper.map(existEntity, entity);
     modelMapper.map(form, entity);
