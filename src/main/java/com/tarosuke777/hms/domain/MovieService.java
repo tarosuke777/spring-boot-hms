@@ -17,14 +17,14 @@ public class MovieService {
     private final ModelMapper modelMapper;
 
     /** 一覧取得 */
-    public List<MovieForm> getMovieList() {
-        return movieRepository.findAll().stream()
+    public List<MovieForm> getMovieList(String currentUserId) {
+        return movieRepository.findByCreatedBy(currentUserId).stream()
                 .map(entity -> modelMapper.map(entity, MovieForm.class)).toList();
     }
 
     /** 1件取得 */
-    public MovieForm getMovie(Integer movieId) {
-        MovieEntity movie = movieRepository.findById(movieId)
+    public MovieForm getMovie(Integer movieId, String currentUserId) {
+        MovieEntity movie = movieRepository.findByMovieIdAndCreatedBy(movieId, currentUserId)
                 .orElseThrow(() -> new RuntimeException("Movie not found"));
         return modelMapper.map(movie, MovieForm.class);
     }
@@ -38,9 +38,10 @@ public class MovieService {
 
     /** 更新 */
     @Transactional
-    public void updateMovie(MovieForm form) {
-        MovieEntity existEntity = movieRepository.findById(form.getMovieId())
-                .orElseThrow(() -> new RuntimeException("Movie not found"));
+    public void updateMovie(MovieForm form, String currentUserId) {
+        MovieEntity existEntity = movieRepository
+                .findByMovieIdAndCreatedBy(form.getMovieId(), currentUserId)
+                .orElseThrow(() -> new RuntimeException("Movie not found or access denied"));
         MovieEntity entity = new MovieEntity();
         modelMapper.map(existEntity, entity);
         modelMapper.map(form, entity);
@@ -49,7 +50,10 @@ public class MovieService {
 
     /** 削除 */
     @Transactional
-    public void deleteMovie(Integer movieId) {
+    public void deleteMovie(Integer movieId, String currentUserId) {
+        if (!movieRepository.existsByMovieIdAndCreatedBy(movieId, currentUserId)) {
+            throw new RuntimeException("Movie not found or access denied");
+        }
         movieRepository.deleteById(movieId);
     }
 }

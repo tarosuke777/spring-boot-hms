@@ -15,7 +15,7 @@ INSERT INTO user(
 );
 
 INSERT INTO movie (movie_name, note, created_at, updated_at, created_by, updated_by, version) 
-VALUES ('Sample Movie 1', 'Sample Note 1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+VALUES ('Sample Movie 1', 'Sample Note 1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'adm  in', 0);
 
 INSERT INTO movie (movie_name, note, created_at, updated_at, created_by, updated_by, version) 
-VALUES ('Sample Movie 2', 'Sample Note 2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+VALUES ('Sample Movie 2', 'Sample Note 2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'user', 'user', 0);

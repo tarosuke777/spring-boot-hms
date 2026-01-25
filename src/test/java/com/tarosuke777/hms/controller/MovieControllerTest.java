@@ -58,7 +58,7 @@ public class MovieControllerTest {
   void getList_ShouldReturnMovieList() throws Exception {
 
     // Given
-    List<MovieForm> expectedMovieList = movieRepository.findAll().stream()
+    List<MovieForm> expectedMovieList = movieRepository.findByCreatedBy("admin").stream()
         .map(entity -> modelMapper.map(entity, MovieForm.class)).toList();
 
     // When & Then
@@ -114,19 +114,20 @@ public class MovieControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    MovieEntity expectedMovie = movieRepository.findAll().getFirst();
-    expectedMovie.setMovieName("著者２");
+    MovieEntity movie = movieRepository.findAll().getFirst();
+    MovieForm form = modelMapper.map(movie, MovieForm.class);
+    form.setMovieName("著者２");
 
     // When & Then
-    performUpdateRequest(expectedMovie).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
     entityManager.clear();
 
-    MovieEntity movie = movieRepository.findById(expectedMovie.getMovieId()).orElse(null);
-    Assertions.assertEquals(movie.getMovieName(), expectedMovie.getMovieName());
+    MovieEntity updatedMovie = movieRepository.findById(form.getMovieId()).orElse(null);
+    Assertions.assertEquals(form.getMovieName(), updatedMovie.getMovieName());
   }
 
   @Test
@@ -142,13 +143,13 @@ public class MovieControllerTest {
     movieRepository.saveAndFlush(movie); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    MovieEntity movieToUpdate = new MovieEntity();
-    movieToUpdate.setMovieId(currentId);
-    movieToUpdate.setMovieName("Try to Update");
-    movieToUpdate.setVersion(currentVersion);
+    MovieForm form = new MovieForm();
+    form.setMovieId(currentId);
+    form.setMovieName("Try to Update");
+    form.setVersion(currentVersion);
 
     // When & Then
-    performUpdateRequest(movieToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -196,10 +197,10 @@ public class MovieControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performUpdateRequest(MovieEntity movie) throws Exception {
+  private ResultActions performUpdateRequest(MovieForm form) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("movieId", movie.getMovieId().toString()).param("movieName", movie.getMovieName())
-        .param("version", movie.getVersion().toString())).andDo(print());
+        .param("movieId", form.getMovieId().toString()).param("movieName", form.getMovieName())
+        .param("version", form.getVersion().toString())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int movieId) throws Exception {

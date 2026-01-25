@@ -1,5 +1,7 @@
 package com.tarosuke777.hms.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,8 +25,8 @@ public class MovieController {
   private final MovieService movieService;
 
   @GetMapping("/list")
-  public String getList(Model model) {
-    model.addAttribute("movieList", movieService.getMovieList());
+  public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
+    model.addAttribute("movieList", movieService.getMovieList(user.getUsername()));
     return "movie/list";
   }
 
@@ -43,23 +45,25 @@ public class MovieController {
   }
 
   @GetMapping("/detail/{movieId}")
-  public String getDetail(@PathVariable("movieId") Integer movieId, Model model) {
-    model.addAttribute("movieForm", movieService.getMovie(movieId));
+  public String getDetail(@PathVariable("movieId") Integer movieId, Model model,
+      @AuthenticationPrincipal UserDetails user) {
+    model.addAttribute("movieForm", movieService.getMovie(movieId, user.getUsername()));
     return "movie/detail";
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@ModelAttribute @Validated MovieForm form, BindingResult bindingResult) {
+  public String update(@ModelAttribute @Validated MovieForm form, BindingResult bindingResult,
+      @AuthenticationPrincipal UserDetails user) {
     if (bindingResult.hasErrors()) {
       return "movie/detail";
     }
-    movieService.updateMovie(form);
+    movieService.updateMovie(form, user.getUsername());
     return "redirect:/movie/list";
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(MovieForm form) {
-    movieService.deleteMovie(form.getMovieId());
+  public String delete(MovieForm form, @AuthenticationPrincipal UserDetails user) {
+    movieService.deleteMovie(form.getMovieId(), user.getUsername());
     return "redirect:/movie/list";
   }
 }
