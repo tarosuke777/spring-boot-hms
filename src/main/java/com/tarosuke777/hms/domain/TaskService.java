@@ -15,14 +15,14 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final ModelMapper modelMapper;
 
-    public List<TaskForm> getTaskList() {
-        return taskRepository.findAll().stream()
+    public List<TaskForm> getTaskList(String currentUserId) {
+        return taskRepository.findByCreatedBy(currentUserId).stream()
                 .map(entity -> modelMapper.map(entity, TaskForm.class)).toList();
     }
 
-    public TaskForm getTask(Integer id) {
-        TaskEntity entity = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+    public TaskForm getTask(Integer id, String currentUserId) {
+        TaskEntity entity = taskRepository.findByIdAndCreatedBy(id, currentUserId)
+                .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
         return modelMapper.map(entity, TaskForm.class);
     }
 
@@ -33,9 +33,9 @@ public class TaskService {
     }
 
     @Transactional
-    public void updateTask(TaskForm form) {
-        TaskEntity existEntity = taskRepository.findById(form.getId())
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+    public void updateTask(TaskForm form, String currentUserId) {
+        TaskEntity existEntity = taskRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+                .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
         TaskEntity entity = new TaskEntity();
         modelMapper.map(existEntity, entity);
         modelMapper.map(form, entity);
@@ -43,7 +43,12 @@ public class TaskService {
     }
 
     @Transactional
-    public void deleteTask(Integer id) {
+    public void deleteTask(Integer id, String currentUserId) {
+
+        if (!taskRepository.existsByIdAndCreatedBy(id, currentUserId)) {
+            throw new RuntimeException("Task not found or unauthorized");
+        }
+
         taskRepository.deleteById(id);
     }
 }

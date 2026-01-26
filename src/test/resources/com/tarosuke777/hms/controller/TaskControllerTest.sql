@@ -15,7 +15,7 @@ INSERT INTO user(
 );
 
 INSERT INTO task (name, note, created_at, updated_at, created_by, updated_by, version) 
-VALUES ('サンプルタスク1', 'タスクの詳細メモが入ります。', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+VALUES ('サンプルタスク1', 'タスクの詳細メモが入ります。', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin', 0);
 
 INSERT INTO task (name, note, created_at, updated_at, created_by, updated_by, version) 
-VALUES ('サンプルタスク2', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+VALUES ('サンプルタスク2', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'user', 'user', 0);

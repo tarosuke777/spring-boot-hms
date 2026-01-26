@@ -1,5 +1,7 @@
 package com.tarosuke777.hms.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,8 +23,8 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping("/list")
-    public String list(Model model) {
-        model.addAttribute("tasks", taskService.getTaskList());
+    public String list(Model model, @AuthenticationPrincipal UserDetails user) {
+        model.addAttribute("tasks", taskService.getTaskList(user.getUsername()));
         return "task/list";
     }
 
@@ -38,7 +40,6 @@ public class TaskController {
             return "task/register";
         }
 
-        // 詰め替えはService内で行うので、Formをそのまま渡す
         taskService.createTask(taskForm);
 
         return "redirect:/task/list";
@@ -46,22 +47,23 @@ public class TaskController {
 
     @PostMapping("/update")
     public String update(@Validated @ModelAttribute TaskForm taskForm, BindingResult bindingResult,
-            Model model) {
+            Model model, @AuthenticationPrincipal UserDetails user) {
         if (bindingResult.hasErrors()) {
             // エラー時は一覧を再取得して戻る
-            model.addAttribute("tasks", taskService.getTaskList());
+            model.addAttribute("tasks", taskService.getTaskList(user.getUsername()));
             return "task/list";
         }
 
         // ServiceのupdateTask(TaskForm)を呼び出す
-        taskService.updateTask(taskForm);
+        taskService.updateTask(taskForm, user.getUsername());
 
         return "redirect:/task/list";
     }
 
     @PostMapping("/delete")
-    public String delete(@RequestParam("id") Integer id) {
-        taskService.deleteTask(id);
+    public String delete(@RequestParam("id") Integer id,
+            @AuthenticationPrincipal UserDetails user) {
+        taskService.deleteTask(id, user.getUsername());
         return "redirect:/task/list";
     }
 }

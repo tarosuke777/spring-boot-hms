@@ -57,7 +57,7 @@ public class TaskControllerTest {
   void getList_ShouldReturnTaskList() throws Exception {
 
     // Given
-    List<TaskForm> expectedTaskList = taskRepository.findAll().stream()
+    List<TaskForm> expectedTaskList = taskRepository.findByCreatedBy("admin").stream()
         .map(entity -> modelMapper.map(entity, TaskForm.class)).collect(Collectors.toList());
 
     // When & Then
@@ -98,19 +98,20 @@ public class TaskControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    TaskEntity expectedTask = taskRepository.findAll().getFirst();
-    expectedTask.setName("UpdatedName");
+    TaskEntity task = taskRepository.findAll().getFirst();
+    TaskForm form = modelMapper.map(task, TaskForm.class);
+    form.setName("UpdatedName");
 
     // When & Then
-    performUpdateRequest(expectedTask).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
     entityManager.clear();
 
-    TaskEntity updatedEntity = taskRepository.findById(expectedTask.getId()).orElse(null);
-    Assertions.assertEquals(updatedEntity.getName(), expectedTask.getName());
+    TaskEntity updatedEntity = taskRepository.findById(form.getId()).orElse(null);
+    Assertions.assertEquals(updatedEntity.getName(), form.getName());
   }
 
   @Test
@@ -126,13 +127,13 @@ public class TaskControllerTest {
     taskRepository.saveAndFlush(task); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    TaskEntity taskToUpdate = new TaskEntity();
-    taskToUpdate.setId(currentId);
-    taskToUpdate.setName("Try to Update");
-    taskToUpdate.setVersion(currentVersion);
+    TaskForm form = new TaskForm();
+    form.setId(currentId);
+    form.setName("Try to Update");
+    form.setVersion(currentVersion);
 
     // When & Then
-    performUpdateRequest(taskToUpdate).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -171,10 +172,10 @@ public class TaskControllerTest {
         .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
   }
 
-  private ResultActions performUpdateRequest(TaskEntity task) throws Exception {
+  private ResultActions performUpdateRequest(TaskForm form) throws Exception {
     return mockMvc.perform(
-        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", task.getId().toString())
-            .param("name", task.getName()).param("version", task.getVersion().toString()))
+        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
+            .param("name", form.getName()).param("version", form.getVersion().toString()))
         .andDo(print());
   }
 
