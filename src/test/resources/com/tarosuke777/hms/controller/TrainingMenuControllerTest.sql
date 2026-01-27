@@ -15,6 +15,6 @@ INSERT INTO user(
 );
 
 INSERT INTO training_menu (training_menu_name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
-VALUES ('Push Up', 1, 'https://example.com/pushup', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+VALUES ('Push Up', 1, 'https://example.com/pushup', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin', 0);
 INSERT INTO training_menu (training_menu_name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
-VALUES ('Squat', 2, 'https://example.com/squat', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+VALUES ('Squat', 2, 'https://example.com/squat', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'user', 'user', 0);

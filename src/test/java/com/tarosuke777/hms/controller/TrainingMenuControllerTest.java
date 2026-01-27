@@ -58,8 +58,9 @@ public class TrainingMenuControllerTest {
   void getList_ShouldReturnTrainingMenuList() throws Exception {
 
     // Given
-    List<TrainingMenuForm> expectedTrainingMenuList = TrainingMenuRepository.findAll().stream()
-        .map(entity -> modelMapper.map(entity, TrainingMenuForm.class)).toList();
+    List<TrainingMenuForm> expectedTrainingMenuList =
+        TrainingMenuRepository.findByCreatedBy("admin").stream()
+            .map(entity -> modelMapper.map(entity, TrainingMenuForm.class)).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
@@ -112,10 +113,11 @@ public class TrainingMenuControllerTest {
 
     // Given
     TrainingMenuEntity expectedTrainingMenu = TrainingMenuRepository.findAll().getFirst();
-    expectedTrainingMenu.setTrainingMenuName("著者２");
+    TrainingMenuForm form = modelMapper.map(expectedTrainingMenu, TrainingMenuForm.class);
+    form.setTrainingMenuName("著者２");
 
     // When & Then
-    performUpdateRequest(expectedTrainingMenu).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
@@ -141,14 +143,13 @@ public class TrainingMenuControllerTest {
     TrainingMenuRepository.saveAndFlush(TrainingMenu); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    TrainingMenuEntity trainingMenuToUpdate = new TrainingMenuEntity();
-    trainingMenuToUpdate.setTrainingMenuId(currentId);
-    trainingMenuToUpdate.setTrainingMenuName("Try to Update");
-    trainingMenuToUpdate.setVersion(currentVersion);
+    TrainingMenuForm form = new TrainingMenuForm();
+    form.setTrainingMenuId(currentId);
+    form.setTrainingMenuName("Try to Update");
+    form.setVersion(currentVersion);
 
     // When & Then
-    performUpdateRequest(trainingMenuToUpdate).andExpect(status().isOk())
-        .andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -196,11 +197,11 @@ public class TrainingMenuControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performUpdateRequest(TrainingMenuEntity TrainingMenu) throws Exception {
+  private ResultActions performUpdateRequest(TrainingMenuForm form) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("trainingMenuId", TrainingMenu.getTrainingMenuId().toString())
-        .param("trainingMenuName", TrainingMenu.getTrainingMenuName())
-        .param("version", TrainingMenu.getVersion().toString())).andDo(print());
+        .param("trainingMenuId", form.getTrainingMenuId().toString())
+        .param("trainingMenuName", form.getTrainingMenuName())
+        .param("version", form.getVersion().toString())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int TrainingMenuId) throws Exception {

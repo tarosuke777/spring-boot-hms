@@ -1,5 +1,7 @@
 package com.tarosuke777.hms.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,8 +27,9 @@ public class TrainingMenuController {
 	private final TrainingMenuService trainingMenuService;
 
 	@GetMapping("/list")
-	public String getList(Model model) {
-		model.addAttribute("trainingMenuList", trainingMenuService.getTrainingMenuList());
+	public String getList(Model model, @AuthenticationPrincipal UserDetails UserDetail) {
+		model.addAttribute("trainingMenuList",
+				trainingMenuService.getTrainingMenuList(UserDetail.getUsername()));
 		model.addAttribute("targetAreaMap", TargetArea.getTargetAreaMap());
 		return "trainingMenu/list";
 	}
@@ -48,8 +51,10 @@ public class TrainingMenuController {
 	}
 
 	@GetMapping("/detail/{trainingMenuId}")
-	public String getDetail(@PathVariable("trainingMenuId") Integer trainingMenuId, Model model) {
-		TrainingMenuForm form = trainingMenuService.getTrainingMenuDetails(trainingMenuId);
+	public String getDetail(@PathVariable("trainingMenuId") Integer trainingMenuId, Model model,
+			@AuthenticationPrincipal UserDetails user) {
+		TrainingMenuForm form =
+				trainingMenuService.getTrainingMenuDetails(trainingMenuId, user.getUsername());
 		model.addAttribute("trainingMenuForm", form);
 		model.addAttribute("targetAreaMap", TargetArea.getTargetAreaMap());
 		return "trainingMenu/detail";
@@ -57,17 +62,18 @@ public class TrainingMenuController {
 
 	@PostMapping(value = "detail", params = "update")
 	public String update(@ModelAttribute @Validated(UpdateGroup.class) TrainingMenuForm form,
-			BindingResult bindingResult, Model model) {
+			BindingResult bindingResult, Model model, @AuthenticationPrincipal UserDetails user) {
 		if (bindingResult.hasErrors()) {
 			return "trainingMenu/detail";
 		}
-		trainingMenuService.updateTrainingMenu(form);
+		trainingMenuService.updateTrainingMenu(form, user.getUsername());
 		return "redirect:/trainingMenu/list";
 	}
 
 	@PostMapping(value = "/detail", params = "delete")
-	public String delete(TrainingMenuForm form, Model model) {
-		trainingMenuService.deleteTrainingMenu(form.getTrainingMenuId());
+	public String delete(TrainingMenuForm form, Model model,
+			@AuthenticationPrincipal UserDetails user) {
+		trainingMenuService.deleteTrainingMenu(form.getTrainingMenuId(), user.getUsername());
 		return "redirect:/trainingMenu/list";
 	}
 }

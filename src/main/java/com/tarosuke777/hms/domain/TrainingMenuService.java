@@ -20,14 +20,15 @@ public class TrainingMenuService {
 	private final TrainingMenuRepository trainingMenuRepository;
 	private final ModelMapper modelMapper;
 
-	public List<TrainingMenuForm> getTrainingMenuList() {
-		return trainingMenuRepository.findAll().stream()
+	public List<TrainingMenuForm> getTrainingMenuList(String currentUserId) {
+		return trainingMenuRepository.findByCreatedBy(currentUserId).stream()
 				.map(entity -> modelMapper.map(entity, TrainingMenuForm.class)).toList();
 	}
 
-	public TrainingMenuForm getTrainingMenuDetails(Integer trainingMenuId) {
-		TrainingMenuEntity entity = trainingMenuRepository.findById(trainingMenuId)
-				.orElseThrow(() -> new RuntimeException("Menu not found"));
+	public TrainingMenuForm getTrainingMenuDetails(Integer trainingMenuId, String currentUserId) {
+		TrainingMenuEntity entity = trainingMenuRepository
+				.findByTrainingMenuIdAndCreatedBy(trainingMenuId, currentUserId)
+				.orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
 		return modelMapper.map(entity, TrainingMenuForm.class);
 	}
 
@@ -38,9 +39,10 @@ public class TrainingMenuService {
 	}
 
 	@Transactional
-	public void updateTrainingMenu(TrainingMenuForm form) {
-		TrainingMenuEntity existEntity = trainingMenuRepository.findById(form.getTrainingMenuId())
-				.orElseThrow(() -> new RuntimeException("Menu not found"));
+	public void updateTrainingMenu(TrainingMenuForm form, String currentUserId) {
+		TrainingMenuEntity existEntity = trainingMenuRepository
+				.findByTrainingMenuIdAndCreatedBy(form.getTrainingMenuId(), currentUserId)
+				.orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
 		TrainingMenuEntity entity = new TrainingMenuEntity();
 		modelMapper.map(existEntity, entity);
 		modelMapper.map(form, entity);
@@ -48,7 +50,11 @@ public class TrainingMenuService {
 	}
 
 	@Transactional
-	public void deleteTrainingMenu(Integer trainingMenuId) {
+	public void deleteTrainingMenu(Integer trainingMenuId, String currentUserId) {
+		if (!trainingMenuRepository.existsByTrainingMenuIdAndCreatedBy(trainingMenuId,
+				currentUserId)) {
+			throw new RuntimeException("Menu not found or access denied");
+		}
 		trainingMenuRepository.deleteById(trainingMenuId);
 	}
 
