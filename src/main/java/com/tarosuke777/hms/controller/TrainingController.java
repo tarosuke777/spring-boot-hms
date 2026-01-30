@@ -2,7 +2,8 @@ package com.tarosuke777.hms.controller;
 
 import java.util.List;
 import java.util.Map;
-
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,13 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import com.tarosuke777.hms.domain.TrainingMenuService;
 import com.tarosuke777.hms.domain.TrainingService;
 import com.tarosuke777.hms.enums.TargetArea;
 import com.tarosuke777.hms.form.SelectOptionTrainingMenu;
 import com.tarosuke777.hms.form.TrainingForm;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,9 +39,11 @@ public class TrainingController {
 	@GetMapping("/list")
 	public String getList(Model model,
 			@RequestParam(name = "orderBy", defaultValue = "trainingDate") String orderBy,
-			@RequestParam(name = "sort", defaultValue = "desc") String sort) {
+			@RequestParam(name = "sort", defaultValue = "desc") String sort,
+			@AuthenticationPrincipal UserDetails user) {
 
-		List<TrainingForm> trainingList = trainingService.getTrainingList(orderBy, sort);
+		List<TrainingForm> trainingList =
+				trainingService.getTrainingList(orderBy, sort, user.getUsername());
 		Map<Integer, String> trainingAreaMap = TargetArea.getTargetAreaMap();
 		Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
 
@@ -52,9 +53,11 @@ public class TrainingController {
 	}
 
 	@GetMapping("/detail/{trainingId}")
-	public String getDetail(@PathVariable("trainingId") Integer trainingId, Model model) {
+	public String getDetail(@PathVariable("trainingId") Integer trainingId, Model model,
+			@AuthenticationPrincipal UserDetails user) {
 
-		TrainingForm trainingForm = trainingService.getTrainingDetails(trainingId);
+		TrainingForm trainingForm =
+				trainingService.getTrainingDetails(trainingId, user.getUsername());
 		Map<Integer, String> trainingMenuMap = trainingMenuService.getTrainingMenuMap();
 
 		addAttributesToModel(model, trainingForm, trainingMenuMap);
@@ -88,17 +91,18 @@ public class TrainingController {
 	}
 
 	@PostMapping(value = "detail", params = "update")
-	public String update(TrainingForm form) {
+	public String update(TrainingForm form, @AuthenticationPrincipal UserDetails user) {
 
-		trainingService.updateTraining(form);
+		trainingService.updateTraining(form, user.getUsername());
 
 		return REDIRECT_LIST;
 	}
 
 	@PostMapping(value = "/detail", params = "delete")
-	public String delete(TrainingForm form, Model model) {
+	public String delete(TrainingForm form, Model model,
+			@AuthenticationPrincipal UserDetails user) {
 
-		trainingService.deleteTraining(form.getTrainingId());
+		trainingService.deleteTraining(form.getTrainingId(), user.getUsername());
 
 		return REDIRECT_LIST;
 	}

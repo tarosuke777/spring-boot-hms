@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.TestSecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -70,7 +71,8 @@ public class TrainingControllerTest {
 
     // Given
     List<TrainingForm> expectedTrainingList =
-        trainingRepository.findAll().stream().map(this::convertToForm).toList();
+        trainingRepository.findByCreatedBy("admin", Sort.by("trainingDate").descending()).stream()
+            .map(this::convertToForm).toList();
     Map<Integer, String> expectedTrainingAreaMap = TargetArea.getTargetAreaMap();
     Map<Integer, String> expectedTrainingMenuMap = getTrainingMenuMap();
 
@@ -154,24 +156,25 @@ public class TrainingControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    TrainingEntity expectedTraining = trainingRepository.findAll().getFirst();
-    LocalDate newDate = expectedTraining.getTrainingDate().plusDays(1);
+    TrainingEntity training = trainingRepository.findAll().getFirst();
+    LocalDate newDate = training.getTrainingDate().plusDays(1);
     Integer newWeight = 100; // 例: 重量を100に更新
 
-    expectedTraining.setTrainingDate(newDate);
-    expectedTraining.setWeight(newWeight);
+    TrainingForm form = convertToForm(training);
+    form.setTrainingDate(newDate);
+    form.setWeight(newWeight);
+
     // When & Then
-    performUpdateRequest(expectedTraining).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
     entityManager.clear();
 
-    TrainingEntity training =
-        trainingRepository.findById(expectedTraining.getTrainingId()).orElse(null);
-    Assertions.assertEquals(newDate, training.getTrainingDate());
-    Assertions.assertEquals(newWeight, training.getWeight());
+    TrainingEntity updatedTraining = trainingRepository.findById(form.getTrainingId()).orElse(null);
+    Assertions.assertEquals(newDate, updatedTraining.getTrainingDate());
+    Assertions.assertEquals(newWeight, updatedTraining.getWeight());
   }
 
   @Test
@@ -188,18 +191,17 @@ public class TrainingControllerTest {
     trainingRepository.saveAndFlush(trainingEntity); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    TrainingEntity trainingToUpdate = new TrainingEntity();
-    trainingToUpdate.setTrainingId(currentId);
-    trainingToUpdate.setTrainingDate(trainingEntity.getTrainingDate().plusDays(1));
-    trainingToUpdate.setVersion(currentVersion);
-    trainingToUpdate.setTrainingMenu(currentTrainingMenu);
-    trainingToUpdate.setWeight(999);
-    trainingToUpdate.setReps(999);
-    trainingToUpdate.setSets(999);
+    TrainingForm form = new TrainingForm();
+    form.setTrainingId(currentId);
+    form.setTrainingDate(trainingEntity.getTrainingDate().plusDays(1));
+    form.setVersion(currentVersion);
+    form.setTrainingMenuId(currentTrainingMenu.getTrainingMenuId());
+    form.setWeight(999);
+    form.setReps(999);
+    form.setSets(999);
 
     // When & Then
-    performUpdateRequest(trainingToUpdate).andExpect(status().isOk())
-        .andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -277,15 +279,14 @@ public class TrainingControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performUpdateRequest(TrainingEntity training) throws Exception {
+  private ResultActions performUpdateRequest(TrainingForm form) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("trainingId", training.getTrainingId().toString())
-        .param("trainingDate", training.getTrainingDate().toString())
-        .param("trainingMenuId", training.getTrainingMenu().getTrainingMenuId().toString())
-        .param("weight", String.valueOf(training.getWeight()))
-        .param("reps", String.valueOf(training.getReps()))
-        .param("sets", String.valueOf(training.getSets()))
-        .param("version", String.valueOf(training.getVersion()))).andDo(print());
+        .param("trainingId", form.getTrainingId().toString())
+        .param("trainingDate", form.getTrainingDate().toString())
+        .param("trainingMenuId", String.valueOf(form.getTrainingMenuId()))
+        .param("weight", String.valueOf(form.getWeight()))
+        .param("reps", String.valueOf(form.getReps())).param("sets", String.valueOf(form.getSets()))
+        .param("version", String.valueOf(form.getVersion()))).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int trainingId) throws Exception {

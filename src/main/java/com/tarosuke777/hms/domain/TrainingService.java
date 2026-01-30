@@ -23,15 +23,18 @@ public class TrainingService {
 	private final EntityManager entityManager;
 	private final ModelMapper modelMapper;
 
-	public List<TrainingForm> getTrainingList(String orderBy, String sortDirection) {
+	public List<TrainingForm> getTrainingList(String orderBy, String sortDirection,
+			String currentUserId) {
 		Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by(orderBy).descending()
 				: Sort.by(orderBy).ascending();
-		return trainingRepository.findAll(sort).stream().map(this::convertToForm).toList();
+		return trainingRepository.findByCreatedBy(currentUserId, sort).stream()
+				.map(this::convertToForm).toList();
 	}
 
-	public TrainingForm getTrainingDetails(Integer trainingId) {
-		return trainingRepository.findById(trainingId).map(this::convertToForm)
-				.orElseThrow(() -> new RuntimeException("Training not found"));
+	public TrainingForm getTrainingDetails(Integer trainingId, String currentUserId) {
+		return trainingRepository.findByTrainingIdAndCreatedBy(trainingId, currentUserId)
+				.map(this::convertToForm)
+				.orElseThrow(() -> new RuntimeException("Training not found or access denied"));
 	}
 
 	@Transactional
@@ -45,15 +48,18 @@ public class TrainingService {
 	}
 
 	@Transactional
-	public void updateTraining(TrainingForm form) {
-		TrainingEntity existingEntity = trainingRepository.findById(form.getTrainingId())
-				.orElseThrow(() -> new RuntimeException("Training not found"));
+	public void updateTraining(TrainingForm form, String currentUserId) {
+		TrainingEntity existingEntity = trainingRepository
+				.findByTrainingIdAndCreatedBy(form.getTrainingId(), currentUserId)
+				.orElseThrow(() -> new RuntimeException("Training not found or access denied"));
+
 		TrainingEntity entity = new TrainingEntity();
 		modelMapper.map(existingEntity, entity);
 		if (existingEntity.getTrainingMenu() != null) {
 			entity.setTrainingMenu(entityManager.getReference(TrainingMenuEntity.class,
 					existingEntity.getTrainingMenu().getTrainingMenuId()));
 		}
+
 		modelMapper.map(form, entity);
 		if (form.getTrainingMenuId() != null) {
 			entity.setTrainingMenu(
@@ -63,7 +69,10 @@ public class TrainingService {
 	}
 
 	@Transactional
-	public void deleteTraining(Integer trainingId) {
+	public void deleteTraining(Integer trainingId, String currentUserId) {
+		if (!trainingRepository.existsByTrainingIdAndCreatedBy(trainingId, currentUserId)) {
+			throw new RuntimeException("Training not found or access denied");
+		}
 		trainingRepository.deleteById(trainingId);
 	}
 

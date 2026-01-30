@@ -15,9 +15,9 @@ INSERT INTO user(
 );
 
 INSERT INTO training_menu (training_menu_name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
-VALUES ('Push Up', 1, 'https://example.com/pushup', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+VALUES ('Push Up', 1, 'https://example.com/pushup', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin', 0);
 INSERT INTO training_menu (training_menu_name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
-VALUES ('Squat', 2, 'https://example.com/squat', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'SYSTEM', 'SYSTEM', 0);
+VALUES ('Squat', 2, 'https://example.com/squat', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'user', 'user', 0);
 
 -- 1件目: 'Push Up' という名前のメニューIDを取得して記録
 INSERT INTO training (training_date, training_menu_id, weight, reps, sets, created_at, updated_at, created_by, updated_by, version)
@@ -27,8 +27,8 @@ VALUES (
     60, 10, 3,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
-    'SYSTEM',
-    'SYSTEM',
+    'admin',
+    'admin',
     0
 );
 
@@ -40,7 +40,7 @@ VALUES (
     80, 12, 3,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
-    'SYSTEM',
-    'SYSTEM',
+    'user',
+    'user',
     0
 );
