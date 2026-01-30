@@ -23,27 +23,32 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AuthorController {
 
+  private static final String REDIRECT_LIST = "redirect:/author/list";
+  private static final String LIST_VIEW = "author/list";
+  private static final String DETAIL_VIEW = "author/detail";
+  private static final String REGISTER_VIEW = "author/register";
+
   private final AuthorService authorService;
 
   @GetMapping("/list")
   public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
     model.addAttribute("authorList", authorService.getAuthorList(user.getUsername()));
-    return "author/list";
+    return LIST_VIEW;
   }
 
   @GetMapping("/register")
   public String getRegister(@ModelAttribute AuthorForm form) {
-    return "author/register";
+    return REGISTER_VIEW;
   }
 
   @PostMapping("/register")
   public String register(@ModelAttribute @Validated AuthorForm form, BindingResult bindingResult,
       Model model) {
     if (bindingResult.hasErrors()) {
-      return "author/register";
+      return REGISTER_VIEW;
     }
     authorService.registerAuthor(form);
-    return "redirect:/author/list";
+    return REDIRECT_LIST;
   }
 
   @GetMapping("/detail/{authorId}")
@@ -51,24 +56,24 @@ public class AuthorController {
       @AuthenticationPrincipal UserDetails user) {
     AuthorForm form = authorService.getAuthor(authorId, user.getUsername());
     model.addAttribute("authorForm", form);
-    return "author/detail";
+    return DETAIL_VIEW;
   }
 
   @PostMapping(value = "detail", params = "update")
   public String update(@ModelAttribute @Validated AuthorForm form, BindingResult bindingResult,
       @AuthenticationPrincipal UserDetails user) {
     if (bindingResult.hasErrors()) {
-      return "author/detail";
+      return DETAIL_VIEW;
     }
     authorService.updateAuthor(form, user.getUsername());
-    return "redirect:/author/list";
+    return REDIRECT_LIST;
   }
 
   @PostMapping(value = "/detail", params = "delete")
   public String delete(@Validated(DeleteGroup.class) AuthorForm form,
       @AuthenticationPrincipal UserDetails user) {
     authorService.deleteAuthor(form.getAuthorId(), user.getUsername());
-    return "redirect:/author/list";
+    return REDIRECT_LIST;
   }
 
 }

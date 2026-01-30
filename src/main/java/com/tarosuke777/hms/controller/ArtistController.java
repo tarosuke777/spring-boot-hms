@@ -24,27 +24,32 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ArtistController {
 
+  private static final String REDIRECT_LIST = "redirect:/artist/list";
+  private static final String LIST_VIEW = "artist/list";
+  private static final String DETAIL_VIEW = "artist/detail";
+  private static final String REGISTER_VIEW = "artist/register";
+
   private final ArtistService artistService;
 
   @GetMapping("/list")
   public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
     model.addAttribute("artistList", artistService.getArtistList(user.getUsername()));
-    return "artist/list";
+    return LIST_VIEW;
   }
 
   @GetMapping("/register")
   public String getRegister(@ModelAttribute ArtistForm form) {
-    return "artist/register";
+    return REGISTER_VIEW;
   }
 
   @PostMapping("/register")
   public String register(@ModelAttribute @Validated ArtistForm form, BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
-      return "artist/register";
+      return REGISTER_VIEW;
     }
 
     artistService.registerArtist(form);
-    return "redirect:/artist/list";
+    return REDIRECT_LIST;
   }
 
   @GetMapping("/detail/{artistId}")
@@ -52,7 +57,7 @@ public class ArtistController {
       @AuthenticationPrincipal UserDetails user) {
     ArtistForm form = artistService.getArtist(artistId, user.getUsername());
     model.addAttribute("artistForm", form);
-    return "artist/detail";
+    return DETAIL_VIEW;
   }
 
   @PostMapping(value = "detail", params = "update")

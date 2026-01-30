@@ -24,49 +24,54 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MovieController {
 
+  private static final String REDIRECT_LIST = "redirect:/movie/list";
+  private static final String LIST_VIEW = "movie/list";
+  private static final String DETAIL_VIEW = "movie/detail";
+  private static final String REGISTER_VIEW = "movie/register";
+
   private final MovieService movieService;
 
   @GetMapping("/list")
   public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
     model.addAttribute("movieList", movieService.getMovieList(user.getUsername()));
-    return "movie/list";
+    return LIST_VIEW;
   }
 
   @GetMapping("/register")
   public String getRegister(@ModelAttribute MovieForm form) {
-    return "movie/register";
+    return REGISTER_VIEW;
   }
 
   @PostMapping("/register")
   public String register(@ModelAttribute @Validated MovieForm form, BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
-      return "movie/register";
+      return REGISTER_VIEW;
     }
     movieService.registerMovie(form);
-    return "redirect:/movie/list";
+    return REDIRECT_LIST;
   }
 
   @GetMapping("/detail/{movieId}")
   public String getDetail(@PathVariable("movieId") Integer movieId, Model model,
       @AuthenticationPrincipal UserDetails user) {
     model.addAttribute("movieForm", movieService.getMovie(movieId, user.getUsername()));
-    return "movie/detail";
+    return DETAIL_VIEW;
   }
 
   @PostMapping(value = "detail", params = "update")
   public String update(@ModelAttribute @Validated(UpdateGroup.class) MovieForm form,
       BindingResult bindingResult, @AuthenticationPrincipal UserDetails user) {
     if (bindingResult.hasErrors()) {
-      return "movie/detail";
+      return DETAIL_VIEW;
     }
     movieService.updateMovie(form, user.getUsername());
-    return "redirect:/movie/list";
+    return REDIRECT_LIST;
   }
 
   @PostMapping(value = "/detail", params = "delete")
   public String delete(@Validated(DeleteGroup.class) MovieForm form,
       @AuthenticationPrincipal UserDetails user) {
     movieService.deleteMovie(form.getMovieId(), user.getUsername());
-    return "redirect:/movie/list";
+    return REDIRECT_LIST;
   }
 }

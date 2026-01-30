@@ -21,29 +21,34 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/task")
 public class TaskController {
 
+    private static final String REDIRECT_LIST = "redirect:/task/list";
+    private static final String LIST_VIEW = "task/list";
+    private static final String DETAIL_VIEW = "task/detail";
+    private static final String REGISTER_VIEW = "task/register";
+
     private final TaskService taskService;
 
     @GetMapping("/list")
     public String list(Model model, @AuthenticationPrincipal UserDetails user) {
         model.addAttribute("tasks", taskService.getTaskList(user.getUsername()));
-        return "task/list";
+        return LIST_VIEW;
     }
 
     @GetMapping("/register")
     public String register(@ModelAttribute TaskForm taskForm) {
-        return "task/register";
+        return REGISTER_VIEW;
     }
 
     @PostMapping("/create")
     public String create(@Validated @ModelAttribute TaskForm taskForm,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "task/register";
+            return REGISTER_VIEW;
         }
 
         taskService.createTask(taskForm);
 
-        return "redirect:/task/list";
+        return REDIRECT_LIST;
     }
 
     @PostMapping("/update")
@@ -52,19 +57,19 @@ public class TaskController {
         if (bindingResult.hasErrors()) {
             // エラー時は一覧を再取得して戻る
             model.addAttribute("tasks", taskService.getTaskList(user.getUsername()));
-            return "task/list";
+            return LIST_VIEW;
         }
 
         // ServiceのupdateTask(TaskForm)を呼び出す
         taskService.updateTask(taskForm, user.getUsername());
 
-        return "redirect:/task/list";
+        return REDIRECT_LIST;
     }
 
     @PostMapping("/delete")
     public String delete(@RequestParam("id") Integer id,
             @AuthenticationPrincipal UserDetails user) {
         taskService.deleteTask(id, user.getUsername());
-        return "redirect:/task/list";
+        return REDIRECT_LIST;
     }
 }

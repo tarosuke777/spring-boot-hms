@@ -25,6 +25,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class TrainingMenuController {
 
+	private static final String REDIRECT_LIST = "redirect:/trainingMenu/list";
+	private static final String LIST_VIEW = "trainingMenu/list";
+	private static final String DETAIL_VIEW = "trainingMenu/detail";
+	private static final String REGISTER_VIEW = "trainingMenu/register";
+
 	private final TrainingMenuService trainingMenuService;
 
 	@GetMapping("/list")
@@ -32,13 +37,13 @@ public class TrainingMenuController {
 		model.addAttribute("trainingMenuList",
 				trainingMenuService.getTrainingMenuList(UserDetail.getUsername()));
 		model.addAttribute("targetAreaMap", TargetArea.getTargetAreaMap());
-		return "trainingMenu/list";
+		return LIST_VIEW;
 	}
 
 	@GetMapping("/register")
 	public String getRegister(@ModelAttribute TrainingMenuForm form, Model model) {
 		model.addAttribute("targetAreaMap", TargetArea.getTargetAreaMap());
-		return "trainingMenu/register";
+		return REGISTER_VIEW;
 	}
 
 	@PostMapping("/register")
@@ -48,7 +53,7 @@ public class TrainingMenuController {
 			return getRegister(form, model);
 		}
 		trainingMenuService.registerTrainingMenu(form);
-		return "redirect:/trainingMenu/list";
+		return REDIRECT_LIST;
 	}
 
 	@GetMapping("/detail/{trainingMenuId}")
@@ -58,23 +63,23 @@ public class TrainingMenuController {
 				trainingMenuService.getTrainingMenuDetails(trainingMenuId, user.getUsername());
 		model.addAttribute("trainingMenuForm", form);
 		model.addAttribute("targetAreaMap", TargetArea.getTargetAreaMap());
-		return "trainingMenu/detail";
+		return DETAIL_VIEW;
 	}
 
 	@PostMapping(value = "detail", params = "update")
 	public String update(@ModelAttribute @Validated(UpdateGroup.class) TrainingMenuForm form,
 			BindingResult bindingResult, Model model, @AuthenticationPrincipal UserDetails user) {
 		if (bindingResult.hasErrors()) {
-			return "trainingMenu/detail";
+			return DETAIL_VIEW;
 		}
 		trainingMenuService.updateTrainingMenu(form, user.getUsername());
-		return "redirect:/trainingMenu/list";
+		return REDIRECT_LIST;
 	}
 
 	@PostMapping(value = "/detail", params = "delete")
 	public String delete(@ModelAttribute @Validated(DeleteGroup.class) TrainingMenuForm form,
 			Model model, @AuthenticationPrincipal UserDetails user) {
 		trainingMenuService.deleteTrainingMenu(form.getTrainingMenuId(), user.getUsername());
-		return "redirect:/trainingMenu/list";
+		return REDIRECT_LIST;
 	}
 }
