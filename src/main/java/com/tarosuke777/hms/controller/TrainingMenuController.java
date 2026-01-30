@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.TrainingMenuService;
 import com.tarosuke777.hms.enums.TargetArea;
 import com.tarosuke777.hms.form.TrainingMenuForm;
+import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -71,8 +72,8 @@ public class TrainingMenuController {
 	}
 
 	@PostMapping(value = "/detail", params = "delete")
-	public String delete(TrainingMenuForm form, Model model,
-			@AuthenticationPrincipal UserDetails user) {
+	public String delete(@ModelAttribute @Validated(DeleteGroup.class) TrainingMenuForm form,
+			Model model, @AuthenticationPrincipal UserDetails user) {
 		trainingMenuService.deleteTrainingMenu(form.getTrainingMenuId(), user.getUsername());
 		return "redirect:/trainingMenu/list";
 	}

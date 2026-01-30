@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tarosuke777.hms.domain.DiaryService;
 import com.tarosuke777.hms.form.DiaryForm;
-
+import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,13 +68,15 @@ public class DiaryController {
     }
 
     @PostMapping(value = "/detail", params = "update")
-    public String update(DiaryForm form, @AuthenticationPrincipal UserDetails user) {
+    public String update(@Validated(UpdateGroup.class) DiaryForm form,
+            @AuthenticationPrincipal UserDetails user) {
         diaryService.updateDiary(form, user.getUsername());
         return REDIRECT_LIST;
     }
 
     @PostMapping(value = "/detail", params = "delete")
-    public String delete(DiaryForm form, @AuthenticationPrincipal UserDetails user) {
+    public String delete(@Validated(DeleteGroup.class) DiaryForm form,
+            @AuthenticationPrincipal UserDetails user) {
         diaryService.deleteDiary(form.getDiaryId(), user.getUsername());
         return REDIRECT_LIST;
     }

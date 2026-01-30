@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.form;
 
+import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class MusicForm {
 
-  @NotNull(groups = UpdateGroup.class)
+  @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
   private Integer musicId;
 
   @NotBlank

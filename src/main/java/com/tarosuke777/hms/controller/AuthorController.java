@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.AuthorService;
 import com.tarosuke777.hms.form.AuthorForm;
+import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,7 +66,8 @@ public class AuthorController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(AuthorForm form, @AuthenticationPrincipal UserDetails user) {
+  public String delete(@Validated(DeleteGroup.class) AuthorForm form,
+      @AuthenticationPrincipal UserDetails user) {
     authorService.deleteAuthor(form.getAuthorId(), user.getUsername());
     return "redirect:/author/list";
   }

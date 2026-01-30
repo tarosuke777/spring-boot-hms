@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.MovieService;
 import com.tarosuke777.hms.form.MovieForm;
+import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,8 +54,8 @@ public class MovieController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@ModelAttribute @Validated MovieForm form, BindingResult bindingResult,
-      @AuthenticationPrincipal UserDetails user) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) MovieForm form,
+      BindingResult bindingResult, @AuthenticationPrincipal UserDetails user) {
     if (bindingResult.hasErrors()) {
       return "movie/detail";
     }
@@ -62,7 +64,8 @@ public class MovieController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(MovieForm form, @AuthenticationPrincipal UserDetails user) {
+  public String delete(@Validated(DeleteGroup.class) MovieForm form,
+      @AuthenticationPrincipal UserDetails user) {
     movieService.deleteMovie(form.getMovieId(), user.getUsername());
     return "redirect:/movie/list";
   }

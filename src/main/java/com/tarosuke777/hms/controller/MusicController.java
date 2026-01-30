@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.ArtistService;
 import com.tarosuke777.hms.domain.MusicService;
 import com.tarosuke777.hms.form.MusicForm;
-
+import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -82,7 +83,8 @@ public class MusicController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(MusicForm form, @AuthenticationPrincipal UserDetails user) {
+  public String update(@Validated(UpdateGroup.class) MusicForm form,
+      @AuthenticationPrincipal UserDetails user) {
 
     musicService.updateMusic(form, user.getUsername());
 
@@ -90,7 +92,8 @@ public class MusicController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(MusicForm form, Model model, @AuthenticationPrincipal UserDetails user) {
+  public String delete(@Validated(DeleteGroup.class) MusicForm form, Model model,
+      @AuthenticationPrincipal UserDetails user) {
 
     musicService.deleteMusic(form.getMusicId(), user.getUsername());
 

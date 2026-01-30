@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.AuthorService;
 import com.tarosuke777.hms.domain.BookService;
 import com.tarosuke777.hms.form.BookForm;
+import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -80,7 +82,8 @@ public class BookController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(BookForm form, @AuthenticationPrincipal UserDetails user) {
+  public String update(@Validated(UpdateGroup.class) BookForm form,
+      @AuthenticationPrincipal UserDetails user) {
 
     bookService.updateBook(form, user.getUsername());
 
@@ -88,7 +91,8 @@ public class BookController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(BookForm form, Model model, @AuthenticationPrincipal UserDetails user) {
+  public String delete(@Validated(DeleteGroup.class) BookForm form, Model model,
+      @AuthenticationPrincipal UserDetails user) {
 
     bookService.deleteBook(form.getBookId(), user.getUsername());
 

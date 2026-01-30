@@ -19,6 +19,8 @@ import com.tarosuke777.hms.domain.TrainingService;
 import com.tarosuke777.hms.enums.TargetArea;
 import com.tarosuke777.hms.form.SelectOptionTrainingMenu;
 import com.tarosuke777.hms.form.TrainingForm;
+import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -91,7 +93,8 @@ public class TrainingController {
 	}
 
 	@PostMapping(value = "detail", params = "update")
-	public String update(TrainingForm form, @AuthenticationPrincipal UserDetails user) {
+	public String update(@Validated(UpdateGroup.class) TrainingForm form,
+			@AuthenticationPrincipal UserDetails user) {
 
 		trainingService.updateTraining(form, user.getUsername());
 
@@ -99,7 +102,7 @@ public class TrainingController {
 	}
 
 	@PostMapping(value = "/detail", params = "delete")
-	public String delete(TrainingForm form, Model model,
+	public String delete(@Validated(DeleteGroup.class) TrainingForm form, Model model,
 			@AuthenticationPrincipal UserDetails user) {
 
 		trainingService.deleteTraining(form.getTrainingId(), user.getUsername());

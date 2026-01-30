@@ -1,6 +1,7 @@
 package com.tarosuke777.hms.form;
 
 import java.time.LocalDate;
+import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class TrainingForm {
 
-	@NotNull(groups = UpdateGroup.class)
+	@NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
 	private Integer trainingId;
 
 	private LocalDate trainingDate;

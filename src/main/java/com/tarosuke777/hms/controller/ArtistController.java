@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.ArtistService;
 import com.tarosuke777.hms.form.ArtistForm;
+import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +67,8 @@ public class ArtistController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(ArtistForm form, @AuthenticationPrincipal UserDetails user) {
+  public String delete(@Validated(DeleteGroup.class) ArtistForm form,
+      @AuthenticationPrincipal UserDetails user) {
     artistService.deleteArtist(form.getArtistId(), user.getUsername());
     return "redirect:/artist/list";
   }

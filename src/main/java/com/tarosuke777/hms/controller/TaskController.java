@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.tarosuke777.hms.domain.TaskService;
 import com.tarosuke777.hms.form.TaskForm;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -46,8 +47,8 @@ public class TaskController {
     }
 
     @PostMapping("/update")
-    public String update(@Validated @ModelAttribute TaskForm taskForm, BindingResult bindingResult,
-            Model model, @AuthenticationPrincipal UserDetails user) {
+    public String update(@Validated(UpdateGroup.class) @ModelAttribute TaskForm taskForm,
+            BindingResult bindingResult, Model model, @AuthenticationPrincipal UserDetails user) {
         if (bindingResult.hasErrors()) {
             // エラー時は一覧を再取得して戻る
             model.addAttribute("tasks", taskService.getTaskList(user.getUsername()));
