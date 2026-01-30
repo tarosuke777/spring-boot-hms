@@ -23,7 +23,6 @@ public class TaskController {
 
     private static final String REDIRECT_LIST = "redirect:/task/list";
     private static final String LIST_VIEW = "task/list";
-    private static final String DETAIL_VIEW = "task/detail";
     private static final String REGISTER_VIEW = "task/register";
 
     private final TaskService taskService;
