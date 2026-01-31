@@ -32,7 +32,7 @@ public class AuthorEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer authorId;
 
-  @Column(length = 50)
+  @Column(length = 50, nullable = false)
   private String authorName;
 
   @CreatedDate
