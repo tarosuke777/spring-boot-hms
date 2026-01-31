@@ -163,6 +163,7 @@ public class DiaryControllerTest {
 
     DiaryForm form = new DiaryForm();
     form.setDiaryId(currentId);
+    form.setDiaryDate(diary.getDiaryDate());
     form.setTodoPlan("Try to Update");
     form.setVersion(currentVersion);
 
@@ -221,9 +222,12 @@ public class DiaryControllerTest {
   }
 
   private ResultActions performUpdateRequest(DiaryForm form) throws Exception {
-    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("diaryId", form.getDiaryId().toString()).param("todoPlan", form.getTodoPlan())
-        .param("version", form.getVersion().toString())).andDo(print());
+    return mockMvc
+        .perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
+            .param("diaryId", form.getDiaryId().toString())
+            .param("diaryDate", form.getDiaryDate().toString())
+            .param("todoPlan", form.getTodoPlan()).param("version", form.getVersion().toString()))
+        .andDo(print());
   }
 
   private ResultActions performDeleteRequest(int diaryId) throws Exception {

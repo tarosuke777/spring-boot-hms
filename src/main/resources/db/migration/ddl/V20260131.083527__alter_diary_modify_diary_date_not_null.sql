@@ -1,0 +1,1 @@
+ALTER TABLE diary MODIFY diary_date DATE NOT NULL;

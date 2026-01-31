@@ -36,6 +36,7 @@ public class TrainingEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer trainingId;
 
+	@Column(nullable = false)
 	private LocalDate trainingDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)

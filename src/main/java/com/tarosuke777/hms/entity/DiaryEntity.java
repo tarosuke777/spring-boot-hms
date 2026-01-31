@@ -33,6 +33,7 @@ public class DiaryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer diaryId;
 
+    @Column(nullable = false)
     private LocalDate diaryDate;
 
     @Column(length = 255)
