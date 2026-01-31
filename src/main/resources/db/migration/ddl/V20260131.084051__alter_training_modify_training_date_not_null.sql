@@ -1,0 +1,1 @@
+ALTER TABLE training MODIFY training_date DATE NOT NULL;
