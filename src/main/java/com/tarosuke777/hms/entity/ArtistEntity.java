@@ -32,7 +32,7 @@ public class ArtistEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer artistId;
 
-  @Column(length = 50)
+  @Column(length = 50, nullable = false)
   private String artistName;
 
   @CreatedDate

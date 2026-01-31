@@ -1,0 +1,1 @@
+ALTER TABLE artist MODIFY artist_name VARCHAR(50) NOT NULL;
