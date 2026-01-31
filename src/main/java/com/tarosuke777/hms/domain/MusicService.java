@@ -30,7 +30,7 @@ public class MusicService {
         .orElseThrow(() -> new RuntimeException("Music not found"));
     MusicForm musicForm = modelMapper.map(music, MusicForm.class);
     if (music.getArtist() != null) {
-      musicForm.setArtistId(music.getArtist().getArtistId());
+      musicForm.setArtistId(music.getArtist().getId());
     }
     return musicForm;
   }
@@ -57,7 +57,7 @@ public class MusicService {
     modelMapper.map(existEntity, entity);
     if (existEntity.getArtist() != null) {
       entity.setArtist(
-          entityManager.getReference(ArtistEntity.class, existEntity.getArtist().getArtistId()));
+          entityManager.getReference(ArtistEntity.class, existEntity.getArtist().getId()));
     }
 
     modelMapper.map(form, entity);

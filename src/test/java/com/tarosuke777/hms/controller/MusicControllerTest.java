@@ -84,7 +84,7 @@ public class MusicControllerTest {
     // Given
     MusicEntity musicEntity = musicRepository.findAll().getFirst();
     MusicForm expectedMusicForm = modelMapper.map(musicEntity, MusicForm.class);
-    expectedMusicForm.setArtistId(musicEntity.getArtist().getArtistId());
+    expectedMusicForm.setArtistId(musicEntity.getArtist().getId());
     Map<Integer, String> expectedArtistMap = getArtistMap();
 
     // When & Then
@@ -113,7 +113,7 @@ public class MusicControllerTest {
 
     // Given
     ArtistEntity artistEntity = artistRepository.findAll().getFirst();
-    MusicForm musicForm = new MusicForm(null, "test", artistEntity.getArtistId(), null, null);
+    MusicForm musicForm = new MusicForm(null, "test", artistEntity.getId(), null, null);
 
     // When & Then
     performRegisterRequest(musicForm).andExpect(status().is3xxRedirection())
@@ -125,7 +125,7 @@ public class MusicControllerTest {
     MusicEntity musicEntity = musicRepository.findAll().getLast();
 
     Assertions.assertEquals(musicForm.getMusicName(), musicEntity.getMusicName());
-    Assertions.assertEquals(musicForm.getArtistId(), musicEntity.getArtist().getArtistId());
+    Assertions.assertEquals(musicForm.getArtistId(), musicEntity.getArtist().getId());
   }
 
   @Test
@@ -135,7 +135,7 @@ public class MusicControllerTest {
     MusicEntity music = musicRepository.findAll().getFirst();
 
     MusicForm form = modelMapper.map(music, MusicForm.class);
-    form.setArtistId(music.getArtist().getArtistId());
+    form.setMusicId(music.getMusicId());
     form.setMusicName("更新後の曲名");
 
     // When & Then
@@ -168,7 +168,7 @@ public class MusicControllerTest {
     form.setMusicId(currentId);
     form.setMusicName("Try to Update");
     form.setVersion(currentVersion);
-    form.setArtistId(currentArtist.getArtistId());
+    form.setArtistId(currentArtist.getId());
 
     // When & Then
     performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
@@ -195,8 +195,8 @@ public class MusicControllerTest {
 
   // --- Helper Methods ---
   private Map<Integer, String> getArtistMap() {
-    return artistRepository.findAll().stream().collect(Collectors.toMap(ArtistEntity::getArtistId,
-        ArtistEntity::getArtistName, (existing, replacement) -> existing, LinkedHashMap::new));
+    return artistRepository.findAll().stream().collect(Collectors.toMap(ArtistEntity::getId,
+        ArtistEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 
   private ResultActions performGetListRequest() throws Exception {

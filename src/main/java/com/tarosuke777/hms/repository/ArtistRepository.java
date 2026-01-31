@@ -9,9 +9,9 @@ import com.tarosuke777.hms.entity.ArtistEntity;
 @Repository
 public interface ArtistRepository extends JpaRepository<ArtistEntity, Integer> {
 
-    Optional<ArtistEntity> findByArtistIdAndCreatedBy(Integer artistId, String createdBy);
+    Optional<ArtistEntity> findByIdAndCreatedBy(Integer id, String createdBy);
 
     List<ArtistEntity> findByCreatedBy(String createdBy);
 
-    boolean existsByArtistIdAndCreatedBy(Integer artistId, String createdBy);
+    boolean existsByIdAndCreatedBy(Integer id, String createdBy);
 }

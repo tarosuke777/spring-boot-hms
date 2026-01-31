@@ -25,7 +25,7 @@ public class ArtistService {
   }
 
   public ArtistForm getArtist(Integer artistId, String currentUserId) {
-    ArtistEntity artist = artistRepository.findByArtistIdAndCreatedBy(artistId, currentUserId)
+    ArtistEntity artist = artistRepository.findByIdAndCreatedBy(artistId, currentUserId)
         .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
     return modelMapper.map(artist, ArtistForm.class);
   }
@@ -38,9 +38,8 @@ public class ArtistService {
 
   @Transactional
   public void updateArtist(ArtistForm form, String currentUserId) {
-    ArtistEntity existEntity =
-        artistRepository.findByArtistIdAndCreatedBy(form.getArtistId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
+    ArtistEntity existEntity = artistRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
     ArtistEntity entity = new ArtistEntity();
     modelMapper.map(existEntity, entity);
     modelMapper.map(form, entity);
@@ -49,14 +48,14 @@ public class ArtistService {
 
   @Transactional
   public void deleteArtist(Integer artistId, String currentUserId) {
-    if (!artistRepository.existsByArtistIdAndCreatedBy(artistId, currentUserId)) {
+    if (!artistRepository.existsByIdAndCreatedBy(artistId, currentUserId)) {
       throw new RuntimeException("Artist not found or access denied");
     }
     artistRepository.deleteById(artistId);
   }
 
   public Map<Integer, String> getArtistMap() {
-    return artistRepository.findAll().stream().collect(Collectors.toMap(ArtistEntity::getArtistId,
-        ArtistEntity::getArtistName, (existing, replacement) -> existing, LinkedHashMap::new));
+    return artistRepository.findAll().stream().collect(Collectors.toMap(ArtistEntity::getId,
+        ArtistEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 }

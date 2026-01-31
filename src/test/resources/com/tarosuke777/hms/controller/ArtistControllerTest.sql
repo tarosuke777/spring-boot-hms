@@ -14,7 +14,7 @@ INSERT INTO user(
     ,'ROLE_USER'
 );
 
-INSERT INTO artist (artist_name, created_at, updated_at, created_by, updated_by, version) 
+INSERT INTO artist (name, created_at, updated_at, created_by, updated_by, version) 
 VALUES ('Sample1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin', 0);
-INSERT INTO artist (artist_name, created_at, updated_at, created_by, updated_by, version) 
+INSERT INTO artist (name, created_at, updated_at, created_by, updated_by, version) 
 VALUES ('Sample2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'user', 'user', 0);

@@ -74,7 +74,7 @@ public class ArtistController {
   @PostMapping(value = "/detail", params = "delete")
   public String delete(@Validated(DeleteGroup.class) ArtistForm form,
       @AuthenticationPrincipal UserDetails user) {
-    artistService.deleteArtist(form.getArtistId(), user.getUsername());
+    artistService.deleteArtist(form.getId(), user.getUsername());
     return "redirect:/artist/list";
   }
 }

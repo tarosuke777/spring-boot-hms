@@ -30,10 +30,10 @@ public class ArtistEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer artistId;
+  private Integer id;
 
   @Column(length = 50, nullable = false)
-  private String artistName;
+  private String name;
 
   @CreatedDate
   @Column(updatable = false, nullable = false)

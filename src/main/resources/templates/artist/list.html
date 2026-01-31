@@ -17,15 +17,15 @@
 			<table class="table table-bordered table-hover align-middle">
 				<thead>
 					<tr class="table-dark">
-						<th>Artist Name</th>
+						<th>Name</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="artist: ${artistList}">
-						<td th:text="${artist.artistName}"></td>
+						<td th:text="${artist.name}"></td>
 						<td><a class="btn btn-dark"
-							th:href="@{'/artist/detail/' + ${artist.artistId}}">Detail</a>
+							th:href="@{'/artist/detail/' + ${artist.id}}">Detail</a>
 						</td>
 				</tbody>
 			</table>

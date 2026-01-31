@@ -1,0 +1,2 @@
+ALTER TABLE artist CHANGE artist_id id INT AUTO_INCREMENT;
+ALTER TABLE artist CHANGE artist_name name VARCHAR(50) NOT NULL;

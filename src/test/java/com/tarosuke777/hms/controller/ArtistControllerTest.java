@@ -76,7 +76,7 @@ public class ArtistControllerTest {
     ArtistForm expectedArtistForm = modelMapper.map(expectedArtistEntity, ArtistForm.class);
 
     // When & Then
-    performGetDetailRequest(expectedArtistEntity.getArtistId()).andExpect(status().isOk())
+    performGetDetailRequest(expectedArtistEntity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("artistForm", expectedArtistForm))
         .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
   }
@@ -107,7 +107,7 @@ public class ArtistControllerTest {
 
     List<ArtistEntity> artists = artistRepository.findAll();
     ArtistEntity lastArtist = artists.get(artists.size() - 1);
-    Assertions.assertEquals(artistName, lastArtist.getArtistName());
+    Assertions.assertEquals(artistName, lastArtist.getName());
   }
 
   @Test
@@ -117,7 +117,7 @@ public class ArtistControllerTest {
     ArtistEntity targetArtist = artistRepository.findAll().getFirst();
 
     ArtistForm artistForm = modelMapper.map(targetArtist, ArtistForm.class);
-    artistForm.setArtistName("UpdatedName");
+    artistForm.setName("UpdatedName");
 
     // When & Then
     performUpdateRequest(artistForm).andExpect(status().is3xxRedirection())
@@ -127,8 +127,8 @@ public class ArtistControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    ArtistEntity updatedEntity = artistRepository.findById(targetArtist.getArtistId()).orElse(null);
-    Assertions.assertEquals(updatedEntity.getArtistName(), artistForm.getArtistName());
+    ArtistEntity updatedEntity = artistRepository.findById(targetArtist.getId()).orElse(null);
+    Assertions.assertEquals(updatedEntity.getName(), artistForm.getName());
   }
 
   @Test
@@ -136,17 +136,17 @@ public class ArtistControllerTest {
 
     // Given: データベースから現在のデータを取得
     ArtistEntity artist = artistRepository.findAll().getFirst();
-    Integer currentId = artist.getArtistId();
+    Integer currentId = artist.getId();
     Integer currentVersion = artist.getVersion(); // 現在のバージョンを取得
 
     // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
-    artist.setArtistName("Concurrent Update");
+    artist.setName("Concurrent Update");
     artistRepository.saveAndFlush(artist); // これでDB上のバージョンが上がる
     entityManager.clear();
 
     ArtistForm artistForm = modelMapper.map(artist, ArtistForm.class);
-    artistForm.setArtistId(currentId);
-    artistForm.setArtistName("Try to Update");
+    artistForm.setId(currentId);
+    artistForm.setName("Try to Update");
     artistForm.setVersion(currentVersion); // 古いバージョンをセット
 
     // When & Then
@@ -159,7 +159,7 @@ public class ArtistControllerTest {
 
     // Given
     ArtistEntity targetArtist = artistRepository.findAll().getFirst();
-    Integer targetArtistId = targetArtist.getArtistId();
+    Integer targetArtistId = targetArtist.getId();
 
     // When & Then
     performDeleteRequest(targetArtistId).andExpect(status().is3xxRedirection())
@@ -191,22 +191,19 @@ public class ArtistControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performRegisterRequest(String artistName) throws Exception {
-    return mockMvc
-        .perform(post(REGISTER_ENDPOINT).with(csrf())
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("artistName", artistName))
-        .andDo(print());
+  private ResultActions performRegisterRequest(String name) throws Exception {
+    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
   }
 
   private ResultActions performUpdateRequest(ArtistForm artistForm) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("artistId", artistForm.getArtistId().toString())
-        .param("artistName", artistForm.getArtistName())
+        .param("id", artistForm.getId().toString()).param("name", artistForm.getName())
         .param("version", artistForm.getVersion().toString())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int artistId) throws Exception {
-    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("artistId",
+    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("id",
         String.valueOf(artistId))).andDo(print());
   }
 }
