@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.ArtistEntity;
 import com.tarosuke777.hms.form.ArtistForm;
+import com.tarosuke777.hms.mapper.ArtistMapper;
 import com.tarosuke777.hms.repository.ArtistRepository;
 import jakarta.persistence.EntityManager;
 
@@ -38,9 +38,9 @@ public class ArtistControllerTest {
   @Autowired
   private ArtistRepository artistRepository;
   @Autowired
-  private ModelMapper modelMapper;
-  @Autowired
   private EntityManager entityManager; // キャッシュクリア用
+  @Autowired
+  private ArtistMapper artistMapper;
 
   private static final String LIST_ENDPOINT = "/artist/list";
   private static final String LIST_VIEW = "artist/list";
@@ -60,7 +60,7 @@ public class ArtistControllerTest {
 
     // Given
     List<ArtistForm> expectedArtistList = artistRepository.findByCreatedBy("admin").stream()
-        .map(entity -> modelMapper.map(entity, ArtistForm.class)).collect(Collectors.toList());
+        .map(entity -> artistMapper.toForm(entity)).collect(Collectors.toList());
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
@@ -73,7 +73,7 @@ public class ArtistControllerTest {
 
     // Given
     ArtistEntity expectedArtistEntity = artistRepository.findAll().getFirst();
-    ArtistForm expectedArtistForm = modelMapper.map(expectedArtistEntity, ArtistForm.class);
+    ArtistForm expectedArtistForm = artistMapper.toForm(expectedArtistEntity);
 
     // When & Then
     performGetDetailRequest(expectedArtistEntity.getId()).andExpect(status().isOk())
@@ -116,7 +116,7 @@ public class ArtistControllerTest {
     // Given
     ArtistEntity targetArtist = artistRepository.findAll().getFirst();
 
-    ArtistForm artistForm = modelMapper.map(targetArtist, ArtistForm.class);
+    ArtistForm artistForm = artistMapper.toForm(targetArtist);
     artistForm.setName("UpdatedName");
 
     // When & Then
@@ -144,7 +144,7 @@ public class ArtistControllerTest {
     artistRepository.saveAndFlush(artist); // これでDB上のバージョンが上がる
     entityManager.clear();
 
-    ArtistForm artistForm = modelMapper.map(artist, ArtistForm.class);
+    ArtistForm artistForm = artistMapper.toForm(artist);
     artistForm.setId(currentId);
     artistForm.setName("Try to Update");
     artistForm.setVersion(currentVersion); // 古いバージョンをセット

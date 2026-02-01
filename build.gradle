@@ -23,6 +23,8 @@ def versions = [
     springAi: "1.0.1",
 	springCloudAws: "3.4.0",
     modelMapper: "3.2.1",
+	mapstruct: "1.6.3",
+    lombokMapstructBinding: "0.2.0",
 	bootstrap: "5.3.3",
     jquery: "3.7.1",
     jqueryUi: "1.14.1"
@@ -65,10 +67,15 @@ dependencies {
 
 	// --- Utilities ---
 	implementation "org.modelmapper.extensions:modelmapper-spring:${versions.modelMapper}"
+	implementation "org.mapstruct:mapstruct:${versions.mapstruct}"
 
 	// --- Lombok & Annotation Processors ---
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
+	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${versions.lombokMapstructBinding}"
+
 	testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
