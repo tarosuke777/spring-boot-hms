@@ -4,11 +4,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.AuthorEntity;
 import com.tarosuke777.hms.form.AuthorForm;
+import com.tarosuke777.hms.mapper.AuthorMapper;
 import com.tarosuke777.hms.repository.AuthorRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -17,22 +17,22 @@ import lombok.RequiredArgsConstructor;
 public class AuthorService {
 
   private final AuthorRepository authorRepository;
-  private final ModelMapper modelMapper;
+  private final AuthorMapper authorMapper;
 
   public List<AuthorForm> getAuthorList(String currentUserId) {
-    return authorRepository.findByCreatedBy(currentUserId).stream()
-        .map(entity -> modelMapper.map(entity, AuthorForm.class)).toList();
+    return authorRepository.findByCreatedBy(currentUserId).stream().map(authorMapper::toForm)
+        .toList();
   }
 
   public AuthorForm getAuthor(Integer authorId, String currentUserId) {
     AuthorEntity author = authorRepository.findByAuthorIdAndCreatedBy(authorId, currentUserId)
         .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
-    return modelMapper.map(author, AuthorForm.class);
+    return authorMapper.toForm(author);
   }
 
   @Transactional
   public void registerAuthor(AuthorForm form) {
-    AuthorEntity entity = modelMapper.map(form, AuthorEntity.class);
+    AuthorEntity entity = authorMapper.toEntity(form);
     authorRepository.save(entity);
   }
 
@@ -41,9 +41,8 @@ public class AuthorService {
     AuthorEntity existEntity =
         authorRepository.findByAuthorIdAndCreatedBy(form.getAuthorId(), currentUserId)
             .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
-    AuthorEntity entity = new AuthorEntity();
-    modelMapper.map(existEntity, entity);
-    modelMapper.map(form, entity);
+    AuthorEntity entity = authorMapper.copy(existEntity);
+    authorMapper.updateEntityFromForm(form, entity);
     authorRepository.save(entity);
   }
 

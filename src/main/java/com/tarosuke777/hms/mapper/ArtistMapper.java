@@ -5,7 +5,7 @@ import org.mapstruct.MappingTarget;
 import com.tarosuke777.hms.entity.ArtistEntity;
 import com.tarosuke777.hms.form.ArtistForm;
 
-@Mapper(componentModel = "spring") // Spring Beanとして登録
+@Mapper(componentModel = "spring")
 public interface ArtistMapper {
 
     @IgnoreAuditFields

@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.AuthorEntity;
 import com.tarosuke777.hms.form.AuthorForm;
+import com.tarosuke777.hms.mapper.AuthorMapper;
 import com.tarosuke777.hms.repository.AuthorRepository;
 import jakarta.persistence.EntityManager;
 
@@ -37,7 +38,7 @@ public class AuthorControllerTest {
   @Autowired
   private AuthorRepository authorRepository; // Repositoryへ変更
   @Autowired
-  private ModelMapper modelMapper; // ModelMapper追加
+  private AuthorMapper authorMapper;
   @Autowired
   private EntityManager entityManager; // キャッシュクリア用
 
@@ -58,8 +59,8 @@ public class AuthorControllerTest {
   void getList_ShouldReturnAuthorList() throws Exception {
 
     // Given
-    List<AuthorForm> expectedAuthorList = authorRepository.findByCreatedBy("admin").stream()
-        .map(entity -> modelMapper.map(entity, AuthorForm.class)).toList();
+    List<AuthorForm> expectedAuthorList =
+        authorRepository.findByCreatedBy("admin").stream().map(authorMapper::toForm).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
@@ -73,7 +74,7 @@ public class AuthorControllerTest {
 
     // Given
     AuthorEntity entity = authorRepository.findAll().getFirst();
-    AuthorForm expectedAuthorForm = modelMapper.map(entity, AuthorForm.class);
+    AuthorForm expectedAuthorForm = authorMapper.toForm(entity);
 
     // When & Then
     performGetDetailRequest(entity.getAuthorId()).andExpect(status().isOk())
@@ -116,7 +117,7 @@ public class AuthorControllerTest {
     // Given
     AuthorEntity targetEntity = authorRepository.findAll().getFirst();
 
-    AuthorForm form = modelMapper.map(targetEntity, AuthorForm.class);
+    AuthorForm form = authorMapper.toForm(targetEntity);
     form.setAuthorName("著者２");
 
     // When & Then
