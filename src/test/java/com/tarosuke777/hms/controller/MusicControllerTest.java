@@ -135,7 +135,7 @@ public class MusicControllerTest {
     MusicEntity music = musicRepository.findAll().getFirst();
 
     MusicForm form = modelMapper.map(music, MusicForm.class);
-    form.setMusicId(music.getMusicId());
+    form.setArtistId(music.getArtist().getId());
     form.setMusicName("更新後の曲名");
 
     // When & Then
