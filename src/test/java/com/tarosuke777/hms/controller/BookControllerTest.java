@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.AuthorEntity;
 import com.tarosuke777.hms.entity.BookEntity;
 import com.tarosuke777.hms.form.BookForm;
+import com.tarosuke777.hms.mapper.BookMapper;
 import com.tarosuke777.hms.repository.AuthorRepository;
 import com.tarosuke777.hms.repository.BookRepository;
 import jakarta.persistence.EntityManager;
@@ -45,9 +45,9 @@ public class BookControllerTest {
   @Autowired
   private AuthorRepository authorRepository;
   @Autowired
-  private ModelMapper modelMapper;
-  @Autowired
   private EntityManager entityManager;
+  @Autowired
+  private BookMapper bookMapper;
 
   private static final String LIST_ENDPOINT = "/book/list";
   private static final String LIST_VIEW = "book/list";
@@ -67,7 +67,7 @@ public class BookControllerTest {
 
     // Given
     List<BookForm> expectedBookList = bookRepository.findByCreatedByOrderByBookIdAsc("admin")
-        .stream().map(entity -> modelMapper.map(entity, BookForm.class)).toList();
+        .stream().map(bookMapper::toForm).toList();
 
     Map<Integer, String> expectedAuthorMap = getAuthorMap();
 
@@ -83,7 +83,7 @@ public class BookControllerTest {
   void getDetail_ShouldReturnBookDetailAndAuthorMap() throws Exception {
     // Given
     BookEntity bookEntity = bookRepository.findAll().getFirst();
-    BookForm expectedBookForm = modelMapper.map(bookEntity, BookForm.class);
+    BookForm expectedBookForm = bookMapper.toForm(bookEntity);
     expectedBookForm.setAuthorId(bookEntity.getAuthor().getAuthorId());
     Map<Integer, String> expectedAuthorMap = getAuthorMap();
 
@@ -134,7 +134,7 @@ public class BookControllerTest {
 
     // Given
     BookEntity book = bookRepository.findAll().get(0);
-    BookForm form = modelMapper.map(book, BookForm.class);
+    BookForm form = bookMapper.toForm(book);
     form.setAuthorId(book.getAuthor().getAuthorId());
     form.setBookName("更新後の本タイトル");
 
