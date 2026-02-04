@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.DiaryEntity;
 import com.tarosuke777.hms.form.DiaryForm;
+import com.tarosuke777.hms.mapper.DiaryMapper;
 import com.tarosuke777.hms.repository.DiaryRepository;
 import jakarta.persistence.EntityManager;
 
@@ -39,9 +40,9 @@ public class DiaryControllerTest {
   @Autowired
   private DiaryRepository diaryRepository; // Repositoryへ変更
   @Autowired
-  private ModelMapper modelMapper; // ModelMapper追加
-  @Autowired
   private EntityManager entityManager; // キャッシュクリア用
+  @Autowired
+  private DiaryMapper diaryMapper;
 
   private static final String LIST_ENDPOINT = "/diary/list";
   private static final String LIST_VIEW = "diary/list";
@@ -62,7 +63,7 @@ public class DiaryControllerTest {
     // Given
     List<DiaryForm> expectedDiaryList =
         diaryRepository.findByCreatedBy("admin", Sort.by("diaryDate").descending()).stream()
-            .map(entity -> modelMapper.map(entity, DiaryForm.class)).toList();
+            .map(diaryMapper::toForm).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
@@ -76,7 +77,7 @@ public class DiaryControllerTest {
 
     // Given
     DiaryEntity entity = diaryRepository.findAll().getFirst();
-    DiaryForm expectedDiaryForm = modelMapper.map(entity, DiaryForm.class);
+    DiaryForm expectedDiaryForm = diaryMapper.toForm(entity);
 
     // When & Then
     performGetDetailRequest(entity.getDiaryId()).andExpect(status().isOk())
@@ -133,7 +134,7 @@ public class DiaryControllerTest {
     // Given
     DiaryEntity diary = diaryRepository.findAll().getFirst();
 
-    DiaryForm form = modelMapper.map(diary, DiaryForm.class);
+    DiaryForm form = diaryMapper.toForm(diary);
     form.setTodoPlan("update Todo Plan");
 
     // When & Then
