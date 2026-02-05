@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +21,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.MovieEntity;
 import com.tarosuke777.hms.form.MovieForm;
-import com.tarosuke777.hms.mapper.MovieMapper;
 import com.tarosuke777.hms.repository.MovieRepository;
 import jakarta.persistence.EntityManager;
 
@@ -37,9 +37,9 @@ public class MovieControllerTest {
   @Autowired
   private MovieRepository movieRepository; // Repositoryへ変更
   @Autowired
-  private EntityManager entityManager; // キャッシュクリア用
+  private ModelMapper modelMapper; // ModelMapper追加
   @Autowired
-  private MovieMapper movieMapper;
+  private EntityManager entityManager; // キャッシュクリア用
 
   private static final String LIST_ENDPOINT = "/movie/list";
   private static final String LIST_VIEW = "movie/list";
@@ -59,7 +59,7 @@ public class MovieControllerTest {
 
     // Given
     List<MovieForm> expectedMovieList = movieRepository.findByCreatedBy("admin").stream()
-        .map(entity -> movieMapper.toForm(entity)).toList();
+        .map(entity -> modelMapper.map(entity, MovieForm.class)).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
@@ -73,7 +73,7 @@ public class MovieControllerTest {
 
     // Given
     MovieEntity entity = movieRepository.findAll().getFirst();
-    MovieForm expectedMovieForm = movieMapper.toForm(entity);
+    MovieForm expectedMovieForm = modelMapper.map(entity, MovieForm.class);
 
     // When & Then
     performGetDetailRequest(entity.getMovieId()).andExpect(status().isOk())
@@ -115,7 +115,7 @@ public class MovieControllerTest {
 
     // Given
     MovieEntity movie = movieRepository.findAll().getFirst();
-    MovieForm form = movieMapper.toForm(movie);
+    MovieForm form = modelMapper.map(movie, MovieForm.class);
     form.setMovieName("著者２");
 
     // When & Then
