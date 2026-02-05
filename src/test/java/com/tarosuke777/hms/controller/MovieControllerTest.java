@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.MovieEntity;
 import com.tarosuke777.hms.form.MovieForm;
+import com.tarosuke777.hms.mapper.MovieMapper;
 import com.tarosuke777.hms.repository.MovieRepository;
 import jakarta.persistence.EntityManager;
 
@@ -37,9 +38,9 @@ public class MovieControllerTest {
   @Autowired
   private MovieRepository movieRepository; // Repositoryへ変更
   @Autowired
-  private ModelMapper modelMapper; // ModelMapper追加
-  @Autowired
   private EntityManager entityManager; // キャッシュクリア用
+  @Autowired
+  private MovieMapper movieMapper;
 
   private static final String LIST_ENDPOINT = "/movie/list";
   private static final String LIST_VIEW = "movie/list";
@@ -59,7 +60,7 @@ public class MovieControllerTest {
 
     // Given
     List<MovieForm> expectedMovieList = movieRepository.findByCreatedBy("admin").stream()
-        .map(entity -> modelMapper.map(entity, MovieForm.class)).toList();
+        .map(entity -> movieMapper.toForm(entity)).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
@@ -73,7 +74,7 @@ public class MovieControllerTest {
 
     // Given
     MovieEntity entity = movieRepository.findAll().getFirst();
-    MovieForm expectedMovieForm = modelMapper.map(entity, MovieForm.class);
+    MovieForm expectedMovieForm = movieMapper.toForm(entity);
 
     // When & Then
     performGetDetailRequest(entity.getMovieId()).andExpect(status().isOk())
@@ -115,7 +116,7 @@ public class MovieControllerTest {
 
     // Given
     MovieEntity movie = movieRepository.findAll().getFirst();
-    MovieForm form = modelMapper.map(movie, MovieForm.class);
+    MovieForm form = movieMapper.toForm(movie);
     form.setMovieName("著者２");
 
     // When & Then
