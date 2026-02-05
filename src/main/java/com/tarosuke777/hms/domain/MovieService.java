@@ -1,11 +1,11 @@
 package com.tarosuke777.hms.domain;
 
 import java.util.List;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.MovieEntity;
 import com.tarosuke777.hms.form.MovieForm;
+import com.tarosuke777.hms.mapper.MovieMapper;
 import com.tarosuke777.hms.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -14,25 +14,25 @@ import lombok.RequiredArgsConstructor;
 public class MovieService {
 
     private final MovieRepository movieRepository;
-    private final ModelMapper modelMapper;
+    private final MovieMapper movieMapper;
 
     /** 一覧取得 */
     public List<MovieForm> getMovieList(String currentUserId) {
         return movieRepository.findByCreatedBy(currentUserId).stream()
-                .map(entity -> modelMapper.map(entity, MovieForm.class)).toList();
+                .map(entity -> movieMapper.toForm(entity)).toList();
     }
 
     /** 1件取得 */
     public MovieForm getMovie(Integer movieId, String currentUserId) {
         MovieEntity movie = movieRepository.findByMovieIdAndCreatedBy(movieId, currentUserId)
                 .orElseThrow(() -> new RuntimeException("Movie not found"));
-        return modelMapper.map(movie, MovieForm.class);
+        return movieMapper.toForm(movie);
     }
 
     /** 登録 */
     @Transactional
     public void registerMovie(MovieForm form) {
-        MovieEntity entity = modelMapper.map(form, MovieEntity.class);
+        MovieEntity entity = movieMapper.toEntity(form);
         movieRepository.save(entity);
     }
 
@@ -42,9 +42,8 @@ public class MovieService {
         MovieEntity existEntity = movieRepository
                 .findByMovieIdAndCreatedBy(form.getMovieId(), currentUserId)
                 .orElseThrow(() -> new RuntimeException("Movie not found or access denied"));
-        MovieEntity entity = new MovieEntity();
-        modelMapper.map(existEntity, entity);
-        modelMapper.map(form, entity);
+        MovieEntity entity = movieMapper.copy(existEntity);
+        movieMapper.updateEntityFromForm(form, entity);
         movieRepository.save(entity);
     }
 
