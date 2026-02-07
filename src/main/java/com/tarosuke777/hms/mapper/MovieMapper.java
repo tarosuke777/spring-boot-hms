@@ -1,9 +1,11 @@
 package com.tarosuke777.hms.mapper;
 
+import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import com.tarosuke777.hms.entity.MovieEntity;
 import com.tarosuke777.hms.form.MovieForm;
 
+@Mapper(componentModel = "spring")
 public interface MovieMapper {
 
     @IgnoreAuditFields
