@@ -79,6 +79,9 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
+	testAnnotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
+	testAnnotationProcessor "org.projectlombok:lombok-mapstruct-binding:${versions.lombokMapstructBinding}"
+
 	// --- Testing ---
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
@@ -109,4 +112,10 @@ tasks.named('jacocoTestReport') {
         html.required = true
         xml.required = false
     }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += [
+        "-Amapstruct.unmappedTargetPolicy=ERROR"
+    ]
 }
