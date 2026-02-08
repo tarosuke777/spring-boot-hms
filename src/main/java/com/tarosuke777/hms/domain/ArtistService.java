@@ -20,8 +20,8 @@ public class ArtistService {
   private final ArtistMapper artistMapper;
 
   public List<ArtistForm> getArtistList(String currentUserId) {
-    return artistRepository.findByCreatedBy(currentUserId).stream()
-        .map(entity -> artistMapper.toForm(entity)).toList();
+    return artistRepository.findByCreatedBy(currentUserId).stream().map(artistMapper::toForm)
+        .toList();
   }
 
   public ArtistForm getArtist(Integer artistId, String currentUserId) {
