@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.ArtistEntity;
 import com.tarosuke777.hms.entity.MusicEntity;
 import com.tarosuke777.hms.form.MusicForm;
+import com.tarosuke777.hms.mapper.MusicMapper;
 import com.tarosuke777.hms.repository.ArtistRepository;
 import com.tarosuke777.hms.repository.MusicRepository;
 import jakarta.persistence.EntityManager;
@@ -45,7 +45,7 @@ public class MusicControllerTest {
   @Autowired
   private ArtistRepository artistRepository;
   @Autowired
-  private ModelMapper modelMapper;
+  private MusicMapper musicMapper;
   @Autowired
   private EntityManager entityManager;
 
@@ -67,7 +67,7 @@ public class MusicControllerTest {
 
     // Given
     List<MusicForm> expectedMusicList = musicRepository.findByCreatedByOrderByMusicIdAsc("admin")
-        .stream().map(entity -> modelMapper.map(entity, MusicForm.class)).toList();
+        .stream().map(musicMapper::toForm).toList();
 
     Map<Integer, String> expectedArtistMap = getArtistMap();
 
@@ -83,7 +83,7 @@ public class MusicControllerTest {
   void getDetail_ShouldReturnMusicDetailAndArtistMap() throws Exception {
     // Given
     MusicEntity musicEntity = musicRepository.findAll().getFirst();
-    MusicForm expectedMusicForm = modelMapper.map(musicEntity, MusicForm.class);
+    MusicForm expectedMusicForm = musicMapper.toForm(musicEntity);
     expectedMusicForm.setArtistId(musicEntity.getArtist().getId());
     Map<Integer, String> expectedArtistMap = getArtistMap();
 
@@ -134,7 +134,7 @@ public class MusicControllerTest {
     // Given
     MusicEntity music = musicRepository.findAll().getFirst();
 
-    MusicForm form = modelMapper.map(music, MusicForm.class);
+    MusicForm form = musicMapper.toForm(music);
     form.setArtistId(music.getArtist().getId());
     form.setMusicName("更新後の曲名");
 

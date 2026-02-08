@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.ArtistEntity;
 import com.tarosuke777.hms.entity.MusicEntity;
 import com.tarosuke777.hms.form.MusicForm;
+import com.tarosuke777.hms.mapper.MusicMapper;
 import com.tarosuke777.hms.repository.MusicRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -18,17 +19,17 @@ public class MusicService {
 
   private final MusicRepository musicRepository;
   private final EntityManager entityManager;
-  private final ModelMapper modelMapper;
+  private final MusicMapper musicMapper;
 
   public List<MusicForm> getMusicList(String currentUserId) {
     return musicRepository.findByCreatedByOrderByMusicIdAsc(currentUserId).stream()
-        .map(entity -> modelMapper.map(entity, MusicForm.class)).toList();
+        .map(musicMapper::toForm).toList();
   }
 
   public MusicForm getMusicDetails(Integer musicId, String currentUserId) {
     MusicEntity music = musicRepository.findByMusicIdAndCreatedBy(musicId, currentUserId)
         .orElseThrow(() -> new RuntimeException("Music not found"));
-    MusicForm musicForm = modelMapper.map(music, MusicForm.class);
+    MusicForm musicForm = musicMapper.toForm(music);
     if (music.getArtist() != null) {
       musicForm.setArtistId(music.getArtist().getId());
     }
@@ -38,7 +39,7 @@ public class MusicService {
   @Transactional
   public void registerMusic(MusicForm form) {
 
-    MusicEntity entity = modelMapper.map(form, MusicEntity.class);
+    MusicEntity entity = musicMapper.toEntity(form);
 
     // artistId を ArtistEntity の参照としてセット
     if (form.getArtistId() != null) {
@@ -53,14 +54,13 @@ public class MusicService {
     MusicEntity existEntity =
         musicRepository.findByMusicIdAndCreatedBy(form.getMusicId(), currentUserId)
             .orElseThrow(() -> new RuntimeException("Music not found"));
-    MusicEntity entity = new MusicEntity();
-    modelMapper.map(existEntity, entity);
+    MusicEntity entity = musicMapper.copy(existEntity);
     if (existEntity.getArtist() != null) {
       entity.setArtist(
           entityManager.getReference(ArtistEntity.class, existEntity.getArtist().getId()));
     }
 
-    modelMapper.map(form, entity);
+    musicMapper.updateEntityFromForm(form, entity);
     if (form.getArtistId() != null) {
       entity.setArtist(entityManager.getReference(ArtistEntity.class, form.getArtistId()));
     }
