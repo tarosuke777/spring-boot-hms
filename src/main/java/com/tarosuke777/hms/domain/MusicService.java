@@ -1,7 +1,6 @@
 package com.tarosuke777.hms.domain;
 
 import java.util.List;
-import org.modelmapper.ModelMapper;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
