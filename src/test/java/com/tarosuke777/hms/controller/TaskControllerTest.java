@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.TaskEntity;
 import com.tarosuke777.hms.form.TaskForm;
+import com.tarosuke777.hms.mapper.TaskMapper;
 import com.tarosuke777.hms.repository.TaskRepository;
 import jakarta.persistence.EntityManager;
 
@@ -38,7 +38,7 @@ public class TaskControllerTest {
   @Autowired
   private TaskRepository taskRepository;
   @Autowired
-  private ModelMapper modelMapper;
+  private TaskMapper taskMapper;
   @Autowired
   private EntityManager entityManager; // キャッシュクリア用
 
@@ -58,7 +58,7 @@ public class TaskControllerTest {
 
     // Given
     List<TaskForm> expectedTaskList = taskRepository.findByCreatedBy("admin").stream()
-        .map(entity -> modelMapper.map(entity, TaskForm.class)).collect(Collectors.toList());
+        .map(taskMapper::toForm).collect(Collectors.toList());
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
@@ -99,7 +99,7 @@ public class TaskControllerTest {
 
     // Given
     TaskEntity task = taskRepository.findAll().getFirst();
-    TaskForm form = modelMapper.map(task, TaskForm.class);
+    TaskForm form = taskMapper.toForm(task);
     form.setName("UpdatedName");
 
     // When & Then
