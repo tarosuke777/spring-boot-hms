@@ -14,12 +14,6 @@ services:
     networks:
       - home_network
     restart: always
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: localhost:24224
-        tag: docker.hms-app.{{.ID}}
-        fluentd-async: "true"
 secrets:
   mysql_root_password:
     file: C:\\dev\\secrets\\mysql_root_password.txt
