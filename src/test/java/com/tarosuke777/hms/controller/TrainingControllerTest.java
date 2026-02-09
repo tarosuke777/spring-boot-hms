@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +29,7 @@ import com.tarosuke777.hms.entity.TrainingMenuEntity;
 import com.tarosuke777.hms.enums.TargetArea;
 import com.tarosuke777.hms.form.SelectOptionTrainingMenu;
 import com.tarosuke777.hms.form.TrainingForm;
+import com.tarosuke777.hms.mapper.TrainingMapper;
 import com.tarosuke777.hms.repository.TrainingMenuRepository;
 import com.tarosuke777.hms.repository.TrainingRepository;
 import jakarta.persistence.EntityManager;
@@ -49,7 +49,7 @@ public class TrainingControllerTest {
   @Autowired
   private TrainingMenuRepository trainingMenuRepository;
   @Autowired
-  private ModelMapper modelMapper;
+  private TrainingMapper trainingMapper;
   @Autowired
   private EntityManager entityManager;
 
@@ -227,7 +227,7 @@ public class TrainingControllerTest {
 
   /** Entity から Form への変換（リレーションのID詰め替え含む） */
   private TrainingForm convertToForm(TrainingEntity entity) {
-    TrainingForm form = modelMapper.map(entity, TrainingForm.class);
+    TrainingForm form = trainingMapper.toForm(entity);
     if (entity.getTrainingMenu() != null) {
       form.setTrainingMenuId(entity.getTrainingMenu().getTrainingMenuId());
       form.setTrainingAreaId(entity.getTrainingMenu().getTargetAreaId());

@@ -2,7 +2,6 @@ package com.tarosuke777.hms.domain;
 
 import java.util.List;
 import java.util.Map;
-import org.modelmapper.ModelMapper;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.data.domain.Sort;
@@ -11,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.TrainingEntity;
 import com.tarosuke777.hms.entity.TrainingMenuEntity;
 import com.tarosuke777.hms.form.TrainingForm;
+import com.tarosuke777.hms.mapper.TrainingMapper;
 import com.tarosuke777.hms.repository.TrainingRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class TrainingService {
 
 	private final TrainingRepository trainingRepository;
 	private final EntityManager entityManager;
-	private final ModelMapper modelMapper;
+	private final TrainingMapper trainingMapper;
 
 	public List<TrainingForm> getTrainingList(String orderBy, String sortDirection,
 			String currentUserId) {
@@ -39,7 +39,7 @@ public class TrainingService {
 
 	@Transactional
 	public void registerTraining(TrainingForm form) {
-		TrainingEntity entity = modelMapper.map(form, TrainingEntity.class);
+		TrainingEntity entity = trainingMapper.toEntity(form);
 		if (form.getTrainingMenuId() != null) {
 			entity.setTrainingMenu(
 					entityManager.getReference(TrainingMenuEntity.class, form.getTrainingMenuId()));
@@ -53,14 +53,13 @@ public class TrainingService {
 				.findByTrainingIdAndCreatedBy(form.getTrainingId(), currentUserId)
 				.orElseThrow(() -> new RuntimeException("Training not found or access denied"));
 
-		TrainingEntity entity = new TrainingEntity();
-		modelMapper.map(existingEntity, entity);
+		TrainingEntity entity = trainingMapper.copy(existingEntity);
 		if (existingEntity.getTrainingMenu() != null) {
 			entity.setTrainingMenu(entityManager.getReference(TrainingMenuEntity.class,
 					existingEntity.getTrainingMenu().getTrainingMenuId()));
 		}
 
-		modelMapper.map(form, entity);
+		trainingMapper.updateEntityFromForm(form, entity);
 		if (form.getTrainingMenuId() != null) {
 			entity.setTrainingMenu(
 					entityManager.getReference(TrainingMenuEntity.class, form.getTrainingMenuId()));
@@ -79,7 +78,7 @@ public class TrainingService {
 
 	/** Entity から Form への変換（リレーションのID詰め替え含む） */
 	private TrainingForm convertToForm(TrainingEntity entity) {
-		TrainingForm form = modelMapper.map(entity, TrainingForm.class);
+		TrainingForm form = trainingMapper.toForm(entity);
 		if (entity.getTrainingMenu() != null) {
 			form.setTrainingMenuId(entity.getTrainingMenu().getTrainingMenuId());
 			form.setTrainingAreaId(entity.getTrainingMenu().getTargetAreaId());
