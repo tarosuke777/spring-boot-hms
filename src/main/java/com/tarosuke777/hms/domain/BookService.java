@@ -27,7 +27,7 @@ public class BookService {
     BookEntity book = bookRepository.findByBookIdAndCreatedBy(bookId, currentUserId)
         .orElseThrow(() -> new RuntimeException("Book not found"));
     BookForm bookForm = bookMapper.toForm(book);
-    bookForm.setAuthorId(book.getAuthor().getAuthorId());
+    bookForm.setAuthorId(book.getAuthor().getId());
     return bookForm;
   }
 
@@ -49,7 +49,7 @@ public class BookService {
     BookEntity entity = bookMapper.copy(existEntity);
     if (existEntity.getAuthor() != null) {
       entity.setAuthor(
-          entityManager.getReference(AuthorEntity.class, existEntity.getAuthor().getAuthorId()));
+          entityManager.getReference(AuthorEntity.class, existEntity.getAuthor().getId()));
     }
 
     bookMapper.updateEntityFromForm(form, entity);

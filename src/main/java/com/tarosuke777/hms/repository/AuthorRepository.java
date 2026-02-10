@@ -9,9 +9,9 @@ import com.tarosuke777.hms.entity.AuthorEntity;
 @Repository
 public interface AuthorRepository extends JpaRepository<AuthorEntity, Integer> {
 
-    Optional<AuthorEntity> findByAuthorIdAndCreatedBy(Integer authorId, String createdBy);
+    Optional<AuthorEntity> findByIdAndCreatedBy(Integer id, String createdBy);
 
     List<AuthorEntity> findByCreatedBy(String createdBy);
 
-    boolean existsByAuthorIdAndCreatedBy(Integer authorId, String createdBy);
+    boolean existsByIdAndCreatedBy(Integer id, String createdBy);
 }

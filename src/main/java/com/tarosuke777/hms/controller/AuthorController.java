@@ -72,7 +72,7 @@ public class AuthorController {
   @PostMapping(value = "/detail", params = "delete")
   public String delete(@Validated(DeleteGroup.class) AuthorForm form,
       @AuthenticationPrincipal UserDetails user) {
-    authorService.deleteAuthor(form.getAuthorId(), user.getUsername());
+    authorService.deleteAuthor(form.getId(), user.getUsername());
     return REDIRECT_LIST;
   }
 

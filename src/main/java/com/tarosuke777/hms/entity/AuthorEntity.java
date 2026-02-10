@@ -30,10 +30,10 @@ public class AuthorEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer authorId;
+  private Integer id;
 
   @Column(length = 50, nullable = false)
-  private String authorName;
+  private String name;
 
   @CreatedDate
   @Column(updatable = false, nullable = false)

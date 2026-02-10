@@ -76,7 +76,7 @@ public class AuthorControllerTest {
     AuthorForm expectedAuthorForm = authorMapper.toForm(entity);
 
     // When & Then
-    performGetDetailRequest(entity.getAuthorId()).andExpect(status().isOk())
+    performGetDetailRequest(entity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("authorForm", expectedAuthorForm))
         .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
   }
@@ -107,7 +107,7 @@ public class AuthorControllerTest {
     entityManager.clear();
 
     AuthorEntity lastAuthor = authorRepository.findAll().getLast();
-    Assertions.assertEquals(authorName, lastAuthor.getAuthorName());
+    Assertions.assertEquals(authorName, lastAuthor.getName());
   }
 
   @Test
@@ -117,7 +117,7 @@ public class AuthorControllerTest {
     AuthorEntity targetEntity = authorRepository.findAll().getFirst();
 
     AuthorForm form = authorMapper.toForm(targetEntity);
-    form.setAuthorName("著者２");
+    form.setName("著者２");
 
     // When & Then
     performUpdateRequest(form).andExpect(status().is3xxRedirection())
@@ -127,8 +127,8 @@ public class AuthorControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    AuthorEntity updatedEntity = authorRepository.findById(form.getAuthorId()).orElse(null);
-    Assertions.assertEquals(form.getAuthorName(), updatedEntity.getAuthorName());
+    AuthorEntity updatedEntity = authorRepository.findById(form.getId()).orElse(null);
+    Assertions.assertEquals(form.getName(), updatedEntity.getName());
   }
 
   @Test
@@ -136,17 +136,17 @@ public class AuthorControllerTest {
 
     // Given: データベースから現在のデータを取得
     AuthorEntity targetEntity = authorRepository.findAll().getFirst();
-    Integer currentId = targetEntity.getAuthorId();
+    Integer currentId = targetEntity.getId();
     Integer currentVersion = targetEntity.getVersion(); // 現在のバージョンを取得
 
     // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
-    targetEntity.setAuthorName("Concurrent Update");
+    targetEntity.setName("Concurrent Update");
     authorRepository.saveAndFlush(targetEntity); // これでDB上のバージョンが上がる
     entityManager.clear();
 
     AuthorForm form = new AuthorForm();
-    form.setAuthorId(currentId);
-    form.setAuthorName("Try to Update");
+    form.setId(currentId);
+    form.setName("Try to Update");
     form.setVersion(currentVersion); // 古いバージョンをセット
 
     // When & Then
@@ -159,10 +159,10 @@ public class AuthorControllerTest {
 
     // Given
     AuthorEntity targetAuthor = authorRepository.findByCreatedBy("admin").getFirst();
-    Integer targetAuthorId = targetAuthor.getAuthorId();
+    Integer targetAuthorId = targetAuthor.getId();
 
     // When & Then
-    performDeleteRequest(targetAuthor.getAuthorId()).andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetAuthorId).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -191,21 +191,22 @@ public class AuthorControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performRegisterRequest(String authorName) throws Exception {
-    return mockMvc
-        .perform(post(REGISTER_ENDPOINT).with(csrf())
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("authorName", authorName))
-        .andDo(print());
+  private ResultActions performRegisterRequest(String name) throws Exception {
+    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
   }
 
   private ResultActions performUpdateRequest(AuthorForm form) throws Exception {
-    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("authorId", form.getAuthorId().toString()).param("authorName", form.getAuthorName())
-        .param("version", form.getVersion().toString())).andDo(print());
+    return mockMvc.perform(
+        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
+            .param("name", form.getName()).param("version", form.getVersion().toString()))
+        .andDo(print());
   }
 
-  private ResultActions performDeleteRequest(int authorId) throws Exception {
-    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("authorId",
-        String.valueOf(authorId))).andDo(print());
+  private ResultActions performDeleteRequest(int id) throws Exception {
+    return mockMvc
+        .perform(
+            post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("id", String.valueOf(id)))
+        .andDo(print());
   }
 }

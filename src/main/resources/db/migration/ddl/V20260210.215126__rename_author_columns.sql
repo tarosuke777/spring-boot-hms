@@ -1,0 +1,2 @@
+ALTER TABLE author CHANGE author_id id INT AUTO_INCREMENT;
+ALTER TABLE author CHANGE author_name name VARCHAR(50) NOT NULL;

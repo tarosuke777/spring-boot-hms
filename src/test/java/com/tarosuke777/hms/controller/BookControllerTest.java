@@ -84,7 +84,7 @@ public class BookControllerTest {
     // Given
     BookEntity bookEntity = bookRepository.findAll().getFirst();
     BookForm expectedBookForm = bookMapper.toForm(bookEntity);
-    expectedBookForm.setAuthorId(bookEntity.getAuthor().getAuthorId());
+    expectedBookForm.setAuthorId(bookEntity.getAuthor().getId());
     Map<Integer, String> expectedAuthorMap = getAuthorMap();
 
     // When & Then
@@ -112,7 +112,7 @@ public class BookControllerTest {
 
     // Given
     AuthorEntity authorEntity = authorRepository.findAll().get(0);
-    BookForm bookForm = new BookForm(null, "test", authorEntity.getAuthorId(), null, null, null);
+    BookForm bookForm = new BookForm(null, "test", authorEntity.getId(), null, null, null);
 
     // When & Then
     performRegisterRequest(bookForm).andExpect(status().is3xxRedirection())
@@ -125,7 +125,7 @@ public class BookControllerTest {
     BookEntity savedBook = books.get(books.size() - 1);
 
     Assertions.assertEquals(bookForm.getBookName(), savedBook.getBookName());
-    Assertions.assertEquals(bookForm.getAuthorId(), savedBook.getAuthor().getAuthorId());
+    Assertions.assertEquals(bookForm.getAuthorId(), savedBook.getAuthor().getId());
   }
 
 
@@ -135,7 +135,7 @@ public class BookControllerTest {
     // Given
     BookEntity book = bookRepository.findAll().get(0);
     BookForm form = bookMapper.toForm(book);
-    form.setAuthorId(book.getAuthor().getAuthorId());
+    form.setAuthorId(book.getAuthor().getId());
     form.setBookName("更新後の本タイトル");
 
     // When & Then
@@ -168,7 +168,7 @@ public class BookControllerTest {
     form.setBookId(currentId);
     form.setBookName("Try to Update");
     form.setVersion(currentVersion);
-    form.setAuthorId(currentAuthor.getAuthorId());
+    form.setAuthorId(currentAuthor.getId());
     // When & Then
     performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
@@ -193,8 +193,8 @@ public class BookControllerTest {
 
   // --- Helper Methods ---
   private Map<Integer, String> getAuthorMap() {
-    return authorRepository.findAll().stream().collect(Collectors.toMap(AuthorEntity::getAuthorId,
-        AuthorEntity::getAuthorName, (existing, replacement) -> existing, LinkedHashMap::new));
+    return authorRepository.findAll().stream().collect(Collectors.toMap(AuthorEntity::getId,
+        AuthorEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 
   private ResultActions performGetListRequest() throws Exception {

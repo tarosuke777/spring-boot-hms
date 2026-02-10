@@ -25,7 +25,7 @@ public class AuthorService {
   }
 
   public AuthorForm getAuthor(Integer authorId, String currentUserId) {
-    AuthorEntity author = authorRepository.findByAuthorIdAndCreatedBy(authorId, currentUserId)
+    AuthorEntity author = authorRepository.findByIdAndCreatedBy(authorId, currentUserId)
         .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
     return authorMapper.toForm(author);
   }
@@ -38,9 +38,8 @@ public class AuthorService {
 
   @Transactional
   public void updateAuthor(AuthorForm form, String currentUserId) {
-    AuthorEntity existEntity =
-        authorRepository.findByAuthorIdAndCreatedBy(form.getAuthorId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
+    AuthorEntity existEntity = authorRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
     AuthorEntity entity = authorMapper.copy(existEntity);
     authorMapper.updateEntityFromForm(form, entity);
     authorRepository.save(entity);
@@ -48,14 +47,14 @@ public class AuthorService {
 
   @Transactional
   public void deleteAuthor(Integer authorId, String currentUserId) {
-    if (!authorRepository.existsByAuthorIdAndCreatedBy(authorId, currentUserId)) {
+    if (!authorRepository.existsByIdAndCreatedBy(authorId, currentUserId)) {
       throw new RuntimeException("Author not found or access denied");
     }
     authorRepository.deleteById(authorId);
   }
 
   public Map<Integer, String> getAuthorMap() {
-    return authorRepository.findAll().stream().collect(Collectors.toMap(AuthorEntity::getAuthorId,
-        AuthorEntity::getAuthorName, (existing, replacement) -> existing, LinkedHashMap::new));
+    return authorRepository.findAll().stream().collect(Collectors.toMap(AuthorEntity::getId,
+        AuthorEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 }

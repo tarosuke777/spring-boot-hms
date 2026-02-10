@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 public class AuthorForm {
 
   @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
-  private Integer authorId;
+  private Integer id;
 
   @NotBlank
   @Size(min = 1, max = 50)
-  private String authorName;
+  private String name;
 
   @NotNull(groups = UpdateGroup.class)
   private Integer version;
