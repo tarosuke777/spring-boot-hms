@@ -4,12 +4,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.TrainingMenuEntity;
 import com.tarosuke777.hms.form.SelectOptionTrainingMenu;
 import com.tarosuke777.hms.form.TrainingMenuForm;
+import com.tarosuke777.hms.mapper.TrainingMenuMapper;
 import com.tarosuke777.hms.repository.TrainingMenuRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -18,23 +18,23 @@ import lombok.RequiredArgsConstructor;
 public class TrainingMenuService {
 
 	private final TrainingMenuRepository trainingMenuRepository;
-	private final ModelMapper modelMapper;
+	private final TrainingMenuMapper trainingMenuMapper;
 
 	public List<TrainingMenuForm> getTrainingMenuList(String currentUserId) {
 		return trainingMenuRepository.findByCreatedBy(currentUserId).stream()
-				.map(entity -> modelMapper.map(entity, TrainingMenuForm.class)).toList();
+				.map(trainingMenuMapper::toForm).toList();
 	}
 
 	public TrainingMenuForm getTrainingMenuDetails(Integer trainingMenuId, String currentUserId) {
 		TrainingMenuEntity entity = trainingMenuRepository
 				.findByTrainingMenuIdAndCreatedBy(trainingMenuId, currentUserId)
 				.orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
-		return modelMapper.map(entity, TrainingMenuForm.class);
+		return trainingMenuMapper.toForm(entity);
 	}
 
 	@Transactional
 	public void registerTrainingMenu(TrainingMenuForm form) {
-		TrainingMenuEntity entity = modelMapper.map(form, TrainingMenuEntity.class);
+		TrainingMenuEntity entity = trainingMenuMapper.toEntity(form);
 		trainingMenuRepository.save(entity);
 	}
 
@@ -43,9 +43,8 @@ public class TrainingMenuService {
 		TrainingMenuEntity existEntity = trainingMenuRepository
 				.findByTrainingMenuIdAndCreatedBy(form.getTrainingMenuId(), currentUserId)
 				.orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
-		TrainingMenuEntity entity = new TrainingMenuEntity();
-		modelMapper.map(existEntity, entity);
-		modelMapper.map(form, entity);
+		TrainingMenuEntity entity = trainingMenuMapper.copy(existEntity);
+		trainingMenuMapper.updateEntityFromForm(form, entity);
 		trainingMenuRepository.save(entity);
 	}
 

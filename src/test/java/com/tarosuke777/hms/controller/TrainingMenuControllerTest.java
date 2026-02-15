@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +20,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.TrainingMenuEntity;
 import com.tarosuke777.hms.form.TrainingMenuForm;
+import com.tarosuke777.hms.mapper.TrainingMenuMapper;
 import com.tarosuke777.hms.repository.TrainingMenuRepository;
 import jakarta.persistence.EntityManager;
 
@@ -35,9 +35,9 @@ public class TrainingMenuControllerTest {
   @Autowired
   private MockMvc mockMvc;
   @Autowired
-  private TrainingMenuRepository TrainingMenuRepository; // Repositoryへ変更
+  private TrainingMenuRepository trainingMenuRepository; // Repositoryへ変更
   @Autowired
-  private ModelMapper modelMapper; // ModelMapper追加
+  private TrainingMenuMapper trainingMenuMapper; // TrainingMenuMapper追加
   @Autowired
   private EntityManager entityManager; // キャッシュクリア用
 
@@ -58,9 +58,8 @@ public class TrainingMenuControllerTest {
   void getList_ShouldReturnTrainingMenuList() throws Exception {
 
     // Given
-    List<TrainingMenuForm> expectedTrainingMenuList =
-        TrainingMenuRepository.findByCreatedBy("admin").stream()
-            .map(entity -> modelMapper.map(entity, TrainingMenuForm.class)).toList();
+    List<TrainingMenuForm> expectedTrainingMenuList = trainingMenuRepository
+        .findByCreatedBy("admin").stream().map(trainingMenuMapper::toForm).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
@@ -72,8 +71,8 @@ public class TrainingMenuControllerTest {
   void getDetail_ShouldReturnTrainingMenuDetail() throws Exception {
 
     // Given
-    TrainingMenuEntity entity = TrainingMenuRepository.findAll().getFirst();
-    TrainingMenuForm expectedTrainingMenuForm = modelMapper.map(entity, TrainingMenuForm.class);
+    TrainingMenuEntity entity = trainingMenuRepository.findAll().getFirst();
+    TrainingMenuForm expectedTrainingMenuForm = trainingMenuMapper.toForm(entity);
 
     // When & Then
     performGetDetailRequest(entity.getTrainingMenuId()).andExpect(status().isOk())
@@ -104,7 +103,7 @@ public class TrainingMenuControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    TrainingMenuEntity lastTrainingMenu = TrainingMenuRepository.findAll().getLast();
+    TrainingMenuEntity lastTrainingMenu = trainingMenuRepository.findAll().getLast();
     Assertions.assertEquals(TrainingMenuName, lastTrainingMenu.getTrainingMenuName());
   }
 
@@ -112,8 +111,8 @@ public class TrainingMenuControllerTest {
   void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
 
     // Given
-    TrainingMenuEntity expectedTrainingMenu = TrainingMenuRepository.findAll().getFirst();
-    TrainingMenuForm form = modelMapper.map(expectedTrainingMenu, TrainingMenuForm.class);
+    TrainingMenuEntity expectedTrainingMenu = trainingMenuRepository.findAll().getFirst();
+    TrainingMenuForm form = trainingMenuMapper.toForm(expectedTrainingMenu);
     form.setTrainingMenuName("著者２");
 
     // When & Then
@@ -124,9 +123,9 @@ public class TrainingMenuControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    TrainingMenuEntity TrainingMenu =
-        TrainingMenuRepository.findById(expectedTrainingMenu.getTrainingMenuId()).orElse(null);
-    Assertions.assertEquals(TrainingMenu.getTrainingMenuName(),
+    TrainingMenuEntity updatedTrainingMenu =
+        trainingMenuRepository.findById(expectedTrainingMenu.getTrainingMenuId()).orElse(null);
+    Assertions.assertEquals(updatedTrainingMenu.getTrainingMenuName(),
         expectedTrainingMenu.getTrainingMenuName());
   }
 
@@ -134,13 +133,13 @@ public class TrainingMenuControllerTest {
   void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
 
     // Given: データベースから現在のデータを取得
-    TrainingMenuEntity TrainingMenu = TrainingMenuRepository.findAll().getFirst();
+    TrainingMenuEntity TrainingMenu = trainingMenuRepository.findAll().getFirst();
     Integer currentId = TrainingMenu.getTrainingMenuId();
     Integer currentVersion = TrainingMenu.getVersion(); // 現在のバージョンを取得
 
     // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
     TrainingMenu.setTrainingMenuName("Concurrent Update");
-    TrainingMenuRepository.saveAndFlush(TrainingMenu); // これでDB上のバージョンが上がる
+    trainingMenuRepository.saveAndFlush(TrainingMenu); // これでDB上のバージョンが上がる
     entityManager.clear();
 
     TrainingMenuForm form = new TrainingMenuForm();
@@ -157,7 +156,7 @@ public class TrainingMenuControllerTest {
   void delete_ExistingTrainingMenu_ShouldDeleteAndRedirectToList() throws Exception {
 
     // Given
-    TrainingMenuEntity targetTrainingMenu = TrainingMenuRepository.findAll().getFirst();
+    TrainingMenuEntity targetTrainingMenu = trainingMenuRepository.findAll().getFirst();
     Integer targetTrainingMenuId = targetTrainingMenu.getTrainingMenuId();
 
     // When & Then
@@ -167,9 +166,9 @@ public class TrainingMenuControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    TrainingMenuEntity TrainingMenu =
-        TrainingMenuRepository.findById(targetTrainingMenuId).orElse(null);
-    Assertions.assertNull(TrainingMenu);
+    TrainingMenuEntity deletedTrainingMenu =
+        trainingMenuRepository.findById(targetTrainingMenuId).orElse(null);
+    Assertions.assertNull(deletedTrainingMenu);
   }
 
   // --- Helper Methods ---
