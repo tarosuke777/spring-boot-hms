@@ -1,12 +1,12 @@
 package com.tarosuke777.hms.domain;
 
 import java.util.List;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.UserEntity;
 import com.tarosuke777.hms.form.UserForm;
+import com.tarosuke777.hms.mapper.UserMapper;
 import com.tarosuke777.hms.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -15,23 +15,22 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
+    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     public List<UserForm> getUserList() {
-        return userRepository.findAll().stream()
-                .map(entity -> modelMapper.map(entity, UserForm.class)).toList();
+        return userRepository.findAll().stream().map(entity -> userMapper.toForm(entity)).toList();
     }
 
     public UserForm getUser(Integer userId) {
         UserEntity entity = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return modelMapper.map(entity, UserForm.class);
+        return userMapper.toForm(entity);
     }
 
     @Transactional
     public void registerUser(UserForm form, String role) {
-        UserEntity entity = modelMapper.map(form, UserEntity.class);
+        UserEntity entity = userMapper.toEntity(form);
         entity.setPassword(passwordEncoder.encode(form.getPassword()));
         entity.setRole(role);
         userRepository.save(entity);
