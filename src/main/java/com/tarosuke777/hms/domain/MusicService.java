@@ -21,8 +21,13 @@ public class MusicService {
   private final MusicMapper musicMapper;
 
   public List<MusicForm> getMusicList(String currentUserId) {
-    return musicRepository.findByCreatedByOrderByMusicIdAsc(currentUserId).stream()
-        .map(musicMapper::toForm).toList();
+    return musicRepository.findByCreatedByOrderByMusicIdAsc(currentUserId).stream().map(music -> {
+      MusicForm form = musicMapper.toForm(music);
+      if (music.getArtist() != null) {
+        form.setArtistId(music.getArtist().getId());
+      }
+      return form;
+    }).toList();
   }
 
   public MusicForm getMusicDetails(Integer musicId, String currentUserId) {
