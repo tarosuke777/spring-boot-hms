@@ -16,7 +16,6 @@ public interface BookMapper {
     @Mapping(target = "authorId", ignore = true)
     BookForm toForm(BookEntity entity);
 
-    @Mapping(target = "author", ignore = true)
     BookEntity copy(BookEntity entity);
 
     @IgnoreAuditFields
