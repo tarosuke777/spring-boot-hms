@@ -8,14 +8,12 @@ import com.tarosuke777.hms.form.UserForm;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @IgnoreAuditFields
     UserEntity toEntity(UserForm form);
 
     UserForm toForm(UserEntity entity);
 
     UserEntity copy(UserEntity entity);
 
-    @IgnoreAuditFields
     void updateEntityFromForm(UserForm form, @MappingTarget UserEntity entity);
 
 }
