@@ -66,8 +66,14 @@ public class BookControllerTest {
   void getList_ShouldReturnBookListAndAuthorMap() throws Exception {
 
     // Given
-    List<BookForm> expectedBookList = bookRepository.findByCreatedByOrderByBookIdAsc("admin")
-        .stream().map(bookMapper::toForm).toList();
+    List<BookForm> expectedBookList =
+        bookRepository.findByCreatedByOrderByBookIdAsc("admin").stream().map(book -> {
+          BookForm form = bookMapper.toForm(book);
+          if (book.getAuthor() != null) {
+            form.setAuthorId(book.getAuthor().getId());
+          }
+          return form;
+        }).toList();
 
     Map<Integer, String> expectedAuthorMap = getAuthorMap();
 

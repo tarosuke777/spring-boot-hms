@@ -66,8 +66,14 @@ public class MusicControllerTest {
   void getList_ShouldReturnMusicListAndArtistMap() throws Exception {
 
     // Given
-    List<MusicForm> expectedMusicList = musicRepository.findByCreatedByOrderByMusicIdAsc("admin")
-        .stream().map(musicMapper::toForm).toList();
+    List<MusicForm> expectedMusicList =
+        musicRepository.findByCreatedByOrderByMusicIdAsc("admin").stream().map(music -> {
+          MusicForm form = musicMapper.toForm(music);
+          if (music.getArtist() != null) {
+            form.setArtistId(music.getArtist().getId());
+          }
+          return form;
+        }).toList();
 
     Map<Integer, String> expectedArtistMap = getArtistMap();
 
