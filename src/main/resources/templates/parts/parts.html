@@ -7,7 +7,7 @@
 <body>
 	<select
 		th:fragment="commonSelect(selectMap, selectedKey, fieldName, hasBlank)"
-		class="form-select" th:field="*{__${fieldName}__}">
+		class="form-select" th:field="*{__${fieldName}__}" th:errorclass="is-invalid">
 		<option th:if="${hasBlank}" value=""></option>
         <option th:each="item : ${selectMap}" th:value="${item.key}"
             th:text="${item.value}" th:selected="${item.key == selectedKey}"></option>

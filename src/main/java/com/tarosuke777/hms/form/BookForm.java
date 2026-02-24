@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.form;
 
+import org.hibernate.validator.constraints.URL;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import jakarta.validation.constraints.NotBlank;
@@ -21,8 +22,11 @@ public class BookForm {
   @Size(min = 1, max = 50)
   private String bookName;
 
+  @NotNull
   private Integer authorId;
 
+  @URL
+  @Size(min = 1, max = 255)
   private String link;
 
   private String note;
