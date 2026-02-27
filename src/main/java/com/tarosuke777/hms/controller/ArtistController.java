@@ -80,8 +80,14 @@ public class ArtistController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(@Validated(DeleteGroup.class) ArtistForm form,
+  public String delete(@Validated(DeleteGroup.class) ArtistForm form, BindingResult bindingResult,
       @AuthenticationPrincipal UserDetails user) {
+
+    // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
+    if (bindingResult.hasFieldErrors(ArtistForm.Fields.id)) {
+      throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
+    }
+
     artistService.deleteArtist(form.getId(), user.getUsername());
     return "redirect:/artist/list";
   }
