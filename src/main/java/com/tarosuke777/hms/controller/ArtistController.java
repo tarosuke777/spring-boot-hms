@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.ArtistService;
+import com.tarosuke777.hms.exception.IllegalRequestException;
 import com.tarosuke777.hms.form.ArtistForm;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
@@ -63,6 +64,13 @@ public class ArtistController {
   @PostMapping(value = "detail", params = "update")
   public String update(@ModelAttribute @Validated(UpdateGroup.class) ArtistForm form,
       BindingResult bindingResult, @AuthenticationPrincipal UserDetails user) {
+
+    // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
+    if (bindingResult.hasFieldErrors(ArtistForm.Fields.id)
+        || bindingResult.hasFieldErrors(ArtistForm.Fields.version)) {
+      throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
+    }
+
     if (bindingResult.hasErrors()) {
       return "artist/detail";
     }
