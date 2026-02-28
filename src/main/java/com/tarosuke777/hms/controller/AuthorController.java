@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.AuthorService;
 import com.tarosuke777.hms.form.AuthorForm;
+import com.tarosuke777.hms.exception.IllegalRequestException;
 import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,8 +62,15 @@ public class AuthorController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@ModelAttribute @Validated AuthorForm form, BindingResult bindingResult,
-      @AuthenticationPrincipal UserDetails user) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) AuthorForm form,
+      BindingResult bindingResult, @AuthenticationPrincipal UserDetails user) {
+
+    // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
+    if (bindingResult.hasFieldErrors(AuthorForm.Fields.id)
+        || bindingResult.hasFieldErrors(AuthorForm.Fields.version)) {
+      throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
+    }
+
     if (bindingResult.hasErrors()) {
       return DETAIL_VIEW;
     }
@@ -70,8 +79,14 @@ public class AuthorController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(@Validated(DeleteGroup.class) AuthorForm form,
+  public String delete(@Validated(DeleteGroup.class) AuthorForm form, BindingResult bindingResult,
       @AuthenticationPrincipal UserDetails user) {
+
+    // id にエラーがある場合は改ざんとみなしてシステムエラー
+    if (bindingResult.hasFieldErrors(AuthorForm.Fields.id)) {
+      throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
+    }
+
     authorService.deleteAuthor(form.getId(), user.getUsername());
     return REDIRECT_LIST;
   }
