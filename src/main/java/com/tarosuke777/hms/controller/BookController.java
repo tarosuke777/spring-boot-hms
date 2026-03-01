@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import com.tarosuke777.hms.exception.IllegalRequestException;
 import com.tarosuke777.hms.domain.AuthorService;
 import com.tarosuke777.hms.domain.BookService;
 import com.tarosuke777.hms.form.BookForm;
@@ -82,8 +83,18 @@ public class BookController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@Validated(UpdateGroup.class) BookForm form,
-      @AuthenticationPrincipal UserDetails user) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) BookForm form,
+      BindingResult bindingResult, @AuthenticationPrincipal UserDetails user) {
+
+    // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
+    if (bindingResult.hasFieldErrors(BookForm.Fields.bookId)
+        || bindingResult.hasFieldErrors(BookForm.Fields.version)) {
+      throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
+    }
+
+    if (bindingResult.hasErrors()) {
+      return DETAIL_VIEW;
+    }
 
     bookService.updateBook(form, user.getUsername());
 
@@ -91,8 +102,13 @@ public class BookController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(@Validated(DeleteGroup.class) BookForm form, Model model,
+  public String delete(@Validated(DeleteGroup.class) BookForm form, BindingResult bindingResult,
       @AuthenticationPrincipal UserDetails user) {
+
+    // id にエラーがある場合は改ざんとみなしてシステムエラー
+    if (bindingResult.hasFieldErrors(BookForm.Fields.bookId)) {
+      throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
+    }
 
     bookService.deleteBook(form.getBookId(), user.getUsername());
 

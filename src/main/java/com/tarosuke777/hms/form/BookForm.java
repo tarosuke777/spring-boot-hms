@@ -9,10 +9,12 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@FieldNameConstants
 public class BookForm {
 
   @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
