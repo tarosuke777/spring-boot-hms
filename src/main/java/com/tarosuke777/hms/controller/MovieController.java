@@ -51,10 +51,10 @@ public class MovieController {
     return REDIRECT_LIST;
   }
 
-  @GetMapping("/detail/{movieId}")
-  public String getDetail(@PathVariable("movieId") Integer movieId, Model model,
+  @GetMapping("/detail/{id}")
+  public String getDetail(@PathVariable("id") Integer id, Model model,
       @AuthenticationPrincipal UserDetails user) {
-    model.addAttribute("movieForm", movieService.getMovie(movieId, user.getUsername()));
+    model.addAttribute("movieForm", movieService.getMovie(id, user.getUsername()));
     return DETAIL_VIEW;
   }
 
@@ -71,7 +71,7 @@ public class MovieController {
   @PostMapping(value = "/detail", params = "delete")
   public String delete(@Validated(DeleteGroup.class) MovieForm form,
       @AuthenticationPrincipal UserDetails user) {
-    movieService.deleteMovie(form.getMovieId(), user.getUsername());
+    movieService.deleteMovie(form.getId(), user.getUsername());
     return REDIRECT_LIST;
   }
 }

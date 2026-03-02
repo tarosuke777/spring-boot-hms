@@ -9,9 +9,9 @@ import com.tarosuke777.hms.entity.MovieEntity;
 @Repository
 public interface MovieRepository extends JpaRepository<MovieEntity, Integer> {
 
-    Optional<MovieEntity> findByMovieIdAndCreatedBy(Integer movieId, String createdBy);
+    Optional<MovieEntity> findByIdAndCreatedBy(Integer id, String createdBy);
 
     List<MovieEntity> findByCreatedBy(String createdBy);
 
-    boolean existsByMovieIdAndCreatedBy(Integer movieId, String createdBy);
+    boolean existsByIdAndCreatedBy(Integer id, String createdBy);
 }

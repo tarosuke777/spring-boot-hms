@@ -76,7 +76,7 @@ public class MovieControllerTest {
     MovieForm expectedMovieForm = movieMapper.toForm(entity);
 
     // When & Then
-    performGetDetailRequest(entity.getMovieId()).andExpect(status().isOk())
+    performGetDetailRequest(entity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("movieForm", expectedMovieForm))
         .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
   }
@@ -97,17 +97,17 @@ public class MovieControllerTest {
   void register_WithValidData_ShouldRedirectToList() throws Exception {
 
     // Given
-    String movieName = "TestMovieName";
+    String name = "TestMovieName";
 
     // When & Then
-    performRegisterRequest(movieName).andExpect(status().is3xxRedirection())
+    performRegisterRequest(name).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
     entityManager.clear();
 
     MovieEntity lastMovie = movieRepository.findAll().getLast();
-    Assertions.assertEquals(movieName, lastMovie.getMovieName());
+    Assertions.assertEquals(name, lastMovie.getName());
   }
 
   @Test
@@ -116,7 +116,7 @@ public class MovieControllerTest {
     // Given
     MovieEntity movie = movieRepository.findAll().getFirst();
     MovieForm form = movieMapper.toForm(movie);
-    form.setMovieName("著者２");
+    form.setName("著者２");
 
     // When & Then
     performUpdateRequest(form).andExpect(status().is3xxRedirection())
@@ -126,8 +126,8 @@ public class MovieControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    MovieEntity updatedMovie = movieRepository.findById(form.getMovieId()).orElse(null);
-    Assertions.assertEquals(form.getMovieName(), updatedMovie.getMovieName());
+    MovieEntity updatedMovie = movieRepository.findById(form.getId()).orElse(null);
+    Assertions.assertEquals(form.getName(), updatedMovie.getName());
   }
 
   @Test
@@ -135,17 +135,17 @@ public class MovieControllerTest {
 
     // Given: データベースから現在のデータを取得
     MovieEntity movie = movieRepository.findAll().getFirst();
-    Integer currentId = movie.getMovieId();
+    Integer currentId = movie.getId();
     Integer currentVersion = movie.getVersion(); // 現在のバージョンを取得
 
     // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
-    movie.setMovieName("Concurrent Update");
+    movie.setName("Concurrent Update");
     movieRepository.saveAndFlush(movie); // これでDB上のバージョンが上がる
     entityManager.clear();
 
     MovieForm form = new MovieForm();
-    form.setMovieId(currentId);
-    form.setMovieName("Try to Update");
+    form.setId(currentId);
+    form.setName("Try to Update");
     form.setVersion(currentVersion);
 
     // When & Then
@@ -158,10 +158,10 @@ public class MovieControllerTest {
 
     // Given
     MovieEntity targetMovie = movieRepository.findAll().getFirst();
-    Integer targetMovieId = targetMovie.getMovieId();
+    Integer targetMovieId = targetMovie.getId();
 
     // When & Then
-    performDeleteRequest(targetMovie.getMovieId()).andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetMovie.getId()).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -177,10 +177,9 @@ public class MovieControllerTest {
     return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
   }
 
-  private ResultActions performGetDetailRequest(int movieId) throws Exception {
+  private ResultActions performGetDetailRequest(int id) throws Exception {
     return mockMvc
-        .perform(
-            get(DETAIL_ENDPOINT, movieId).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .perform(get(DETAIL_ENDPOINT, id).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
         .andDo(print());
   }
 
@@ -190,21 +189,22 @@ public class MovieControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performRegisterRequest(String movieName) throws Exception {
-    return mockMvc
-        .perform(post(REGISTER_ENDPOINT).with(csrf())
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("movieName", movieName))
-        .andDo(print());
+  private ResultActions performRegisterRequest(String name) throws Exception {
+    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
   }
 
   private ResultActions performUpdateRequest(MovieForm form) throws Exception {
-    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("movieId", form.getMovieId().toString()).param("movieName", form.getMovieName())
-        .param("version", form.getVersion().toString())).andDo(print());
+    return mockMvc.perform(
+        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
+            .param("name", form.getName()).param("version", form.getVersion().toString()))
+        .andDo(print());
   }
 
-  private ResultActions performDeleteRequest(int movieId) throws Exception {
-    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("movieId",
-        String.valueOf(movieId))).andDo(print());
+  private ResultActions performDeleteRequest(int id) throws Exception {
+    return mockMvc
+        .perform(
+            post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("id", String.valueOf(id)))
+        .andDo(print());
   }
 }

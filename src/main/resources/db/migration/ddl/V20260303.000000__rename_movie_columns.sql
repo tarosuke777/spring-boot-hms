@@ -1,0 +1,2 @@
+ALTER TABLE movie CHANGE movie_id id INT AUTO_INCREMENT;
+ALTER TABLE movie CHANGE movie_name name VARCHAR(50);

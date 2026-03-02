@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 public class MovieForm {
 
   @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
-  private Integer movieId;
+  private Integer id;
 
   @NotBlank
   @Size(min = 1, max = 50)
-  private String movieName;
+  private String name;
 
   private String note;
 

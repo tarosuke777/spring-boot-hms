@@ -30,10 +30,10 @@ public class MovieEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer movieId;
+  private Integer id;
 
   @Column(length = 50)
-  private String movieName;
+  private String name;
 
   @Column(columnDefinition = "TEXT")
   private String note;

@@ -23,8 +23,8 @@ public class MovieService {
     }
 
     /** 1件取得 */
-    public MovieForm getMovie(Integer movieId, String currentUserId) {
-        MovieEntity movie = movieRepository.findByMovieIdAndCreatedBy(movieId, currentUserId)
+    public MovieForm getMovie(Integer id, String currentUserId) {
+        MovieEntity movie = movieRepository.findByIdAndCreatedBy(id, currentUserId)
                 .orElseThrow(() -> new RuntimeException("Movie not found"));
         return movieMapper.toForm(movie);
     }
@@ -39,8 +39,7 @@ public class MovieService {
     /** 更新 */
     @Transactional
     public void updateMovie(MovieForm form, String currentUserId) {
-        MovieEntity existEntity = movieRepository
-                .findByMovieIdAndCreatedBy(form.getMovieId(), currentUserId)
+        MovieEntity existEntity = movieRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
                 .orElseThrow(() -> new RuntimeException("Movie not found or access denied"));
         MovieEntity entity = movieMapper.copy(existEntity);
         movieMapper.updateEntityFromForm(form, entity);
@@ -49,10 +48,10 @@ public class MovieService {
 
     /** 削除 */
     @Transactional
-    public void deleteMovie(Integer movieId, String currentUserId) {
-        if (!movieRepository.existsByMovieIdAndCreatedBy(movieId, currentUserId)) {
+    public void deleteMovie(Integer id, String currentUserId) {
+        if (!movieRepository.existsByIdAndCreatedBy(id, currentUserId)) {
             throw new RuntimeException("Movie not found or access denied");
         }
-        movieRepository.deleteById(movieId);
+        movieRepository.deleteById(id);
     }
 }
