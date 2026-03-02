@@ -47,11 +47,11 @@ public class BookController {
     return LIST_VIEW;
   }
 
-  @GetMapping("/detail/{bookId}")
-  public String getDetail(@PathVariable("bookId") Integer bookId, Model model,
+  @GetMapping("/detail/{id}")
+  public String getDetail(@PathVariable("id") Integer id, Model model,
       @AuthenticationPrincipal UserDetails user) {
 
-    BookForm bookForm = bookService.getBookDetails(bookId, user.getUsername());
+    BookForm bookForm = bookService.getBookDetails(id, user.getUsername());
     Map<Integer, String> authorMap = authorService.getAuthorMap();
 
     addAttributesToModel(model, bookForm, authorMap);
@@ -87,7 +87,7 @@ public class BookController {
       BindingResult bindingResult, @AuthenticationPrincipal UserDetails user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
-    if (bindingResult.hasFieldErrors(BookForm.Fields.bookId)
+    if (bindingResult.hasFieldErrors(BookForm.Fields.id)
         || bindingResult.hasFieldErrors(BookForm.Fields.version)) {
       throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
     }
@@ -106,11 +106,11 @@ public class BookController {
       @AuthenticationPrincipal UserDetails user) {
 
     // id にエラーがある場合は改ざんとみなしてシステムエラー
-    if (bindingResult.hasFieldErrors(BookForm.Fields.bookId)) {
+    if (bindingResult.hasFieldErrors(BookForm.Fields.id)) {
       throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
     }
 
-    bookService.deleteBook(form.getBookId(), user.getUsername());
+    bookService.deleteBook(form.getId(), user.getUsername());
 
     return REDIRECT_LIST;
   }

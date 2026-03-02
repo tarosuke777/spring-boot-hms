@@ -33,10 +33,10 @@ public class BookEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer bookId;
+  private Integer id;
 
   @Column(length = 50)
-  private String bookName;
+  private String name;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "author_id")

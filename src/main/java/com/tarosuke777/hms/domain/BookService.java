@@ -19,7 +19,7 @@ public class BookService {
   private final BookMapper bookMapper;
 
   public List<BookForm> getBookList(String currentUserId) {
-    return bookRepository.findByCreatedByOrderByBookIdAsc(currentUserId).stream().map(book -> {
+    return bookRepository.findByCreatedByOrderByIdAsc(currentUserId).stream().map(book -> {
       BookForm form = bookMapper.toForm(book);
       if (book.getAuthor() != null) {
         form.setAuthorId(book.getAuthor().getId());
@@ -28,8 +28,8 @@ public class BookService {
     }).toList();
   }
 
-  public BookForm getBookDetails(Integer bookId, String currentUserId) {
-    BookEntity book = bookRepository.findByBookIdAndCreatedBy(bookId, currentUserId)
+  public BookForm getBookDetails(Integer id, String currentUserId) {
+    BookEntity book = bookRepository.findByIdAndCreatedBy(id, currentUserId)
         .orElseThrow(() -> new RuntimeException("Book not found"));
     BookForm bookForm = bookMapper.toForm(book);
     bookForm.setAuthorId(book.getAuthor().getId());
@@ -47,9 +47,8 @@ public class BookService {
 
   @Transactional
   public void updateBook(BookForm form, String currentUserId) {
-    BookEntity existEntity =
-        bookRepository.findByBookIdAndCreatedBy(form.getBookId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Book not found"));
+    BookEntity existEntity = bookRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Book not found"));
 
     BookEntity entity = bookMapper.copy(existEntity);
     if (existEntity.getAuthor() != null) {
@@ -65,10 +64,10 @@ public class BookService {
   }
 
   @Transactional
-  public void deleteBook(Integer bookId, String currentUserId) {
-    if (!bookRepository.existsByBookIdAndCreatedBy(bookId, currentUserId)) {
+  public void deleteBook(Integer id, String currentUserId) {
+    if (!bookRepository.existsByIdAndCreatedBy(id, currentUserId)) {
       throw new RuntimeException("Book not found or access denied");
     }
-    bookRepository.deleteById(bookId);
+    bookRepository.deleteById(id);
   }
 }

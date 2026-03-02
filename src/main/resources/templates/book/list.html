@@ -26,12 +26,12 @@
 				</thead>
 				<tbody>
 					<tr th:each="book: ${bookList}">
-						<td th:text="${book.bookName}"></td>
+						<td th:text="${book.name}"></td>
 						<td th:text="${book.authorId != null ? authorMap.get(book.authorId) : ''}"></td>
 						<td><a th:href="${book.link}" th:text="${book.link}" target="_blank"></a></td>
 						<td style="white-space: pre-line;" th:text="${book.note}"></td>
 						<td><a class="btn btn-dark"
-							th:href="@{'/book/detail/' + ${book.bookId}}">Detail</a>
+							th:href="@{'/book/detail/' + ${book.id}}">Detail</a>
 						</td>
 				</tbody>
 			</table>

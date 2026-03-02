@@ -12,13 +12,13 @@
 		</div>
 		<form method="post" th:action="@{/book/detail}"
 			th:object="${bookForm}">
-			<input type="hidden" th:field="*{bookId}">
+			<input type="hidden" th:field="*{id}">
 			<input type="hidden" th:field="*{version}" />
 			<div class="mb-3 row">
-				<label for="bookName" class="col-sm-2 col-form-label">Book
+				<label for="name" class="col-sm-2 col-form-label">Book
 					Name</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" th:field="*{bookName}">
+					<input type="text" class="form-control" th:field="*{name}">
 				</div>
 			</div>
 			<div class="mb-3 row">

@@ -1,0 +1,2 @@
+ALTER TABLE book CHANGE book_id id INT AUTO_INCREMENT;
+ALTER TABLE book CHANGE book_name name VARCHAR(50);

@@ -67,7 +67,7 @@ public class BookControllerTest {
 
     // Given
     List<BookForm> expectedBookList =
-        bookRepository.findByCreatedByOrderByBookIdAsc("admin").stream().map(book -> {
+        bookRepository.findByCreatedByOrderByIdAsc("admin").stream().map(book -> {
           BookForm form = bookMapper.toForm(book);
           if (book.getAuthor() != null) {
             form.setAuthorId(book.getAuthor().getId());
@@ -94,7 +94,7 @@ public class BookControllerTest {
     Map<Integer, String> expectedAuthorMap = getAuthorMap();
 
     // When & Then
-    performGetDetailRequest(bookEntity.getBookId()).andExpect(status().isOk())
+    performGetDetailRequest(bookEntity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("authorMap", expectedAuthorMap))
         .andExpect(model().attribute("bookForm", expectedBookForm))
         .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
@@ -130,7 +130,7 @@ public class BookControllerTest {
     List<BookEntity> books = bookRepository.findAll();
     BookEntity savedBook = books.get(books.size() - 1);
 
-    Assertions.assertEquals(bookForm.getBookName(), savedBook.getBookName());
+    Assertions.assertEquals(bookForm.getName(), savedBook.getName());
     Assertions.assertEquals(bookForm.getAuthorId(), savedBook.getAuthor().getId());
   }
 
@@ -142,7 +142,7 @@ public class BookControllerTest {
     BookEntity book = bookRepository.findAll().get(0);
     BookForm form = bookMapper.toForm(book);
     form.setAuthorId(book.getAuthor().getId());
-    form.setBookName("更新後の本タイトル");
+    form.setName("更新後の本タイトル");
 
     // When & Then
     performUpdateRequest(form).andExpect(status().is3xxRedirection())
@@ -152,8 +152,8 @@ public class BookControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    BookEntity updatedBook = bookRepository.findById(form.getBookId()).orElse(null);
-    assertEquals(form.getBookName(), updatedBook.getBookName());
+    BookEntity updatedBook = bookRepository.findById(form.getId()).orElse(null);
+    assertEquals(form.getName(), updatedBook.getName());
   }
 
   @Test
@@ -161,18 +161,18 @@ public class BookControllerTest {
 
     // Given: データベースから現在のデータを取得
     BookEntity book = bookRepository.findAll().getFirst();
-    Integer currentId = book.getBookId();
+    Integer currentId = book.getId();
     Integer currentVersion = book.getVersion(); // 現在のバージョンを取得
     AuthorEntity currentAuthor = book.getAuthor();
 
     // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
-    book.setBookName("Concurrent Update");
+    book.setName("Concurrent Update");
     bookRepository.saveAndFlush(book); // これでDB上のバージョンが上がる
     entityManager.clear();
 
     BookForm form = new BookForm();
-    form.setBookId(currentId);
-    form.setBookName("Try to Update");
+    form.setId(currentId);
+    form.setName("Try to Update");
     form.setVersion(currentVersion);
     form.setAuthorId(currentAuthor.getId());
     // When & Then
@@ -187,13 +187,13 @@ public class BookControllerTest {
     BookEntity expectedBook = bookRepository.findAll().get(0);
 
     // When & Then
-    performDeleteRequest(expectedBook.getBookId()).andExpect(status().is3xxRedirection())
+    performDeleteRequest(expectedBook.getId()).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
     entityManager.clear();
 
-    BookEntity book = bookRepository.findById(expectedBook.getBookId()).orElse(null);
+    BookEntity book = bookRepository.findById(expectedBook.getId()).orElse(null);
     assertNull(book);
   }
 
@@ -207,10 +207,9 @@ public class BookControllerTest {
     return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
   }
 
-  private ResultActions performGetDetailRequest(int bookId) throws Exception {
+  private ResultActions performGetDetailRequest(int id) throws Exception {
     return mockMvc
-        .perform(
-            get(DETAIL_ENDPOINT, bookId).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .perform(get(DETAIL_ENDPOINT, id).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
         .andDo(print());
   }
 
@@ -221,20 +220,24 @@ public class BookControllerTest {
   }
 
   private ResultActions performRegisterRequest(BookForm form) throws Exception {
-    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
-        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("bookName", form.getBookName())
-        .param("authorId", String.valueOf(form.getAuthorId()))).andDo(print());
+    return mockMvc.perform(
+        post(REGISTER_ENDPOINT).with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("name", form.getName()).param("authorId", String.valueOf(form.getAuthorId())))
+        .andDo(print());
   }
 
   private ResultActions performUpdateRequest(BookForm form) throws Exception {
-    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("bookId", form.getBookId().toString()).param("bookName", form.getBookName())
-        .param("authorId", String.valueOf(form.getAuthorId()))
-        .param("version", form.getVersion().toString())).andDo(print());
+    return mockMvc.perform(
+        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
+            .param("name", form.getName()).param("authorId", String.valueOf(form.getAuthorId()))
+            .param("version", form.getVersion().toString()))
+        .andDo(print());
   }
 
-  private ResultActions performDeleteRequest(int bookId) throws Exception {
-    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("bookId",
-        String.valueOf(bookId))).andDo(print());
+  private ResultActions performDeleteRequest(int id) throws Exception {
+    return mockMvc
+        .perform(
+            post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("id", String.valueOf(id)))
+        .andDo(print());
   }
 }

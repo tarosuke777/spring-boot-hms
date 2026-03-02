@@ -18,11 +18,11 @@ import lombok.experimental.FieldNameConstants;
 public class BookForm {
 
   @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
-  private Integer bookId;
+  private Integer id;
 
   @NotBlank
   @Size(min = 1, max = 50)
-  private String bookName;
+  private String name;
 
   @NotNull
   private Integer authorId;
