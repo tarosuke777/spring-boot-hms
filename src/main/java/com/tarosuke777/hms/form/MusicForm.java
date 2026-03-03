@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 public class MusicForm {
 
   @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
-  private Integer musicId;
+  private Integer id;
 
   @NotBlank
   @Size(min = 1, max = 50)
-  private String musicName;
+  private String name;
 
   private Integer artistId;
 

@@ -67,7 +67,7 @@ public class MusicControllerTest {
 
     // Given
     List<MusicForm> expectedMusicList =
-        musicRepository.findByCreatedByOrderByMusicIdAsc("admin").stream().map(music -> {
+        musicRepository.findByCreatedByOrderByIdAsc("admin").stream().map(music -> {
           MusicForm form = musicMapper.toForm(music);
           if (music.getArtist() != null) {
             form.setArtistId(music.getArtist().getId());
@@ -94,7 +94,7 @@ public class MusicControllerTest {
     Map<Integer, String> expectedArtistMap = getArtistMap();
 
     // When & Then
-    performGetDetailRequest(musicEntity.getMusicId()).andExpect(status().isOk())
+    performGetDetailRequest(musicEntity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("artistMap", expectedArtistMap))
         .andExpect(model().attribute("musicForm", expectedMusicForm))
         .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
@@ -130,7 +130,7 @@ public class MusicControllerTest {
 
     MusicEntity musicEntity = musicRepository.findAll().getLast();
 
-    Assertions.assertEquals(musicForm.getMusicName(), musicEntity.getMusicName());
+    Assertions.assertEquals(musicForm.getName(), musicEntity.getName());
     Assertions.assertEquals(musicForm.getArtistId(), musicEntity.getArtist().getId());
   }
 
@@ -142,7 +142,7 @@ public class MusicControllerTest {
 
     MusicForm form = musicMapper.toForm(music);
     form.setArtistId(music.getArtist().getId());
-    form.setMusicName("更新後の曲名");
+    form.setName("更新後の曲名");
 
     // When & Then
     performUpdateRequest(form).andExpect(status().is3xxRedirection())
@@ -152,8 +152,8 @@ public class MusicControllerTest {
     entityManager.flush();
     entityManager.clear();
 
-    MusicEntity updatedEntity = musicRepository.findById(form.getMusicId()).orElse(null);
-    assertEquals(form.getMusicName(), updatedEntity.getMusicName());
+    MusicEntity updatedEntity = musicRepository.findById(form.getId()).orElse(null);
+    assertEquals(form.getName(), updatedEntity.getName());
   }
 
   @Test
@@ -161,18 +161,18 @@ public class MusicControllerTest {
 
     // Given: データベースから現在のデータを取得
     MusicEntity music = musicRepository.findAll().getFirst();
-    Integer currentId = music.getMusicId();
+    Integer currentId = music.getId();
     Integer currentVersion = music.getVersion(); // 現在のバージョンを取得
     ArtistEntity currentArtist = music.getArtist();
 
     // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
-    music.setMusicName("Concurrent Update");
+    music.setName("Concurrent Update");
     musicRepository.saveAndFlush(music); // これでDB上のバージョンが上がる
     entityManager.clear();
 
     MusicForm form = new MusicForm();
-    form.setMusicId(currentId);
-    form.setMusicName("Try to Update");
+    form.setId(currentId);
+    form.setName("Try to Update");
     form.setVersion(currentVersion);
     form.setArtistId(currentArtist.getId());
 
@@ -189,13 +189,13 @@ public class MusicControllerTest {
     MusicEntity targetMusic = musicRepository.findAll().getFirst();
 
     // When & Then
-    performDeleteRequest(targetMusic.getMusicId()).andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetMusic.getId()).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush(); // 未処理のSQLを全部出す
     entityManager.clear(); // キャッシュをクリア
 
-    MusicEntity music = musicRepository.findById(targetMusic.getMusicId()).orElse(null);
+    MusicEntity music = musicRepository.findById(targetMusic.getId()).orElse(null);
     assertNull(music);
   }
 
@@ -209,10 +209,9 @@ public class MusicControllerTest {
     return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
   }
 
-  private ResultActions performGetDetailRequest(int musicId) throws Exception {
+  private ResultActions performGetDetailRequest(int id) throws Exception {
     return mockMvc
-        .perform(
-            get(DETAIL_ENDPOINT, musicId).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .perform(get(DETAIL_ENDPOINT, id).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
         .andDo(print());
   }
 
@@ -223,20 +222,24 @@ public class MusicControllerTest {
   }
 
   private ResultActions performRegisterRequest(MusicForm form) throws Exception {
-    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
-        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("musicName", form.getMusicName())
-        .param("artistId", String.valueOf(form.getArtistId()))).andDo(print());
+    return mockMvc.perform(
+        post(REGISTER_ENDPOINT).with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("name", form.getName()).param("artistId", String.valueOf(form.getArtistId())))
+        .andDo(print());
   }
 
   private ResultActions performUpdateRequest(MusicForm form) throws Exception {
-    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("musicId", form.getMusicId().toString()).param("musicName", form.getMusicName())
-        .param("artistId", String.valueOf(form.getArtistId()))
-        .param("version", form.getVersion().toString())).andDo(print());
+    return mockMvc.perform(
+        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
+            .param("name", form.getName()).param("artistId", String.valueOf(form.getArtistId()))
+            .param("version", form.getVersion().toString()))
+        .andDo(print());
   }
 
-  private ResultActions performDeleteRequest(int musicId) throws Exception {
-    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("musicId",
-        String.valueOf(musicId))).andDo(print());
+  private ResultActions performDeleteRequest(int id) throws Exception {
+    return mockMvc
+        .perform(
+            post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("id", String.valueOf(id)))
+        .andDo(print());
   }
 }

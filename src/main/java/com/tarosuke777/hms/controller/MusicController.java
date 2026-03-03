@@ -47,11 +47,11 @@ public class MusicController {
     return LIST_VIEW;
   }
 
-  @GetMapping("/detail/{musicId}")
-  public String getDetail(@PathVariable("musicId") Integer musicId, Model model,
+  @GetMapping("/detail/{id}")
+  public String getDetail(@PathVariable("id") Integer id, Model model,
       @AuthenticationPrincipal UserDetails user) {
 
-    MusicForm musicForm = musicService.getMusicDetails(musicId, user.getUsername());
+    MusicForm musicForm = musicService.getMusicDetails(id, user.getUsername());
     Map<Integer, String> artistMap = artistService.getArtistMap();
 
     addAttributesToModel(model, musicForm, artistMap);
@@ -95,7 +95,7 @@ public class MusicController {
   public String delete(@Validated(DeleteGroup.class) MusicForm form, Model model,
       @AuthenticationPrincipal UserDetails user) {
 
-    musicService.deleteMusic(form.getMusicId(), user.getUsername());
+    musicService.deleteMusic(form.getId(), user.getUsername());
 
     return REDIRECT_LIST;
   }

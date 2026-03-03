@@ -33,10 +33,10 @@ public class MusicEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer musicId;
+  private Integer id;
 
-  @Column(length = 50)
-  private String musicName;
+  @Column(length = 50, nullable = false)
+  private String name;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "artist_id")

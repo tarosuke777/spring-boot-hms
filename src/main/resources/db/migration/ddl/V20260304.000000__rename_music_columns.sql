@@ -1,0 +1,2 @@
+ALTER TABLE music CHANGE music_id id INT AUTO_INCREMENT;
+ALTER TABLE music CHANGE music_name name VARCHAR(50);

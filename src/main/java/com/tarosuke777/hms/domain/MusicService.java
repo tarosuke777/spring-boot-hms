@@ -21,7 +21,7 @@ public class MusicService {
   private final MusicMapper musicMapper;
 
   public List<MusicForm> getMusicList(String currentUserId) {
-    return musicRepository.findByCreatedByOrderByMusicIdAsc(currentUserId).stream().map(music -> {
+    return musicRepository.findByCreatedByOrderByIdAsc(currentUserId).stream().map(music -> {
       MusicForm form = musicMapper.toForm(music);
       if (music.getArtist() != null) {
         form.setArtistId(music.getArtist().getId());
@@ -30,8 +30,8 @@ public class MusicService {
     }).toList();
   }
 
-  public MusicForm getMusicDetails(Integer musicId, String currentUserId) {
-    MusicEntity music = musicRepository.findByMusicIdAndCreatedBy(musicId, currentUserId)
+  public MusicForm getMusicDetails(Integer id, String currentUserId) {
+    MusicEntity music = musicRepository.findByIdAndCreatedBy(id, currentUserId)
         .orElseThrow(() -> new RuntimeException("Music not found"));
     MusicForm musicForm = musicMapper.toForm(music);
     if (music.getArtist() != null) {
@@ -55,9 +55,8 @@ public class MusicService {
 
   @Transactional
   public void updateMusic(MusicForm form, String currentUserId) {
-    MusicEntity existEntity =
-        musicRepository.findByMusicIdAndCreatedBy(form.getMusicId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Music not found"));
+    MusicEntity existEntity = musicRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Music not found"));
     MusicEntity entity = musicMapper.copy(existEntity);
     if (existEntity.getArtist() != null) {
       entity.setArtist(
@@ -73,16 +72,16 @@ public class MusicService {
   }
 
   @Transactional
-  public void deleteMusic(Integer musicId, String currentUserId) {
-    if (!musicRepository.existsByMusicIdAndCreatedBy(musicId, currentUserId)) {
+  public void deleteMusic(Integer id, String currentUserId) {
+    if (!musicRepository.existsByIdAndCreatedBy(id, currentUserId)) {
       throw new RuntimeException("Music not found");
     }
-    musicRepository.deleteById(musicId);
+    musicRepository.deleteById(id);
   }
 
   @Tool(description = "好きな曲名の一覧を取得する")
   public String getMusicListForMcp(String currentUserId) {
-    return musicRepository.findAll().stream().map(MusicEntity::getMusicName)
+    return musicRepository.findAll().stream().map(MusicEntity::getName)
         .reduce((a, b) -> a + ", " + b).orElse("No music available");
   }
 }

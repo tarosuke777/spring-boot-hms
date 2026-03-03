@@ -11,11 +11,11 @@ import com.tarosuke777.hms.entity.MusicEntity;
 public interface MusicRepository extends JpaRepository<MusicEntity, Integer> {
 
     @EntityGraph(attributePaths = {"artist"})
-    Optional<MusicEntity> findByMusicIdAndCreatedBy(Integer musicId, String createdBy);
+    Optional<MusicEntity> findByIdAndCreatedBy(Integer id, String createdBy);
 
     @EntityGraph(attributePaths = {"artist"})
-    List<MusicEntity> findByCreatedByOrderByMusicIdAsc(String createdBy);
+    List<MusicEntity> findByCreatedByOrderByIdAsc(String createdBy);
 
-    boolean existsByMusicIdAndCreatedBy(Integer musicId, String createdBy);
+    boolean existsByIdAndCreatedBy(Integer id, String createdBy);
 
 }
