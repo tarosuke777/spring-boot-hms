@@ -3,16 +3,16 @@ VALUES('admin', '{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92
 INSERT INTO user(user_name, password, role, created_at, updated_at, created_by, updated_by, version) 
 VALUES('user', '{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92u.e5m', 'ROLE_USER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin', 0);
 
-INSERT INTO training_menu (training_menu_name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
+INSERT INTO training_menu (name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
 VALUES ('Push Up', 1, 'https://example.com/pushup', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin', 0);
-INSERT INTO training_menu (training_menu_name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
+INSERT INTO training_menu (name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
 VALUES ('Squat', 2, 'https://example.com/squat', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'user', 'user', 0);
 
 -- 1件目: 'Push Up' という名前のメニューIDを取得して記録
 INSERT INTO training (training_date, training_menu_id, weight, reps, sets, created_at, updated_at, created_by, updated_by, version)
 VALUES (
     CURRENT_DATE,
-    (SELECT training_menu_id FROM training_menu WHERE training_menu_name = 'Push Up' LIMIT 1), 
+    (SELECT id FROM training_menu WHERE name = 'Push Up' LIMIT 1), 
     60, 10, 3,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,
@@ -25,7 +25,7 @@ VALUES (
 INSERT INTO training (training_date, training_menu_id, weight, reps, sets, created_at, updated_at, created_by, updated_by, version)
 VALUES (
     CURRENT_DATE,
-    (SELECT training_menu_id FROM training_menu WHERE training_menu_name = 'Squat' LIMIT 1), 
+    (SELECT id FROM training_menu WHERE name = 'Squat' LIMIT 1), 
     80, 12, 3,
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP,

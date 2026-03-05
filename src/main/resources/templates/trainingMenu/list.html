@@ -28,14 +28,14 @@
 				</thead>
 				<tbody>
 					<tr th:each="trainingMenu: ${trainingMenuList}">
-						<td th:text="${trainingMenu.trainingMenuName}"></td>
+						<td th:text="${trainingMenu.name}"></td>
 						<td th:text="${trainingMenu.targetAreaId != null ? targetAreaMap.get(trainingMenu.targetAreaId) : ''}"></td>
 						<td th:text="${trainingMenu.link}"></td>
 						<td th:text="${trainingMenu.maxWeight}"></td>
 						<td th:text="${trainingMenu.maxReps}"></td>
 						<td th:text="${trainingMenu.maxSets}"></td>
 						<td><a class="btn btn-dark"
-							th:href="@{'/trainingMenu/detail/' + ${trainingMenu.trainingMenuId}}">Detail</a>
+							th:href="@{'/trainingMenu/detail/' + ${trainingMenu.id}}">Detail</a>
 						</td>
 				</tbody>
 			</table>

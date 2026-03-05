@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 public class TrainingMenuForm {
 
   @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
-  private Integer trainingMenuId;
+  private Integer id;
 
   @NotBlank
   @Size(min = 1, max = 50)
-  private String trainingMenuName;
+  private String name;
 
   private Integer targetAreaId;
 

@@ -12,12 +12,12 @@
 		</div>
 		<form method="post" th:action="@{/trainingMenu/detail}"
 			th:object="${trainingMenuForm}">
-			<input type="hidden" th:field="*{trainingMenuId}">
+			<input type="hidden" th:field="*{id}">
 			<div class="mb-3 row">
-				<label for="trainingMenuName" class="col-sm-2 col-form-label">Training Menu
+				<label for="name" class="col-sm-2 col-form-label">Training Menu
 					Name</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" th:field="*{trainingMenuName}">
+					<input type="text" class="form-control" th:field="*{name}">
 				</div>
 			</div>
 			<div class="mb-3 row">

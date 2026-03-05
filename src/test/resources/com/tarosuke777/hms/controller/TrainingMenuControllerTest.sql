@@ -3,7 +3,7 @@ VALUES('admin', '{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92
 INSERT INTO user(user_name, password, role, created_at, updated_at, created_by, updated_by, version) 
 VALUES('user', '{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92u.e5m', 'ROLE_USER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin', 0);
 
-INSERT INTO training_menu (training_menu_name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
+INSERT INTO training_menu (name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
 VALUES ('Push Up', 1, 'https://example.com/pushup', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin', 0);
-INSERT INTO training_menu (training_menu_name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
+INSERT INTO training_menu (name, target_area_id, link, created_at, updated_at, created_by, updated_by, version) 
 VALUES ('Squat', 2, 'https://example.com/squat', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'user', 'user', 0);

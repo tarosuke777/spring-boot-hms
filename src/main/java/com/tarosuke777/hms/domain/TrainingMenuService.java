@@ -25,9 +25,8 @@ public class TrainingMenuService {
 				.map(trainingMenuMapper::toForm).toList();
 	}
 
-	public TrainingMenuForm getTrainingMenuDetails(Integer trainingMenuId, String currentUserId) {
-		TrainingMenuEntity entity = trainingMenuRepository
-				.findByTrainingMenuIdAndCreatedBy(trainingMenuId, currentUserId)
+	public TrainingMenuForm getTrainingMenuDetails(Integer id, String currentUserId) {
+		TrainingMenuEntity entity = trainingMenuRepository.findByIdAndCreatedBy(id, currentUserId)
 				.orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
 		return trainingMenuMapper.toForm(entity);
 	}
@@ -40,35 +39,33 @@ public class TrainingMenuService {
 
 	@Transactional
 	public void updateTrainingMenu(TrainingMenuForm form, String currentUserId) {
-		TrainingMenuEntity existEntity = trainingMenuRepository
-				.findByTrainingMenuIdAndCreatedBy(form.getTrainingMenuId(), currentUserId)
-				.orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
+		TrainingMenuEntity existEntity =
+				trainingMenuRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+						.orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
 		TrainingMenuEntity entity = trainingMenuMapper.copy(existEntity);
 		trainingMenuMapper.updateEntityFromForm(form, entity);
 		trainingMenuRepository.save(entity);
 	}
 
 	@Transactional
-	public void deleteTrainingMenu(Integer trainingMenuId, String currentUserId) {
-		if (!trainingMenuRepository.existsByTrainingMenuIdAndCreatedBy(trainingMenuId,
-				currentUserId)) {
+	public void deleteTrainingMenu(Integer id, String currentUserId) {
+		if (!trainingMenuRepository.existsByIdAndCreatedBy(id, currentUserId)) {
 			throw new RuntimeException("Menu not found or access denied");
 		}
-		trainingMenuRepository.deleteById(trainingMenuId);
+		trainingMenuRepository.deleteById(id);
 	}
 
 	public Map<Integer, String> getTrainingMenuMap() {
 		return trainingMenuRepository.findAll().stream()
-				.collect(Collectors.toMap(TrainingMenuEntity::getTrainingMenuId,
-						TrainingMenuEntity::getTrainingMenuName,
+				.collect(Collectors.toMap(TrainingMenuEntity::getId, TrainingMenuEntity::getName,
 						(existing, replacement) -> existing, LinkedHashMap::new));
 	}
 
 	public List<SelectOptionTrainingMenu> getTrainingMenuSelectList() {
 		return trainingMenuRepository.findAll().stream()
-				.map(entity -> new SelectOptionTrainingMenu(entity.getTrainingMenuId().toString(),
-						entity.getTrainingMenuName(), entity.getTargetAreaId(),
-						entity.getMaxWeight(), entity.getMaxReps(), entity.getMaxSets()))
+				.map(entity -> new SelectOptionTrainingMenu(entity.getId().toString(),
+						entity.getName(), entity.getTargetAreaId(), entity.getMaxWeight(),
+						entity.getMaxReps(), entity.getMaxSets()))
 				.collect(Collectors.toList());
 	}
 

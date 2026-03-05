@@ -8,10 +8,9 @@ import com.tarosuke777.hms.entity.TrainingMenuEntity;
 
 @Repository
 public interface TrainingMenuRepository extends JpaRepository<TrainingMenuEntity, Integer> {
-    Optional<TrainingMenuEntity> findByTrainingMenuIdAndCreatedBy(Integer trainingMenuId,
-            String createdBy);
+    Optional<TrainingMenuEntity> findByIdAndCreatedBy(Integer id, String createdBy);
 
     List<TrainingMenuEntity> findByCreatedBy(String createdBy);
 
-    boolean existsByTrainingMenuIdAndCreatedBy(Integer trainingMenuId, String createdBy);
+    boolean existsByIdAndCreatedBy(Integer id, String createdBy);
 }

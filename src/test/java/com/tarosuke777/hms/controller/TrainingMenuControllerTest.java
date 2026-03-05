@@ -75,7 +75,7 @@ public class TrainingMenuControllerTest {
     TrainingMenuForm expectedTrainingMenuForm = trainingMenuMapper.toForm(entity);
 
     // When & Then
-    performGetDetailRequest(entity.getTrainingMenuId()).andExpect(status().isOk())
+    performGetDetailRequest(entity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("trainingMenuForm", expectedTrainingMenuForm))
         .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
   }
@@ -104,7 +104,7 @@ public class TrainingMenuControllerTest {
     entityManager.clear();
 
     TrainingMenuEntity lastTrainingMenu = trainingMenuRepository.findAll().getLast();
-    Assertions.assertEquals(TrainingMenuName, lastTrainingMenu.getTrainingMenuName());
+    Assertions.assertEquals(TrainingMenuName, lastTrainingMenu.getName());
   }
 
   @Test
@@ -113,7 +113,7 @@ public class TrainingMenuControllerTest {
     // Given
     TrainingMenuEntity expectedTrainingMenu = trainingMenuRepository.findAll().getFirst();
     TrainingMenuForm form = trainingMenuMapper.toForm(expectedTrainingMenu);
-    form.setTrainingMenuName("著者２");
+    form.setName("著者２");
 
     // When & Then
     performUpdateRequest(form).andExpect(status().is3xxRedirection())
@@ -124,9 +124,8 @@ public class TrainingMenuControllerTest {
     entityManager.clear();
 
     TrainingMenuEntity updatedTrainingMenu =
-        trainingMenuRepository.findById(expectedTrainingMenu.getTrainingMenuId()).orElse(null);
-    Assertions.assertEquals(updatedTrainingMenu.getTrainingMenuName(),
-        expectedTrainingMenu.getTrainingMenuName());
+        trainingMenuRepository.findById(expectedTrainingMenu.getId()).orElse(null);
+    Assertions.assertEquals(updatedTrainingMenu.getName(), expectedTrainingMenu.getName());
   }
 
   @Test
@@ -134,17 +133,17 @@ public class TrainingMenuControllerTest {
 
     // Given: データベースから現在のデータを取得
     TrainingMenuEntity TrainingMenu = trainingMenuRepository.findAll().getFirst();
-    Integer currentId = TrainingMenu.getTrainingMenuId();
+    Integer currentId = TrainingMenu.getId();
     Integer currentVersion = TrainingMenu.getVersion(); // 現在のバージョンを取得
 
     // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
-    TrainingMenu.setTrainingMenuName("Concurrent Update");
+    TrainingMenu.setName("Concurrent Update");
     trainingMenuRepository.saveAndFlush(TrainingMenu); // これでDB上のバージョンが上がる
     entityManager.clear();
 
     TrainingMenuForm form = new TrainingMenuForm();
-    form.setTrainingMenuId(currentId);
-    form.setTrainingMenuName("Try to Update");
+    form.setId(currentId);
+    form.setName("Try to Update");
     form.setVersion(currentVersion);
 
     // When & Then
@@ -157,11 +156,11 @@ public class TrainingMenuControllerTest {
 
     // Given
     TrainingMenuEntity targetTrainingMenu = trainingMenuRepository.findAll().getFirst();
-    Integer targetTrainingMenuId = targetTrainingMenu.getTrainingMenuId();
+    Integer targetTrainingMenuId = targetTrainingMenu.getId();
 
     // When & Then
-    performDeleteRequest(targetTrainingMenu.getTrainingMenuId())
-        .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl(LIST_URL));
+    performDeleteRequest(targetTrainingMenu.getId()).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
     entityManager.clear();
@@ -177,9 +176,9 @@ public class TrainingMenuControllerTest {
     return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
   }
 
-  private ResultActions performGetDetailRequest(int TrainingMenuId) throws Exception {
-    return mockMvc.perform(
-        get(DETAIL_ENDPOINT, TrainingMenuId).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+  private ResultActions performGetDetailRequest(int id) throws Exception {
+    return mockMvc
+        .perform(get(DETAIL_ENDPOINT, id).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
         .andDo(print());
   }
 
@@ -189,22 +188,22 @@ public class TrainingMenuControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performRegisterRequest(String TrainingMenuName) throws Exception {
-    return mockMvc.perform(
-        post(REGISTER_ENDPOINT).with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .param("trainingMenuName", TrainingMenuName))
-        .andDo(print());
+  private ResultActions performRegisterRequest(String name) throws Exception {
+    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
   }
 
   private ResultActions performUpdateRequest(TrainingMenuForm form) throws Exception {
-    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-        .param("trainingMenuId", form.getTrainingMenuId().toString())
-        .param("trainingMenuName", form.getTrainingMenuName())
-        .param("version", form.getVersion().toString())).andDo(print());
+    return mockMvc.perform(
+        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
+            .param("name", form.getName()).param("version", form.getVersion().toString()))
+        .andDo(print());
   }
 
-  private ResultActions performDeleteRequest(int TrainingMenuId) throws Exception {
-    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "")
-        .param("trainingMenuId", String.valueOf(TrainingMenuId))).andDo(print());
+  private ResultActions performDeleteRequest(int id) throws Exception {
+    return mockMvc
+        .perform(
+            post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("id", String.valueOf(id)))
+        .andDo(print());
   }
 }

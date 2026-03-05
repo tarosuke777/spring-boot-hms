@@ -126,7 +126,7 @@ public class TrainingControllerTest {
     TrainingForm trainingForm = new TrainingForm(null, // trainingId
         testDate, // trainingDate (String "test" から修正)
         1, // trainingAreaId (適切なID、またはnull)
-        trainingMenuEntity.getTrainingMenuId(), // trainingMenuId
+        trainingMenuEntity.getId(), // trainingMenuId
         60, // weight (例: 60kg)
         10, // reps (例: 10回)
         3, // sets (例: 3セット)
@@ -145,7 +145,7 @@ public class TrainingControllerTest {
 
     Assertions.assertEquals(trainingForm.getTrainingDate(), savedTraining.getTrainingDate());
     Assertions.assertEquals(trainingForm.getTrainingMenuId(),
-        savedTraining.getTrainingMenu().getTrainingMenuId());
+        savedTraining.getTrainingMenu().getId());
     Assertions.assertEquals(trainingForm.getWeight(), savedTraining.getWeight());
     Assertions.assertEquals(trainingForm.getReps(), savedTraining.getReps());
     Assertions.assertEquals(trainingForm.getSets(), savedTraining.getSets());
@@ -195,7 +195,7 @@ public class TrainingControllerTest {
     form.setTrainingId(currentId);
     form.setTrainingDate(trainingEntity.getTrainingDate().plusDays(1));
     form.setVersion(currentVersion);
-    form.setTrainingMenuId(currentTrainingMenu.getTrainingMenuId());
+    form.setTrainingMenuId(currentTrainingMenu.getId());
     form.setWeight(999);
     form.setReps(999);
     form.setSets(999);
@@ -229,7 +229,7 @@ public class TrainingControllerTest {
   private TrainingForm convertToForm(TrainingEntity entity) {
     TrainingForm form = trainingMapper.toForm(entity);
     if (entity.getTrainingMenu() != null) {
-      form.setTrainingMenuId(entity.getTrainingMenu().getTrainingMenuId());
+      form.setTrainingMenuId(entity.getTrainingMenu().getId());
       form.setTrainingAreaId(entity.getTrainingMenu().getTargetAreaId());
     }
     return form;
@@ -237,16 +237,15 @@ public class TrainingControllerTest {
 
   private Map<Integer, String> getTrainingMenuMap() {
     return trainingMenuRepository.findAll().stream()
-        .collect(Collectors.toMap(TrainingMenuEntity::getTrainingMenuId,
-            TrainingMenuEntity::getTrainingMenuName, (existing, replacement) -> existing,
-            LinkedHashMap::new));
+        .collect(Collectors.toMap(TrainingMenuEntity::getId, TrainingMenuEntity::getName,
+            (existing, replacement) -> existing, LinkedHashMap::new));
   }
 
   public List<SelectOptionTrainingMenu> getTrainingMenuSelectList() {
     return trainingMenuRepository.findAll().stream()
-        .map(entity -> new SelectOptionTrainingMenu(entity.getTrainingMenuId().toString(),
-            entity.getTrainingMenuName(), entity.getTargetAreaId(), entity.getMaxWeight(),
-            entity.getMaxReps(), entity.getMaxSets()))
+        .map(entity -> new SelectOptionTrainingMenu(entity.getId().toString(), entity.getName(),
+            entity.getTargetAreaId(), entity.getMaxWeight(), entity.getMaxReps(),
+            entity.getMaxSets()))
         .collect(Collectors.toList());
   }
 

@@ -56,11 +56,10 @@ public class TrainingMenuController {
 		return REDIRECT_LIST;
 	}
 
-	@GetMapping("/detail/{trainingMenuId}")
-	public String getDetail(@PathVariable("trainingMenuId") Integer trainingMenuId, Model model,
+	@GetMapping("/detail/{id}")
+	public String getDetail(@PathVariable("id") Integer id, Model model,
 			@AuthenticationPrincipal UserDetails user) {
-		TrainingMenuForm form =
-				trainingMenuService.getTrainingMenuDetails(trainingMenuId, user.getUsername());
+		TrainingMenuForm form = trainingMenuService.getTrainingMenuDetails(id, user.getUsername());
 		model.addAttribute("trainingMenuForm", form);
 		model.addAttribute("targetAreaMap", TargetArea.getTargetAreaMap());
 		return DETAIL_VIEW;
@@ -79,7 +78,7 @@ public class TrainingMenuController {
 	@PostMapping(value = "/detail", params = "delete")
 	public String delete(@ModelAttribute @Validated(DeleteGroup.class) TrainingMenuForm form,
 			Model model, @AuthenticationPrincipal UserDetails user) {
-		trainingMenuService.deleteTrainingMenu(form.getTrainingMenuId(), user.getUsername());
+		trainingMenuService.deleteTrainingMenu(form.getId(), user.getUsername());
 		return REDIRECT_LIST;
 	}
 }

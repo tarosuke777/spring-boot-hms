@@ -56,7 +56,7 @@ public class TrainingService {
 		TrainingEntity entity = trainingMapper.copy(existingEntity);
 		if (existingEntity.getTrainingMenu() != null) {
 			entity.setTrainingMenu(entityManager.getReference(TrainingMenuEntity.class,
-					existingEntity.getTrainingMenu().getTrainingMenuId()));
+					existingEntity.getTrainingMenu().getId()));
 		}
 
 		trainingMapper.updateEntityFromForm(form, entity);
@@ -80,7 +80,7 @@ public class TrainingService {
 	private TrainingForm convertToForm(TrainingEntity entity) {
 		TrainingForm form = trainingMapper.toForm(entity);
 		if (entity.getTrainingMenu() != null) {
-			form.setTrainingMenuId(entity.getTrainingMenu().getTrainingMenuId());
+			form.setTrainingMenuId(entity.getTrainingMenu().getId());
 			form.setTrainingAreaId(entity.getTrainingMenu().getTargetAreaId());
 		}
 		return form;

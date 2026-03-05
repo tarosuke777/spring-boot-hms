@@ -30,10 +30,10 @@ public class TrainingMenuEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer trainingMenuId;
+  private Integer id;
 
   @Column(length = 50)
-  private String trainingMenuName;
+  private String name;
 
   private Integer targetAreaId;
 
