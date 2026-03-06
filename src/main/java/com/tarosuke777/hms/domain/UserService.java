@@ -22,8 +22,8 @@ public class UserService {
         return userRepository.findAll().stream().map(entity -> userMapper.toForm(entity)).toList();
     }
 
-    public UserForm getUser(Integer userId) {
-        UserEntity entity = userRepository.findById(userId)
+    public UserForm getUser(Integer id) {
+        UserEntity entity = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return userMapper.toForm(entity);
     }
@@ -38,10 +38,10 @@ public class UserService {
 
     @Transactional
     public void updateUser(UserForm form) {
-        UserEntity entity = userRepository.findById(form.getUserId())
+        UserEntity entity = userRepository.findById(form.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        entity.setUserName(form.getUserName());
+        entity.setName(form.getName());
 
         // パスワードが入力されている場合のみ更新（MyBatisの<if>に相当）
         if (form.getPassword() != null && !form.getPassword().isEmpty()) {
@@ -52,8 +52,8 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Integer userId) {
-        userRepository.deleteById(userId);
+    public void deleteUser(Integer id) {
+        userRepository.deleteById(id);
     }
 
 }

@@ -66,7 +66,7 @@ public class UserController {
 
   @PostMapping(value = "/detail", params = "delete")
   public String delete(UserForm form, Model model) {
-    userService.deleteUser(form.getUserId());
+    userService.deleteUser(form.getId());
     return "redirect:/user/list";
   }
 }

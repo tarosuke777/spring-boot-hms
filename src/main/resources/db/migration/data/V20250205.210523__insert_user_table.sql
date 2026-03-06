@@ -1,5 +1,5 @@
 INSERT INTO user(
-     user_name
+     name
     ,password
     ,role
 ) VALUES

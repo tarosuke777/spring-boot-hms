@@ -22,12 +22,12 @@ public class UserDetailServiceImpl implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-    UserEntity loginUser = userRepository.findByUserName(userName)
+    UserEntity loginUser = userRepository.findByName(userName)
         .orElseThrow(() -> new UsernameNotFoundException("user not found."));
 
     List<GrantedAuthority> authorities =
         Collections.singletonList(new SimpleGrantedAuthority(loginUser.getRole()));
 
-    return new User(loginUser.getUserName(), loginUser.getPassword(), authorities);
+    return new User(loginUser.getName(), loginUser.getPassword(), authorities);
   }
 }

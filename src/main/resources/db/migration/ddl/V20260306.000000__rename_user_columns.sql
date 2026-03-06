@@ -1,0 +1,2 @@
+ALTER TABLE user CHANGE user_id id INT AUTO_INCREMENT;
+ALTER TABLE user CHANGE user_name name VARCHAR(50);

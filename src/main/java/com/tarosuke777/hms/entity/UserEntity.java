@@ -27,10 +27,10 @@ public class UserEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer userId;
+  private Integer id;
 
   @Column(length = 50)
-  private String userName;
+  private String name;
 
   @Column(length = 100)
   private String password;

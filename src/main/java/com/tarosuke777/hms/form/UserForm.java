@@ -12,11 +12,11 @@ import lombok.Data;
 public class UserForm {
 
   @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
-  private Integer userId;
+  private Integer id;
 
   @NotBlank
   @Size(min = 1, max = 50)
-  private String userName;
+  private String name;
 
   @NotBlank
   @Size(min = 4, max = 20)

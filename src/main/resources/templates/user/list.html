@@ -17,17 +17,17 @@
 			<table class="table table-bordered table-hover align-middle">
 				<thead>
 					<tr class="table-dark">
-						<th>User Id</th>
-						<th>User Name</th>
+						<th>Id</th>
+						<th>Name</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="user: ${userList}">
-                        <td th:text="${user.userId}"></td>
-						<td th:text="${user.userName}"></td>
+                        <td th:text="${user.id}"></td>
+						<td th:text="${user.name}"></td>
 						<td><a class="btn btn-dark"
-							th:href="@{'/user/detail/' + ${user.userId}}">Detail</a>
+							th:href="@{'/user/detail/' + ${user.id}}">Detail</a>
 						</td>
 				</tbody>
 			</table>
