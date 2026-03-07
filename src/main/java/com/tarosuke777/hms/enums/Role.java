@@ -1,16 +1,22 @@
 package com.tarosuke777.hms.enums;
 
 public enum Role {
-    ADMIN(1), GENERAL(2);
+    ADMIN(1, "管理者"), GENERAL(2, "一般ユーザー");
 
     private final int value;
+    private final String displayName;
 
-    Role(int value) {
+    Role(int value, String displayName) {
         this.value = value;
+        this.displayName = displayName;
     }
 
     public int getValue() {
         return value;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public static Role fromValue(int value) {

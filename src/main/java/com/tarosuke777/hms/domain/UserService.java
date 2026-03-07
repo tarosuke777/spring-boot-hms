@@ -44,6 +44,11 @@ public class UserService {
 
         entity.setName(form.getName());
 
+        // ロールは画面から変更可能なのでフォーム値を反映
+        if (form.getRole() != null) {
+            entity.setRole(form.getRole());
+        }
+
         // パスワードが入力されている場合のみ更新（MyBatisの<if>に相当）
         if (form.getPassword() != null && !form.getPassword().isEmpty()) {
             entity.setPassword(passwordEncoder.encode(form.getPassword()));

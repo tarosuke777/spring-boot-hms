@@ -1,7 +1,6 @@
 package com.tarosuke777.hms.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import com.tarosuke777.hms.entity.UserEntity;
 import com.tarosuke777.hms.form.UserForm;
@@ -10,7 +9,6 @@ import com.tarosuke777.hms.form.UserForm;
 public interface UserMapper {
 
     @IgnoreAuditFields
-    @Mapping(target = "role", ignore = true)
     UserEntity toEntity(UserForm form);
 
     UserForm toForm(UserEntity entity);
@@ -18,7 +16,6 @@ public interface UserMapper {
     UserEntity copy(UserEntity entity);
 
     @IgnoreAuditFields
-    @Mapping(target = "role", ignore = true)
     void updateEntityFromForm(UserForm form, @MappingTarget UserEntity entity);
 
 }

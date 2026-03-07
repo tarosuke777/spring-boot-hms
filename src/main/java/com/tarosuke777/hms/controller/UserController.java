@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.UserService;
 import com.tarosuke777.hms.enums.Role;
 import com.tarosuke777.hms.form.UserForm;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,7 +61,11 @@ public class UserController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(UserForm form) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) UserForm form,
+      BindingResult bindingResult, Model model) {
+    if (bindingResult.hasErrors()) {
+      return "user/detail";
+    }
     userService.updateUser(form);
     return "redirect:/user/list";
   }
