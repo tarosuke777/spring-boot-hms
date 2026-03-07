@@ -1,100 +1,105 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
-  <head>
-    <title>Task List</title>
-  </head>
-  <body>
-    <div layout:fragment="content">
-      <div class="mt-3 mb-3 border-bottom">
-        <h1 class="h2">Task List</h1>
-      </div>
-      <div class="mb-2">
-        <a class="btn btn-dark" th:href="@{'/task/register'}">Register</a>
-      </div>
-      <div th:if="${#lists.isEmpty(tasks)}">
-        <p>No tasks found.</p>
-      </div>
-      <div th:unless="${#lists.isEmpty(tasks)}">
-        <div id="task-container" class="row">
-          <div class="col-md-4 mb-4" draggable="true" th:each="task : ${tasks}" th:id="${'task-' + task.id}">
-            <div class="card h-100">
-              <form method="post" th:action="@{/task/update}" th:id="${'updateForm-' + task.id}">
-                <input type="hidden" name="id" th:value="${task.id}" />
-                <input type="hidden" name="version" th:value="${task.version}" />
-                <div class="card-header">
-                  <input type="text" name="name" class="form-control" th:value="${task.name}" />
-                </div>
-                <div class="card-body">
-                  <textarea name="note" class="form-control" rows="5" th:text="${task.note}"></textarea>
-                </div>
-              </form>
-              <div class="card-footer text-center">
-                <button type="submit" class="btn btn-primary btn-sm" th:form="${'updateForm-' + task.id}">Update</button>
-                <form method="post" th:action="@{/task/delete}" style="display: inline-block">
-                  <input type="hidden" name="id" th:value="${task.id}" />
-                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this task?');">Delete</button>
-                </form>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout}">
+
+<head>
+  <title>Task List</title>
+</head>
+
+<body>
+  <div layout:fragment="content">
+    <div class="mt-3 mb-3 border-bottom">
+      <h1 class="h2">Task List</h1>
+    </div>
+    <div class="mb-2">
+      <a class="btn btn-dark" th:href="@{'/task/register'}">Register</a>
+    </div>
+    <div th:if="${#lists.isEmpty(tasks)}">
+      <p>No tasks found.</p>
+    </div>
+    <div th:unless="${#lists.isEmpty(tasks)}">
+      <div id="task-container" class="row">
+        <div class="col-md-4 mb-4" draggable="true" th:each="task : ${tasks}" th:id="${'task-' + task.id}">
+          <div class="card h-100">
+            <form method="post" th:action="@{/task/update}" th:id="${'updateForm-' + task.id}">
+              <input type="hidden" name="id" th:value="${task.id}" />
+              <input type="hidden" name="version" th:value="${task.version}" />
+              <div class="card-header">
+                <input type="text" name="name" class="form-control" th:value="${task.name}" />
               </div>
+              <div class="card-body">
+                <textarea name="note" class="form-control" rows="5" th:text="${task.note}"></textarea>
+              </div>
+            </form>
+            <div class="card-footer text-center">
+              <button type="submit" class="btn btn-primary btn-sm" th:form="${'updateForm-' + task.id}">Update</button>
+              <form method="post" th:action="@{/task/delete}" style="display: inline-block">
+                <input type="hidden" name="id" th:value="${task.id}" />
+                <button type="submit" class="btn btn-danger btn-sm"
+                  onclick="return confirm('Are you sure you want to delete this task?');">Delete</button>
+              </form>
             </div>
           </div>
         </div>
       </div>
-      <script>
-        document.addEventListener("DOMContentLoaded", (event) => {
-          const container = document.getElementById("task-container");
-          let draggedItem = null;
-
-          // ドラッグ開始
-          container.addEventListener("dragstart", (e) => {
-            draggedItem = e.target.closest(".col-md-4");
-            // ドラッグ中の要素を半透明にするなどの視覚効果
-            setTimeout(() => {
-              draggedItem.style.opacity = "0.5";
-            }, 0);
-            e.dataTransfer.setData("text/plain", draggedItem.id);
-          });
-
-          // ドラッグ終了
-          container.addEventListener("dragend", (e) => {
-            if (draggedItem) {
-              draggedItem.style.opacity = "";
-              draggedItem = null;
-            }
-          });
-
-          // ドロップオーバー (ドロップを許可するために必要)
-          container.addEventListener("dragover", (e) => {
-            e.preventDefault();
-          });
-
-          // ドロップ
-          container.addEventListener("drop", (e) => {
-            e.preventDefault();
-            const dropTarget = e.target.closest(".col-md-4");
-            if (dropTarget && draggedItem) {
-              // ドロップされた場所に基づいて要素を挿入
-              const boundingBox = dropTarget.getBoundingClientRect();
-              const center = boundingBox.left + boundingBox.width / 2;
-              if (e.clientX > center) {
-                // 右側にドロップ
-                container.insertBefore(draggedItem, dropTarget.nextSibling);
-              } else {
-                // 左側にドロップ
-                container.insertBefore(draggedItem, dropTarget);
-              }
-
-              // ここでサーバーに新しい順序を送信するロジックを実装
-              // 例: const newOrder = Array.from(container.children).map(child => child.id);
-              // fetch('/api/update-order', { method: 'POST', body: JSON.stringify(newOrder) });
-            }
-          });
-        });
-      </script>
-      <style>
-        .col-md-4[draggable="true"] {
-          cursor: move;
-        }
-      </style>
     </div>
-  </body>
+    <script>
+      document.addEventListener("DOMContentLoaded", (event) => {
+        const container = document.getElementById("task-container");
+        let draggedItem = null;
+
+        // ドラッグ開始
+        container.addEventListener("dragstart", (e) => {
+          draggedItem = e.target.closest(".col-md-4");
+          // ドラッグ中の要素を半透明にするなどの視覚効果
+          setTimeout(() => {
+            draggedItem.style.opacity = "0.5";
+          }, 0);
+          e.dataTransfer.setData("text/plain", draggedItem.id);
+        });
+
+        // ドラッグ終了
+        container.addEventListener("dragend", (e) => {
+          if (draggedItem) {
+            draggedItem.style.opacity = "";
+            draggedItem = null;
+          }
+        });
+
+        // ドロップオーバー (ドロップを許可するために必要)
+        container.addEventListener("dragover", (e) => {
+          e.preventDefault();
+        });
+
+        // ドロップ
+        container.addEventListener("drop", (e) => {
+          e.preventDefault();
+          const dropTarget = e.target.closest(".col-md-4");
+          if (dropTarget && draggedItem) {
+            // ドロップされた場所に基づいて要素を挿入
+            const boundingBox = dropTarget.getBoundingClientRect();
+            const center = boundingBox.left + boundingBox.width / 2;
+            if (e.clientX > center) {
+              // 右側にドロップ
+              container.insertBefore(draggedItem, dropTarget.nextSibling);
+            } else {
+              // 左側にドロップ
+              container.insertBefore(draggedItem, dropTarget);
+            }
+
+            // ここでサーバーに新しい順序を送信するロジックを実装
+            // 例: const newOrder = Array.from(container.children).map(child => child.id);
+            // fetch('/api/update-order', { method: 'POST', body: JSON.stringify(newOrder) });
+          }
+        });
+      });
+    </script>
+    <style>
+      .col-md-4[draggable="true"] {
+        cursor: move;
+      }
+    </style>
+  </div>
+</body>
+
 </html>

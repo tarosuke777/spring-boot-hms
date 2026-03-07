@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 	layout:decorate="~{layout/layout}">
+
 <head>
-<title>Login</title>
+	<title>Login</title>
 </head>
+
 <body>
 	<div layout:fragment="content">
 		<div class="container">
@@ -17,12 +18,10 @@
 						<p th:if="${param.error}" class="error">UserName or Password is
 							incorrect.</p>
 						<div class="mb-3">
-							<input type="text" class="form-control" placeholder="Name"
-								name="userName">
+							<input type="text" class="form-control" placeholder="Name" name="userName">
 						</div>
 						<div class="mb-3">
-							<input type="password" class="form-control" placeholder="Password"
-								name="password">
+							<input type="password" class="form-control" placeholder="Password" name="password">
 						</div>
 						<div class="mb-3">
 							<input type="submit" value="login" class="btn btn-dark" />
@@ -34,4 +33,5 @@
 		</div>
 	</div>
 </body>
+
 </html>

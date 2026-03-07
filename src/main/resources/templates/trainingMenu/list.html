@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout/layout}">
+
 <head>
-<title>TrainingMenu</title>
+	<title>TrainingMenu</title>
 </head>
+
 <body>
 	<div layout:fragment="content">
 		<div class="mt-3 mb-3 border-bottom">
@@ -29,17 +30,19 @@
 				<tbody>
 					<tr th:each="trainingMenu: ${trainingMenuList}">
 						<td th:text="${trainingMenu.name}"></td>
-						<td th:text="${trainingMenu.targetAreaId != null ? targetAreaMap.get(trainingMenu.targetAreaId) : ''}"></td>
+						<td
+							th:text="${trainingMenu.targetAreaId != null ? targetAreaMap.get(trainingMenu.targetAreaId) : ''}">
+						</td>
 						<td th:text="${trainingMenu.link}"></td>
 						<td th:text="${trainingMenu.maxWeight}"></td>
 						<td th:text="${trainingMenu.maxReps}"></td>
 						<td th:text="${trainingMenu.maxSets}"></td>
-						<td><a class="btn btn-dark"
-							th:href="@{'/trainingMenu/detail/' + ${trainingMenu.id}}">Detail</a>
+						<td><a class="btn btn-dark" th:href="@{'/trainingMenu/detail/' + ${trainingMenu.id}}">Detail</a>
 						</td>
 				</tbody>
 			</table>
 		</div>
 	</div>
 </body>
+
 </html>

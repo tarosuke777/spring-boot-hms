@@ -1,68 +1,68 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout/layout}">
-<head>
-<title>TrainingRegister</title>
-<script>
-$(function() {
-  $("#jsiDatepicker").datepicker({
-	dateFormat: "yy-mm-dd"
-  });
-  
-  $('#jsiDatepicker').datepicker('setDate', new Date());
-  
-  const $children = $('#trainingMenuId');
-  const original = $children.html();
-   
-  $('#trainingAreaId').change(function() {
-   
-    const val1 = $(this).val();
-   
-    $children.html(original).find('option').each(function() {
-      const val2 = $(this).data('parent-key');
-   
-      if (val1 != val2) {
-        $(this).not(':first-child').remove();
-      }
-   
-    });
-   
-    if ($(this).val() == "") {
-      $children.attr('disabled', 'disabled');
-    } else {
-      $children.removeAttr('disabled');
-    }
-   
-  });
-  
-  $('#trainingMenuId').change(function() {
-      const selectedOption = $(this).find('option:selected');
-      const maxWeight = selectedOption.data('max-weight');
-      const maxReps = selectedOption.data('max-reps');
-      const maxSets = selectedOption.data('max-sets');
 
-      $('#weight').val(maxWeight || ''); // maxWeightが存在しない場合は空文字を設定
-      $('#reps').val(maxReps || ''); // maxRepsが存在しない場合は空文字を設定
-      $('#sets').val(maxSets || ''); // maxSetsが存在しない場合は空文字を設定
-  });
-  
-});
-</script>
+<head>
+	<title>TrainingRegister</title>
+	<script>
+		$(function () {
+			$("#jsiDatepicker").datepicker({
+				dateFormat: "yy-mm-dd"
+			});
+
+			$('#jsiDatepicker').datepicker('setDate', new Date());
+
+			const $children = $('#trainingMenuId');
+			const original = $children.html();
+
+			$('#trainingAreaId').change(function () {
+
+				const val1 = $(this).val();
+
+				$children.html(original).find('option').each(function () {
+					const val2 = $(this).data('parent-key');
+
+					if (val1 != val2) {
+						$(this).not(':first-child').remove();
+					}
+
+				});
+
+				if ($(this).val() == "") {
+					$children.attr('disabled', 'disabled');
+				} else {
+					$children.removeAttr('disabled');
+				}
+
+			});
+
+			$('#trainingMenuId').change(function () {
+				const selectedOption = $(this).find('option:selected');
+				const maxWeight = selectedOption.data('max-weight');
+				const maxReps = selectedOption.data('max-reps');
+				const maxSets = selectedOption.data('max-sets');
+
+				$('#weight').val(maxWeight || ''); // maxWeightが存在しない場合は空文字を設定
+				$('#reps').val(maxReps || ''); // maxRepsが存在しない場合は空文字を設定
+				$('#sets').val(maxSets || ''); // maxSetsが存在しない場合は空文字を設定
+			});
+
+		});
+	</script>
 </head>
+
 <body>
 	<div layout:fragment="content">
 		<div class="mt-3 mb-3 border-bottom">
 			<h1 class="h2">Training Register</h1>
 		</div>
-		<form method="post" th:action="@{/training/register}"
-			th:object="${trainingForm}">
+		<form method="post" th:action="@{/training/register}" th:object="${trainingForm}">
 			<div class="mb-3 row">
 				<label for="trainingName" class="col-sm-2 col-form-label">Training
 					Date</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" th:field="*{trainingDate}"
-						th:errorclass="is-invalid" id="jsiDatepicker">
+					<input type="text" class="form-control" th:field="*{trainingDate}" th:errorclass="is-invalid"
+						id="jsiDatepicker">
 					<div class="invalid-feedback" th:errors="*{trainingDate}"></div>
 				</div>
 			</div>
@@ -81,24 +81,21 @@ $(function() {
 			<div class="mb-3 row">
 				<label for="weight" class="col-sm-2 col-form-label">Weight</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" th:field="*{weight}"
-						th:errorclass="is-invalid">
+					<input type="text" class="form-control" th:field="*{weight}" th:errorclass="is-invalid">
 					<div class="invalid-feedback" th:errors="*{weight}"></div>
 				</div>
 			</div>
 			<div class="mb-3 row">
 				<label for="reps" class="col-sm-2 col-form-label">Reps</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" th:field="*{reps}"
-						th:errorclass="is-invalid">
+					<input type="text" class="form-control" th:field="*{reps}" th:errorclass="is-invalid">
 					<div class="invalid-feedback" th:errors="*{reps}"></div>
 				</div>
 			</div>
 			<div class="mb-3 row">
 				<label for="sets" class="col-sm-2 col-form-label">Sets</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" th:field="*{sets}"
-						th:errorclass="is-invalid">
+					<input type="text" class="form-control" th:field="*{sets}" th:errorclass="is-invalid">
 					<div class="invalid-feedback" th:errors="*{sets}"></div>
 				</div>
 			</div>
@@ -108,4 +105,5 @@ $(function() {
 		</form>
 	</div>
 </body>
+
 </html>

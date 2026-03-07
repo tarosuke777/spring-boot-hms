@@ -1,28 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Parts</title>
+	<meta charset="UTF-8">
+	<title>Parts</title>
 </head>
+
 <body>
-	<select
-		th:fragment="commonSelect(selectMap, selectedKey, fieldName, hasBlank)"
-		class="form-select" th:field="*{__${fieldName}__}" th:errorclass="is-invalid">
+	<select th:fragment="commonSelect(selectMap, selectedKey, fieldName, hasBlank)" class="form-select"
+		th:field="*{__${fieldName}__}" th:errorclass="is-invalid">
 		<option th:if="${hasBlank}" value=""></option>
-        <option th:each="item : ${selectMap}" th:value="${item.key}"
-            th:text="${item.value}" th:selected="${item.key == selectedKey}"></option>
+		<option th:each="item : ${selectMap}" th:value="${item.key}" th:text="${item.value}"
+			th:selected="${item.key == selectedKey}"></option>
 	</select>
-	
-	<select
-		th:fragment="trainingMenu(selectList, selectedKey, fieldName, hasBlank)"
-		class="form-select" th:field="*{__${fieldName}__}">
+
+	<select th:fragment="trainingMenu(selectList, selectedKey, fieldName, hasBlank)" class="form-select"
+		th:field="*{__${fieldName}__}">
 		<option th:if="${hasBlank}" value=""></option>
-		<option th:each="item : ${selectList}" th:value="${item.key}" 
-			th:data-parent-key="${item.parentKey}"
-	    	th:data-max-weight="${item.maxWeight}" 
-			th:data-max-reps="${item.maxReps}" 
-			th:data-max-sets="${item.maxSets}"     
-		th:text="${item.value}" th:selected="${item.key == selectedKey}"></option>
+		<option th:each="item : ${selectList}" th:value="${item.key}" th:data-parent-key="${item.parentKey}"
+			th:data-max-weight="${item.maxWeight}" th:data-max-reps="${item.maxReps}" th:data-max-sets="${item.maxSets}"
+			th:text="${item.value}" th:selected="${item.key == selectedKey}"></option>
 	</select>
 </body>
+
 </html>

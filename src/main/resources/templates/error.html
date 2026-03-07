@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 	layout:decorate="~{layout/layout}">
+
 <head>
-<title>Error</title>
+	<title>Error</title>
 </head>
+
 <body>
 	<div layout:fragment="content">
 		<div class="mt-3 mb-3 border-bottom">
 			<h1 class="h2">Error</h1>
 		</div>
-		
+
 		<div th:if="${isOptimisticLockError}">
 			<div class="alert alert-warning">
 				他のユーザーによってデータが更新されたため、処理を完了できませんでした。<br>
@@ -31,4 +32,5 @@
 		</div>
 	</div>
 </body>
+
 </html>
