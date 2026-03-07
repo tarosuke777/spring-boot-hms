@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.domain.UserService;
+import com.tarosuke777.hms.enums.Role;
 import com.tarosuke777.hms.form.UserForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ public class UserController {
       return "user/signup";
     }
 
-    userService.registerUser(form, "ROLE_GENERAL");
+    userService.registerUser(form, Role.GENERAL);
 
     if (context.getAuthentication() != null && context.getAuthentication().isAuthenticated()) {
       return "redirect:/user/list";

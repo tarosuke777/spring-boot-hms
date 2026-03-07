@@ -23,7 +23,7 @@
           <li class="mb-2"><a class="text-decoration-none link-dark" href="/jenkins/" target="jenkins">Jenkins</a></li>
         </ul>
       </li>
-      <li sec:authorize="hasAuthority('ROLE_ADMIN')" class="my-2">
+      <li sec:authorize="hasRole(T(com.tarosuke777.hms.enums.Role).ADMIN.name())" class="my-2">
         <button class="btn d-inline-flex align-items-center border-0">Manage</button>
         <ul class="list-unstyled ps-3">
           <li><a class="text-decoration-none link-dark" th:href="@{'/user/list'}">User</a></li>

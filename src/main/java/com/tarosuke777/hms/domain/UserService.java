@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.tarosuke777.hms.enums.Role;
 import com.tarosuke777.hms.entity.UserEntity;
 import com.tarosuke777.hms.form.UserForm;
 import com.tarosuke777.hms.mapper.UserMapper;
@@ -29,7 +30,7 @@ public class UserService {
     }
 
     @Transactional
-    public void registerUser(UserForm form, String role) {
+    public void registerUser(UserForm form, Role role) {
         UserEntity entity = userMapper.toEntity(form);
         entity.setPassword(passwordEncoder.encode(form.getPassword()));
         entity.setRole(role);

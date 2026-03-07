@@ -1,4 +1,4 @@
-INSERT INTO training_menu (name, target_area_id, link) VALUES
+INSERT INTO training_menu (training_menu_name, target_area_id, link) VALUES
 ('プッシュアップ', 1, 'https://example.com/pushup'),
 ('チンニング', 2, 'https://example.com/chinning'),
 ('レッグプレス', 2, 'https://example.com/legpress'),

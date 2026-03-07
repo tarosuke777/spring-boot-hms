@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.tarosuke777.hms.entity.UserEntity;
 import com.tarosuke777.hms.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import com.tarosuke777.hms.enums.Role;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +26,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
     UserEntity loginUser = userRepository.findByName(userName)
         .orElseThrow(() -> new UsernameNotFoundException("user not found."));
 
+    Role userRole = loginUser.getRole();
+
     List<GrantedAuthority> authorities =
-        Collections.singletonList(new SimpleGrantedAuthority(loginUser.getRole()));
+        Collections.singletonList(new SimpleGrantedAuthority(userRole.getAuthority()));
 
     return new User(loginUser.getName(), loginUser.getPassword(), authorities);
   }

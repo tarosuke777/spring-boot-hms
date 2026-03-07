@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.tarosuke777.hms.enums.Role;
 
 @Entity
 @Table(name = "user")
@@ -35,8 +36,7 @@ public class UserEntity {
   @Column(length = 100)
   private String password;
 
-  @Column(length = 50)
-  private String role;
+  private Role role;
 
   @CreatedDate
   @Column(updatable = false, nullable = false)

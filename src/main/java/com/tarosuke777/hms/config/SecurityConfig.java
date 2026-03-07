@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import com.tarosuke777.hms.enums.Role;
 
 @Configuration
 @EnableWebSecurity
@@ -26,7 +27,7 @@ public class SecurityConfig {
     http.authorizeHttpRequests(
         (authz) -> authz.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
             .permitAll().requestMatchers("/user/signup").permitAll().requestMatchers("/user/**")
-            .hasAuthority("ROLE_ADMIN").anyRequest().authenticated());
+            .hasRole(Role.ADMIN.name()).anyRequest().authenticated());
 
     return http.build();
   }
