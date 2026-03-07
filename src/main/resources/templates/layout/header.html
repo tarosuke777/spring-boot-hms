@@ -14,7 +14,7 @@
 				aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-			<a class="navbar-brand" href="/">HMS</a>
+			<a class="navbar-brand" th:href="@{/}">HMS</a>
 			<form sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}" class="ms-auto">
 				<button class="btn btn-link navbar-brand" type="submit">logout</button>
 			</form>
