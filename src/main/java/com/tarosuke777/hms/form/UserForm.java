@@ -1,12 +1,13 @@
 package com.tarosuke777.hms.form;
 
+import com.tarosuke777.hms.enums.Role;
 import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.InsertGroup;
+import com.tarosuke777.hms.validation.OptionalPassword;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import com.tarosuke777.hms.enums.Role;
 import lombok.Data;
 
 @Data
@@ -19,9 +20,8 @@ public class UserForm {
   @Size(min = 1, max = 50)
   private String name;
 
-  @NotBlank
-  @Size(min = 4, max = 20)
-  @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Enter {0} in single-byte alphanumeric characters")
+  @NotBlank(groups = InsertGroup.class)
+  @OptionalPassword
   private String password;
 
   /** ユーザーのロール（更新時のみ使用） */

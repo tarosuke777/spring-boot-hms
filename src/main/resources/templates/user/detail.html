@@ -15,15 +15,17 @@
 			<input type="hidden" th:field="*{id}">
 			<input type="hidden" th:field="*{version}" />
 			<div class="mb-3 row">
-				<label for="musicName" class="col-sm-2 col-form-label">Name</label>
+				<label for="name" class="col-sm-2 col-form-label">Name</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" th:field="*{name}">
+					<input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid">
+					<div class="invalid-feedback" th:errors="*{name}"></div>
 				</div>
 			</div>
             <div class="mb-3 row">
                 <label for="password" class="col-sm-2 col-form-label">Password</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" th:field="*{password}">
+                    <input type="text" class="form-control" th:field="*{password}" th:errorclass="is-invalid">
+					<div class="invalid-feedback" th:errors="*{password}"></div>
                 </div>
             </div>
             <div class="mb-3 row">
