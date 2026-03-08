@@ -1,16 +1,15 @@
-package com.tarosuke777.hms.aspect;
+package com.tarosuke777.hms.exception;
 
 import java.util.UUID;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import com.tarosuke777.hms.exception.IllegalRequestException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ControllerAdvice
-public class GlobalControllerAdvice {
+public class GlobalExceptionHandler {
 
 	/**
 	 * 不正なリクエスト（改ざん等）のハンドリング
