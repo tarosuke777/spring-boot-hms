@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.tarosuke777.hms.domain.DiaryService;
 import com.tarosuke777.hms.form.DiaryForm;
+import com.tarosuke777.hms.service.DiaryService;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;

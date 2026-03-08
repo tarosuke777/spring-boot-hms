@@ -1,4 +1,4 @@
-package com.tarosuke777.hms.domain;
+package com.tarosuke777.hms.service;
 
 import java.util.List;
 import org.springframework.data.domain.Sort;

@@ -24,11 +24,11 @@ class ArchitectureTest {
     static final ArchRule layer_dependencies_are_respected = layeredArchitecture()
             .consideringAllDependencies()
             .layer("Controller").definedBy("..controller..")
-            .layer("Service")   .definedBy("..domain..", "..service..")
+            .layer("Service").definedBy("..service..")
             .layer("Repository").definedBy("..repository..")
 
             .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
-            .whereLayer("Service")   .mayOnlyBeAccessedByLayers("Controller")
+            .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller")
             .whereLayer("Repository").mayOnlyBeAccessedByLayers("Service");
     // @formatter:on
 }

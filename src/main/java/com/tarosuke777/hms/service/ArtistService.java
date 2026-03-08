@@ -1,4 +1,4 @@
-package com.tarosuke777.hms.domain;
+package com.tarosuke777.hms.service;
 
 import java.util.LinkedHashMap;
 import java.util.List;

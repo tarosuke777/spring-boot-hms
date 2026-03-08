@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.tarosuke777.hms.domain.TaskService;
 import com.tarosuke777.hms.form.TaskForm;
+import com.tarosuke777.hms.service.TaskService;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
 

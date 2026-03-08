@@ -6,8 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import com.tarosuke777.hms.domain.MusicService;
-import com.tarosuke777.hms.domain.TrainingService;
+import com.tarosuke777.hms.service.MusicService;
+import com.tarosuke777.hms.service.TrainingService;
 
 @SpringBootApplication
 @EnableJpaAuditing

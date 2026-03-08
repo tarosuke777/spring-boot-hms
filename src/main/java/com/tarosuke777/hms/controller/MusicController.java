@@ -13,10 +13,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.tarosuke777.hms.domain.ArtistService;
-import com.tarosuke777.hms.domain.MusicService;
 import com.tarosuke777.hms.form.MusicForm;
+import com.tarosuke777.hms.service.ArtistService;
+import com.tarosuke777.hms.service.MusicService;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
