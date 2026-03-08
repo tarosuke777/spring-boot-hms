@@ -10,9 +10,9 @@ import com.tarosuke777.hms.entity.DiaryEntity;
 @Repository
 public interface DiaryRepository extends JpaRepository<DiaryEntity, Integer> {
 
-    Optional<DiaryEntity> findByDiaryIdAndCreatedBy(Integer diaryId, String createdBy);
+    Optional<DiaryEntity> findByDiaryIdAndCreatedBy(Integer diaryId, Integer createdBy);
 
-    List<DiaryEntity> findByCreatedBy(String createdBy, Sort sort);
+    List<DiaryEntity> findByCreatedBy(Integer createdBy, Sort sort);
 
-    boolean existsByDiaryIdAndCreatedBy(Integer diaryId, String createdBy);
+    boolean existsByDiaryIdAndCreatedBy(Integer diaryId, Integer createdBy);
 }

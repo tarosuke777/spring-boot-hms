@@ -15,12 +15,12 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
 
-    public List<TaskForm> getTaskList(String currentUserId) {
+    public List<TaskForm> getTaskList(Integer currentUserId) {
         return taskRepository.findByCreatedBy(currentUserId).stream().map(taskMapper::toForm)
                 .toList();
     }
 
-    public TaskForm getTask(Integer id, String currentUserId) {
+    public TaskForm getTask(Integer id, Integer currentUserId) {
         TaskEntity entity = taskRepository.findByIdAndCreatedBy(id, currentUserId)
                 .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
         return taskMapper.toForm(entity);
@@ -33,7 +33,7 @@ public class TaskService {
     }
 
     @Transactional
-    public void updateTask(TaskForm form, String currentUserId) {
+    public void updateTask(TaskForm form, Integer currentUserId) {
         TaskEntity existEntity = taskRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
                 .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
         TaskEntity entity = taskMapper.copy(existEntity);
@@ -42,7 +42,7 @@ public class TaskService {
     }
 
     @Transactional
-    public void deleteTask(Integer id, String currentUserId) {
+    public void deleteTask(Integer id, Integer currentUserId) {
 
         if (!taskRepository.existsByIdAndCreatedBy(id, currentUserId)) {
             throw new RuntimeException("Task not found or unauthorized");

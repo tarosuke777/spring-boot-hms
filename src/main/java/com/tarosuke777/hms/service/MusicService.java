@@ -20,7 +20,7 @@ public class MusicService {
   private final EntityManager entityManager;
   private final MusicMapper musicMapper;
 
-  public List<MusicForm> getMusicList(String currentUserId) {
+  public List<MusicForm> getMusicList(Integer currentUserId) {
     return musicRepository.findByCreatedByOrderByIdAsc(currentUserId).stream().map(music -> {
       MusicForm form = musicMapper.toForm(music);
       if (music.getArtist() != null) {
@@ -30,7 +30,7 @@ public class MusicService {
     }).toList();
   }
 
-  public MusicForm getMusicDetails(Integer id, String currentUserId) {
+  public MusicForm getMusicDetails(Integer id, Integer currentUserId) {
     MusicEntity music = musicRepository.findByIdAndCreatedBy(id, currentUserId)
         .orElseThrow(() -> new RuntimeException("Music not found"));
     MusicForm musicForm = musicMapper.toForm(music);
@@ -54,7 +54,7 @@ public class MusicService {
   }
 
   @Transactional
-  public void updateMusic(MusicForm form, String currentUserId) {
+  public void updateMusic(MusicForm form, Integer currentUserId) {
     MusicEntity existEntity = musicRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
         .orElseThrow(() -> new RuntimeException("Music not found"));
     MusicEntity entity = musicMapper.copy(existEntity);
@@ -72,7 +72,7 @@ public class MusicService {
   }
 
   @Transactional
-  public void deleteMusic(Integer id, String currentUserId) {
+  public void deleteMusic(Integer id, Integer currentUserId) {
     if (!musicRepository.existsByIdAndCreatedBy(id, currentUserId)) {
       throw new RuntimeException("Music not found");
     }
@@ -80,7 +80,7 @@ public class MusicService {
   }
 
   @Tool(description = "好きな曲名の一覧を取得する")
-  public String getMusicListForMcp(String currentUserId) {
+  public String getMusicListForMcp(Integer currentUserId) {
     return musicRepository.findAll().stream().map(MusicEntity::getName)
         .reduce((a, b) -> a + ", " + b).orElse("No music available");
   }

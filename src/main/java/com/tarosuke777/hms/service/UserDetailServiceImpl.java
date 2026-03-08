@@ -4,15 +4,15 @@ import java.util.Collections;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.tarosuke777.hms.entity.UserEntity;
-import com.tarosuke777.hms.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import com.tarosuke777.hms.enums.Role;
+import com.tarosuke777.hms.repository.UserRepository;
+import com.tarosuke777.hms.security.LoginUser;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +31,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     List<GrantedAuthority> authorities =
         Collections.singletonList(new SimpleGrantedAuthority(userRole.getAuthority()));
 
-    return new User(loginUser.getName(), loginUser.getPassword(), authorities);
+    return new LoginUser(loginUser.getId(), loginUser.getName(), loginUser.getPassword(),
+        authorities);
   }
 }

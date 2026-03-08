@@ -58,11 +58,11 @@ public class BookEntity {
 
   @CreatedBy
   @Column(updatable = false, nullable = false)
-  private String createdBy;
+  private Integer createdBy;
 
   @LastModifiedBy
   @Column(nullable = false)
-  private String updatedBy;
+  private Integer updatedBy;
 
   @Version
   private Integer version;

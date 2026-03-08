@@ -12,11 +12,11 @@ import com.tarosuke777.hms.entity.TrainingEntity;
 public interface TrainingRepository extends JpaRepository<TrainingEntity, Integer> {
 
     @EntityGraph(attributePaths = {"trainingMenu"})
-    Optional<TrainingEntity> findByTrainingIdAndCreatedBy(Integer trainingId, String createdBy);
+    Optional<TrainingEntity> findByTrainingIdAndCreatedBy(Integer trainingId, Integer createdBy);
 
     @EntityGraph(attributePaths = {"trainingMenu"})
-    List<TrainingEntity> findByCreatedBy(String createdBy, Sort sort);
+    List<TrainingEntity> findByCreatedBy(Integer createdBy, Sort sort);
 
-    boolean existsByTrainingIdAndCreatedBy(Integer trainingId, String createdBy);
+    boolean existsByTrainingIdAndCreatedBy(Integer trainingId, Integer createdBy);
 
 }

@@ -19,12 +19,12 @@ public class AuthorService {
   private final AuthorRepository authorRepository;
   private final AuthorMapper authorMapper;
 
-  public List<AuthorForm> getAuthorList(String currentUserId) {
+  public List<AuthorForm> getAuthorList(Integer currentUserId) {
     return authorRepository.findByCreatedBy(currentUserId).stream().map(authorMapper::toForm)
         .toList();
   }
 
-  public AuthorForm getAuthor(Integer authorId, String currentUserId) {
+  public AuthorForm getAuthor(Integer authorId, Integer currentUserId) {
     AuthorEntity author = authorRepository.findByIdAndCreatedBy(authorId, currentUserId)
         .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
     return authorMapper.toForm(author);
@@ -37,7 +37,7 @@ public class AuthorService {
   }
 
   @Transactional
-  public void updateAuthor(AuthorForm form, String currentUserId) {
+  public void updateAuthor(AuthorForm form, Integer currentUserId) {
     AuthorEntity existEntity = authorRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
         .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
     AuthorEntity entity = authorMapper.copy(existEntity);
@@ -46,7 +46,7 @@ public class AuthorService {
   }
 
   @Transactional
-  public void deleteAuthor(Integer authorId, String currentUserId) {
+  public void deleteAuthor(Integer authorId, Integer currentUserId) {
     if (!authorRepository.existsByIdAndCreatedBy(authorId, currentUserId)) {
       throw new RuntimeException("Author not found or access denied");
     }

@@ -24,6 +24,7 @@ import com.tarosuke777.hms.entity.DiaryEntity;
 import com.tarosuke777.hms.form.DiaryForm;
 import com.tarosuke777.hms.mapper.DiaryMapper;
 import com.tarosuke777.hms.repository.DiaryRepository;
+import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -60,8 +61,12 @@ public class DiaryControllerTest {
   void getList_ShouldReturnDiaryList() throws Exception {
 
     // Given
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
+
     List<DiaryForm> expectedDiaryList =
-        diaryRepository.findByCreatedBy("admin", Sort.by("diaryDate").descending()).stream()
+        diaryRepository.findByCreatedBy(currentUserId, Sort.by("diaryDate").descending()).stream()
             .map(diaryMapper::toForm).toList();
 
     // When & Then

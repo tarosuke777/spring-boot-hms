@@ -18,7 +18,7 @@ public class BookService {
   private final EntityManager entityManager;
   private final BookMapper bookMapper;
 
-  public List<BookForm> getBookList(String currentUserId) {
+  public List<BookForm> getBookList(Integer currentUserId) {
     return bookRepository.findByCreatedByOrderByIdAsc(currentUserId).stream().map(book -> {
       BookForm form = bookMapper.toForm(book);
       if (book.getAuthor() != null) {
@@ -28,7 +28,7 @@ public class BookService {
     }).toList();
   }
 
-  public BookForm getBookDetails(Integer id, String currentUserId) {
+  public BookForm getBookDetails(Integer id, Integer currentUserId) {
     BookEntity book = bookRepository.findByIdAndCreatedBy(id, currentUserId)
         .orElseThrow(() -> new RuntimeException("Book not found"));
     BookForm bookForm = bookMapper.toForm(book);
@@ -46,7 +46,7 @@ public class BookService {
   }
 
   @Transactional
-  public void updateBook(BookForm form, String currentUserId) {
+  public void updateBook(BookForm form, Integer currentUserId) {
     BookEntity existEntity = bookRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
         .orElseThrow(() -> new RuntimeException("Book not found"));
 
@@ -64,7 +64,7 @@ public class BookService {
   }
 
   @Transactional
-  public void deleteBook(Integer id, String currentUserId) {
+  public void deleteBook(Integer id, Integer currentUserId) {
     if (!bookRepository.existsByIdAndCreatedBy(id, currentUserId)) {
       throw new RuntimeException("Book not found or access denied");
     }

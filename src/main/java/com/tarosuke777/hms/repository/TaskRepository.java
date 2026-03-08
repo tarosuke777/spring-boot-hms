@@ -9,9 +9,9 @@ import com.tarosuke777.hms.entity.TaskEntity;
 @Repository
 public interface TaskRepository extends JpaRepository<TaskEntity, Integer> {
 
-    Optional<TaskEntity> findByIdAndCreatedBy(Integer id, String createdBy);
+    Optional<TaskEntity> findByIdAndCreatedBy(Integer id, Integer createdBy);
 
-    List<TaskEntity> findByCreatedBy(String createdBy);
+    List<TaskEntity> findByCreatedBy(Integer createdBy);
 
-    boolean existsByIdAndCreatedBy(Integer id, String createdBy);
+    boolean existsByIdAndCreatedBy(Integer id, Integer createdBy);
 }

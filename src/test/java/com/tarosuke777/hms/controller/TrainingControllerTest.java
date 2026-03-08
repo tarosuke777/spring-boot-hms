@@ -32,6 +32,7 @@ import com.tarosuke777.hms.form.TrainingForm;
 import com.tarosuke777.hms.mapper.TrainingMapper;
 import com.tarosuke777.hms.repository.TrainingMenuRepository;
 import com.tarosuke777.hms.repository.TrainingRepository;
+import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -70,9 +71,12 @@ public class TrainingControllerTest {
   void getList_ShouldReturnTrainingList() throws Exception {
 
     // Given
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
     List<TrainingForm> expectedTrainingList =
-        trainingRepository.findByCreatedBy("admin", Sort.by("trainingDate").descending()).stream()
-            .map(this::convertToForm).toList();
+        trainingRepository.findByCreatedBy(currentUserId, Sort.by("trainingDate").descending())
+            .stream().map(this::convertToForm).toList();
     Map<Integer, String> expectedTrainingAreaMap = TargetArea.getTargetAreaMap();
     Map<Integer, String> expectedTrainingMenuMap = getTrainingMenuMap();
 

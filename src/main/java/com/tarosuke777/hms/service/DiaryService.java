@@ -17,16 +17,17 @@ public class DiaryService {
     private final DiaryRepository diaryRepository;
     private final DiaryMapper diaryMapper;
 
-    public List<DiaryForm> getDiaryList(String orderBy, String sortDirection, String currentUser) {
+    public List<DiaryForm> getDiaryList(String orderBy, String sortDirection,
+            Integer currentUserId) {
         Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by(orderBy).descending()
                 : Sort.by(orderBy).ascending();
 
-        return diaryRepository.findByCreatedBy(currentUser, sort).stream().map(diaryMapper::toForm)
-                .toList();
+        return diaryRepository.findByCreatedBy(currentUserId, sort).stream()
+                .map(diaryMapper::toForm).toList();
     }
 
-    public DiaryForm getDiaryDetails(Integer diaryId, String currentUser) {
-        DiaryEntity diary = diaryRepository.findByDiaryIdAndCreatedBy(diaryId, currentUser)
+    public DiaryForm getDiaryDetails(Integer diaryId, Integer currentUserId) {
+        DiaryEntity diary = diaryRepository.findByDiaryIdAndCreatedBy(diaryId, currentUserId)
                 .orElseThrow(() -> new RuntimeException("Diary not found or access denied"));
         return diaryMapper.toForm(diary);
     }
@@ -38,9 +39,9 @@ public class DiaryService {
     }
 
     @Transactional
-    public void updateDiary(DiaryForm form, String currentUser) {
+    public void updateDiary(DiaryForm form, Integer currentUserId) {
         DiaryEntity existEntity = diaryRepository
-                .findByDiaryIdAndCreatedBy(form.getDiaryId(), currentUser)
+                .findByDiaryIdAndCreatedBy(form.getDiaryId(), currentUserId)
                 .orElseThrow(() -> new RuntimeException("Diary not found or access denied"));
         DiaryEntity entity = diaryMapper.copy(existEntity);
         diaryMapper.updateEntityFromForm(form, entity);
@@ -48,8 +49,8 @@ public class DiaryService {
     }
 
     @Transactional
-    public void deleteDiary(Integer diaryId, String currentUser) {
-        if (!diaryRepository.existsByDiaryIdAndCreatedBy(diaryId, currentUser)) {
+    public void deleteDiary(Integer diaryId, Integer currentUserId) {
+        if (!diaryRepository.existsByDiaryIdAndCreatedBy(diaryId, currentUserId)) {
             throw new RuntimeException("Diary not found or access denied");
         }
         diaryRepository.deleteById(diaryId);

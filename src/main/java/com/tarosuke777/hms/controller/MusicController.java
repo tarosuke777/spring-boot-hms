@@ -3,7 +3,6 @@ package com.tarosuke777.hms.controller;
 import java.util.List;
 import java.util.Map;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.form.MusicForm;
+import com.tarosuke777.hms.security.LoginUser;
 import com.tarosuke777.hms.service.ArtistService;
 import com.tarosuke777.hms.service.MusicService;
 import com.tarosuke777.hms.validation.DeleteGroup;
@@ -36,9 +36,9 @@ public class MusicController {
   private final ArtistService artistService;
 
   @GetMapping("/list")
-  public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
+  public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
 
-    List<MusicForm> musicList = musicService.getMusicList(user.getUsername());
+    List<MusicForm> musicList = musicService.getMusicList(user.getId());
     Map<Integer, String> artistMap = artistService.getArtistMap();
 
     addAttributesToModel(model, musicList, artistMap);
@@ -48,9 +48,9 @@ public class MusicController {
 
   @GetMapping("/detail/{id}")
   public String getDetail(@PathVariable("id") Integer id, Model model,
-      @AuthenticationPrincipal UserDetails user) {
+      @AuthenticationPrincipal LoginUser user) {
 
-    MusicForm musicForm = musicService.getMusicDetails(id, user.getUsername());
+    MusicForm musicForm = musicService.getMusicDetails(id, user.getId());
     Map<Integer, String> artistMap = artistService.getArtistMap();
 
     addAttributesToModel(model, musicForm, artistMap);
@@ -83,18 +83,18 @@ public class MusicController {
 
   @PostMapping(value = "detail", params = "update")
   public String update(@Validated(UpdateGroup.class) MusicForm form,
-      @AuthenticationPrincipal UserDetails user) {
+      @AuthenticationPrincipal LoginUser user) {
 
-    musicService.updateMusic(form, user.getUsername());
+    musicService.updateMusic(form, user.getId());
 
     return REDIRECT_LIST;
   }
 
   @PostMapping(value = "/detail", params = "delete")
   public String delete(@Validated(DeleteGroup.class) MusicForm form, Model model,
-      @AuthenticationPrincipal UserDetails user) {
+      @AuthenticationPrincipal LoginUser user) {
 
-    musicService.deleteMusic(form.getId(), user.getUsername());
+    musicService.deleteMusic(form.getId(), user.getId());
 
     return REDIRECT_LIST;
   }

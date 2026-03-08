@@ -23,6 +23,7 @@ import com.tarosuke777.hms.entity.ArtistEntity;
 import com.tarosuke777.hms.form.ArtistForm;
 import com.tarosuke777.hms.mapper.ArtistMapper;
 import com.tarosuke777.hms.repository.ArtistRepository;
+import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -59,7 +60,10 @@ public class ArtistControllerTest {
   void getList_ShouldReturnArtistList() throws Exception {
 
     // Given
-    List<ArtistForm> expectedArtistList = artistRepository.findByCreatedBy("admin").stream()
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
+    List<ArtistForm> expectedArtistList = artistRepository.findByCreatedBy(currentUserId).stream()
         .map(entity -> artistMapper.toForm(entity)).collect(Collectors.toList());
 
     // When & Then

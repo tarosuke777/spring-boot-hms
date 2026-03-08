@@ -22,6 +22,7 @@ import com.tarosuke777.hms.entity.MovieEntity;
 import com.tarosuke777.hms.form.MovieForm;
 import com.tarosuke777.hms.mapper.MovieMapper;
 import com.tarosuke777.hms.repository.MovieRepository;
+import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -58,7 +59,10 @@ public class MovieControllerTest {
   void getList_ShouldReturnMovieList() throws Exception {
 
     // Given
-    List<MovieForm> expectedMovieList = movieRepository.findByCreatedBy("admin").stream()
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
+    List<MovieForm> expectedMovieList = movieRepository.findByCreatedBy(currentUserId).stream()
         .map(entity -> movieMapper.toForm(entity)).toList();
 
     // When & Then

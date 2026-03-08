@@ -22,6 +22,7 @@ import com.tarosuke777.hms.entity.TrainingMenuEntity;
 import com.tarosuke777.hms.form.TrainingMenuForm;
 import com.tarosuke777.hms.mapper.TrainingMenuMapper;
 import com.tarosuke777.hms.repository.TrainingMenuRepository;
+import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -58,8 +59,11 @@ public class TrainingMenuControllerTest {
   void getList_ShouldReturnTrainingMenuList() throws Exception {
 
     // Given
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
     List<TrainingMenuForm> expectedTrainingMenuList = trainingMenuRepository
-        .findByCreatedBy("admin").stream().map(trainingMenuMapper::toForm).toList();
+        .findByCreatedBy(currentUserId).stream().map(trainingMenuMapper::toForm).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())

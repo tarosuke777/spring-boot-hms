@@ -28,6 +28,7 @@ import com.tarosuke777.hms.form.BookForm;
 import com.tarosuke777.hms.mapper.BookMapper;
 import com.tarosuke777.hms.repository.AuthorRepository;
 import com.tarosuke777.hms.repository.BookRepository;
+import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -66,8 +67,11 @@ public class BookControllerTest {
   void getList_ShouldReturnBookListAndAuthorMap() throws Exception {
 
     // Given
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
     List<BookForm> expectedBookList =
-        bookRepository.findByCreatedByOrderByIdAsc("admin").stream().map(book -> {
+        bookRepository.findByCreatedByOrderByIdAsc(currentUserId).stream().map(book -> {
           BookForm form = bookMapper.toForm(book);
           if (book.getAuthor() != null) {
             form.setAuthorId(book.getAuthor().getId());

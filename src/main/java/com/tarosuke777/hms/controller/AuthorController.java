@@ -1,7 +1,6 @@
 package com.tarosuke777.hms.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,9 +10,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.tarosuke777.hms.form.AuthorForm;
-import com.tarosuke777.hms.service.AuthorService;
 import com.tarosuke777.hms.exception.IllegalRequestException;
+import com.tarosuke777.hms.form.AuthorForm;
+import com.tarosuke777.hms.security.LoginUser;
+import com.tarosuke777.hms.service.AuthorService;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +33,8 @@ public class AuthorController {
   private final AuthorService authorService;
 
   @GetMapping("/list")
-  public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
-    model.addAttribute("authorList", authorService.getAuthorList(user.getUsername()));
+  public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
+    model.addAttribute("authorList", authorService.getAuthorList(user.getId()));
     return LIST_VIEW;
   }
 
@@ -55,15 +55,15 @@ public class AuthorController {
 
   @GetMapping("/detail/{authorId}")
   public String getDetail(@PathVariable("authorId") Integer authorId, Model model,
-      @AuthenticationPrincipal UserDetails user) {
-    AuthorForm form = authorService.getAuthor(authorId, user.getUsername());
+      @AuthenticationPrincipal LoginUser user) {
+    AuthorForm form = authorService.getAuthor(authorId, user.getId());
     model.addAttribute("authorForm", form);
     return DETAIL_VIEW;
   }
 
   @PostMapping(value = "detail", params = "update")
   public String update(@ModelAttribute @Validated(UpdateGroup.class) AuthorForm form,
-      BindingResult bindingResult, @AuthenticationPrincipal UserDetails user) {
+      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(AuthorForm.Fields.id)
@@ -74,20 +74,20 @@ public class AuthorController {
     if (bindingResult.hasErrors()) {
       return DETAIL_VIEW;
     }
-    authorService.updateAuthor(form, user.getUsername());
+    authorService.updateAuthor(form, user.getId());
     return REDIRECT_LIST;
   }
 
   @PostMapping(value = "/detail", params = "delete")
   public String delete(@Validated(DeleteGroup.class) AuthorForm form, BindingResult bindingResult,
-      @AuthenticationPrincipal UserDetails user) {
+      @AuthenticationPrincipal LoginUser user) {
 
     // id にエラーがある場合は改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(AuthorForm.Fields.id)) {
       throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
     }
 
-    authorService.deleteAuthor(form.getId(), user.getUsername());
+    authorService.deleteAuthor(form.getId(), user.getId());
     return REDIRECT_LIST;
   }
 

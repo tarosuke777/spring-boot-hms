@@ -3,7 +3,6 @@ package com.tarosuke777.hms.controller;
 import java.util.List;
 import java.util.Map;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.exception.IllegalRequestException;
 import com.tarosuke777.hms.form.BookForm;
+import com.tarosuke777.hms.security.LoginUser;
 import com.tarosuke777.hms.service.AuthorService;
 import com.tarosuke777.hms.service.BookService;
 import com.tarosuke777.hms.validation.DeleteGroup;
@@ -37,9 +37,9 @@ public class BookController {
   private final AuthorService authorService;
 
   @GetMapping("/list")
-  public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
+  public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
 
-    List<BookForm> bookList = bookService.getBookList(user.getUsername());
+    List<BookForm> bookList = bookService.getBookList(user.getId());
     Map<Integer, String> authorMap = authorService.getAuthorMap();
 
     addAttributesToModel(model, bookList, authorMap);
@@ -49,9 +49,9 @@ public class BookController {
 
   @GetMapping("/detail/{id}")
   public String getDetail(@PathVariable("id") Integer id, Model model,
-      @AuthenticationPrincipal UserDetails user) {
+      @AuthenticationPrincipal LoginUser user) {
 
-    BookForm bookForm = bookService.getBookDetails(id, user.getUsername());
+    BookForm bookForm = bookService.getBookDetails(id, user.getId());
     Map<Integer, String> authorMap = authorService.getAuthorMap();
 
     addAttributesToModel(model, bookForm, authorMap);
@@ -84,7 +84,7 @@ public class BookController {
 
   @PostMapping(value = "detail", params = "update")
   public String update(@ModelAttribute @Validated(UpdateGroup.class) BookForm form,
-      BindingResult bindingResult, @AuthenticationPrincipal UserDetails user) {
+      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(BookForm.Fields.id)
@@ -96,21 +96,21 @@ public class BookController {
       return DETAIL_VIEW;
     }
 
-    bookService.updateBook(form, user.getUsername());
+    bookService.updateBook(form, user.getId());
 
     return REDIRECT_LIST;
   }
 
   @PostMapping(value = "/detail", params = "delete")
   public String delete(@Validated(DeleteGroup.class) BookForm form, BindingResult bindingResult,
-      @AuthenticationPrincipal UserDetails user) {
+      @AuthenticationPrincipal LoginUser user) {
 
     // id にエラーがある場合は改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(BookForm.Fields.id)) {
       throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
     }
 
-    bookService.deleteBook(form.getId(), user.getUsername());
+    bookService.deleteBook(form.getId(), user.getId());
 
     return REDIRECT_LIST;
   }

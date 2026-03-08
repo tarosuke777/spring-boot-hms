@@ -1,22 +1,22 @@
 INSERT INTO user(name, password, role, created_at, updated_at, created_by, updated_by, version) 
-VALUES('admin', '{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92u.e5m', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin', 0);
+VALUES('admin', '{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92u.e5m', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1, 0);
 INSERT INTO user(name, password, role, created_at, updated_at, created_by, updated_by, version) 
-VALUES('user', '{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92u.e5m', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'admin', 0);
+VALUES('user', '{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92u.e5m', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1, 0);
 
 INSERT INTO artist (name, created_at, updated_at, created_by, updated_by, version) 
 VALUES 
-('Test Artist A', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), 'admin', 'admin', 0),
-('Test Artist B', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), 'user', 'user', 0);
+('Test Artist A', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), (SELECT id FROM user WHERE name = 'admin'), (SELECT id FROM user WHERE name = 'admin'), 0),
+('Test Artist B', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), (SELECT id FROM user WHERE name = 'user'), (SELECT id FROM user WHERE name = 'user'), 0);
 
 -- Test Artist A に紐づく曲
 INSERT INTO music (name, artist_id, created_at, updated_at, created_by, updated_by, version)
-SELECT 'Test Track 01 - A', id, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), 'admin', 'admin', 0 
+SELECT 'Test Track 01 - A', id, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), (SELECT id FROM user WHERE name = 'admin'), (SELECT id FROM user WHERE name = 'admin'), 0 
 FROM artist WHERE name = 'Test Artist A';
 
 INSERT INTO music (name, artist_id, created_at, updated_at, created_by, updated_by, version)
-SELECT 'Test Track 02 - A', id, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), 'admin', 'admin', 0 
+SELECT 'Test Track 02 - A', id, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), (SELECT id FROM user WHERE name = 'admin'), (SELECT id FROM user WHERE name = 'admin'), 0 
 FROM artist WHERE name = 'Test Artist A';
 -- Test Artist B に紐づく曲
 INSERT INTO music (name, artist_id, created_at, updated_at, created_by, updated_by, version)
-SELECT 'Test Track 03 - B', id, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), 'user', 'user', 0 
+SELECT 'Test Track 03 - B', id, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), (SELECT id FROM user WHERE name = 'user'), (SELECT id FROM user WHERE name = 'user'), 0 
 FROM artist WHERE name = 'Test Artist B';

@@ -19,12 +19,12 @@ public class ArtistService {
   private final ArtistRepository artistRepository;
   private final ArtistMapper artistMapper;
 
-  public List<ArtistForm> getArtistList(String currentUserId) {
+  public List<ArtistForm> getArtistList(Integer currentUserId) {
     return artistRepository.findByCreatedBy(currentUserId).stream().map(artistMapper::toForm)
         .toList();
   }
 
-  public ArtistForm getArtist(Integer artistId, String currentUserId) {
+  public ArtistForm getArtist(Integer artistId, Integer currentUserId) {
     ArtistEntity artist = artistRepository.findByIdAndCreatedBy(artistId, currentUserId)
         .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
     return artistMapper.toForm(artist);
@@ -37,7 +37,7 @@ public class ArtistService {
   }
 
   @Transactional
-  public void updateArtist(ArtistForm form, String currentUserId) {
+  public void updateArtist(ArtistForm form, Integer currentUserId) {
     ArtistEntity existEntity = artistRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
         .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
     ArtistEntity entity = artistMapper.copy(existEntity);
@@ -46,7 +46,7 @@ public class ArtistService {
   }
 
   @Transactional
-  public void deleteArtist(Integer artistId, String currentUserId) {
+  public void deleteArtist(Integer artistId, Integer currentUserId) {
     if (!artistRepository.existsByIdAndCreatedBy(artistId, currentUserId)) {
       throw new RuntimeException("Artist not found or access denied");
     }

@@ -22,6 +22,7 @@ import com.tarosuke777.hms.entity.AuthorEntity;
 import com.tarosuke777.hms.form.AuthorForm;
 import com.tarosuke777.hms.mapper.AuthorMapper;
 import com.tarosuke777.hms.repository.AuthorRepository;
+import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -58,8 +59,11 @@ public class AuthorControllerTest {
   void getList_ShouldReturnAuthorList() throws Exception {
 
     // Given
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
     List<AuthorForm> expectedAuthorList =
-        authorRepository.findByCreatedBy("admin").stream().map(authorMapper::toForm).toList();
+        authorRepository.findByCreatedBy(currentUserId).stream().map(authorMapper::toForm).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
@@ -158,7 +162,10 @@ public class AuthorControllerTest {
   void delete_ExistingAuthor_ShouldDeleteAndRedirectToList() throws Exception {
 
     // Given
-    AuthorEntity targetAuthor = authorRepository.findByCreatedBy("admin").getFirst();
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
+    AuthorEntity targetAuthor = authorRepository.findByCreatedBy(currentUserId).getFirst();
     Integer targetAuthorId = targetAuthor.getId();
 
     // When & Then

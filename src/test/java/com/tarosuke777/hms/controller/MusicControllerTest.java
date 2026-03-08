@@ -28,6 +28,7 @@ import com.tarosuke777.hms.form.MusicForm;
 import com.tarosuke777.hms.mapper.MusicMapper;
 import com.tarosuke777.hms.repository.ArtistRepository;
 import com.tarosuke777.hms.repository.MusicRepository;
+import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -66,8 +67,11 @@ public class MusicControllerTest {
   void getList_ShouldReturnMusicListAndArtistMap() throws Exception {
 
     // Given
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
     List<MusicForm> expectedMusicList =
-        musicRepository.findByCreatedByOrderByIdAsc("admin").stream().map(music -> {
+        musicRepository.findByCreatedByOrderByIdAsc(currentUserId).stream().map(music -> {
           MusicForm form = musicMapper.toForm(music);
           if (music.getArtist() != null) {
             form.setArtistId(music.getArtist().getId());

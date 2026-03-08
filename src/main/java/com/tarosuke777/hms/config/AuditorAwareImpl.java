@@ -6,15 +6,15 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import com.tarosuke777.hms.security.LoginUser;
 
 @Component
-public class AuditorAwareImpl implements AuditorAware<String> {
+public class AuditorAwareImpl implements AuditorAware<Integer> {
 
     @Override
     @NonNull
-    public Optional<String> getCurrentAuditor() {
+    public Optional<Integer> getCurrentAuditor() {
         // 1. セキュリティコンテキスト（ログイン情報が詰まった箱）を取得
         return Optional.ofNullable(SecurityContextHolder.getContext())
                 // 2. 認証オブジェクトを取得
@@ -25,8 +25,8 @@ public class AuditorAwareImpl implements AuditorAware<String> {
                 .map(Authentication::getPrincipal)
                 // 5. ログイン中のユーザー名を取り出す
                 .map(principal -> {
-                    if (principal instanceof UserDetails user) {
-                        return user.getUsername();
+                    if (principal instanceof LoginUser user) {
+                        return user.getId();
                     }
                     // 「ログインしていない」または「匿名ユーザー」の状態
                     return null;

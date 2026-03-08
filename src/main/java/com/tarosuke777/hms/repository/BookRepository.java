@@ -11,10 +11,10 @@ import com.tarosuke777.hms.entity.BookEntity;
 public interface BookRepository extends JpaRepository<BookEntity, Integer> {
 
     @EntityGraph(attributePaths = {"author"})
-    Optional<BookEntity> findByIdAndCreatedBy(Integer id, String createdBy);
+    Optional<BookEntity> findByIdAndCreatedBy(Integer id, Integer createdBy);
 
     @EntityGraph(attributePaths = {"author"})
-    List<BookEntity> findByCreatedByOrderByIdAsc(String createdBy);
+    List<BookEntity> findByCreatedByOrderByIdAsc(Integer createdBy);
 
-    boolean existsByIdAndCreatedBy(Integer id, String createdBy);
+    boolean existsByIdAndCreatedBy(Integer id, Integer createdBy);
 }

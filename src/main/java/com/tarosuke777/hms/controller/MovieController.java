@@ -1,7 +1,6 @@
 package com.tarosuke777.hms.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.form.MovieForm;
+import com.tarosuke777.hms.security.LoginUser;
 import com.tarosuke777.hms.service.MovieService;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
@@ -32,8 +32,8 @@ public class MovieController {
   private final MovieService movieService;
 
   @GetMapping("/list")
-  public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
-    model.addAttribute("movieList", movieService.getMovieList(user.getUsername()));
+  public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
+    model.addAttribute("movieList", movieService.getMovieList(user.getId()));
     return LIST_VIEW;
   }
 
@@ -53,25 +53,25 @@ public class MovieController {
 
   @GetMapping("/detail/{id}")
   public String getDetail(@PathVariable("id") Integer id, Model model,
-      @AuthenticationPrincipal UserDetails user) {
-    model.addAttribute("movieForm", movieService.getMovie(id, user.getUsername()));
+      @AuthenticationPrincipal LoginUser user) {
+    model.addAttribute("movieForm", movieService.getMovie(id, user.getId()));
     return DETAIL_VIEW;
   }
 
   @PostMapping(value = "detail", params = "update")
   public String update(@ModelAttribute @Validated(UpdateGroup.class) MovieForm form,
-      BindingResult bindingResult, @AuthenticationPrincipal UserDetails user) {
+      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
     if (bindingResult.hasErrors()) {
       return DETAIL_VIEW;
     }
-    movieService.updateMovie(form, user.getUsername());
+    movieService.updateMovie(form, user.getId());
     return REDIRECT_LIST;
   }
 
   @PostMapping(value = "/detail", params = "delete")
   public String delete(@Validated(DeleteGroup.class) MovieForm form,
-      @AuthenticationPrincipal UserDetails user) {
-    movieService.deleteMovie(form.getId(), user.getUsername());
+      @AuthenticationPrincipal LoginUser user) {
+    movieService.deleteMovie(form.getId(), user.getId());
     return REDIRECT_LIST;
   }
 }

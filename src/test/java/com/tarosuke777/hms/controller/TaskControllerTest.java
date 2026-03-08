@@ -23,6 +23,7 @@ import com.tarosuke777.hms.entity.TaskEntity;
 import com.tarosuke777.hms.form.TaskForm;
 import com.tarosuke777.hms.mapper.TaskMapper;
 import com.tarosuke777.hms.repository.TaskRepository;
+import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -57,7 +58,10 @@ public class TaskControllerTest {
   void getList_ShouldReturnTaskList() throws Exception {
 
     // Given
-    List<TaskForm> expectedTaskList = taskRepository.findByCreatedBy("admin").stream()
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
+    List<TaskForm> expectedTaskList = taskRepository.findByCreatedBy(currentUserId).stream()
         .map(taskMapper::toForm).collect(Collectors.toList());
 
     // When & Then

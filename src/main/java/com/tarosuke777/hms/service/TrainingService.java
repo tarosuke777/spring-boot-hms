@@ -24,14 +24,14 @@ public class TrainingService {
 	private final TrainingMapper trainingMapper;
 
 	public List<TrainingForm> getTrainingList(String orderBy, String sortDirection,
-			String currentUserId) {
+			Integer currentUserId) {
 		Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by(orderBy).descending()
 				: Sort.by(orderBy).ascending();
 		return trainingRepository.findByCreatedBy(currentUserId, sort).stream()
 				.map(this::convertToForm).toList();
 	}
 
-	public TrainingForm getTrainingDetails(Integer trainingId, String currentUserId) {
+	public TrainingForm getTrainingDetails(Integer trainingId, Integer currentUserId) {
 		return trainingRepository.findByTrainingIdAndCreatedBy(trainingId, currentUserId)
 				.map(this::convertToForm)
 				.orElseThrow(() -> new RuntimeException("Training not found or access denied"));
@@ -48,7 +48,7 @@ public class TrainingService {
 	}
 
 	@Transactional
-	public void updateTraining(TrainingForm form, String currentUserId) {
+	public void updateTraining(TrainingForm form, Integer currentUserId) {
 		TrainingEntity existingEntity = trainingRepository
 				.findByTrainingIdAndCreatedBy(form.getTrainingId(), currentUserId)
 				.orElseThrow(() -> new RuntimeException("Training not found or access denied"));
@@ -68,7 +68,7 @@ public class TrainingService {
 	}
 
 	@Transactional
-	public void deleteTraining(Integer trainingId, String currentUserId) {
+	public void deleteTraining(Integer trainingId, Integer currentUserId) {
 		if (!trainingRepository.existsByTrainingIdAndCreatedBy(trainingId, currentUserId)) {
 			throw new RuntimeException("Training not found or access denied");
 		}

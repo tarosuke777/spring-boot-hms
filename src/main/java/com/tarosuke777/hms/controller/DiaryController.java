@@ -2,7 +2,6 @@ package com.tarosuke777.hms.controller;
 
 import java.util.List;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.tarosuke777.hms.form.DiaryForm;
+import com.tarosuke777.hms.security.LoginUser;
 import com.tarosuke777.hms.service.DiaryService;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
@@ -37,16 +37,16 @@ public class DiaryController {
     public String getList(Model model,
             @RequestParam(name = "orderBy", defaultValue = "diaryDate") String orderBy,
             @RequestParam(name = "sort", defaultValue = "desc") String sort,
-            @AuthenticationPrincipal UserDetails user) {
-        List<DiaryForm> diaryList = diaryService.getDiaryList(orderBy, sort, user.getUsername());
+            @AuthenticationPrincipal LoginUser user) {
+        List<DiaryForm> diaryList = diaryService.getDiaryList(orderBy, sort, user.getId());
         model.addAttribute("diaryList", diaryList);
         return LIST_VIEW;
     }
 
     @GetMapping("/detail/{diaryId}")
     public String getDetail(@PathVariable("diaryId") Integer diaryId, Model model,
-            @AuthenticationPrincipal UserDetails user) {
-        DiaryForm diaryForm = diaryService.getDiaryDetails(diaryId, user.getUsername());
+            @AuthenticationPrincipal LoginUser user) {
+        DiaryForm diaryForm = diaryService.getDiaryDetails(diaryId, user.getId());
         model.addAttribute("diaryForm", diaryForm);
         return DETAIL_VIEW;
     }
@@ -68,15 +68,15 @@ public class DiaryController {
 
     @PostMapping(value = "/detail", params = "update")
     public String update(@Validated(UpdateGroup.class) DiaryForm form,
-            @AuthenticationPrincipal UserDetails user) {
-        diaryService.updateDiary(form, user.getUsername());
+            @AuthenticationPrincipal LoginUser user) {
+        diaryService.updateDiary(form, user.getId());
         return REDIRECT_LIST;
     }
 
     @PostMapping(value = "/detail", params = "delete")
     public String delete(@Validated(DeleteGroup.class) DiaryForm form,
-            @AuthenticationPrincipal UserDetails user) {
-        diaryService.deleteDiary(form.getDiaryId(), user.getUsername());
+            @AuthenticationPrincipal LoginUser user) {
+        diaryService.deleteDiary(form.getDiaryId(), user.getId());
         return REDIRECT_LIST;
     }
 }

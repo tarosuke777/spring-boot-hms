@@ -20,12 +20,12 @@ public class TrainingMenuService {
 	private final TrainingMenuRepository trainingMenuRepository;
 	private final TrainingMenuMapper trainingMenuMapper;
 
-	public List<TrainingMenuForm> getTrainingMenuList(String currentUserId) {
+	public List<TrainingMenuForm> getTrainingMenuList(Integer currentUserId) {
 		return trainingMenuRepository.findByCreatedBy(currentUserId).stream()
 				.map(trainingMenuMapper::toForm).toList();
 	}
 
-	public TrainingMenuForm getTrainingMenuDetails(Integer id, String currentUserId) {
+	public TrainingMenuForm getTrainingMenuDetails(Integer id, Integer currentUserId) {
 		TrainingMenuEntity entity = trainingMenuRepository.findByIdAndCreatedBy(id, currentUserId)
 				.orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
 		return trainingMenuMapper.toForm(entity);
@@ -38,7 +38,7 @@ public class TrainingMenuService {
 	}
 
 	@Transactional
-	public void updateTrainingMenu(TrainingMenuForm form, String currentUserId) {
+	public void updateTrainingMenu(TrainingMenuForm form, Integer currentUserId) {
 		TrainingMenuEntity existEntity =
 				trainingMenuRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
 						.orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
@@ -48,7 +48,7 @@ public class TrainingMenuService {
 	}
 
 	@Transactional
-	public void deleteTrainingMenu(Integer id, String currentUserId) {
+	public void deleteTrainingMenu(Integer id, Integer currentUserId) {
 		if (!trainingMenuRepository.existsByIdAndCreatedBy(id, currentUserId)) {
 			throw new RuntimeException("Menu not found or access denied");
 		}

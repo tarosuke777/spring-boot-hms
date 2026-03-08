@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.exception.IllegalRequestException;
 import com.tarosuke777.hms.form.ArtistForm;
+import com.tarosuke777.hms.security.LoginUser;
 import com.tarosuke777.hms.service.ArtistService;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
@@ -33,8 +34,8 @@ public class ArtistController {
   private final ArtistService artistService;
 
   @GetMapping("/list")
-  public String getList(Model model, @AuthenticationPrincipal UserDetails user) {
-    model.addAttribute("artistList", artistService.getArtistList(user.getUsername()));
+  public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
+    model.addAttribute("artistList", artistService.getArtistList(user.getId()));
     return LIST_VIEW;
   }
 
@@ -55,15 +56,15 @@ public class ArtistController {
 
   @GetMapping("/detail/{artistId}")
   public String getDetail(@PathVariable("artistId") Integer artistId, Model model,
-      @AuthenticationPrincipal UserDetails user) {
-    ArtistForm form = artistService.getArtist(artistId, user.getUsername());
+      @AuthenticationPrincipal LoginUser user) {
+    ArtistForm form = artistService.getArtist(artistId, user.getId());
     model.addAttribute("artistForm", form);
     return DETAIL_VIEW;
   }
 
   @PostMapping(value = "detail", params = "update")
   public String update(@ModelAttribute @Validated(UpdateGroup.class) ArtistForm form,
-      BindingResult bindingResult, @AuthenticationPrincipal UserDetails user) {
+      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(ArtistForm.Fields.id)
@@ -75,20 +76,20 @@ public class ArtistController {
       return "artist/detail";
     }
 
-    artistService.updateArtist(form, user.getUsername());
+    artistService.updateArtist(form, user.getId());
     return "redirect:/artist/list";
   }
 
   @PostMapping(value = "/detail", params = "delete")
   public String delete(@Validated(DeleteGroup.class) ArtistForm form, BindingResult bindingResult,
-      @AuthenticationPrincipal UserDetails user) {
+      @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(ArtistForm.Fields.id)) {
       throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
     }
 
-    artistService.deleteArtist(form.getId(), user.getUsername());
+    artistService.deleteArtist(form.getId(), user.getId());
     return "redirect:/artist/list";
   }
 }
