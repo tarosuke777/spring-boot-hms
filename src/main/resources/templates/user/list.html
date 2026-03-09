@@ -20,6 +20,7 @@
 					<tr class="table-dark">
 						<th>Id</th>
 						<th>Name</th>
+						<th>Role</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -27,6 +28,7 @@
 					<tr th:each="user: ${userList}">
 						<td th:text="${user.id}"></td>
 						<td th:text="${user.name}"></td>
+						<td th:text="${user.role.displayName}"></td>
 						<td><a class="btn btn-dark" th:href="@{'/user/detail/' + ${user.id}}">Detail</a>
 						</td>
 				</tbody>
