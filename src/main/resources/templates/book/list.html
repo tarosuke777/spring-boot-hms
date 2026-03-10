@@ -18,8 +18,9 @@
 			<table class="table table-bordered table-hover align-middle">
 				<thead>
 					<tr class="table-dark">
+						<th>Genre</th>
 						<th>Book Name</th>
-						<th>Artist Name</th>
+						<th>Author Name</th>
 						<th>Link</th>
 						<th>Note</th>
 						<th></th>
@@ -27,7 +28,11 @@
 				</thead>
 				<tbody>
 					<tr th:each="book: ${bookList}">
-						<td th:text="${book.name}"></td>
+						<td th:text="${book.genre.label}"></td>
+						<td>
+							<span th:text="${book.name}"></span>
+							<span th:if="${book.isAdult}" class="badge bg-danger ms-1">18+</span>
+						</td>
 						<td th:text="${book.authorId != null ? authorMap.get(book.authorId) : ''}"></td>
 						<td><a th:href="${book.link}" th:text="${book.link}" target="_blank"></a></td>
 						<td style="white-space: pre-line;" th:text="${book.note}"></td>

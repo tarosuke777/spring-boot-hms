@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.tarosuke777.hms.enums.BookGenre;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -47,6 +48,12 @@ public class BookEntity {
 
   @Column(columnDefinition = "TEXT")
   private String note;
+
+  @Column(nullable = false)
+  private BookGenre genre;
+
+  @Column(nullable = false)
+  private boolean isAdult = false;
 
   @CreatedDate
   @Column(updatable = false, nullable = false)

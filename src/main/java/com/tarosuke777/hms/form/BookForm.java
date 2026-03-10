@@ -1,6 +1,7 @@
 package com.tarosuke777.hms.form;
 
 import org.hibernate.validator.constraints.URL;
+import com.tarosuke777.hms.enums.BookGenre;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import jakarta.validation.constraints.NotBlank;
@@ -30,6 +31,11 @@ public class BookForm {
   @URL
   @Size(min = 1, max = 255)
   private String link;
+
+  @NotNull(message = "ジャンルを選択してください")
+  private BookGenre genre;
+
+  private boolean isAdult;
 
   private String note;
 
