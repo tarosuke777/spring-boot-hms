@@ -1,13 +1,12 @@
 package com.tarosuke777.hms.specification;
 
-import com.tarosuke777.hms.entity.BookEntity;
-import com.tarosuke777.hms.entity.BookEntity_; // 自動生成されたメタモデル
-import com.tarosuke777.hms.enums.BookGenre;
-import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
+import com.tarosuke777.hms.entity.BookEntity;
+import com.tarosuke777.hms.entity.BookEntity_;
+import com.tarosuke777.hms.enums.BookGenre;
+import jakarta.persistence.criteria.Predicate;
 
 public class BookSpecifications {
 
@@ -15,10 +14,6 @@ public class BookSpecifications {
             Boolean isAdult) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-
-            if (query.getResultType() != Long.class) {
-                root.fetch(BookEntity_.author, JoinType.LEFT);
-            }
 
             predicates.add(cb.equal(root.get(BookEntity_.createdBy), userId));
 
