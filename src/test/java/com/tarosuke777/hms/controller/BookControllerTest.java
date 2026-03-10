@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.AuthorEntity;
 import com.tarosuke777.hms.entity.BookEntity;
+import com.tarosuke777.hms.enums.BookGenre;
 import com.tarosuke777.hms.form.BookForm;
 import com.tarosuke777.hms.mapper.BookMapper;
 import com.tarosuke777.hms.repository.AuthorRepository;
@@ -122,7 +123,8 @@ public class BookControllerTest {
 
     // Given
     AuthorEntity authorEntity = authorRepository.findAll().get(0);
-    BookForm bookForm = new BookForm(null, "test", authorEntity.getId(), null, null, null);
+    BookForm bookForm =
+        new BookForm(null, "test", authorEntity.getId(), null, BookGenre.MANGA, true, null, null);
 
     // When & Then
     performRegisterRequest(bookForm).andExpect(status().is3xxRedirection())
@@ -177,6 +179,8 @@ public class BookControllerTest {
     BookForm form = new BookForm();
     form.setId(currentId);
     form.setName("Try to Update");
+    form.setGenre(BookGenre.NOVEL);
+    form.setAdult(true);
     form.setVersion(currentVersion);
     form.setAuthorId(currentAuthor.getId());
     // When & Then
@@ -226,7 +230,9 @@ public class BookControllerTest {
   private ResultActions performRegisterRequest(BookForm form) throws Exception {
     return mockMvc.perform(
         post(REGISTER_ENDPOINT).with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .param("name", form.getName()).param("authorId", String.valueOf(form.getAuthorId())))
+            .param("name", form.getName()).param("authorId", String.valueOf(form.getAuthorId()))
+            .param("genre", String.valueOf(form.getGenre()))
+            .param("isAdult", String.valueOf(form.isAdult())))
         .andDo(print());
   }
 
@@ -234,6 +240,8 @@ public class BookControllerTest {
     return mockMvc.perform(
         post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
             .param("name", form.getName()).param("authorId", String.valueOf(form.getAuthorId()))
+            .param("genre", String.valueOf(form.getGenre()))
+            .param("isAdult", String.valueOf(form.isAdult()))
             .param("version", form.getVersion().toString()))
         .andDo(print());
   }

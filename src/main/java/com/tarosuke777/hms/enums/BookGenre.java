@@ -24,4 +24,13 @@ public enum BookGenre {
     public String getLabel() {
         return label;
     }
+
+    public static BookGenre fromValue(int value) {
+        for (BookGenre genre : values()) {
+            if (genre.code == value) {
+                return genre;
+            }
+        }
+        throw new IllegalArgumentException("Invalid genre value: " + value);
+    }
 }
