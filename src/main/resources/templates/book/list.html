@@ -11,36 +11,62 @@
 		<div class="mt-3 mb-3 border-bottom">
 			<h1 class="h2">Book</h1>
 		</div>
-		<div>
-			<div class="mb-2">
-				<a class="btn btn-dark" th:href="@{'/book/register'}">Register</a>
+		<div class="row align-items-center mb-4 g-3">
+			<div class="col-auto">
+				<a class="btn btn-dark" th:href="@{'/book/register'}">新規登録</a>
 			</div>
-			<table class="table table-bordered table-hover align-middle">
-				<thead>
-					<tr class="table-dark">
-						<th>Genre</th>
-						<th>Book Name</th>
-						<th>Author Name</th>
-						<th>Link</th>
-						<th>Note</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="book: ${bookList}">
-						<td th:text="${book.genre.label}"></td>
-						<td>
-							<span th:text="${book.name}"></span>
-							<span th:if="${book.isAdult}" class="badge bg-danger ms-1">18+</span>
-						</td>
-						<td th:text="${book.authorId != null ? authorMap.get(book.authorId) : ''}"></td>
-						<td><a th:href="${book.link}" th:text="${book.link}" target="_blank"></a></td>
-						<td style="white-space: pre-line;" th:text="${book.note}"></td>
-						<td><a class="btn btn-dark" th:href="@{'/book/detail/' + ${book.id}}">Detail</a>
-						</td>
-				</tbody>
-			</table>
+
+			<div class="col">
+				<form th:action="@{/book/list}" method="get" class="row g-2 align-items-center">
+
+					<div class="col-auto">
+						<select class="form-select" name="genre">
+							<option th:each="g : ${T(com.tarosuke777.hms.enums.BookGenre).values()}" th:value="${g}"
+								th:text="${g.label}" th:selected="${genre != null and g.code == genre.code}"></option>
+						</select>
+					</div>
+
+					<div class="col-auto">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" name="isAdult" id="isAdult"
+								th:checked="${isAdult}">
+							<label class="form-check-label" for="isAdult">18+のみ</label>
+						</div>
+					</div>
+
+					<div class="col-auto">
+						<button type="submit" class="btn btn-dark">検索</button>
+						<a th:href="@{/book/list}" class="btn btn-secondary">リセット</a>
+					</div>
+				</form>
+			</div>
 		</div>
+		<table class="table table-bordered table-hover align-middle">
+			<thead>
+				<tr class="table-dark">
+					<th>Genre</th>
+					<th>Book Name</th>
+					<th>Author Name</th>
+					<th>Link</th>
+					<th>Note</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="book: ${bookList}">
+					<td th:text="${book.genre.label}"></td>
+					<td>
+						<span th:text="${book.name}"></span>
+						<span th:if="${book.isAdult}" class="badge bg-danger ms-1">18+</span>
+					</td>
+					<td th:text="${book.authorId != null ? authorMap.get(book.authorId) : ''}"></td>
+					<td><a th:href="${book.link}" th:text="${book.link}" target="_blank"></a></td>
+					<td style="white-space: pre-line;" th:text="${book.note}"></td>
+					<td><a class="btn btn-dark" th:href="@{'/book/detail/' + ${book.id}}">Detail</a>
+					</td>
+			</tbody>
+		</table>
+	</div>
 	</div>
 </body>
 

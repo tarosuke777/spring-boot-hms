@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import com.tarosuke777.hms.enums.BookGenre;
 import com.tarosuke777.hms.exception.IllegalRequestException;
 import com.tarosuke777.hms.form.BookForm;
 import com.tarosuke777.hms.security.LoginUser;
@@ -37,12 +39,17 @@ public class BookController {
   private final AuthorService authorService;
 
   @GetMapping("/list")
-  public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
+  public String getList(@RequestParam(required = false) BookGenre genre,
+      @RequestParam(required = false) Boolean isAdult, Model model,
+      @AuthenticationPrincipal LoginUser user) {
 
-    List<BookForm> bookList = bookService.getBookList(user.getId());
+    List<BookForm> bookList = bookService.getBookList(user.getId(), genre, isAdult);
     Map<Integer, String> authorMap = authorService.getAuthorMap();
 
     addAttributesToModel(model, bookList, authorMap);
+
+    model.addAttribute("genre", genre);
+    model.addAttribute("isAdult", isAdult != null && isAdult);
 
     return LIST_VIEW;
   }

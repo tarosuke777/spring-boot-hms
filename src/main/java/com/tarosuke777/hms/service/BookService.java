@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.AuthorEntity;
 import com.tarosuke777.hms.entity.BookEntity;
+import com.tarosuke777.hms.enums.BookGenre;
 import com.tarosuke777.hms.form.BookForm;
 import com.tarosuke777.hms.mapper.BookMapper;
 import com.tarosuke777.hms.repository.BookRepository;
+import com.tarosuke777.hms.specification.BookSpecifications;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
@@ -18,8 +20,10 @@ public class BookService {
   private final EntityManager entityManager;
   private final BookMapper bookMapper;
 
-  public List<BookForm> getBookList(Integer currentUserId) {
-    return bookRepository.findByCreatedByOrderByIdAsc(currentUserId).stream().map(book -> {
+  public List<BookForm> getBookList(Integer currentUserId, BookGenre genre, Boolean isAdult) {
+    var spec = BookSpecifications.withFilters(currentUserId, genre, isAdult);
+
+    return bookRepository.findAll(spec).stream().map(book -> {
       BookForm form = bookMapper.toForm(book);
       if (book.getAuthor() != null) {
         form.setAuthorId(book.getAuthor().getId());
