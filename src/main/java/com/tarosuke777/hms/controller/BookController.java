@@ -2,6 +2,9 @@ package com.tarosuke777.hms.controller;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,14 +43,14 @@ public class BookController {
 
   @GetMapping("/list")
   public String getList(@RequestParam(required = false) BookGenre genre,
-      @RequestParam(required = false) Boolean isAdult, Model model,
-      @AuthenticationPrincipal LoginUser user) {
+      @RequestParam(required = false) Boolean isAdult, @PageableDefault(size = 1) Pageable pageable,
+      Model model, @AuthenticationPrincipal LoginUser user) {
 
-    List<BookForm> bookList = bookService.getBookList(user.getId(), genre, isAdult);
+    Page<BookForm> bookPage = bookService.getBookList(user.getId(), genre, isAdult, pageable);
     Map<Integer, String> authorMap = authorService.getAuthorMap();
 
-    addAttributesToModel(model, bookList, authorMap);
-
+    model.addAttribute("bookPage", bookPage);
+    model.addAttribute("authorMap", authorMap);
     model.addAttribute("genre", genre);
     model.addAttribute("isAdult", isAdult != null && isAdult);
 
@@ -120,12 +123,6 @@ public class BookController {
     bookService.deleteBook(form.getId(), user.getId());
 
     return REDIRECT_LIST;
-  }
-
-  private void addAttributesToModel(Model model, List<BookForm> bookList,
-      Map<Integer, String> authorMap) {
-    model.addAttribute("authorMap", authorMap);
-    model.addAttribute("bookList", bookList);
   }
 
   private void addAttributesToModel(Model model, BookForm bookForm,

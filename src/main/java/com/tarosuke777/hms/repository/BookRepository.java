@@ -2,6 +2,9 @@ package com.tarosuke777.hms.repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -11,6 +14,9 @@ import com.tarosuke777.hms.entity.BookEntity;
 @Repository
 public interface BookRepository
         extends JpaRepository<BookEntity, Integer>, JpaSpecificationExecutor<BookEntity> {
+
+    @EntityGraph(attributePaths = {"author"})
+    Page<BookEntity> findAll(Specification<BookEntity> spec, Pageable pageable);
 
     @EntityGraph(attributePaths = {"author"})
     Optional<BookEntity> findByIdAndCreatedBy(Integer id, Integer createdBy);

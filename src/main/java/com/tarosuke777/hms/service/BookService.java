@@ -1,6 +1,7 @@
 package com.tarosuke777.hms.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.AuthorEntity;
@@ -20,16 +21,21 @@ public class BookService {
   private final EntityManager entityManager;
   private final BookMapper bookMapper;
 
-  public List<BookForm> getBookList(Integer currentUserId, BookGenre genre, Boolean isAdult) {
+  public Page<BookForm> getBookList(Integer currentUserId, BookGenre genre, Boolean isAdult,
+      Pageable pageable) {
     var spec = BookSpecifications.withFilters(currentUserId, genre, isAdult);
 
-    return bookRepository.findAll(spec).stream().map(book -> {
+    // Page<Entity> を取得
+    Page<BookEntity> bookPage = bookRepository.findAll(spec, pageable);
+
+    // Pageの中身(Entity)をFormに詰め替える
+    return bookPage.map(book -> {
       BookForm form = bookMapper.toForm(book);
       if (book.getAuthor() != null) {
         form.setAuthorId(book.getAuthor().getId());
       }
       return form;
-    }).toList();
+    });
   }
 
   public BookForm getBookDetails(Integer id, Integer currentUserId) {
