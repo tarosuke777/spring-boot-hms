@@ -93,7 +93,7 @@ public class BookController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@ModelAttribute @Validated(UpdateGroup.class) BookForm form,
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) BookForm form, Model model,
       BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
@@ -103,12 +103,14 @@ public class BookController {
     }
 
     if (bindingResult.hasErrors()) {
+      Map<Integer, String> authorMap = authorService.getAuthorMap();
+      model.addAttribute("authorMap", authorMap);
       return DETAIL_VIEW;
     }
 
     bookService.updateBook(form, user.getId());
 
-    return DETAIL_VIEW;
+    return "redirect:/book/detail/" + form.getId();
   }
 
   @PostMapping(value = "/detail", params = "delete")
