@@ -93,8 +93,8 @@ public class BookController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@ModelAttribute @Validated(UpdateGroup.class) BookForm form, Model model,
-      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) BookForm form,
+      BindingResult bindingResult, Model model, @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(BookForm.Fields.id)
