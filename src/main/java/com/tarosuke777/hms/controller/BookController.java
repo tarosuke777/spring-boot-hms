@@ -43,8 +43,9 @@ public class BookController {
 
   @GetMapping("/list")
   public String getList(@RequestParam(required = false) BookGenre genre,
-      @RequestParam(required = false) Boolean isAdult, @PageableDefault(size = 1) Pageable pageable,
-      Model model, @AuthenticationPrincipal LoginUser user) {
+      @RequestParam(required = false) Boolean isAdult,
+      @PageableDefault(size = 10) Pageable pageable, Model model,
+      @AuthenticationPrincipal LoginUser user) {
 
     Page<BookForm> bookPage = bookService.getBookList(user.getId(), genre, isAdult, pageable);
     Map<Integer, String> authorMap = authorService.getAuthorMap();

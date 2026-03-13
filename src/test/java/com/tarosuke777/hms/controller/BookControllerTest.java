@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.TestSecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -30,6 +32,7 @@ import com.tarosuke777.hms.mapper.BookMapper;
 import com.tarosuke777.hms.repository.AuthorRepository;
 import com.tarosuke777.hms.repository.BookRepository;
 import com.tarosuke777.hms.security.LoginUser;
+import com.tarosuke777.hms.specification.BookSpecifications;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -71,21 +74,32 @@ public class BookControllerTest {
     LoginUser loginUser =
         (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Integer currentUserId = loginUser.getId();
-    List<BookForm> expectedBookList =
-        bookRepository.findByCreatedByOrderByIdAsc(currentUserId).stream().map(book -> {
-          BookForm form = bookMapper.toForm(book);
-          if (book.getAuthor() != null) {
-            form.setAuthorId(book.getAuthor().getId());
-          }
-          return form;
-        }).toList();
+
+
+    Pageable pageable = Pageable.ofSize(10);
+    BookGenre genre = null;
+    Boolean isAdult = null;
+
+    var spec = BookSpecifications.withFilters(currentUserId, genre, isAdult);
+
+    // Page<Entity> を取得
+    Page<BookEntity> bookPage = bookRepository.findAll(spec, pageable);
+
+    // Pageの中身(Entity)をFormに詰め替える
+    Page<BookForm> expectedBookPage = bookPage.map(book -> {
+      BookForm form = bookMapper.toForm(book);
+      if (book.getAuthor() != null) {
+        form.setAuthorId(book.getAuthor().getId());
+      }
+      return form;
+    });
 
     Map<Integer, String> expectedAuthorMap = getAuthorMap();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
         .andExpect(model().attribute("authorMap", expectedAuthorMap))
-        .andExpect(model().attribute("bookList", expectedBookList))
+        .andExpect(model().attribute("bookPage", expectedBookPage))
         .andExpect(view().name(LIST_VIEW));
   }
 
