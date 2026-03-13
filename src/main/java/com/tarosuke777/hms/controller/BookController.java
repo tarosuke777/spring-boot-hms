@@ -108,7 +108,7 @@ public class BookController {
 
     bookService.updateBook(form, user.getId());
 
-    return REDIRECT_LIST;
+    return DETAIL_VIEW;
   }
 
   @PostMapping(value = "/detail", params = "delete")

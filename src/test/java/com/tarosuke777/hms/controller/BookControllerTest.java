@@ -156,7 +156,7 @@ public class BookControllerTest {
 
 
   @Test
-  void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
+  void update_WithValidData_ShouldUpdate() throws Exception {
 
     // Given
     BookEntity book = bookRepository.findAll().get(0);
@@ -165,8 +165,8 @@ public class BookControllerTest {
     form.setName("更新後の本タイトル");
 
     // When & Then
-    performUpdateRequest(form).andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl(LIST_URL));
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name(DETAIL_VIEW))
+        .andExpect(model().hasNoErrors());
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
