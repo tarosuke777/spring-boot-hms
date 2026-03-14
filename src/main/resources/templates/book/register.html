@@ -33,6 +33,7 @@
 				<label for="genre" class="col-sm-2 col-form-label">Genre</label>
 				<div class="col-sm-10">
 					<select class="form-select" th:field="*{genre}" th:errorclass="is-invalid">
+						<option value="" th:selected="${bookForm.genre == null}"></option>
 						<option th:each="g : ${T(com.tarosuke777.hms.enums.BookGenre).values()}" th:value="${g}"
 							th:text="${g.label}">
 						</option>
