@@ -85,12 +85,38 @@
 					</td>
 					<td th:text="${book.authorId != null ? authorMap.get(book.authorId) : ''}"></td>
 					<td><a th:href="${book.link}" th:text="${book.link}" target="_blank"></a></td>
-					<td style="white-space: pre-line;" th:text="${book.note}"></td>
+					<td class="text-truncate" style="max-width: 200px; cursor: pointer;" data-bs-toggle="modal"
+						data-bs-target="#noteModal" th:data-note="${book.note}" onclick="viewNote(this)">
+						<span th:text="${book.note}"></span>
+					</td>
 					<td><a class="btn btn-dark" th:href="@{'/book/detail/' + ${book.id}}">Detail</a>
 					</td>
 			</tbody>
 		</table>
-	</div>
+		<div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class=" modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="noteModalLabel">Note詳細</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p id="modalNoteBody" style="white-space: pre-line;"></p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			function viewNote(element) {
+				// 隠し属性(th:data-note)からテキストを取得
+				const noteText = element.getAttribute('data-note');
+				// モーダル内の要素にテキストをセット
+				document.getElementById('modalNoteBody').textContent = noteText;
+			}
+		</script>
 	</div>
 </body>
 
