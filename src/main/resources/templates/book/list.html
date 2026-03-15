@@ -3,6 +3,11 @@
 	layout:decorate="~{layout/layout}">
 
 <head>
+
+	<th:block layout:fragment="page-scripts">
+		<script type="module" th:src="@{/js/book/list.js}"></script>
+	</th:block>
+
 	<title>Book</title>
 </head>
 
@@ -85,8 +90,8 @@
 					</td>
 					<td th:text="${book.authorId != null ? authorMap.get(book.authorId) : ''}"></td>
 					<td><a th:href="${book.link}" th:text="${book.link}" target="_blank"></a></td>
-					<td class="text-truncate" style="max-width: 200px; cursor: pointer;" data-bs-toggle="modal"
-						data-bs-target="#noteModal" th:data-note="${book.note}" onclick="viewNote(this)">
+					<td class="text-truncate note-trigger" style="max-width: 200px; cursor: pointer;"
+						data-bs-toggle="modal" data-bs-target="#noteModal" th:data-note="${book.note}">
 						<span th:text="${book.note}"></span>
 					</td>
 					<td><a class="btn btn-dark" th:href="@{'/book/detail/' + ${book.id}}">Detail</a>
@@ -109,14 +114,6 @@
 				</div>
 			</div>
 		</div>
-		<script>
-			function viewNote(element) {
-				// 隠し属性(th:data-note)からテキストを取得
-				const noteText = element.getAttribute('data-note');
-				// モーダル内の要素にテキストをセット
-				document.getElementById('modalNoteBody').textContent = noteText;
-			}
-		</script>
 	</div>
 </body>
 
