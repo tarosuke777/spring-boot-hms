@@ -4,6 +4,10 @@
 
 <head>
 
+	<th:block layout:fragment="page-css">
+		<link rel="stylesheet" th:href="@{/css/book/list.css}" />
+	</th:block>
+
 	<th:block layout:fragment="page-scripts">
 		<script type="module" th:src="@{/js/book/list.js}"></script>
 	</th:block>
