@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriComponentsBuilder;
 import com.tarosuke777.hms.enums.BookGenre;
 import com.tarosuke777.hms.exception.IllegalRequestException;
 import com.tarosuke777.hms.form.BookForm;
@@ -34,6 +36,7 @@ public class BookController {
 
   private static final String REDIRECT_LIST = "redirect:/book/list";
   private static final String LIST_VIEW = "book/list";
+  private static final String REDIRECT_DETAIL_VIEW = "redirect:/book/detail/{id}";
   private static final String DETAIL_VIEW = "book/detail";
   private static final String REGISTER_VIEW = "book/register";
 
@@ -110,7 +113,11 @@ public class BookController {
 
     bookService.updateBook(form, user.getId());
 
-    return "redirect:/book/detail/" + form.getId();
+    Map<String, Object> uriVariables = new HashMap<>();
+    uriVariables.put("id", form.getId());
+
+    return UriComponentsBuilder.fromUriString(REDIRECT_DETAIL_VIEW).buildAndExpand(uriVariables)
+        .toUriString();
   }
 
   @PostMapping(value = "/detail", params = "delete")
