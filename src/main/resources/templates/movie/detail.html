@@ -19,6 +19,41 @@
 					Name</label>
 				<div class="col-sm-10">
 					<input type="text" class="form-control" th:field="*{name}">
+					<div class="invalid-feedback" th:errors="*{name}"></div>
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<label for="castName" class="col-sm-2 col-form-label">Cast
+					Name</label>
+				<div class="col-sm-10" th:insert="~{parts/parts :: commonSelect(${castMap}, castId, 'castId', true)}">
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<label for="genre" class="col-sm-2 col-form-label">Genre</label>
+				<div class="col-sm-10">
+					<select class="form-select" th:field="*{genre}" th:errorclass="is-invalid">
+						<option value="" th:selected="${movieForm.genre == null}"></option>
+						<option th:each="g : ${T(com.tarosuke777.hms.enums.MovieGenre).values()}" th:value="${g}"
+							th:text="${g.label}">
+						</option>
+					</select>
+					<div class="invalid-feedback" th:errors="*{genre}"></div>
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<label class="col-sm-2 col-form-label">Attributes</label>
+				<div class="col-sm-10">
+					<div class="form-check pt-2">
+						<input class="form-check-input" type="checkbox" th:field="*{adult}" id="isAdult">
+						<label class="form-check-label" for="isAdult">Adult Content (18+)</label>
+					</div>
+				</div>
+			</div>
+			<div class="mb-3 row">
+				<label for="link" class="col-sm-2 col-form-label">Link</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" th:field="*{link}" th:errorclass="is-invalid">
+					<div class="invalid-feedback" th:errors="*{link}"></div>
 				</div>
 			</div>
 			<div class="mb-3 row">

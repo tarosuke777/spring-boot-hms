@@ -7,6 +7,7 @@ import com.tarosuke777.hms.form.CastForm;
 
 @Mapper(componentModel = "spring")
 public interface CastMapper {
+
     @IgnoreAuditFields
     CastEntity toEntity(CastForm form);
 

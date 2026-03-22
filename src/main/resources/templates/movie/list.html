@@ -18,14 +18,23 @@
 			<table class="table table-bordered table-hover align-middle">
 				<thead>
 					<tr class="table-dark">
+						<th>Genre</th>
 						<th>Movie Name</th>
+						<th>Cast</th>
+						<th>Link</th>
 						<th>Note</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="movie: ${movieList}">
-						<td th:text="${movie.name}"></td>
+						<td th:text="${movie.genre.label}"></td>
+						<td>
+							<span th:text="${movie.name}"></span>
+							<span th:if="${movie.isAdult}" class="badge bg-danger ms-1">18+</span>
+						</td>
+						<td th:text="${movie.castId != null ? castMap.get(movie.castId) : ''}"></td>
+						<td><a th:href="${movie.link}" target="_blank" th:text="${movie.link}"></a></td>
 						<td style="white-space: pre-line;" th:text="${movie.note}"></td>
 						<td><a class="btn btn-dark" th:href="@{'/movie/detail/' + ${movie.id}}">Detail</a>
 						</td>

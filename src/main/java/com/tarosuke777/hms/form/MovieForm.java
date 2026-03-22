@@ -1,5 +1,7 @@
 package com.tarosuke777.hms.form;
 
+import org.hibernate.validator.constraints.URL;
+import com.tarosuke777.hms.enums.MovieGenre;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import jakarta.validation.constraints.NotBlank;
@@ -20,6 +22,18 @@ public class MovieForm {
   @NotBlank
   @Size(min = 1, max = 50)
   private String name;
+
+  @NotNull
+  private Integer castId;
+
+  @URL
+  @Size(min = 1, max = 255)
+  private String link;
+
+  @NotNull(message = "ジャンルを選択してください")
+  private MovieGenre genre;
+
+  private boolean isAdult;
 
   private String note;
 

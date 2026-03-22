@@ -18,9 +18,13 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+import com.tarosuke777.hms.entity.BookEntity;
+import com.tarosuke777.hms.entity.CastEntity;
 import com.tarosuke777.hms.entity.MovieEntity;
+import com.tarosuke777.hms.enums.MovieGenre;
 import com.tarosuke777.hms.form.MovieForm;
 import com.tarosuke777.hms.mapper.MovieMapper;
+import com.tarosuke777.hms.repository.CastRepository;
 import com.tarosuke777.hms.repository.MovieRepository;
 import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
@@ -41,6 +45,8 @@ public class MovieControllerTest {
   private EntityManager entityManager; // キャッシュクリア用
   @Autowired
   private MovieMapper movieMapper;
+  @Autowired
+  private CastRepository castRepository;
 
   private static final String LIST_ENDPOINT = "/movie/list";
   private static final String LIST_VIEW = "movie/list";
@@ -101,17 +107,22 @@ public class MovieControllerTest {
   void register_WithValidData_ShouldRedirectToList() throws Exception {
 
     // Given
-    String name = "TestMovieName";
+    CastEntity castEntity = castRepository.findAll().get(0);
+    MovieForm movieForm = new MovieForm(null, "test", castEntity.getId(), "http://test.com",
+        MovieGenre.ANIME, true, null, null);
 
     // When & Then
-    performRegisterRequest(name).andExpect(status().is3xxRedirection())
+    performRegisterRequest(movieForm).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
     entityManager.clear();
 
-    MovieEntity lastMovie = movieRepository.findAll().getLast();
-    Assertions.assertEquals(name, lastMovie.getName());
+    List<MovieEntity> movies = movieRepository.findAll();
+    MovieEntity savedMovie = movies.get(movies.size() - 1);
+
+    Assertions.assertEquals(movieForm.getName(), savedMovie.getName());
+    Assertions.assertEquals(movieForm.getCastId(), savedMovie.getCast().getId());
   }
 
   @Test
@@ -120,6 +131,7 @@ public class MovieControllerTest {
     // Given
     MovieEntity movie = movieRepository.findAll().getFirst();
     MovieForm form = movieMapper.toForm(movie);
+    form.setCastId(movie.getCast().getId());
     form.setName("著者２");
 
     // When & Then
@@ -150,6 +162,8 @@ public class MovieControllerTest {
     MovieForm form = new MovieForm();
     form.setId(currentId);
     form.setName("Try to Update");
+    form.setCastId(movie.getCast().getId());
+    form.setGenre(MovieGenre.ANIME);
     form.setVersion(currentVersion);
 
     // When & Then
@@ -193,15 +207,21 @@ public class MovieControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performRegisterRequest(String name) throws Exception {
+  private ResultActions performRegisterRequest(MovieForm form) throws Exception {
     return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
-        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", form.getName())
+        .param("castId", form.getCastId().toString()).param("genre", form.getGenre().toString())
+        .param("adult", String.valueOf(form.isAdult())).param("link", form.getLink())
+        .param("note", form.getNote())).andDo(print());
   }
 
   private ResultActions performUpdateRequest(MovieForm form) throws Exception {
-    return mockMvc.perform(
-        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
-            .param("name", form.getName()).param("version", form.getVersion().toString()))
+    return mockMvc
+        .perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
+            .param("id", form.getId().toString()).param("name", form.getName())
+            .param("castId", form.getCastId().toString()).param("genre", form.getGenre().toString())
+            .param("adult", String.valueOf(form.isAdult())).param("link", form.getLink())
+            .param("note", form.getNote()).param("version", form.getVersion().toString()))
         .andDo(print());
   }
 

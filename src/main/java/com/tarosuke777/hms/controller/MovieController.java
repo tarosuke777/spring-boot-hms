@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.tarosuke777.hms.form.MovieForm;
 import com.tarosuke777.hms.security.LoginUser;
+import com.tarosuke777.hms.service.CastService;
 import com.tarosuke777.hms.service.MovieService;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
@@ -30,15 +31,18 @@ public class MovieController {
   private static final String REGISTER_VIEW = "movie/register";
 
   private final MovieService movieService;
+  private final CastService castService;
 
   @GetMapping("/list")
   public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
     model.addAttribute("movieList", movieService.getMovieList(user.getId()));
+    model.addAttribute("castMap", castService.getCastMap());
     return LIST_VIEW;
   }
 
   @GetMapping("/register")
-  public String getRegister(@ModelAttribute MovieForm form) {
+  public String getRegister(@ModelAttribute MovieForm form, Model model) {
+    model.addAttribute("castMap", castService.getCastMap());
     return REGISTER_VIEW;
   }
 
@@ -54,6 +58,8 @@ public class MovieController {
   @GetMapping("/detail/{id}")
   public String getDetail(@PathVariable("id") Integer id, Model model,
       @AuthenticationPrincipal LoginUser user) {
+
+    model.addAttribute("castMap", castService.getCastMap());
     model.addAttribute("movieForm", movieService.getMovie(id, user.getId()));
     return DETAIL_VIEW;
   }

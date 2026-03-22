@@ -6,12 +6,16 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.tarosuke777.hms.enums.MovieGenre;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
@@ -35,8 +39,21 @@ public class MovieEntity {
   @Column(length = 50)
   private String name;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "cast_id")
+  private CastEntity cast;
+
+  @Column(length = 255)
+  private String link;
+
   @Column(columnDefinition = "TEXT")
   private String note;
+
+  @Column(nullable = false)
+  private MovieGenre genre;
+
+  @Column(nullable = false)
+  private boolean isAdult = false;
 
   @CreatedDate
   @Column(updatable = false, nullable = false)

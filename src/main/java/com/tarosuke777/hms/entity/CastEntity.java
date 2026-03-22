@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "cast")
+@Table(name = "casts")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter

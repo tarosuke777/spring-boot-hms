@@ -1,0 +1,4 @@
+ALTER TABLE movie ADD cast_id INT;
+ALTER TABLE movie ADD link varchar(255);
+ALTER TABLE movie ADD COLUMN genre INT NOT NULL DEFAULT 99 COMMENT 'ジャンルコード';
+ALTER TABLE movie ADD COLUMN is_adult TINYINT(1) NOT NULL DEFAULT 0 COMMENT '成人向けフラグ(1:真, 0:偽)';
