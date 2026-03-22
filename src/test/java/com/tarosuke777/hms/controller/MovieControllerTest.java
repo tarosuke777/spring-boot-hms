@@ -67,8 +67,12 @@ public class MovieControllerTest {
     LoginUser loginUser =
         (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Integer currentUserId = loginUser.getId();
-    List<MovieForm> expectedMovieList = movieRepository.findByCreatedBy(currentUserId).stream()
-        .map(entity -> movieMapper.toForm(entity)).toList();
+    List<MovieForm> expectedMovieList =
+        movieRepository.findByCreatedBy(currentUserId).stream().map(entity -> {
+          MovieForm form = movieMapper.toForm(entity);
+          form.setCastId(entity.getCast() != null ? entity.getCast().getId() : null);
+          return form;
+        }).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
@@ -83,6 +87,7 @@ public class MovieControllerTest {
     // Given
     MovieEntity entity = movieRepository.findAll().getFirst();
     MovieForm expectedMovieForm = movieMapper.toForm(entity);
+    expectedMovieForm.setCastId(entity.getCast() != null ? entity.getCast().getId() : null);
 
     // When & Then
     performGetDetailRequest(entity.getId()).andExpect(status().isOk())
