@@ -18,7 +18,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-import com.tarosuke777.hms.entity.BookEntity;
 import com.tarosuke777.hms.entity.CastEntity;
 import com.tarosuke777.hms.entity.MovieEntity;
 import com.tarosuke777.hms.enums.MovieGenre;
