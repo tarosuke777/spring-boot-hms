@@ -47,8 +47,10 @@ public class MovieController {
   }
 
   @PostMapping("/register")
-  public String register(@ModelAttribute @Validated MovieForm form, BindingResult bindingResult) {
+  public String register(@ModelAttribute @Validated MovieForm form, BindingResult bindingResult,
+      Model model) {
     if (bindingResult.hasErrors()) {
+      model.addAttribute("castMap", castService.getCastMap());
       return REGISTER_VIEW;
     }
     movieService.registerMovie(form);
@@ -66,8 +68,9 @@ public class MovieController {
 
   @PostMapping(value = "detail", params = "update")
   public String update(@ModelAttribute @Validated(UpdateGroup.class) MovieForm form,
-      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
+      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user, Model model) {
     if (bindingResult.hasErrors()) {
+      model.addAttribute("castMap", castService.getCastMap());
       return DETAIL_VIEW;
     }
     movieService.updateMovie(form, user.getId());
