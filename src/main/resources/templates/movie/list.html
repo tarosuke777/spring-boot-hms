@@ -35,9 +35,9 @@
 						</td>
 						<td th:text="${movie.castId != null ? castMap.get(movie.castId) : ''}"></td>
 						<td class="text-center">
-							<a th:if="${movie.link}" th:href="${movie.link}" target="_blank"
+							<a th:if="${not #strings.isEmpty(movie.link)}" th:href="${movie.link}" target="_blank"
 								class="btn btn-sm btn-link">Link</a>
-							<span th:unless="${movie.link}">-</span>
+							<span th:unless="${not #strings.isEmpty(movie.link)}">-</span>
 						</td>
 						<td style="white-space: pre-line;" th:text="${movie.note}"></td>
 						<td><a class="btn btn-dark" th:href="@{'/movie/detail/' + ${movie.id}}">Detail</a>
