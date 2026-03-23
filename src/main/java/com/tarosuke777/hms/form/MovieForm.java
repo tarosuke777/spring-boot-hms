@@ -27,7 +27,7 @@ public class MovieForm {
   private Integer castId;
 
   @URL
-  @Size(min = 1, max = 255)
+  @Size(max = 255)
   private String link;
 
   @NotNull(message = "ジャンルを選択してください")

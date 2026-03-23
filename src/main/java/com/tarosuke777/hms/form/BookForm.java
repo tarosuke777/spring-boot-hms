@@ -29,7 +29,7 @@ public class BookForm {
   private Integer authorId;
 
   @URL
-  @Size(min = 1, max = 255)
+  @Size(max = 255)
   private String link;
 
   @NotNull(message = "ジャンルを選択してください")
