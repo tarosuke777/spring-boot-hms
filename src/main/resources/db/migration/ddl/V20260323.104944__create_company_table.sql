@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS company (
+    id INT auto_increment PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    note TEXT,
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    created_by INT NOT NULL DEFAULT 0,
+    updated_by INT NOT NULL DEFAULT 0,
+    version INT NOT NULL DEFAULT 0
+);
