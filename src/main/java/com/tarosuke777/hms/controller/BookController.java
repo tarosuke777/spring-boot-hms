@@ -1,6 +1,5 @@
 package com.tarosuke777.hms.controller;
 
-import java.util.HashMap;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -113,9 +112,7 @@ public class BookController {
 
     bookService.updateBook(form, user.getId());
 
-    Map<String, Object> uriVariables = new HashMap<>();
-    uriVariables.put("id", form.getId());
-
+    final Map<String, Object> uriVariables = Map.of("id", form.getId());
     return UriComponentsBuilder.fromUriString(REDIRECT_DETAIL_VIEW).buildAndExpand(uriVariables)
         .toUriString();
   }

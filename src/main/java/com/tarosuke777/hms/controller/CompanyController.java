@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.controller;
 
+import java.util.Map;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.util.UriComponentsBuilder;
 import com.tarosuke777.hms.exception.IllegalRequestException;
 import com.tarosuke777.hms.form.CompanyForm;
 import com.tarosuke777.hms.security.LoginUser;
@@ -28,6 +30,7 @@ public class CompanyController {
     private static final String REDIRECT_LIST = "redirect:/company/list";
     private static final String LIST_VIEW = "company/list";
     private static final String DETAIL_VIEW = "company/detail";
+    private static final String REDIRECT_DETAIL_VIEW = "redirect:/company/detail/{id}";
     private static final String REGISTER_VIEW = "company/register";
 
     private final CompanyService companyService;
@@ -75,7 +78,10 @@ public class CompanyController {
             return DETAIL_VIEW;
         }
         companyService.updateCompany(form, user.getId());
-        return REDIRECT_LIST;
+
+        final Map<String, Object> uriVariables = Map.of("id", form.getId());
+        return UriComponentsBuilder.fromUriString(REDIRECT_DETAIL_VIEW).buildAndExpand(uriVariables)
+                .toUriString();
     }
 
     @PostMapping(value = "/detail", params = "delete")
