@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -79,7 +80,8 @@ public class CompanyController {
         }
         companyService.updateCompany(form, user.getId());
 
-        final Map<String, Object> uriVariables = Map.of("id", form.getId());
+        final Map<String, Object> uriVariables = new HashMap<>();
+        uriVariables.put(CompanyForm.Fields.id, form.getId());
         return UriComponentsBuilder.fromUriString(REDIRECT_DETAIL_VIEW).buildAndExpand(uriVariables)
                 .toUriString();
     }
