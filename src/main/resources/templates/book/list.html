@@ -93,7 +93,11 @@
 						<span th:if="${book.isAdult}" class="badge bg-danger ms-1">18+</span>
 					</td>
 					<td th:text="${book.authorId != null ? authorMap.get(book.authorId) : ''}"></td>
-					<td><a th:href="${book.link}" th:text="${book.link}" target="_blank"></a></td>
+					<td class="text-center">
+						<a th:if="${book.link}" th:href="${book.link}" target="_blank"
+							class="btn btn-sm btn-link">Link</a>
+						<span th:unless="${book.link}">-</span>
+					</td>
 					<td class="text-truncate note-trigger" style="max-width: 200px; cursor: pointer;"
 						data-bs-toggle="modal" data-bs-target="#noteModal" th:data-note="${book.note}">
 						<span th:text="${book.note}"></span>
