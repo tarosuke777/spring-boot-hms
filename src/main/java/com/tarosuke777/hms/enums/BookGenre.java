@@ -6,6 +6,7 @@ public enum BookGenre {
     TECHNICAL(1, "技術書/仕事"),
     MANGA(2, "漫画"),
     NOVEL(3, "小説/ラノベ"),
+    PHOTO_BOOK(4, "写真集"),
     OTHER(99, "その他");
     // @formatter:on
 
