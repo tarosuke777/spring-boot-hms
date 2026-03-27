@@ -28,7 +28,10 @@
 					<tr th:each="music: ${musicList}">
 						<td th:text="${music.name}"></td>
 						<td th:text="${music.artistId != null ? artistMap.get(music.artistId) : ''}"></td>
-						<td><a th:href="${music.link}" th:text="${music.link}" target="_blank"></a>
+						<td class="text-center">
+							<a th:if="${not #strings.isEmpty(music.link)}" th:href="${music.link}" target="_blank"
+								class="btn btn-sm btn-link">Link</a>
+							<span th:unless="${not #strings.isEmpty(music.link)}">-</span>
 						</td>
 						<td><a class="btn btn-dark" th:href="@{'/music/detail/' + ${music.id}}">Detail</a>
 						</td>
