@@ -4,8 +4,11 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -13,10 +16,21 @@ import com.tarosuke777.hms.enums.Role;
 
 @Configuration
 @EnableWebSecurity
-@Order(1)
 public class SecurityConfig {
 
   @Bean
+  @Order(3)
+  public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+    http.securityMatcher("/api/**") // /api/ で始まるリクエストにだけ適用
+        .csrf(csrf -> csrf.disable()) // APIなのでCSRFはオフでOK
+        .authorizeHttpRequests(authz -> authz.anyRequest().authenticated())
+        .httpBasic(Customizer.withDefaults()); // Basic認証を有効化
+
+    return http.build();
+  }
+
+  @Bean
+  @Order(4)
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.formLogin(login -> login.loginProcessingUrl("/login").loginPage("/login")
         .usernameParameter("userName").passwordParameter("password")
@@ -31,6 +45,7 @@ public class SecurityConfig {
 
     return http.build();
   }
+
 
   @Bean
   public PasswordEncoder passwordEncoder() {

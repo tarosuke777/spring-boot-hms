@@ -14,15 +14,17 @@ import org.springframework.security.web.SecurityFilterChain;
 @Profile("local")
 @Configuration
 @EnableWebSecurity
-@Order(2)
 public class LocalSecurityConfig {
+
   @Bean
+  @Order(1)
   SecurityFilterChain h2ConsoleSecurityFilterChain(HttpSecurity http) throws Exception {
-    http.securityMatcher(PathRequest.toH2Console());
-    http.authorizeHttpRequests((authz) -> authz.requestMatchers(PathRequest.toH2Console())
-        .permitAll().anyRequest().authenticated());
-    http.csrf(CsrfConfigurer::disable);
-    http.headers((headers) -> headers.frameOptions(FrameOptionsConfig::sameOrigin));
+    http.securityMatcher(PathRequest.toH2Console())
+        .authorizeHttpRequests((authz) -> authz.anyRequest().permitAll())
+        .csrf(CsrfConfigurer::disable)
+        .headers((headers) -> headers.frameOptions(FrameOptionsConfig::sameOrigin));
     return http.build();
   }
+
+
 }
