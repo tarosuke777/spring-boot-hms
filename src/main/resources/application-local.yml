@@ -11,3 +11,7 @@ spring:
   h2:
     console:
       enabled: true
+  ai:
+    vector-store:
+      mariadb:
+        initialize-schema: false

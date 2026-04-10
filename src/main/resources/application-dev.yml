@@ -2,10 +2,10 @@ spring:
   config:
     import: optional:configtree:/run/secrets/
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/hms}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:13306/hms}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: hms
-    password: ${mysql_user_password}
+    password: ${mysql_user_password:hms-password2}
   flyway:
     locations: classpath:db/migration/ddl
     baseline-on-migrate: true
@@ -13,3 +13,8 @@ spring:
   h2:
     console:
       enabled: false
+  ai:
+    vector-store:
+      mariadb:
+        initialize-schema: true
+

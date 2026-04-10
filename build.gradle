@@ -20,7 +20,7 @@ repositories {
 }
 
 def versions = [
-    springAi: "1.0.1",
+    springAi: "1.1.4",
 	springCloudAws: "3.4.0",
 	mapstruct: "1.6.3",
     lombokMapstructBinding: "0.2.0",
@@ -48,6 +48,9 @@ dependencies {
 
 	// --- AI & Cloud ---
 	implementation 'org.springframework.ai:spring-ai-starter-mcp-server-webmvc'
+    implementation 'org.springframework.ai:spring-ai-starter-vector-store-mariadb'
+	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+
     implementation 'io.awspring.cloud:spring-cloud-aws-starter'
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
 
