@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: dev
-      SPRING_DATASOURCE_URL: jdbc:mysql://home-db-mysql:3306/hms
+      SPRING_DATASOURCE_URL: jdbc:mysql://home-db-mariadb:3306/hms
     secrets:
       - mysql_user_password
     networks:
