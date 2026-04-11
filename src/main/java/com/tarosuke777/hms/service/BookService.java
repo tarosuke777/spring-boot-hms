@@ -2,6 +2,7 @@ package com.tarosuke777.hms.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.data.domain.Page;
@@ -149,6 +150,7 @@ public class BookService {
   }
 
   private String getVectorStoreId(Integer bookId) {
-    return "BOOK_" + bookId;
+    String source = "BOOK_" + bookId;
+    return UUID.nameUUIDFromBytes(source.getBytes()).toString();
   }
 }
