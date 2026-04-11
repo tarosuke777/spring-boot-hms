@@ -2,7 +2,7 @@ spring:
   config:
     import: optional:configtree:/run/secrets/
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:13306/hms}
+    url: ${SPRING_DATASOURCE_URL:jdbc:mariadb://localhost:13306/hms}
     driver-class-name: org.mariadb.jdbc.Driver
     username: hms
     password: ${mysql_user_password:hms-password2}
