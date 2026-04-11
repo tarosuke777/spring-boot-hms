@@ -135,10 +135,17 @@ public class BookService {
 
   @Transactional
   public void migrateAllBooksToVectorStore() {
-    // 1. 全件取得（件数が多い場合は分割して取得するのが安全）
     List<BookEntity> allBooks = bookRepository.findAll();
+    List<String> allIds = allBooks.stream().map(book -> getVectorStoreId(book.getId())).toList();
 
-    // 2. 1件ずつ（あるいはリストにまとめて）ベクトルストアへ登録
+    if (!allIds.isEmpty()) {
+      try {
+        vectorStore.delete(allIds);
+      } catch (Exception e) {
+        log.warn("Failed to clear vector store before migration, but continuing...", e);
+      }
+    }
+
     for (BookEntity book : allBooks) {
       try {
         syncVectorStore(book);
