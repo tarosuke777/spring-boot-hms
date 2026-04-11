@@ -9,6 +9,10 @@ spring:
   h2:
     console:
       enabled: false
+  ai:
+    vector-store:
+      mariadb:
+        initialize-schema: false
 logging:
   level:
     org.hibernate.orm.jdbc.bind: TRACE

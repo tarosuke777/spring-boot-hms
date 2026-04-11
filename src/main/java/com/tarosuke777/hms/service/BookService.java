@@ -94,7 +94,13 @@ public class BookService {
     }
     bookRepository.deleteById(id);
 
-    vectorStore.delete(List.of(getVectorStoreId(id)));
+    try {
+      // ベクトルストアからも削除
+      vectorStore.delete(List.of(getVectorStoreId(id)));
+    } catch (Exception e) {
+      // 削除に失敗してもログを出すだけで処理は続行（ベクトルストアはあくまで補助的なものなので）
+      log.error("Failed to delete book from vector store: " + id, e);
+    }
   }
 
   /**

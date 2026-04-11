@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class VectorStoreConfig {
 
     @Bean
-    @Profile("local") // H2を使うローカル環境用
+    @Profile({"local", "test"}) // H2を使うローカル環境用
     public VectorStore simpleVectorStore(EmbeddingModel embeddingModel) {
         return SimpleVectorStore.builder(embeddingModel).build();
     }
