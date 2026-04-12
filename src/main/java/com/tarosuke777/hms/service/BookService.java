@@ -112,8 +112,8 @@ public class BookService {
 
     // 文章の組み立てにリンクを含める
     StringBuilder content = new StringBuilder();
-    content
-        .append(String.format("蔵書情報: タイトルは「%s」、ジャンルは「%s」です。", entity.getName(), entity.getGenre()));
+    content.append(String.format("蔵書情報: タイトルは「%s」、ジャンルは「%s」です。", entity.getName(),
+        entity.getGenre().getLabel()));
 
     if (entity.getLink() != null && !entity.getLink().isBlank()) {
       content.append(String.format(" 詳細リンクはこちら: %s", entity.getLink()));
