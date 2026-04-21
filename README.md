@@ -74,7 +74,7 @@
 #### Generate Version
 
 ```bash
-date '+%Y%m%d.%H%M%S'
+date '+V%Y%m%d.%H%M%S'
 ```
 
 #### H2-DB ConsoleURL
@@ -92,4 +92,23 @@ https://www.thymeleaf.org/doc/tutorials/3.1/usingthymeleaf_ja.html
 ### Spring Boot
 #### DOC
 https://docs.spring.io/spring-boot/3.5/appendix/dependency-versions/coordinates.html
+https://plugins.gradle.org/plugin/io.spring.dependency-management
 
+### Spring Cloud AWS
+#### DOC
+https://github.com/awspring/spring-cloud-aws?tab=readme-ov-file
+
+
+ * https://spring.pleiades.io/spring-framework/reference/testing/testcontext-framework/tx.html
+ * https://spring.pleiades.io/spring-framework/reference/testing/testcontext-framework/executing-sql.html#testcontext-executing-sql-declaratively-tx
+ * https://spring.pleiades.io/spring-boot/reference/features/logging.html
+
+
+https://spring.pleiades.io/spring-boot/reference/data/sql.html#data.sql.h2-web-console
+
+
+https://docs.gradle.org/current/userguide/jacoco_plugin.html
+
+```bash
+./gradlew bootRun --args='--migrate'
+```
