@@ -108,9 +108,7 @@ public class BookService {
    * Entity の内容をベクトルストアに同期する共通メソッド
    */
   public void syncVectorStore(BookEntity entity) {
-    // ベクトル検索の対象にしたいテキスト（タイトル + 内容など）を作成
 
-    // 文章の組み立てにリンクを含める
     StringBuilder content = new StringBuilder();
     content.append(String.format("蔵書情報: タイトルは「%s」、ジャンルは「%s」です。", entity.getName(),
         entity.getGenre().getLabel()));
@@ -119,10 +117,8 @@ public class BookService {
       content.append(String.format(" 詳細リンクはこちら: %s", entity.getLink()));
     }
 
-    // 1. ID を "BOOK_" + 数値ID に固定する（これで他のIDと被らず、削除も容易になる）
     String docId = getVectorStoreId(entity.getId());
 
-    // 2. メタデータにも "type" を入れておくと、検索時に「本だけ」に絞り込める
     Document doc =
         new Document(docId, content.toString(), Map.of("bookId", entity.getId(), "type", "BOOK"));
 
