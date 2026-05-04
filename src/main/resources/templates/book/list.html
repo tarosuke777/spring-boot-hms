@@ -37,6 +37,14 @@
 					</div>
 
 					<div class="col-auto">
+						<select class="form-select" name="authorId">
+							<option value="" th:selected="${authorId == null}">選択してください</option>
+							<option th:each="entry : ${authorMap}" th:value="${entry.key}" th:text="${entry.value}"
+								th:selected="${authorId != null and entry.key == authorId}"></option>
+						</select>
+					</div>
+
+					<div class="col-auto">
 						<div class="form-check">
 							<input class="form-check-input" type="checkbox" name="isAdult" id="isAdult"
 								th:checked="${isAdult}">
@@ -57,18 +65,19 @@
 
 				<li class="page-item" th:classappend="${bookPage.first} ? 'disabled'">
 					<a class="page-link"
-						th:href="@{/book/list(page=${bookPage.number - 1}, genre=${genre}, isAdult=${isAdult})}">&laquo;</a>
+						th:href="@{/book/list(page=${bookPage.number - 1}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}">&laquo;</a>
 				</li>
 
 				<li class="page-item" th:each="i : ${#numbers.sequence(0, bookPage.totalPages - 1)}"
 					th:classappend="${i == bookPage.number} ? 'active'">
-					<a class="page-link" th:href="@{/book/list(page=${i}, genre=${genre}, isAdult=${isAdult})}"
+					<a class="page-link"
+						th:href="@{/book/list(page=${i}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}"
 						th:text="${i + 1}">1</a>
 				</li>
 
 				<li class="page-item" th:classappend="${bookPage.last} ? 'disabled'">
 					<a class="page-link"
-						th:href="@{/book/list(page=${bookPage.number + 1}, genre=${genre}, isAdult=${isAdult})}">&raquo;</a>
+						th:href="@{/book/list(page=${bookPage.number + 1}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}">&raquo;</a>
 				</li>
 
 			</ul>

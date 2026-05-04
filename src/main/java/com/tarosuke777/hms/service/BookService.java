@@ -30,9 +30,9 @@ public class BookService {
 
   private final VectorStore vectorStore;
 
-  public Page<BookForm> getBookList(Integer currentUserId, BookGenre genre, Boolean isAdult,
-      Pageable pageable) {
-    var spec = BookSpecifications.withFilters(currentUserId, genre, isAdult);
+  public Page<BookForm> getBookList(Integer currentUserId, BookGenre genre, Integer authorId,
+      Boolean isAdult, Pageable pageable) {
+    var spec = BookSpecifications.withFilters(currentUserId, genre, authorId, isAdult);
 
     // Page<Entity> を取得
     Page<BookEntity> bookPage = bookRepository.findAll(spec, pageable);

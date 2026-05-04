@@ -45,16 +45,19 @@ public class BookController {
 
   @GetMapping("/list")
   public String getList(@RequestParam(required = false) BookGenre genre,
+      @RequestParam(required = false) Integer authorId,
       @RequestParam(required = false) Boolean isAdult,
       @PageableDefault(size = 10) Pageable pageable, Model model,
       @AuthenticationPrincipal LoginUser user) {
 
-    Page<BookForm> bookPage = bookService.getBookList(user.getId(), genre, isAdult, pageable);
+    Page<BookForm> bookPage =
+        bookService.getBookList(user.getId(), genre, authorId, isAdult, pageable);
     Map<Integer, String> authorMap = authorService.getAuthorMap();
 
     model.addAttribute("bookPage", bookPage);
     model.addAttribute("authorMap", authorMap);
     model.addAttribute("genre", genre);
+    model.addAttribute("authorId", authorId);
     model.addAttribute("isAdult", isAdult != null && isAdult);
 
     return LIST_VIEW;

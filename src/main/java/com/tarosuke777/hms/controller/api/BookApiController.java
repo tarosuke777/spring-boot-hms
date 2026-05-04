@@ -22,6 +22,7 @@ public class BookApiController {
 
     @GetMapping
     public List<BookForm> getBooks(@AuthenticationPrincipal LoginUser user) {
-        return bookService.getBookList(user.getId(), null, null, Pageable.unpaged()).getContent();
+        return bookService.getBookList(user.getId(), null, null, null, Pageable.unpaged())
+                .getContent();
     }
 }

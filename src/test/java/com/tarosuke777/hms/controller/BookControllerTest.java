@@ -79,8 +79,9 @@ public class BookControllerTest {
     Pageable pageable = Pageable.ofSize(10);
     BookGenre genre = null;
     Boolean isAdult = null;
+    Integer authorId = null;
 
-    var spec = BookSpecifications.withFilters(currentUserId, genre, isAdult);
+    var spec = BookSpecifications.withFilters(currentUserId, genre, authorId, isAdult);
 
     // Page<Entity> を取得
     Page<BookEntity> bookPage = bookRepository.findAll(spec, pageable);
