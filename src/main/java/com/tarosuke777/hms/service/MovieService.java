@@ -1,6 +1,8 @@
 package com.tarosuke777.hms.service;
 
 import java.util.List;
+import java.util.Objects;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.CastEntity;
@@ -46,7 +48,7 @@ public class MovieService {
     /** 登録 */
     @Transactional
     public void registerMovie(MovieForm form) {
-        MovieEntity entity = movieMapper.toEntity(form);
+        MovieEntity entity = Objects.requireNonNull(movieMapper.toEntity(form));
 
         if (form.getCastId() != null) {
             entity.setCast(entityManager.getReference(CastEntity.class, form.getCastId()));
@@ -60,7 +62,7 @@ public class MovieService {
     public void updateMovie(MovieForm form, Integer currentUserId) {
         MovieEntity existEntity = movieRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
                 .orElseThrow(() -> new RuntimeException("Movie not found or access denied"));
-        MovieEntity entity = movieMapper.copy(existEntity);
+        MovieEntity entity = Objects.requireNonNull(movieMapper.copy(existEntity));
 
         if (existEntity.getCast() != null) {
             entity.setCast(
@@ -77,7 +79,7 @@ public class MovieService {
 
     /** 削除 */
     @Transactional
-    public void deleteMovie(Integer id, Integer currentUserId) {
+    public void deleteMovie(@NonNull Integer id, Integer currentUserId) {
         if (!movieRepository.existsByIdAndCreatedBy(id, currentUserId)) {
             throw new RuntimeException("Movie not found or access denied");
         }

@@ -1,7 +1,9 @@
 package com.tarosuke777.hms.service;
 
 import java.util.List;
+import java.util.Objects;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.DiaryEntity;
@@ -34,7 +36,7 @@ public class DiaryService {
 
     @Transactional
     public void registerDiary(DiaryForm form) {
-        DiaryEntity entity = diaryMapper.toEntity(form);
+        DiaryEntity entity = Objects.requireNonNull(diaryMapper.toEntity(form));
         diaryRepository.save(entity);
     }
 
@@ -43,13 +45,13 @@ public class DiaryService {
         DiaryEntity existEntity = diaryRepository
                 .findByDiaryIdAndCreatedBy(form.getDiaryId(), currentUserId)
                 .orElseThrow(() -> new RuntimeException("Diary not found or access denied"));
-        DiaryEntity entity = diaryMapper.copy(existEntity);
+        DiaryEntity entity = Objects.requireNonNull(diaryMapper.copy(existEntity));
         diaryMapper.updateEntityFromForm(form, entity);
         diaryRepository.save(entity);
     }
 
     @Transactional
-    public void deleteDiary(Integer diaryId, Integer currentUserId) {
+    public void deleteDiary(@NonNull Integer diaryId, Integer currentUserId) {
         if (!diaryRepository.existsByDiaryIdAndCreatedBy(diaryId, currentUserId)) {
             throw new RuntimeException("Diary not found or access denied");
         }

@@ -1,7 +1,9 @@
 package com.tarosuke777.hms.service;
 
 import java.util.List;
+import java.util.Objects;
 import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.ArtistEntity;
@@ -43,7 +45,7 @@ public class MusicService {
   @Transactional
   public void registerMusic(MusicForm form) {
 
-    MusicEntity entity = musicMapper.toEntity(form);
+    MusicEntity entity = Objects.requireNonNull(musicMapper.toEntity(form));
 
     // artistId を ArtistEntity の参照としてセット
     if (form.getArtistId() != null) {
@@ -57,7 +59,7 @@ public class MusicService {
   public void updateMusic(MusicForm form, Integer currentUserId) {
     MusicEntity existEntity = musicRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
         .orElseThrow(() -> new RuntimeException("Music not found"));
-    MusicEntity entity = musicMapper.copy(existEntity);
+    MusicEntity entity = Objects.requireNonNull(musicMapper.copy(existEntity));
     if (existEntity.getArtist() != null) {
       entity.setArtist(
           entityManager.getReference(ArtistEntity.class, existEntity.getArtist().getId()));
@@ -72,7 +74,7 @@ public class MusicService {
   }
 
   @Transactional
-  public void deleteMusic(Integer id, Integer currentUserId) {
+  public void deleteMusic(@NonNull Integer id, Integer currentUserId) {
     if (!musicRepository.existsByIdAndCreatedBy(id, currentUserId)) {
       throw new RuntimeException("Music not found");
     }

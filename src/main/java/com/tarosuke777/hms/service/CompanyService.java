@@ -3,7 +3,9 @@ package com.tarosuke777.hms.service;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.CompanyEntity;
@@ -24,7 +26,7 @@ public class CompanyService {
                 .toList();
     }
 
-    public CompanyForm getCompany(Integer companyId, Integer currentUserId) {
+    public CompanyForm getCompany(@NonNull Integer companyId, Integer currentUserId) {
         CompanyEntity company = companyRepository.findByIdAndCreatedBy(companyId, currentUserId)
                 .orElseThrow(() -> new RuntimeException("Company not found or access denied"));
         return companyMapper.toForm(company);
@@ -32,7 +34,7 @@ public class CompanyService {
 
     @Transactional
     public void registerCompany(CompanyForm form) {
-        CompanyEntity entity = companyMapper.toEntity(form);
+        CompanyEntity entity = Objects.requireNonNull(companyMapper.toEntity(form));
         companyRepository.save(entity);
     }
 
@@ -41,13 +43,13 @@ public class CompanyService {
         CompanyEntity existEntity =
                 companyRepository.findByIdAndCreatedBy(form.getId(), currentUserId).orElseThrow(
                         () -> new RuntimeException("Company not found or access denied"));
-        CompanyEntity entity = companyMapper.copy(existEntity);
+        CompanyEntity entity = Objects.requireNonNull(companyMapper.copy(existEntity));
         companyMapper.updateEntityFromForm(form, entity);
         companyRepository.save(entity);
     }
 
     @Transactional
-    public void deleteCompany(Integer companyId, Integer currentUserId) {
+    public void deleteCompany(@NonNull Integer companyId, Integer currentUserId) {
         if (!companyRepository.existsByIdAndCreatedBy(companyId, currentUserId)) {
             throw new RuntimeException("Company not found or access denied");
         }

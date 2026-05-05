@@ -3,7 +3,9 @@ package com.tarosuke777.hms.service;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.ArtistEntity;
@@ -32,7 +34,7 @@ public class ArtistService {
 
   @Transactional
   public void registerArtist(ArtistForm form) {
-    ArtistEntity entity = artistMapper.toEntity(form);
+    ArtistEntity entity = Objects.requireNonNull(artistMapper.toEntity(form));
     artistRepository.save(entity);
   }
 
@@ -40,13 +42,13 @@ public class ArtistService {
   public void updateArtist(ArtistForm form, Integer currentUserId) {
     ArtistEntity existEntity = artistRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
         .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
-    ArtistEntity entity = artistMapper.copy(existEntity);
+    ArtistEntity entity = Objects.requireNonNull(artistMapper.copy(existEntity));
     artistMapper.updateEntityFromForm(form, entity);
     artistRepository.save(entity);
   }
 
   @Transactional
-  public void deleteArtist(Integer artistId, Integer currentUserId) {
+  public void deleteArtist(@NonNull Integer artistId, Integer currentUserId) {
     if (!artistRepository.existsByIdAndCreatedBy(artistId, currentUserId)) {
       throw new RuntimeException("Artist not found or access denied");
     }

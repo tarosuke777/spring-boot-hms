@@ -1,6 +1,8 @@
 package com.tarosuke777.hms.service;
 
 import java.util.List;
+import java.util.Objects;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.TaskEntity;
@@ -28,7 +30,7 @@ public class TaskService {
 
     @Transactional
     public void createTask(TaskForm form) {
-        TaskEntity entity = taskMapper.toEntity(form);
+        TaskEntity entity = Objects.requireNonNull(taskMapper.toEntity(form));
         taskRepository.save(entity);
     }
 
@@ -36,13 +38,13 @@ public class TaskService {
     public void updateTask(TaskForm form, Integer currentUserId) {
         TaskEntity existEntity = taskRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
                 .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
-        TaskEntity entity = taskMapper.copy(existEntity);
+        TaskEntity entity = Objects.requireNonNull(taskMapper.copy(existEntity));
         taskMapper.updateEntityFromForm(form, entity);
         taskRepository.save(entity);
     }
 
     @Transactional
-    public void deleteTask(Integer id, Integer currentUserId) {
+    public void deleteTask(@NonNull Integer id, Integer currentUserId) {
 
         if (!taskRepository.existsByIdAndCreatedBy(id, currentUserId)) {
             throw new RuntimeException("Task not found or unauthorized");

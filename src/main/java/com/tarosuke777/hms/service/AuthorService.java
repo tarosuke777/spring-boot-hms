@@ -3,7 +3,9 @@ package com.tarosuke777.hms.service;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.AuthorEntity;
@@ -32,7 +34,7 @@ public class AuthorService {
 
   @Transactional
   public void registerAuthor(AuthorForm form) {
-    AuthorEntity entity = authorMapper.toEntity(form);
+    AuthorEntity entity = Objects.requireNonNull(authorMapper.toEntity(form));
     authorRepository.save(entity);
   }
 
@@ -40,13 +42,13 @@ public class AuthorService {
   public void updateAuthor(AuthorForm form, Integer currentUserId) {
     AuthorEntity existEntity = authorRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
         .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
-    AuthorEntity entity = authorMapper.copy(existEntity);
+    AuthorEntity entity = Objects.requireNonNull(authorMapper.copy(existEntity));
     authorMapper.updateEntityFromForm(form, entity);
     authorRepository.save(entity);
   }
 
   @Transactional
-  public void deleteAuthor(Integer authorId, Integer currentUserId) {
+  public void deleteAuthor(@NonNull Integer authorId, Integer currentUserId) {
     if (!authorRepository.existsByIdAndCreatedBy(authorId, currentUserId)) {
       throw new RuntimeException("Author not found or access denied");
     }

@@ -3,7 +3,9 @@ package com.tarosuke777.hms.service;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.CastEntity;
@@ -32,7 +34,7 @@ public class CastService {
 
     @Transactional
     public void registerCast(CastForm form) {
-        CastEntity entity = castMapper.toEntity(form);
+        CastEntity entity = Objects.requireNonNull(castMapper.toEntity(form));
         castRepository.save(entity);
     }
 
@@ -40,13 +42,13 @@ public class CastService {
     public void updateCast(CastForm form, Integer currentUserId) {
         CastEntity existEntity = castRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
                 .orElseThrow(() -> new RuntimeException("Cast not found or access denied"));
-        CastEntity entity = castMapper.copy(existEntity);
+        CastEntity entity = Objects.requireNonNull(castMapper.copy(existEntity));
         castMapper.updateEntityFromForm(form, entity);
         castRepository.save(entity);
     }
 
     @Transactional
-    public void deleteCast(Integer castId, Integer currentUserId) {
+    public void deleteCast(@NonNull Integer castId, Integer currentUserId) {
         if (!castRepository.existsByIdAndCreatedBy(castId, currentUserId)) {
             throw new RuntimeException("Cast not found or access denied");
         }
