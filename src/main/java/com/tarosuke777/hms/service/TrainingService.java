@@ -2,9 +2,11 @@ package com.tarosuke777.hms.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.TrainingEntity;
@@ -39,7 +41,7 @@ public class TrainingService {
 
 	@Transactional
 	public void registerTraining(TrainingForm form) {
-		TrainingEntity entity = trainingMapper.toEntity(form);
+		TrainingEntity entity = Objects.requireNonNull(trainingMapper.toEntity(form));
 		if (form.getTrainingMenuId() != null) {
 			entity.setTrainingMenu(
 					entityManager.getReference(TrainingMenuEntity.class, form.getTrainingMenuId()));
@@ -53,7 +55,7 @@ public class TrainingService {
 				.findByTrainingIdAndCreatedBy(form.getTrainingId(), currentUserId)
 				.orElseThrow(() -> new RuntimeException("Training not found or access denied"));
 
-		TrainingEntity entity = trainingMapper.copy(existingEntity);
+		TrainingEntity entity = Objects.requireNonNull(trainingMapper.copy(existingEntity));
 		if (existingEntity.getTrainingMenu() != null) {
 			entity.setTrainingMenu(entityManager.getReference(TrainingMenuEntity.class,
 					existingEntity.getTrainingMenu().getId()));
@@ -68,7 +70,7 @@ public class TrainingService {
 	}
 
 	@Transactional
-	public void deleteTraining(Integer trainingId, Integer currentUserId) {
+	public void deleteTraining(@NonNull Integer trainingId, Integer currentUserId) {
 		if (!trainingRepository.existsByTrainingIdAndCreatedBy(trainingId, currentUserId)) {
 			throw new RuntimeException("Training not found or access denied");
 		}

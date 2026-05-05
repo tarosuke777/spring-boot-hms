@@ -3,7 +3,9 @@ package com.tarosuke777.hms.service;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.TrainingMenuEntity;
@@ -33,7 +35,7 @@ public class TrainingMenuService {
 
 	@Transactional
 	public void registerTrainingMenu(TrainingMenuForm form) {
-		TrainingMenuEntity entity = trainingMenuMapper.toEntity(form);
+		TrainingMenuEntity entity = Objects.requireNonNull(trainingMenuMapper.toEntity(form));
 		trainingMenuRepository.save(entity);
 	}
 
@@ -42,13 +44,13 @@ public class TrainingMenuService {
 		TrainingMenuEntity existEntity =
 				trainingMenuRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
 						.orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
-		TrainingMenuEntity entity = trainingMenuMapper.copy(existEntity);
+		TrainingMenuEntity entity = Objects.requireNonNull(trainingMenuMapper.copy(existEntity));
 		trainingMenuMapper.updateEntityFromForm(form, entity);
 		trainingMenuRepository.save(entity);
 	}
 
 	@Transactional
-	public void deleteTrainingMenu(Integer id, Integer currentUserId) {
+	public void deleteTrainingMenu(@NonNull Integer id, Integer currentUserId) {
 		if (!trainingMenuRepository.existsByIdAndCreatedBy(id, currentUserId)) {
 			throw new RuntimeException("Menu not found or access denied");
 		}
