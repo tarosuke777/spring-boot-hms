@@ -26,7 +26,8 @@
                 <tbody>
                     <tr th:each="company: ${companyList}">
                         <td th:text="${company.name}"></td>
-                        <td style="white-space: pre-line;" th:text="${company.note}"></td>
+                        <td style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                            th:text="${company.note}"></td>
                         <td><a class="btn btn-dark" th:href="@{'/company/detail/' + ${company.id}}">Detail</a>
                         </td>
                 </tbody>
