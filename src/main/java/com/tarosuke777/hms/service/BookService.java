@@ -2,6 +2,7 @@ package com.tarosuke777.hms.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -57,7 +58,7 @@ public class BookService {
 
   @Transactional
   public void registerBook(BookForm form) {
-    BookEntity entity = bookMapper.toEntity(form);
+    BookEntity entity = Objects.requireNonNull(bookMapper.toEntity(form));
     if (form.getAuthorId() != null) {
       entity.setAuthor(entityManager.getReference(AuthorEntity.class, form.getAuthorId()));
     }
@@ -72,7 +73,7 @@ public class BookService {
     BookEntity existEntity = bookRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
         .orElseThrow(() -> new RuntimeException("Book not found"));
 
-    BookEntity entity = bookMapper.copy(existEntity);
+    BookEntity entity = Objects.requireNonNull(bookMapper.copy(existEntity));
     if (existEntity.getAuthor() != null) {
       entity.setAuthor(
           entityManager.getReference(AuthorEntity.class, existEntity.getAuthor().getId()));
