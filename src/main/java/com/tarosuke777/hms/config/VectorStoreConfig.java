@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.config;
 
+import java.util.Objects;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -15,12 +16,13 @@ public class VectorStoreConfig {
     @Bean
     @Profile({"local", "test"}) // H2を使うローカル環境用
     public VectorStore simpleVectorStore(EmbeddingModel embeddingModel) {
-        return SimpleVectorStore.builder(embeddingModel).build();
+        return SimpleVectorStore.builder(Objects.requireNonNull(embeddingModel)).build();
     }
 
     @Bean
     @Profile("dev") // MariaDBを使う開発環境用
     public VectorStore mysqlVectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
-        return MariaDBVectorStore.builder(jdbcTemplate, embeddingModel).build();
+        return MariaDBVectorStore.builder(Objects.requireNonNull(jdbcTemplate),
+                Objects.requireNonNull(embeddingModel)).build();
     }
 }
