@@ -1,11 +1,13 @@
 package com.tarosuke777.hms.service;
 
 import java.util.List;
+import java.util.Objects;
+import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.tarosuke777.hms.enums.Role;
 import com.tarosuke777.hms.entity.UserEntity;
+import com.tarosuke777.hms.enums.Role;
 import com.tarosuke777.hms.form.UserForm;
 import com.tarosuke777.hms.mapper.UserMapper;
 import com.tarosuke777.hms.repository.UserRepository;
@@ -23,7 +25,7 @@ public class UserService {
         return userRepository.findAll().stream().map(entity -> userMapper.toForm(entity)).toList();
     }
 
-    public UserForm getUser(Integer id) {
+    public UserForm getUser(@NonNull Integer id) {
         UserEntity entity = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return userMapper.toForm(entity);
@@ -39,7 +41,7 @@ public class UserService {
 
     @Transactional
     public void updateUser(UserForm form) {
-        UserEntity entity = userRepository.findById(form.getId())
+        UserEntity entity = userRepository.findById(Objects.requireNonNull(form.getId()))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         entity.setName(form.getName());
@@ -58,7 +60,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Integer id) {
+    public void deleteUser(@NonNull Integer id) {
         userRepository.deleteById(id);
     }
 
