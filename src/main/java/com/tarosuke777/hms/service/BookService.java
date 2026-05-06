@@ -8,6 +8,7 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.AuthorEntity;
@@ -32,7 +33,7 @@ public class BookService {
   private final VectorStore vectorStore;
 
   public Page<BookForm> getBookList(Integer currentUserId, BookGenre genre, Integer authorId,
-      Boolean isAdult, Pageable pageable) {
+      Boolean isAdult, @NonNull Pageable pageable) {
     var spec = BookSpecifications.withFilters(currentUserId, genre, authorId, isAdult);
 
     // Page<Entity> を取得
@@ -90,7 +91,7 @@ public class BookService {
   }
 
   @Transactional
-  public void deleteBook(Integer id, Integer currentUserId) {
+  public void deleteBook(@NonNull Integer id, Integer currentUserId) {
     if (!bookRepository.existsByIdAndCreatedBy(id, currentUserId)) {
       throw new RuntimeException("Book not found or access denied");
     }
@@ -98,7 +99,7 @@ public class BookService {
 
     try {
       // ベクトルストアからも削除
-      vectorStore.delete(List.of(getVectorStoreId(id)));
+      vectorStore.delete(Objects.requireNonNull(List.of(getVectorStoreId(id))));
     } catch (Exception e) {
       // 削除に失敗してもログを出すだけで処理は続行（ベクトルストアはあくまで補助的なものなので）
       log.error("Failed to delete book from vector store: " + id, e);
@@ -124,7 +125,7 @@ public class BookService {
         new Document(docId, content.toString(), Map.of("bookId", entity.getId(), "type", "BOOK"));
 
     try {
-      vectorStore.add(List.of(doc));
+      vectorStore.add(Objects.requireNonNull(List.of(doc)));
     } catch (Exception e) {
       log.error("Failed to sync book to vector store: " + entity.getId(), e);
     }
