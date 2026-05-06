@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.controller;
 
+import java.util.Objects;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -78,7 +79,7 @@ public class TrainingMenuController {
 	@PostMapping(value = "/detail", params = "delete")
 	public String delete(@ModelAttribute @Validated(DeleteGroup.class) TrainingMenuForm form,
 			Model model, @AuthenticationPrincipal LoginUser user) {
-		trainingMenuService.deleteTrainingMenu(form.getId(), user.getId());
+		trainingMenuService.deleteTrainingMenu(Objects.requireNonNull(form.getId()), user.getId());
 		return REDIRECT_LIST;
 	}
 }

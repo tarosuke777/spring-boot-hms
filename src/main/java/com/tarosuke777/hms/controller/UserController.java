@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.controller;
 
+import java.util.Objects;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Controller;
@@ -57,7 +58,7 @@ public class UserController {
 
   @GetMapping("/detail/{userId}")
   public String getDetail(UserForm form, Model model, @PathVariable("userId") Integer userId) {
-    model.addAttribute("userForm", userService.getUser(userId));
+    model.addAttribute("userForm", userService.getUser(Objects.requireNonNull(userId)));
     return "user/detail";
   }
 
@@ -74,7 +75,7 @@ public class UserController {
 
   @PostMapping(value = "/detail", params = "delete")
   public String delete(UserForm form, Model model) {
-    userService.deleteUser(form.getId());
+    userService.deleteUser(Objects.requireNonNull(form.getId()));
     return "redirect:/user/list";
   }
 }

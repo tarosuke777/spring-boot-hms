@@ -2,6 +2,7 @@ package com.tarosuke777.hms.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,7 +61,8 @@ public class CompanyController {
     @GetMapping("/detail/{companyId}")
     public String getDetail(@PathVariable("companyId") Integer companyId, Model model,
             @AuthenticationPrincipal LoginUser user) {
-        CompanyForm form = companyService.getCompany(companyId, user.getId());
+        CompanyForm form =
+                companyService.getCompany(Objects.requireNonNull(companyId), user.getId());
         model.addAttribute("companyForm", form);
         return DETAIL_VIEW;
     }
@@ -95,7 +97,7 @@ public class CompanyController {
             throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
         }
 
-        companyService.deleteCompany(form.getId(), user.getId());
+        companyService.deleteCompany(Objects.requireNonNull(form.getId()), user.getId());
         return REDIRECT_LIST;
     }
 

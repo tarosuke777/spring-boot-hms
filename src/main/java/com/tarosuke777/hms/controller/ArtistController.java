@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.controller;
 
+import java.util.Objects;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -88,7 +89,7 @@ public class ArtistController {
       throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
     }
 
-    artistService.deleteArtist(form.getId(), user.getId());
+    artistService.deleteArtist(Objects.requireNonNull(form.getId()), user.getId());
     return "redirect:/artist/list";
   }
 }

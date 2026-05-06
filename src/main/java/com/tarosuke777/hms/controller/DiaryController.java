@@ -1,6 +1,7 @@
 package com.tarosuke777.hms.controller;
 
 import java.util.List;
+import java.util.Objects;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,7 +77,7 @@ public class DiaryController {
     @PostMapping(value = "/detail", params = "delete")
     public String delete(@Validated(DeleteGroup.class) DiaryForm form,
             @AuthenticationPrincipal LoginUser user) {
-        diaryService.deleteDiary(form.getDiaryId(), user.getId());
+        diaryService.deleteDiary(Objects.requireNonNull(form.getDiaryId()), user.getId());
         return REDIRECT_LIST;
     }
 }

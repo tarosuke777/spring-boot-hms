@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.controller;
 
+import java.util.Objects;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,7 +68,7 @@ public class TaskController {
 
     @PostMapping("/delete")
     public String delete(@RequestParam("id") Integer id, @AuthenticationPrincipal LoginUser user) {
-        taskService.deleteTask(id, user.getId());
+        taskService.deleteTask(Objects.requireNonNull(id), user.getId());
         return REDIRECT_LIST;
     }
 }

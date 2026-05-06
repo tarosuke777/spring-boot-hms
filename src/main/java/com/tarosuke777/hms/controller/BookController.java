@@ -2,6 +2,7 @@ package com.tarosuke777.hms.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -50,8 +51,8 @@ public class BookController {
       @PageableDefault(size = 10) Pageable pageable, Model model,
       @AuthenticationPrincipal LoginUser user) {
 
-    Page<BookForm> bookPage =
-        bookService.getBookList(user.getId(), genre, authorId, isAdult, pageable);
+    Page<BookForm> bookPage = bookService.getBookList(user.getId(), genre, authorId, isAdult,
+        Objects.requireNonNull(pageable));
     Map<Integer, String> authorMap = authorService.getAuthorMap();
 
     model.addAttribute("bookPage", bookPage);
@@ -132,7 +133,7 @@ public class BookController {
       throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
     }
 
-    bookService.deleteBook(form.getId(), user.getId());
+    bookService.deleteBook(Objects.requireNonNull(form.getId()), user.getId());
 
     return REDIRECT_LIST;
   }

@@ -2,6 +2,7 @@ package com.tarosuke777.hms.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -94,7 +95,7 @@ public class MusicController {
   public String delete(@Validated(DeleteGroup.class) MusicForm form, Model model,
       @AuthenticationPrincipal LoginUser user) {
 
-    musicService.deleteMusic(form.getId(), user.getId());
+    musicService.deleteMusic(Objects.requireNonNull(form.getId()), user.getId());
 
     return REDIRECT_LIST;
   }
