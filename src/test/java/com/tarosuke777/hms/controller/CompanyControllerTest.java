@@ -60,8 +60,11 @@ public class CompanyControllerTest {
         // Given
         LoginUser loginUser = (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Integer currentUserId = loginUser.getId();
-        List<CompanyForm> expectedCompanyList = companyRepository.findByCreatedBy(currentUserId).stream()
-                .map(companyMapper::toForm).toList();
+        CompanyEntity companyA = companyRepository.findAll().stream()
+                .filter(c -> "CompanyA".equals(c.getName()))
+                .findFirst()
+                .orElseThrow();
+        List<CompanyForm> expectedCompanyList = List.of(companyMapper.toForm(companyA));
 
         // When & Then
         performGetListRequest().andExpect(status().isOk())
