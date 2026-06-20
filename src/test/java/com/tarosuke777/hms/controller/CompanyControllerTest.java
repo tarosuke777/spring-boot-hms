@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,6 @@ public class CompanyControllerTest {
     @Autowired
     private CompanyMapper companyMapper;
 
-    private static final String LIST_ENDPOINT = "/company/list";
     private static final String LIST_VIEW = "company/list";
     private static final String LIST_URL = "/company/list";
 
@@ -218,7 +216,7 @@ public class CompanyControllerTest {
     // --- Helper Methods ---
 
     private ResultActions performGetListRequest() throws Exception {
-        return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
+        return mockMvc.perform(get(LIST_URL)).andDo(print());
     }
 
     private ResultActions performGetRegisterRequest() throws Exception {
