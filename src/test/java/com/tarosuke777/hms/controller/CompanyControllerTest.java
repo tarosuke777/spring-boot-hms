@@ -63,7 +63,7 @@ public class CompanyControllerTest {
         LoginUser loginUser = (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Integer currentUserId = loginUser.getId();
         List<CompanyForm> expectedCompanyList = companyRepository.findByCreatedBy(currentUserId).stream()
-                .map(entity -> companyMapper.toForm(entity)).collect(Collectors.toList());
+                .map(companyMapper::toForm).toList();
 
         // When & Then
         performGetListRequest().andExpect(status().isOk())
@@ -92,8 +92,10 @@ public class CompanyControllerTest {
         entityManager.flush();
         entityManager.clear();
 
-        List<CompanyEntity> companies = companyRepository.findAll();
-        CompanyEntity lastCompany = companies.get(companies.size() - 1);
+        CompanyEntity lastCompany = companyRepository.findAll().stream()
+                .filter(c -> companyName.equals(c.getName()))
+                .findFirst()
+                .orElseThrow();
         Assertions.assertEquals(companyName, lastCompany.getName());
         Assertions.assertEquals(companyNote, lastCompany.getNote());
     }
@@ -112,7 +114,10 @@ public class CompanyControllerTest {
     @Test
     void getDetail_ShouldReturnCompanyDetail() throws Exception {
         // Given
-        CompanyEntity expectedCompanyEntity = companyRepository.findAll().getFirst();
+        CompanyEntity expectedCompanyEntity = companyRepository.findAll().stream()
+                .filter(c -> "CompanyA".equals(c.getName()))
+                .findFirst()
+                .orElseThrow();
         CompanyForm expectedCompanyForm = companyMapper.toForm(expectedCompanyEntity);
 
         // When & Then
@@ -125,7 +130,10 @@ public class CompanyControllerTest {
     @Test
     void update_WithValidData_ShouldUpdateAndRedirectToDetail() throws Exception {
         // Given
-        CompanyEntity targetCompany = companyRepository.findAll().getFirst();
+        CompanyEntity targetCompany = companyRepository.findAll().stream()
+                .filter(c -> "CompanyA".equals(c.getName()))
+                .findFirst()
+                .orElseThrow();
         CompanyForm companyForm = companyMapper.toForm(targetCompany);
         companyForm.setName("UpdatedCompanyName");
         companyForm.setNote("UpdatedCompanyNote");
@@ -146,7 +154,10 @@ public class CompanyControllerTest {
     @Test
     void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
         // Given
-        CompanyEntity company = companyRepository.findAll().getFirst();
+        CompanyEntity company = companyRepository.findAll().stream()
+                .filter(c -> "CompanyA".equals(c.getName()))
+                .findFirst()
+                .orElseThrow();
         Integer currentId = company.getId();
         Integer currentVersion = company.getVersion();
 
@@ -169,7 +180,10 @@ public class CompanyControllerTest {
     @Test
     void update_WithTamperedId_ShouldThrowIllegalRequestException() throws Exception {
         // Given
-        CompanyEntity targetCompany = companyRepository.findAll().getFirst();
+        CompanyEntity targetCompany = companyRepository.findAll().stream()
+                .filter(c -> "CompanyA".equals(c.getName()))
+                .findFirst()
+                .orElseThrow();
 
         // When & Then
         mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
@@ -184,7 +198,10 @@ public class CompanyControllerTest {
     @Test
     void delete_ExistingCompany_ShouldDeleteAndRedirectToList() throws Exception {
         // Given
-        CompanyEntity targetCompany = companyRepository.findAll().getFirst();
+        CompanyEntity targetCompany = companyRepository.findAll().stream()
+                .filter(c -> "CompanyA".equals(c.getName()))
+                .findFirst()
+                .orElseThrow();
         Integer targetCompanyId = targetCompany.getId();
 
         // When & Then
