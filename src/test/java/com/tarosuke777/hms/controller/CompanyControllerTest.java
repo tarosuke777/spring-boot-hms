@@ -58,8 +58,6 @@ public class CompanyControllerTest {
     @Test
     void getList_ShouldReturnCompanyList() throws Exception {
         // Given
-        LoginUser loginUser = (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Integer currentUserId = loginUser.getId();
         CompanyEntity companyA = companyRepository.findAll().stream()
                 .filter(c -> "CompanyA".equals(c.getName()))
                 .findFirst()
@@ -159,7 +157,6 @@ public class CompanyControllerTest {
                 .filter(c -> "CompanyA".equals(c.getName()))
                 .findFirst()
                 .orElseThrow();
-        Integer currentId = company.getId();
         Integer currentVersion = company.getVersion();
 
         // Update in database to increment version
@@ -168,7 +165,6 @@ public class CompanyControllerTest {
         entityManager.clear();
 
         CompanyForm companyForm = companyMapper.toForm(company);
-        companyForm.setId(currentId);
         companyForm.setName("Try to Update");
         companyForm.setVersion(currentVersion); // old version
 
