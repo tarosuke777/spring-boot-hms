@@ -11,10 +11,27 @@
         <div class="mt-3 mb-3 border-bottom">
             <h1 class="h2">Company</h1>
         </div>
-        <div>
-            <div class="mb-2">
+        <div class="row align-items-center mb-4 g-3">
+            <div class="col-auto">
                 <a class="btn btn-dark" th:href="@{'/company/register'}">Register</a>
             </div>
+
+            <div class="col">
+                <form th:action="@{/company/list}" method="get" class="row g-2 align-items-center">
+
+                    <div class="col-auto">
+                        <input type="text" class="form-control" name="name" placeholder="Name"
+                            th:value="${name}" />
+                    </div>
+
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-dark">検索</button>
+                        <a th:href="@{/company/list}" class="btn btn-secondary">リセット</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div>
             <table class="table table-bordered table-hover align-middle">
                 <thead>
                     <tr class="table-dark">

@@ -12,6 +12,7 @@ import com.tarosuke777.hms.entity.CompanyEntity;
 import com.tarosuke777.hms.form.CompanyForm;
 import com.tarosuke777.hms.mapper.CompanyMapper;
 import com.tarosuke777.hms.repository.CompanyRepository;
+import com.tarosuke777.hms.specification.CompanySpecifications;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,8 +22,9 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
 
-    public List<CompanyForm> getCompanyList(Integer currentUserId) {
-        return companyRepository.findByCreatedBy(currentUserId).stream().map(companyMapper::toForm)
+    public List<CompanyForm> getCompanyList(Integer currentUserId, String name) {
+        var spec = CompanySpecifications.withFilters(currentUserId, name);
+        return companyRepository.findAll(spec).stream().map(companyMapper::toForm)
                 .toList();
     }
 
