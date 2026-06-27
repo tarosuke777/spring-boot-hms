@@ -62,7 +62,39 @@ public class CompanyControllerTest {
         List<CompanyForm> expectedCompanyList = List.of(companyMapper.toForm(companyA));
 
         // When & Then
-        performGetListRequest().andExpect(status().isOk())
+        performGetListRequest(null).andExpect(status().isOk())
+                .andExpect(model().attribute("companyList", expectedCompanyList))
+                .andExpect(view().name(LIST_VIEW));
+    }
+
+    @Test
+    void getList_WithNameFilter_ShouldReturnFilteredList() throws Exception {
+        // Given
+        CompanyEntity companyA = companyRepository.findByName("CompanyA").orElseThrow();
+        List<CompanyForm> expectedCompanyList = List.of(companyMapper.toForm(companyA));
+
+        // When & Then
+        performGetListRequest("panyA").andExpect(status().isOk())
+                .andExpect(model().attribute("companyList", expectedCompanyList))
+                .andExpect(view().name(LIST_VIEW));
+    }
+
+    @Test
+    void getList_WithNoMatchName_ShouldReturnEmptyList() throws Exception {
+        // When & Then
+        performGetListRequest("NonExistent").andExpect(status().isOk())
+                .andExpect(model().attribute("companyList", List.of()))
+                .andExpect(view().name(LIST_VIEW));
+    }
+
+    @Test
+    void getList_WithEmptyName_ShouldReturnAllCompanies() throws Exception {
+        // Given
+        CompanyEntity companyA = companyRepository.findByName("CompanyA").orElseThrow();
+        List<CompanyForm> expectedCompanyList = List.of(companyMapper.toForm(companyA));
+
+        // When & Then
+        performGetListRequest("").andExpect(status().isOk())
                 .andExpect(model().attribute("companyList", expectedCompanyList))
                 .andExpect(view().name(LIST_VIEW));
     }
@@ -196,8 +228,12 @@ public class CompanyControllerTest {
 
     // --- Helper Methods ---
 
-    private ResultActions performGetListRequest() throws Exception {
-        return mockMvc.perform(get(LIST_URL)).andDo(print());
+    private ResultActions performGetListRequest(String name) throws Exception {
+        var request = get(LIST_URL);
+        if (name != null) {
+            request = request.param("name", name);
+        }
+        return mockMvc.perform(request).andDo(print());
     }
 
     private ResultActions performGetRegisterRequest() throws Exception {

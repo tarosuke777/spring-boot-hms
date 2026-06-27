@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.tarosuke777.hms.exception.IllegalRequestException;
 import com.tarosuke777.hms.form.CompanyForm;
@@ -38,8 +39,10 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @GetMapping("/list")
-    public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
-        model.addAttribute("companyList", companyService.getCompanyList(user.getId()));
+    public String getList(@RequestParam(required = false) String name, Model model,
+            @AuthenticationPrincipal LoginUser user) {
+        model.addAttribute("companyList", companyService.getCompanyList(user.getId(), name));
+        model.addAttribute("name", name);
         return LIST_VIEW;
     }
 
