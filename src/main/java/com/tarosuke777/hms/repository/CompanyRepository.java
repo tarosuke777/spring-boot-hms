@@ -15,4 +15,6 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Integer>
 
     boolean existsByIdAndCreatedBy(Integer id, Integer createdBy);
 
+    Optional<CompanyEntity> findByName(String name);
+
 }
