@@ -2,6 +2,8 @@ package com.tarosuke777.hms.repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -17,6 +19,10 @@ public interface CompanyRepository
     @Override
     @NonNull
     List<CompanyEntity> findAll(@Nullable Specification<CompanyEntity> spec);
+
+    @Override
+    @NonNull
+    Page<CompanyEntity> findAll(@Nullable Specification<CompanyEntity> spec, @NonNull Pageable pageable);
 
     Optional<CompanyEntity> findByIdAndCreatedBy(Integer id, Integer createdBy);
 
