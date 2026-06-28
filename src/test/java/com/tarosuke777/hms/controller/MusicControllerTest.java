@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
@@ -14,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.TestSecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -29,6 +30,7 @@ import com.tarosuke777.hms.mapper.MusicMapper;
 import com.tarosuke777.hms.repository.ArtistRepository;
 import com.tarosuke777.hms.repository.MusicRepository;
 import com.tarosuke777.hms.security.LoginUser;
+import com.tarosuke777.hms.specification.MusicSpecifications;
 import jakarta.persistence.EntityManager;
 
 @SpringBootTest
@@ -70,21 +72,32 @@ public class MusicControllerTest {
     LoginUser loginUser =
         (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Integer currentUserId = loginUser.getId();
-    List<MusicForm> expectedMusicList =
-        musicRepository.findByCreatedByOrderByIdAsc(currentUserId).stream().map(music -> {
-          MusicForm form = musicMapper.toForm(music);
-          if (music.getArtist() != null) {
-            form.setArtistId(music.getArtist().getId());
-          }
-          return form;
-        }).toList();
+    Page<MusicForm> expectedMusicPage = getExpectedMusicPage(currentUserId, Pageable.ofSize(10));
 
     Map<Integer, String> expectedArtistMap = getArtistMap();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
         .andExpect(model().attribute("artistMap", expectedArtistMap))
-        .andExpect(model().attribute("musicList", expectedMusicList))
+        .andExpect(model().attribute("musicPage", expectedMusicPage))
+        .andExpect(view().name(LIST_VIEW));
+  }
+
+  @Test
+  void getList_WithSecondPage_ShouldReturnSecondMusicPage() throws Exception {
+
+    // Given
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
+    Pageable pageable = Pageable.ofSize(10).withPage(1);
+    Page<MusicForm> expectedMusicPage = getExpectedMusicPage(currentUserId, pageable);
+    Map<Integer, String> expectedArtistMap = getArtistMap();
+
+    // When & Then
+    performGetListRequest(1).andExpect(status().isOk())
+        .andExpect(model().attribute("artistMap", expectedArtistMap))
+        .andExpect(model().attribute("musicPage", expectedMusicPage))
         .andExpect(view().name(LIST_VIEW));
   }
 
@@ -209,8 +222,23 @@ public class MusicControllerTest {
         ArtistEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 
+  private Page<MusicForm> getExpectedMusicPage(Integer currentUserId, Pageable pageable) {
+    var spec = MusicSpecifications.withFilters(currentUserId);
+    return musicRepository.findAll(spec, pageable).map(music -> {
+      MusicForm form = musicMapper.toForm(music);
+      if (music.getArtist() != null) {
+        form.setArtistId(music.getArtist().getId());
+      }
+      return form;
+    });
+  }
+
   private ResultActions performGetListRequest() throws Exception {
     return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
+  }
+
+  private ResultActions performGetListRequest(int page) throws Exception {
+    return mockMvc.perform(get(LIST_ENDPOINT).param("page", String.valueOf(page))).andDo(print());
   }
 
   private ResultActions performGetDetailRequest(int id) throws Exception {

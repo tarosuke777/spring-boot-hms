@@ -3,6 +3,8 @@ package com.tarosuke777.hms.service;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,7 @@ import com.tarosuke777.hms.entity.MusicEntity;
 import com.tarosuke777.hms.form.MusicForm;
 import com.tarosuke777.hms.mapper.MusicMapper;
 import com.tarosuke777.hms.repository.MusicRepository;
+import com.tarosuke777.hms.specification.MusicSpecifications;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
@@ -22,14 +25,17 @@ public class MusicService {
   private final EntityManager entityManager;
   private final MusicMapper musicMapper;
 
-  public List<MusicForm> getMusicList(Integer currentUserId) {
-    return musicRepository.findByCreatedByOrderByIdAsc(currentUserId).stream().map(music -> {
+  public Page<MusicForm> getMusicList(Integer currentUserId, @NonNull Pageable pageable) {
+    var spec = MusicSpecifications.withFilters(currentUserId);
+    Page<MusicEntity> musicPage = musicRepository.findAll(spec, pageable);
+
+    return musicPage.map(music -> {
       MusicForm form = musicMapper.toForm(music);
       if (music.getArtist() != null) {
         form.setArtistId(music.getArtist().getId());
       }
       return form;
-    }).toList();
+    });
   }
 
   public MusicForm getMusicDetails(Integer id, Integer currentUserId) {
