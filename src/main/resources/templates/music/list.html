@@ -15,6 +15,24 @@
 			<div class="mb-2">
 				<a class="btn btn-dark" th:href="@{'/music/register'}">Register</a>
 			</div>
+			<nav th:if="${musicPage.totalPages > 1}" aria-label="Page navigation">
+				<ul class="pagination">
+
+					<li class="page-item" th:classappend="${musicPage.first} ? 'disabled'">
+						<a class="page-link" th:href="@{/music/list(page=${musicPage.number - 1})}">&laquo;</a>
+					</li>
+
+					<li class="page-item" th:each="i : ${#numbers.sequence(0, musicPage.totalPages - 1)}"
+						th:classappend="${i == musicPage.number} ? 'active'">
+						<a class="page-link" th:href="@{/music/list(page=${i})}" th:text="${i + 1}">1</a>
+					</li>
+
+					<li class="page-item" th:classappend="${musicPage.last} ? 'disabled'">
+						<a class="page-link" th:href="@{/music/list(page=${musicPage.number + 1})}">&raquo;</a>
+					</li>
+
+				</ul>
+			</nav>
 			<table class="table table-bordered table-hover align-middle">
 				<thead>
 					<tr class="table-dark">
@@ -25,7 +43,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr th:each="music: ${musicList}">
+					<tr th:each="music: ${musicPage.content}">
 						<td th:text="${music.name}"></td>
 						<td th:text="${music.artistId != null ? artistMap.get(music.artistId) : ''}"></td>
 						<td class="text-center">

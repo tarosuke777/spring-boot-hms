@@ -1,8 +1,10 @@
 package com.tarosuke777.hms.controller;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,12 +39,14 @@ public class MusicController {
   private final ArtistService artistService;
 
   @GetMapping("/list")
-  public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
+  public String getList(@PageableDefault(size = 10) Pageable pageable, Model model,
+      @AuthenticationPrincipal LoginUser user) {
 
-    List<MusicForm> musicList = musicService.getMusicList(user.getId());
+    Page<MusicForm> musicPage =
+        musicService.getMusicList(user.getId(), Objects.requireNonNull(pageable));
     Map<Integer, String> artistMap = artistService.getArtistMap();
 
-    addAttributesToModel(model, musicList, artistMap);
+    addAttributesToModel(model, musicPage, artistMap);
 
     return LIST_VIEW;
   }
@@ -100,10 +104,10 @@ public class MusicController {
     return REDIRECT_LIST;
   }
 
-  private void addAttributesToModel(Model model, List<MusicForm> musicList,
+  private void addAttributesToModel(Model model, Page<MusicForm> musicPage,
       Map<Integer, String> artistMap) {
     model.addAttribute("artistMap", artistMap);
-    model.addAttribute("musicList", musicList);
+    model.addAttribute("musicPage", musicPage);
   }
 
   private void addAttributesToModel(Model model, MusicForm musicForm,
