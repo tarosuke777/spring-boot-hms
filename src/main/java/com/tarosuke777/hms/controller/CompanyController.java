@@ -3,6 +3,9 @@ package com.tarosuke777.hms.controller;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,9 +42,11 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @GetMapping("/list")
-    public String getList(@RequestParam(required = false) String name, Model model,
+    public String getList(@RequestParam(required = false) String name,
+            @PageableDefault(size = 10) Pageable pageable, Model model,
             @AuthenticationPrincipal LoginUser user) {
-        model.addAttribute("companyList", companyService.getCompanyList(user.getId(), name));
+        Page<CompanyForm> companyPage = companyService.getCompanyList(user.getId(), name, Objects.requireNonNull(pageable));
+        model.addAttribute("companyPage", companyPage);
         model.addAttribute("name", name);
         return LIST_VIEW;
     }

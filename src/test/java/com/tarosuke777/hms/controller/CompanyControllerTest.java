@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.TestSecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -56,46 +57,50 @@ public class CompanyControllerTest {
     private static final String DELETE_ENDPOINT = "/company/detail";
 
     @Test
-    void getList_ShouldReturnCompanyList() throws Exception {
-        // Given
-        CompanyEntity companyA = companyRepository.findByName("CompanyA").orElseThrow();
-        List<CompanyForm> expectedCompanyList = List.of(companyMapper.toForm(companyA));
-
+    void getList_ShouldReturnCompanyPageWithPagination() throws Exception {
         // When & Then
-        performGetListRequest(null).andExpect(status().isOk())
-                .andExpect(model().attribute("companyList", expectedCompanyList))
+        performGetListRequest(null, null).andExpect(status().isOk())
+                .andExpect(model().attributeExists("companyPage"))
                 .andExpect(view().name(LIST_VIEW));
     }
 
     @Test
-    void getList_WithNameFilter_ShouldReturnFilteredList() throws Exception {
-        // Given
-        CompanyEntity companyA = companyRepository.findByName("CompanyA").orElseThrow();
-        List<CompanyForm> expectedCompanyList = List.of(companyMapper.toForm(companyA));
-
+    void getList_WithPage1_ShouldReturnFirstTenCompanies() throws Exception {
         // When & Then
-        performGetListRequest("panyA").andExpect(status().isOk())
-                .andExpect(model().attribute("companyList", expectedCompanyList))
+        performGetListRequest(null, "0").andExpect(status().isOk())
+                .andExpect(model().attributeExists("companyPage"))
                 .andExpect(view().name(LIST_VIEW));
     }
 
     @Test
-    void getList_WithNoMatchName_ShouldReturnEmptyList() throws Exception {
+    void getList_WithPage2_ShouldReturnNextPage() throws Exception {
         // When & Then
-        performGetListRequest("NonExistent").andExpect(status().isOk())
-                .andExpect(model().attribute("companyList", List.of()))
+        performGetListRequest(null, "1").andExpect(status().isOk())
+                .andExpect(model().attributeExists("companyPage"))
                 .andExpect(view().name(LIST_VIEW));
     }
 
     @Test
-    void getList_WithEmptyName_ShouldReturnAllCompanies() throws Exception {
-        // Given
-        CompanyEntity companyA = companyRepository.findByName("CompanyA").orElseThrow();
-        List<CompanyForm> expectedCompanyList = List.of(companyMapper.toForm(companyA));
-
+    void getList_WithNameFilter_ShouldReturnFilteredPagedList() throws Exception {
         // When & Then
-        performGetListRequest("").andExpect(status().isOk())
-                .andExpect(model().attribute("companyList", expectedCompanyList))
+        performGetListRequest("panyA", null).andExpect(status().isOk())
+                .andExpect(model().attributeExists("companyPage"))
+                .andExpect(view().name(LIST_VIEW));
+    }
+
+    @Test
+    void getList_WithNameFilterAndPaging_ShouldReturnFilteredPage() throws Exception {
+        // When & Then
+        performGetListRequest("Company", "0").andExpect(status().isOk())
+                .andExpect(model().attributeExists("companyPage"))
+                .andExpect(view().name(LIST_VIEW));
+    }
+
+    @Test
+    void getList_WithNoMatchName_ShouldReturnEmptyPage() throws Exception {
+        // When & Then
+        performGetListRequest("NonExistent", null).andExpect(status().isOk())
+                .andExpect(model().attributeExists("companyPage"))
                 .andExpect(view().name(LIST_VIEW));
     }
 
@@ -228,10 +233,13 @@ public class CompanyControllerTest {
 
     // --- Helper Methods ---
 
-    private ResultActions performGetListRequest(String name) throws Exception {
+    private ResultActions performGetListRequest(String name, String page) throws Exception {
         var request = get(LIST_URL);
         if (name != null) {
             request = request.param("name", name);
+        }
+        if (page != null) {
+            request = request.param("page", page);
         }
         return mockMvc.perform(request).andDo(print());
     }

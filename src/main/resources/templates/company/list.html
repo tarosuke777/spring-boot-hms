@@ -31,6 +31,30 @@
                 </form>
             </div>
         </div>
+
+        <nav th:if="${companyPage.totalPages > 1}" aria-label="Page navigation">
+            <ul class="pagination">
+
+                <li class="page-item" th:classappend="${companyPage.first} ? 'disabled'">
+                    <a class="page-link"
+                        th:href="@{/company/list(page=${companyPage.number - 1}, name=${name})}">&laquo;</a>
+                </li>
+
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, companyPage.totalPages - 1)}"
+                    th:classappend="${i == companyPage.number} ? 'active'">
+                    <a class="page-link"
+                        th:href="@{/company/list(page=${i}, name=${name})}"
+                        th:text="${i + 1}">1</a>
+                </li>
+
+                <li class="page-item" th:classappend="${companyPage.last} ? 'disabled'">
+                    <a class="page-link"
+                        th:href="@{/company/list(page=${companyPage.number + 1}, name=${name})}">&raquo;</a>
+                </li>
+
+            </ul>
+        </nav>
+
         <div>
             <table class="table table-bordered table-hover align-middle">
                 <thead>
@@ -41,12 +65,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="company: ${companyList}">
+                    <tr th:each="company: ${companyPage.content}">
                         <td th:text="${company.name}"></td>
                         <td style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
                             th:text="${company.note}"></td>
                         <td><a class="btn btn-dark" th:href="@{'/company/detail/' + ${company.id}}">Detail</a>
                         </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

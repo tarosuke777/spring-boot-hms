@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,16 @@ public class CompanyService {
         var spec = CompanySpecifications.withFilters(currentUserId, name);
         return companyRepository.findAll(spec).stream().map(companyMapper::toForm)
                 .toList();
+    }
+
+    public Page<CompanyForm> getCompanyList(Integer currentUserId, String name, @NonNull Pageable pageable) {
+        var spec = CompanySpecifications.withFilters(currentUserId, name);
+        
+        // Page<Entity> を取得
+        Page<CompanyEntity> companyPage = companyRepository.findAll(spec, pageable);
+        
+        // ページ内の Entity を Form に詰め替える
+        return companyPage.map(companyMapper::toForm);
     }
 
     public CompanyForm getCompany(@NonNull Integer companyId, Integer currentUserId) {
