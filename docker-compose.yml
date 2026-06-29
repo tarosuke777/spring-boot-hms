@@ -1,9 +1,9 @@
 name: hms
 
 services:
-  hms-app:
+  hms-ap:
     image: hms:1.0
-    container_name: hms-app
+    container_name: hms-ap
     build:
       context: .
       dockerfile: Dockerfile
