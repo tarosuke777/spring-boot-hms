@@ -24,6 +24,8 @@ public class CompanyForm {
 
     private String note;
 
+    private String jobApplicationHistory;
+
     @NotNull(groups = UpdateGroup.class)
     private Integer version;
 }

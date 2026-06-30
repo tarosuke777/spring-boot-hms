@@ -61,6 +61,7 @@
                     <tr class="table-dark">
                         <th>Name</th>
                         <th>Note</th>
+                        <th>Job Application History</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -69,6 +70,8 @@
                         <td th:text="${company.name}"></td>
                         <td style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
                             th:text="${company.note}"></td>
+                        <td style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                            th:text="${company.jobApplicationHistory}"></td>
                         <td><a class="btn btn-dark" th:href="@{'/company/detail/' + ${company.id}}">Detail</a>
                         </td>
                     </tr>

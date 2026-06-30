@@ -117,9 +117,10 @@ public class CompanyControllerTest {
         // Given
         String companyName = "NewTestCompany";
         String companyNote = "NewCompanyNote";
+        String jobApplicationHistory = "NewJobApplicationHistory";
 
         // When & Then
-        performRegisterRequest(companyName, companyNote).andExpect(status().is3xxRedirection())
+        performRegisterRequest(companyName, companyNote, jobApplicationHistory).andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(LIST_URL));
 
         entityManager.flush();
@@ -128,6 +129,7 @@ public class CompanyControllerTest {
         CompanyEntity lastCompany = companyRepository.findByName(companyName).orElseThrow();
         Assertions.assertEquals(companyName, lastCompany.getName());
         Assertions.assertEquals(companyNote, lastCompany.getNote());
+        Assertions.assertEquals(jobApplicationHistory, lastCompany.getJobApplicationHistory());
     }
 
     @Test
@@ -136,7 +138,7 @@ public class CompanyControllerTest {
         String emptyName = "";
 
         // When & Then
-        performRegisterRequest(emptyName, "SomeNote").andExpect(status().isOk())
+        performRegisterRequest(emptyName, "SomeNote", "SomeJobApplicationHistory").andExpect(status().isOk())
                 .andExpect(view().name(REGISTER_VIEW))
                 .andExpect(model().hasErrors());
     }
@@ -161,6 +163,7 @@ public class CompanyControllerTest {
         CompanyForm companyForm = companyMapper.toForm(targetCompany);
         companyForm.setName("UpdatedCompanyName");
         companyForm.setNote("UpdatedCompanyNote");
+        companyForm.setJobApplicationHistory("UpdatedJobApplicationHistory");
 
         // When & Then
         performUpdateRequest(companyForm).andExpect(status().is3xxRedirection())
@@ -173,6 +176,7 @@ public class CompanyControllerTest {
         Assertions.assertNotNull(updatedEntity);
         Assertions.assertEquals(companyForm.getName(), updatedEntity.getName());
         Assertions.assertEquals(companyForm.getNote(), updatedEntity.getNote());
+        Assertions.assertEquals(companyForm.getJobApplicationHistory(), updatedEntity.getJobApplicationHistory());
     }
 
     @Test
@@ -249,11 +253,12 @@ public class CompanyControllerTest {
                 .andDo(print());
     }
 
-    private ResultActions performRegisterRequest(String name, String note) throws Exception {
+    private ResultActions performRegisterRequest(String name, String note, String jobApplicationHistory) throws Exception {
         return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", name)
-                .param("note", note))
+                .param("note", note)
+                .param("jobApplicationHistory", jobApplicationHistory))
                 .andDo(print());
     }
 
@@ -267,6 +272,7 @@ public class CompanyControllerTest {
                 .param("id", companyForm.getId().toString())
                 .param("name", companyForm.getName())
                 .param("note", companyForm.getNote())
+                .param("jobApplicationHistory", companyForm.getJobApplicationHistory())
                 .param("version", companyForm.getVersion().toString()))
                 .andDo(print());
     }
