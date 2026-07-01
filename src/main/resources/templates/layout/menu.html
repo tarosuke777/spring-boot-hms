@@ -24,11 +24,18 @@
       </ul>
       <button class="btn collapsed">Link</button>
       <ul class="list-unstyled ps-3">
-        <li class="mb-2"><a class="text-decoration-none link-dark" href="/hc/" target="hc_chat">Chat</a></li>
-        <li class="mb-2"><a class="text-decoration-none link-dark" href="/hb/" target="hb_blog">Blog</a></li>
-        <li class="mb-2"><a class="text-decoration-none link-dark" href="/hv/videos/" target="hv_videos">Videos</a></li>
-        <li class="mb-2"><a class="text-decoration-none link-dark" href="/hv/books/" target="hv_books">Books</a></li>
-        <li class="mb-2"><a class="text-decoration-none link-dark" href="/jenkins/" target="jenkins">Jenkins</a></li>
+        <li class="mb-2"><a class="text-decoration-none link-dark" href="/hc/" target="hc_chat"
+            rel="noopener noreferrer">Chat</a></li>
+        <li class="mb-2"><a class="text-decoration-none link-dark" href="/hb/" target="hb_blog"
+            rel="noopener noreferrer">Blog</a></li>
+        <li class="mb-2"><a class="text-decoration-none link-dark" href="/hv/videos/" target="hv_videos"
+            rel="noopener noreferrer">Videos</a></li>
+        <li class="mb-2"><a class="text-decoration-none link-dark" href="/hv/books/" target="hv_books"
+            rel="noopener noreferrer">Books</a></li>
+        <li class="mb-2"><a class="text-decoration-none link-dark" href="/jenkins/" target="jenkins"
+            rel="noopener noreferrer">Jenkins</a></li>
+        <li class="mb-2"><a class="text-decoration-none link-dark" href="/grafana/" target="grafana"
+            rel="noopener noreferrer">Grafana</a></li>
       </ul>
     </li>
     <li sec:authorize="hasRole(T(com.tarosuke777.hms.enums.Role).ADMIN.name())" class="my-2">
