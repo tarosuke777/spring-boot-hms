@@ -3,6 +3,9 @@
     layout:decorate="~{layout/layout}">
 
 <head>
+    <th:block layout:fragment="page-scripts">
+        <script type="module" th:src="@{/js/book/list.js}"></script>
+    </th:block>
     <title>Company</title>
 </head>
 
@@ -68,15 +71,31 @@
                 <tbody>
                     <tr th:each="company: ${companyPage.content}">
                         <td th:text="${company.name}"></td>
-                        <td style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
-                            th:text="${company.note}"></td>
-                        <td style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
-                            th:text="${company.jobApplicationHistory}"></td>
-                        <td><a class="btn btn-dark" th:href="@{'/company/detail/' + ${company.id}}">Detail</a>
+                        <td class="text-truncate note-trigger" style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#noteModal" th:data-note="${company.note}">
+                            <span th:text="${company.note}"></span>
                         </td>
+                        <td class="text-truncate note-trigger" style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#noteModal" th:data-note="${company.jobApplicationHistory}">
+                            <span th:text="${company.jobApplicationHistory}"></span>
+                        </td>
+                        <td><a class="btn btn-dark" th:href="@{'/company/detail/' + ${company.id}}">Detail</a></td>
                     </tr>
                 </tbody>
             </table>
+        <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class=" modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="noteModalLabel">Note詳細</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modalNoteBody" style="white-space: pre-line;"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
