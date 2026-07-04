@@ -2,6 +2,21 @@ pipeline {
     agent any
 
     stages {
+        stage('Test & Analyze') {
+            steps {
+                echo 'Running tests and generating JaCoCo report...'
+                // テストを実行してレポートを生成
+                sh './gradlew clean test jacocoTestReport'
+                
+                // JenkinsにJaCoCoレポートを認識させる（これで環境変数がセットされます）
+                jacoco(
+                    execPattern: '**/build/jacoco/*.exec',
+                    classPattern: '**/build/classes/java/main',
+                    sourcePattern: '**/src/main/java'
+                )
+            }
+        }
+
         stage('Prepare Docker and Deploy') {
             steps {
                 echo 'Building Docker Compose services...'
