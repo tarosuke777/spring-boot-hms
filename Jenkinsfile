@@ -5,6 +5,9 @@ pipeline {
         stage('Test & Analyze') {
             steps {
                 echo 'Running tests and generating JaCoCo report...'
+
+                sh 'chmod +x gradlew'
+
                 // テストを実行してレポートを生成
                 sh './gradlew clean test jacocoTestReport'
                 
@@ -21,10 +24,10 @@ pipeline {
             steps {
                 echo 'Building Docker Compose services...'
                 sh 'sudo docker compose build'
-                    
+                
                 echo 'Stopping and removing old containers...'
                 sh 'sudo docker compose down'
-                    
+                
                 echo 'Starting new containers...'
                 sh 'sudo docker compose up -d'
             }
