@@ -21,19 +21,16 @@ pipeline {
         success {
             echo 'Build succeeded! Analyzing JaCoCo report and sending notification...'
             script {
-                // 1. デフォルトメッセージを用意
+                def instructionCov = env.JACOCO_INSTRUCTION_COVERAGE
+                def branchCov = env.JACOCO_BRANCH_COVERAGE
                 def coverageText = ""
                 
-                // 2. JaCoCoのアクションからカバレッジの数値を動的に取得
-                def jacocoAction = currentBuild.rawBuild.getAction(hudson.plugins.jacoco.JacocoBuildAction.class)
-                
-                if (jacocoAction != null) {
-                    def instructionCov = jacocoAction.getInstructionCoverage().getPercentage()
-                    def branchCov = jacocoAction.getBranchCoverage().getPercentage()
-                    
-                    coverageText = "\\n📊 JaCoCoカバレッジレポート:\\n・命令カバレッジ: ${instructionCov}%\\n・分岐カバレッジ: ${branchCov}%"
+                // 環境変数が存在する場合のみテキストを作成
+                if (instructionCov != null && branchCov != null) {
+                    coverageText = "\\n📊 JaCoCoカバレッジレポート:\\n・命令カバレッジ: ${instructionCov}%\\n・分岐カバレッジ: ${branchCov}%\\n🔗 レポート詳細: ${env.BUILD_URL}jacoco/"                } else {
                 } else {
-                    coverageText = "\\n⚠️ JaCoCoレポートが見つかりませんでした。"
+                    // もし環境変数から取れない場合はリンクのみ
+                    coverageText = "\\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
                 }
                 
                 // 3. 取得したカバレッジ情報を結合してWebhookを送信
