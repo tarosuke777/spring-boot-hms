@@ -9,7 +9,7 @@ pipeline {
                 sh 'chmod +x gradlew'
 
                 // テストを実行してレポートを生成
-                sh './gradlew clean test jacocoTestReport'
+                sh './gradlew clean test jacocoTestReport build'
 
                 sh 'ls -R build/libs/'
             }
