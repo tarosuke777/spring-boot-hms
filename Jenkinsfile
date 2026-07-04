@@ -11,7 +11,16 @@ pipeline {
                 // テストを実行してレポートを生成
                 sh './gradlew clean test jacocoTestReport build'
 
-                sh 'ls -R build/libs/'
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'build/reports/jacoco/test/html',
+                    reportFiles: 'index.html',
+                    reportName: 'JaCoCo Report',
+                    reportTitles: ''
+                ])
+
             }
         }
 
@@ -42,7 +51,7 @@ pipeline {
                     if (fileExists(htmlPath)) {
                         // 最初のパーセンテージ（通常これが全体の命令カバレッジ）を取得
                         def covPct = sh(script: "grep -oE '[0-9]+%' ${htmlPath} | head -n 1", returnStdout: true).trim()
-                        coverageText = "\\n📊 JaCoCoカバレッジレポート:\\n・命令カバレッジ: ${covPct}\\n🔗 レポート詳細: ${env.BUILD_URL}jacoco/"
+                        coverageText = "\\n📊 JaCoCoカバレッジレポート:\\n・命令カバレッジ: ${covPct}\\n🔗 レポート詳細: ${env.BUILD_URL}HTML_20Report/"
                     } else {
                         coverageText = "\\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
                     }
