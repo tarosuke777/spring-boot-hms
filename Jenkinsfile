@@ -27,7 +27,7 @@ pipeline {
                 
                 // 環境変数が存在する場合のみテキストを作成
                 if (instructionCov != null && branchCov != null) {
-                    coverageText = "\\n📊 JaCoCoカバレッジレポート:\\n・命令カバレッジ: ${instructionCov}%\\n・分岐カバレッジ: ${branchCov}%\\n🔗 レポート詳細: ${env.BUILD_URL}jacoco/"                } else {
+                    coverageText = "\\n📊 JaCoCoカバレッジレポート:\\n・命令カバレッジ: ${instructionCov}%\\n・分岐カバレッジ: ${branchCov}%\\n🔗 レポート詳細: ${env.BUILD_URL}jacoco/"
                 } else {
                     // もし環境変数から取れない場合はリンクのみ
                     coverageText = "\\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
