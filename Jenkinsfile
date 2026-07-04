@@ -10,13 +10,6 @@ pipeline {
 
                 // テストを実行してレポートを生成
                 sh './gradlew clean test jacocoTestReport'
-                
-                // JenkinsにJaCoCoレポートを認識させる（これで環境変数がセットされます）
-                jacoco(
-                    execPattern: '**/build/jacoco/*.exec',
-                    classPattern: '**/build/classes/java/main',
-                    sourcePattern: '**/src/main/java'
-                )
             }
         }
 
@@ -39,15 +32,20 @@ pipeline {
         success {
             echo 'Build succeeded! Analyzing JaCoCo report and sending notification...'
             script {
-                def instructionCov = env.JACOCO_INSTRUCTION_COVERAGE
-                def branchCov = env.JACOCO_BRANCH_COVERAGE
                 def coverageText = ""
                 
-                // 環境変数が存在する場合のみテキストを作成
-                if (instructionCov != null && branchCov != null) {
-                    coverageText = "\\n📊 JaCoCoカバレッジレポート:\\n・命令カバレッジ: ${instructionCov}%\\n・分岐カバレッジ: ${branchCov}%\\n🔗 レポート詳細: ${env.BUILD_URL}jacoco/"
-                } else {
-                    // もし環境変数から取れない場合はリンクのみ
+                try {
+                    // JaCoCoのindex.htmlの「Total」行からパーセンテージを抽出するシェル芸
+                    def htmlPath = "build/reports/jacoco/test/html/index.html"
+                    if (fileExists(htmlPath)) {
+                        // 最初のパーセンテージ（通常これが全体の命令カバレッジ）を取得
+                        def covPct = sh(script: "grep -oE '[0-9]+%' ${htmlPath} | head -n 1", returnStdout: true).trim()
+                        coverageText = "\\n📊 JaCoCoカバレッジレポート:\\n・命令カバレッジ: ${covPct}\\n🔗 レポート詳細: ${env.BUILD_URL}jacoco/"
+                    } else {
+                        coverageText = "\\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
+                    }
+                } catch (Exception e) {
+                    // パースに失敗した場合は安全にリンクのみにする
                     coverageText = "\\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
                 }
                 
