@@ -1,8 +1,8 @@
 pipeline {
     agent any
 
-    stages {       
-        stage('Prepare Docker and Deploy') { 
+    stages {
+        stage('Prepare Docker and Deploy') {
             steps {
                 echo 'Building Docker Compose services...'
                 sh 'sudo docker compose build'
