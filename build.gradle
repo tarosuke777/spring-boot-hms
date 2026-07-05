@@ -27,7 +27,8 @@ def versions = [
 	bootstrap: "5.3.3",
     jquery: "3.7.1",
     jqueryUi: "1.14.1",
-	archunit: "1.4.1"
+	archunit: "1.4.1",
+	playwright: "1.61.0"
 ]
 
 dependencyManagement {
@@ -91,6 +92,7 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation "com.tngtech.archunit:archunit-junit5:${versions.archunit}"
+	testImplementation "com.microsoft.playwright:playwright:${versions.playwright}"
 
 }
 
