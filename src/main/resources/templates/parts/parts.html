@@ -21,6 +21,25 @@
 			th:data-max-weight="${item.maxWeight}" th:data-max-reps="${item.maxReps}" th:data-max-sets="${item.maxSets}"
 			th:text="${item.value}" th:selected="${item.key == selectedKey}"></option>
 	</select>
+
+	<div th:fragment="globalModal" class="modal fade" id="globalModal" tabindex="-1" aria-labelledby="globalModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class=" modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="globalModalLabel">詳細</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p id="globalModalBody" style="white-space: pre-line;"></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </body>
 
 </html>
