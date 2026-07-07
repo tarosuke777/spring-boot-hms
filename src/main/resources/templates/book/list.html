@@ -108,7 +108,8 @@
 						<span th:unless="${not #strings.isEmpty(book.link)}">-</span>
 					</td>
 					<td class="text-truncate modal-trigger" style="max-width: 200px; cursor: pointer;"
-						data-bs-toggle="modal" data-bs-target="#globalModal" th:data-modal-text="${book.note}">
+						data-bs-toggle="modal" data-bs-target="#globalModal" th:data-modal-text="${book.note}"
+						data-modal-title="Note">
 						<span th:text="${book.note}"></span>
 					</td>
 					<td><a class="btn btn-dark" th:href="@{'/book/detail/' + ${book.id}}">Detail</a>
