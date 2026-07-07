@@ -1,12 +1,13 @@
-// テーブル全体に対して1つだけリスナーを登録する手法
-document.addEventListener("DOMContentLoaded", () => {
-    const table = document.querySelector('table'); // テーブル要素
-    table.addEventListener('click', (event) => {
-        // クリックされた要素が .modal-trigger か確認
-        const target = event.target.closest('.modal-trigger');
-        if (target) {
-            const modalText = target.getAttribute('data-modal-text');
-            document.getElementById('globalModalBody').textContent = modalText;
-        }
-    });
+// document全体に対して1つだけリスナーを登録する（安全・汎用的）
+document.addEventListener('click', (event) => {
+
+    const target = event.target.closest('.modal-trigger');
+    if (!target) return; // なければ何もしない
+
+    const modalText = target.getAttribute('data-modal-text');
+    const modalBody = document.getElementById('globalModalBody');
+
+    if (modalBody) {
+        modalBody.textContent = modalText;
+    }
 });
