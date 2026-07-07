@@ -10,7 +10,7 @@ document.addEventListener('click', (event) => {
         modalBodyElm.textContent = modalBody;
     }
 
-    const modalTitle = target.getAttribute('data-modal-title') || '';
+    const modalTitle = target.getAttribute('data-modal-title') || '詳細';
     const modalTitleElm = document.getElementById('globalModalTitle');
     if (modalTitleElm) {
         modalTitleElm.textContent = modalTitle;
