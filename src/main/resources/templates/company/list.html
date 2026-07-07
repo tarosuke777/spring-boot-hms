@@ -4,7 +4,7 @@
 
 <head>
     <th:block layout:fragment="page-scripts">
-        <script type="module" th:src="@{/js/book/list.js}"></script>
+        <script type="module" th:src="@{/js/common/modal.js}"></script>
     </th:block>
     <title>Company</title>
 </head>
@@ -23,8 +23,7 @@
                 <form th:action="@{/company/list}" method="get" class="row g-2 align-items-center">
 
                     <div class="col-auto">
-                        <input type="text" class="form-control" name="name" placeholder="Name"
-                            th:value="${name}" />
+                        <input type="text" class="form-control" name="name" placeholder="Name" th:value="${name}" />
                     </div>
 
                     <div class="col-auto">
@@ -45,9 +44,7 @@
 
                 <li class="page-item" th:each="i : ${#numbers.sequence(0, companyPage.totalPages - 1)}"
                     th:classappend="${i == companyPage.number} ? 'active'">
-                    <a class="page-link"
-                        th:href="@{/company/list(page=${i}, name=${name})}"
-                        th:text="${i + 1}">1</a>
+                    <a class="page-link" th:href="@{/company/list(page=${i}, name=${name})}" th:text="${i + 1}">1</a>
                 </li>
 
                 <li class="page-item" th:classappend="${companyPage.last} ? 'disabled'">
@@ -71,33 +68,21 @@
                 <tbody>
                     <tr th:each="company: ${companyPage.content}">
                         <td th:text="${company.name}"></td>
-                        <td class="text-truncate note-trigger" style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#noteModal" th:data-note="${company.note}">
+                        <td class="text-truncate modal-trigger" style="max-width: 500px; cursor: pointer;"
+                            data-bs-toggle="modal" data-bs-target="#globalModal" th:data-modal-text="${company.note}">
                             <span th:text="${company.note}"></span>
                         </td>
-                        <td class="text-truncate note-trigger" style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#noteModal" th:data-note="${company.jobApplicationHistory}">
+                        <td class="text-truncate modal-trigger" style="max-width: 500px; cursor: pointer;"
+                            data-bs-toggle="modal" data-bs-target="#globalModal"
+                            th:data-modal-text="${company.jobApplicationHistory}">
                             <span th:text="${company.jobApplicationHistory}"></span>
                         </td>
                         <td><a class="btn btn-dark" th:href="@{'/company/detail/' + ${company.id}}">Detail</a></td>
                     </tr>
                 </tbody>
             </table>
-        <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class=" modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="noteModalLabel">Note詳細</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p id="modalNoteBody" style="white-space: pre-line;"></p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
+        <th:block th:replace="~{parts/parts :: globalModal }"></th:block>
 </body>
 
 </html>

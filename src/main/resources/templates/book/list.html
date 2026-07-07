@@ -9,7 +9,7 @@
 	</th:block>
 
 	<th:block layout:fragment="page-scripts">
-		<script type="module" th:src="@{/js/book/list.js}"></script>
+		<script type="module" th:src="@{/js/common/modal.js}"></script>
 	</th:block>
 
 	<title>Book</title>
@@ -107,30 +107,15 @@
 							class="btn btn-sm btn-link">Link</a>
 						<span th:unless="${not #strings.isEmpty(book.link)}">-</span>
 					</td>
-					<td class="text-truncate note-trigger" style="max-width: 200px; cursor: pointer;"
-						data-bs-toggle="modal" data-bs-target="#noteModal" th:data-note="${book.note}">
+					<td class="text-truncate modal-trigger" style="max-width: 200px; cursor: pointer;"
+						data-bs-toggle="modal" data-bs-target="#globalModal" th:data-modal-text="${book.note}">
 						<span th:text="${book.note}"></span>
 					</td>
 					<td><a class="btn btn-dark" th:href="@{'/book/detail/' + ${book.id}}">Detail</a>
 					</td>
 			</tbody>
 		</table>
-		<div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-lg">
-				<div class=" modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="noteModalLabel">Note詳細</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<p id="modalNoteBody" style="white-space: pre-line;"></p>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-					</div>
-				</div>
-			</div>
-		</div>
+		<th:block th:replace="~{parts/parts :: globalModal }"></th:block>
 	</div>
 </body>
 
