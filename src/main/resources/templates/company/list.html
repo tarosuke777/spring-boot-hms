@@ -68,13 +68,11 @@
                 <tbody>
                     <tr th:each="company: ${companyPage.content}">
                         <td th:text="${company.name}"></td>
-                        <td class="text-truncate modal-trigger"
-                            style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;"
+                        <td class="text-truncate modal-trigger" style="max-width: 500px; cursor: pointer;"
                             data-bs-toggle="modal" data-bs-target="#globalModal" th:data-modal-text="${company.note}">
                             <span th:text="${company.note}"></span>
                         </td>
-                        <td class="text-truncate modal-trigger"
-                            style="max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;"
+                        <td class="text-truncate modal-trigger" style="max-width: 500px; cursor: pointer;"
                             data-bs-toggle="modal" data-bs-target="#globalModal"
                             th:data-modal-text="${company.jobApplicationHistory}">
                             <span th:text="${company.jobApplicationHistory}"></span>
