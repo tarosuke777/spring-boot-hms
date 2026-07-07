@@ -4,7 +4,7 @@ document.addEventListener('click', (event) => {
     const target = event.target.closest('.modal-trigger');
     if (!target) return; // なければ何もしない
 
-    const modalText = target.getAttribute('data-modal-text');
+    const modalText = target.getAttribute('data-modal-text') || '';
     const modalBody = document.getElementById('globalModalBody');
 
     if (modalBody) {
