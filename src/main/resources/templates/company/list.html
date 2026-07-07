@@ -69,12 +69,14 @@
                     <tr th:each="company: ${companyPage.content}">
                         <td th:text="${company.name}"></td>
                         <td class="text-truncate modal-trigger" style="max-width: 500px; cursor: pointer;"
-                            data-bs-toggle="modal" data-bs-target="#globalModal" th:data-modal-text="${company.note}">
+                            data-bs-toggle="modal" data-bs-target="#globalModal" th:data-modal-text="${company.note}"
+                            data-modal-title="Note">
                             <span th:text="${company.note}"></span>
                         </td>
                         <td class="text-truncate modal-trigger" style="max-width: 500px; cursor: pointer;"
                             data-bs-toggle="modal" data-bs-target="#globalModal"
-                            th:data-modal-text="${company.jobApplicationHistory}">
+                            th:data-modal-text="${company.jobApplicationHistory}"
+                            data-modal-title="Job Application History">
                             <span th:text="${company.jobApplicationHistory}"></span>
                         </td>
                         <td><a class="btn btn-dark" th:href="@{'/company/detail/' + ${company.id}}">Detail</a></td>

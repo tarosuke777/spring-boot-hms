@@ -4,10 +4,15 @@ document.addEventListener('click', (event) => {
     const target = event.target.closest('.modal-trigger');
     if (!target) return; // なければ何もしない
 
-    const modalText = target.getAttribute('data-modal-text') || '';
-    const modalBody = document.getElementById('globalModalBody');
+    const modalBody = target.getAttribute('data-modal-text') || '';
+    const modalBodyElm = document.getElementById('globalModalBody');
+    if (modalBodyElm) {
+        modalBodyElm.textContent = modalBody;
+    }
 
-    if (modalBody) {
-        modalBody.textContent = modalText;
+    const modalTitle = target.getAttribute('data-modal-title') || '詳細';
+    const modalTitleElm = document.getElementById('globalModalTitle');
+    if (modalTitleElm) {
+        modalTitleElm.textContent = modalTitle;
     }
 });

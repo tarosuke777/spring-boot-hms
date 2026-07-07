@@ -22,12 +22,12 @@
 			th:text="${item.value}" th:selected="${item.key == selectedKey}"></option>
 	</select>
 
-	<div th:fragment="globalModal" class="modal fade" id="globalModal" tabindex="-1" aria-labelledby="globalModalLabel"
+	<div th:fragment="globalModal" class="modal fade" id="globalModal" tabindex="-1" aria-labelledby="globalModalTitle"
 		aria-hidden="true">
 		<div class="modal-dialog modal-lg">
 			<div class=" modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="globalModalLabel">詳細</h5>
+					<h5 class="modal-title" id="globalModalTitle">詳細</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
