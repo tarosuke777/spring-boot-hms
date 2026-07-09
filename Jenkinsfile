@@ -8,6 +8,9 @@ pipeline {
 
                 sh 'chmod +x gradlew'
 
+                echo 'Installing Playwright system dependencies...'
+                sh './gradlew pWInstallDeps'
+
                 // テストを実行してレポートを生成
                 sh './gradlew clean test jacocoTestReport build'
 
