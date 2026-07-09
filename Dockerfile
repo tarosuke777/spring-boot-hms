@@ -9,6 +9,7 @@ FROM gradle:jdk25 AS builder
 COPY . /app
 WORKDIR /app
 RUN chmod +x gradlew
+RUN ./gradlew playwrightInstallDeps
 RUN ./gradlew clean build
 
 # ========================

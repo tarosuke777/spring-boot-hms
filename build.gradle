@@ -125,3 +125,12 @@ tasks.withType(JavaCompile) {
         "-Amapstruct.unmappedTargetPolicy=ERROR"
     ]
 }
+
+tasks.register('playwrightInstallDeps', JavaExec) {
+    group = 'verification'
+    description = 'Installs system dependencies for Playwright'
+    
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.microsoft.playwright.CLI'
+    args = ['install-deps']
+}
