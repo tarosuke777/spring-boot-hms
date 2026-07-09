@@ -132,7 +132,7 @@ tasks.register('playwrightInstallDeps', JavaExec) {
     group = 'verification'
     description = 'Installs system dependencies for Playwright'
     
-    classpath = sourceSets.main.runtimeClasspath
+    classpath = sourceSets.test.runtimeClasspath
     mainClass = 'com.microsoft.playwright.CLI'
     args = ['install-deps']
 }
