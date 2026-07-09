@@ -1,15 +1,15 @@
 # ========================
 # ステージ 1: ビルドステージ (JARの作成のみ)
 # ========================
-# FROM gradle:jdk25 AS builder 
+FROM gradle:jdk25 AS builder 
 
-# # RUN apk update && apk add --no-cache bash build-base
+# RUN apk update && apk add --no-cache bash build-base
 
-# # Jenkinsのshコマンド内容をDockerに移す
-# COPY . /app
-# WORKDIR /app
-# RUN chmod +x gradlew
-# RUN ./gradlew clean build
+# Jenkinsのshコマンド内容をDockerに移す
+COPY . /app
+WORKDIR /app
+RUN chmod +x gradlew
+RUN ./gradlew clean build
 
 # ========================
 # ステージ 2: 実行ステージ (JARの実行のみ)
@@ -21,10 +21,10 @@ FROM eclipse-temurin:25-jre-alpine
 ENV TZ Asia/Tokyo 
 
 # ビルドステージから作成されたJARをコピー
-# COPY --from=builder /app/build/libs/*.jar app.jar
+COPY --from=builder /app/build/libs/*.jar app.jar
 
-# JenkinsのワークスペースでビルドされたJARをコンテナにコピー
-COPY build/libs/*.jar app.jar
+# # JenkinsのワークスペースでビルドされたJARをコンテナにコピー
+# COPY build/libs/*.jar app.jar
 
 # 実行
 ENTRYPOINT ["java", "-jar", "app.jar"]

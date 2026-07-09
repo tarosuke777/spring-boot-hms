@@ -2,18 +2,33 @@ pipeline {
     agent any
 
     stages {
-        stage('Test & Analyze') {
+        stage('Docker Build & Extract Reports') {
             steps {
-                echo 'Running tests and generating JaCoCo report...'
+                echo 'Building Docker Compose services and running tests inside Docker...'
+                // 1. Docker Composeでビルド（この内部のマルチステージビルドでテストとJaCoCoが走ります）
+                sh 'sudo docker compose build'
 
-                sh 'chmod +x gradlew'
+                echo 'Extracting JaCoCo reports from Docker builder stage...'
+                script {
+                    // 2. マルチステージビルドの "builder" ステージをターゲットに一時イメージを作成（キャッシュが効くので一瞬です）
+                    sh 'sudo docker build --target builder -t hms-builder:tmp .'
+                    
+                    // 3. 一時コンテナを作成
+                    sh 'sudo docker create --name tmp_reporter hms-builder:tmp'
+                    
+                    // 4. コンテナ内のレポートをJenkinsのワークスペースへコピー
+                    sh 'mkdir -p build/reports/jacoco/test'
+                    sh 'sudo docker cp tmp_reporter:/app/build/reports/jacoco/test/html build/reports/jacoco/test/'
+                    
+                    // 5. 後片付け（一時コンテナと一時イメージの削除）
+                    sh 'sudo docker rm tmp_reporter'
+                    sh 'sudo docker rmi hms-builder:tmp'
+                    
+                    // 6. Jenkinsがファイルを読み取れるように権限を調整
+                    sh 'sudo chmod -R 755 build/reports'
+                }
 
-                echo 'Installing Playwright system dependencies...'
-                sh './gradlew pWInstallDeps'
-
-                // テストを実行してレポートを生成
-                sh './gradlew clean test jacocoTestReport build'
-
+                // 7. コピーしてきたレポートを Jenkins にパブリッシュ
                 publishHTML([
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
@@ -23,15 +38,11 @@ pipeline {
                     reportName: 'JaCoCo Report',
                     reportTitles: ''
                 ])
-
             }
         }
 
-        stage('Prepare Docker and Deploy') {
+        stage('Deploy') {
             steps {
-                echo 'Building Docker Compose services...'
-                sh 'sudo docker compose build'
-                
                 echo 'Stopping and removing old containers...'
                 sh 'sudo docker compose down'
                 
