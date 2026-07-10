@@ -106,7 +106,7 @@ tasks.named('jar') {
 }
 
 tasks.named('test') {
-	dependsOn 'playwrightInstallDeps'
+	// dependsOn 'playwrightInstallDeps'
 
 	useJUnitPlatform()
 	systemProperty 'spring.profiles.active', 'test'
@@ -128,11 +128,11 @@ tasks.withType(JavaCompile) {
     ]
 }
 
-tasks.register('playwrightInstallDeps', JavaExec) {
-    group = 'verification'
-    description = 'Installs system dependencies for Playwright'
+// tasks.register('playwrightInstallDeps', JavaExec) {
+//     group = 'verification'
+//     description = 'Installs system dependencies for Playwright'
     
-    classpath = sourceSets.test.runtimeClasspath
-    mainClass = 'com.microsoft.playwright.CLI'
-    args = ['install-deps']
-}
+//     classpath = sourceSets.test.runtimeClasspath
+//     mainClass = 'com.microsoft.playwright.CLI'
+//     args = ['install-deps']
+// }
