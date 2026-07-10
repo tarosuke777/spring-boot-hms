@@ -42,6 +42,13 @@ class UserFlowE2ETest {
     @BeforeEach
     void createContext() {
         // HEADLESS=false にすると、実際にブラウザが起動する様子を目視できます
+        System.out.println("====== START: ENVIRONMENT VARIABLES ======");
+        java.util.Map<String, String> env = System.getenv();
+        env.forEach((key, value) -> {
+            System.out.println(key + " = " + value);
+        });
+        System.out.println("====== END: ENVIRONMENT VARIABLES ======");
+
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
         page = browser.newPage();
     }
