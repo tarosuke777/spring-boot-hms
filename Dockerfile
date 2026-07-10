@@ -3,6 +3,8 @@
 # ========================
 FROM gradle:jdk25 AS builder 
 
+ENV GRADLE_USER_HOME=/tmp/.gradle
+
 # RUN apk update && apk add --no-cache bash build-base
 
 # Playwrightの依存関係をインストールするために必要なパッケージを追加
