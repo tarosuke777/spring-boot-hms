@@ -62,7 +62,7 @@
 #     libglib2.0-0t64 \
 #     && rm -rf /var/lib/apt/lists/*
 
-FROM mcr.microsoft.com/playwright/java:v1.61.0-jammy
+FROM mcr.microsoft.com/playwright/java:v1.61.0-jammy AS builder
 
 # Jenkinsのshコマンド内容をDockerに移す
 COPY . /app
