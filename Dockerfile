@@ -3,6 +3,8 @@
 # ========================
 FROM gradle:jdk25 AS builder 
 
+RUN echo "--- GRADLE_USER_HOME is: $GRADLE_USER_HOME ---"
+
 ENV GRADLE_USER_HOME=/tmp/.gradle
 
 # RUN apk update && apk add --no-cache bash build-base
