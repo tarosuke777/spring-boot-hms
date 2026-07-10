@@ -60,7 +60,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Jenkinsのshコマンド内容をDockerに移す
 COPY . /app
 
-RUN find /app -maxdepth 
+RUN find /app -maxdepth 3
 
 WORKDIR /app
 # root ユーザーに切り替える（playwright の install-deps コマンドに apt-get を成功させるため）
