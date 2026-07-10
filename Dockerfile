@@ -70,7 +70,7 @@ WORKDIR /app
 # root ユーザーに切り替える（playwright の install-deps コマンドに apt-get を成功させるため）
 USER root
 RUN chmod +x gradlew
-RUN ./gradlew clean build
+RUN ./gradlew clean build --stacktrace
 
 # ========================
 # ステージ 2: 実行ステージ (JARの実行のみ)
