@@ -3,6 +3,7 @@
 # ========================
 FROM gradle:jdk25 AS builder 
 
+ENV PLAYWRIGHT_BROWSERS_PATH=/tmp/ms-playwright
 
 ENV GRADLE_USER_HOME=/tmp/.gradle
 RUN echo "--- GRADLE_USER_HOME is: $GRADLE_USER_HOME ---"
