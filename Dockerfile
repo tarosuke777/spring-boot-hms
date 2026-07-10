@@ -8,6 +8,8 @@ FROM gradle:jdk25 AS builder
 # Jenkinsのshコマンド内容をDockerに移す
 COPY . /app
 WORKDIR /app
+# root ユーザーに切り替える（playwright の install-deps コマンドに apt-get を成功させるため）
+USER root
 RUN chmod +x gradlew
 RUN ./gradlew clean build
 
