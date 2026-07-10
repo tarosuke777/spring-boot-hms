@@ -54,6 +54,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libdbus-1-3 \
     libgdk-pixbuf2.0-bin \
     libasound2t64 \
+    libglib2.0-0t64 \
     && rm -rf /var/lib/apt/lists/*
 
 # Jenkinsのshコマンド内容をDockerに移す
