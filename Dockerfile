@@ -1,7 +1,7 @@
 # ========================
 # ステージ 1: ビルドステージ (JARの作成のみ)
 # ========================
-# FROM gradle:jdk25 AS builder 
+FROM gradle:jdk25 AS builder 
 
 # ENV PLAYWRIGHT_BROWSERS_PATH=/tmp/ms-playwright
 
@@ -62,16 +62,15 @@
 #     libglib2.0-0t64 \
 #     && rm -rf /var/lib/apt/lists/*
 
-FROM mcr.microsoft.com/playwright/java:v1.61.0-jammy AS builder
+# FROM mcr.microsoft.com/playwright/java:v1.61.0-jammy AS builder
 
 # Jenkinsのshコマンド内容をDockerに移す
-COPY . /app
+# COPY . /app
 
 # RUN find /app -maxdepth 3
 
 WORKDIR /app
-# root ユーザーに切り替える（playwright の install-deps コマンドに apt-get を成功させるため）
-# USER root
+COPY . /app
 RUN chmod +x gradlew
 RUN ./gradlew clean build
 
