@@ -20,7 +20,7 @@ pipeline {
                         sh 'sudo docker compose build builder'
 
                         echo 'Running builder inside Docker...'
-                        sh 'sudo docker compose run --name jenkins-builder-container builder'
+                        sh 'sudo docker compose run --name jenkins-builder-container builder ./gradlew build'
                     } finally {
                         echo 'Copying build artifacts from builder container...'
                         sh 'sudo docker cp jenkins-builder-container:/app/build .'
