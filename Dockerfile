@@ -72,7 +72,7 @@ FROM mcr.microsoft.com/playwright/java:v1.61.0-jammy AS builder
 WORKDIR /app
 COPY . /app
 RUN chmod +x gradlew
-RUN ./gradlew clean build
+# RUN ./gradlew clean build
 
 # # ========================
 # # レポート書き出し専用のステージ
