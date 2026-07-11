@@ -25,7 +25,7 @@ pipeline {
                         sh 'sudo docker compose run --name jenkins-test-container test ./gradlew test'
                     } catch (Exception e) {
                         echo "Tests failed: ${e.getMessage()}"
-                        sh 'sudo docker cp jenkins-test-container:/app/build .'
+                        // sh 'sudo docker cp jenkins-test-container:/app/build .'
                         // echo '--- Displaying /app/build contents due to failure ---'
                         // sh 'sudo docker compose run --name jenkins-test-container test ls -la /app/build'
                         throw e // Rethrow to mark the build as failed
