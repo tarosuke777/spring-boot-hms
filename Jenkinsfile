@@ -7,6 +7,9 @@ pipeline {
                 script {
                     echo 'Forcibly cleaning up old root-owned artifacts...'
                     sh 'sudo rm -rf build'
+
+                    echo 'Creating build directory...'
+                    sh 'sudo mkdir build'
                 }
             }
         }
