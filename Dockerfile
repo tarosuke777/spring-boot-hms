@@ -81,7 +81,6 @@ RUN chmod +x gradlew
 # COPY --from=builder /app/build /
 
 FROM builder AS tester
-# RUN ./gradlew test
 
 FROM builder AS final-build
 RUN ./gradlew bootJar -x test
