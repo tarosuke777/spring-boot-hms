@@ -70,7 +70,7 @@ FROM mcr.microsoft.com/playwright/java:v1.61.0-jammy AS builder
 # RUN find /app -maxdepth 3
 
 WORKDIR /app
-# COPY . /app
+COPY . /app
 RUN chmod +x gradlew
 # RUN ./gradlew clean build
 
