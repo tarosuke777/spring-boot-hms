@@ -14,8 +14,11 @@ pipeline {
         stage('Test & Report') {
             steps {
                 script {
-                    echo 'Building Docker Compose services and running tests inside Docker...'
-                    sh 'sudo docker compose build test' 
+                    echo 'Building tests inside Docker...'
+                    sh 'sudo docker compose build test'
+
+                    echo 'Running tests inside Docker...'
+                    sh 'sudo docker compose run --rm test'
                 }
             }
         }
