@@ -4,7 +4,9 @@ services:
   test:
     build:
       context: .
+      dockerfile: Dockerfile
       target: tester
+    command: ./gradlew test
     volumes:
       - ./build:/app/build
 
@@ -14,6 +16,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: final-build
+    command: ./gradlew bootJar -x test
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:mariadb://home-db-mariadb:3306/hms
