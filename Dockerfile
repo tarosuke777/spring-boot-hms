@@ -82,15 +82,15 @@ RUN chmod +x gradlew
 
 # FROM builder AS tester
 
-FROM builder AS final-build
-RUN ./gradlew bootJar -x test
+# FROM builder AS final-build
+# RUN ./gradlew bootJar -x test
 
 # ========================
 # ステージ 2: 実行ステージ (JARの実行のみ)
 # ========================
 # FROM openjdk:21-jdk
 # FROM eclipse-temurin:21-jre-ubi10-minimal
-FROM eclipse-temurin:25-jre-alpine
+FROM eclipse-temurin:25-jre-alpine AS final-build
 # タイムゾーンを日本時間に変更（コンテナ内の実行環境をJSTに）
 ENV TZ Asia/Tokyo 
 

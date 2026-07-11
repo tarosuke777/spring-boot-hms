@@ -47,7 +47,7 @@ pipeline {
                 sh 'sudo docker compose down'
                 
                 echo 'Starting new containers...'
-                sh 'sudo docker compose up -d'
+                sh 'sudo docker compose up -d hms-ap'
             }
         }
     }
