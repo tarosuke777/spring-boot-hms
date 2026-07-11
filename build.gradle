@@ -111,9 +111,10 @@ tasks.named('test') {
 	useJUnitPlatform()
 	systemProperty 'spring.profiles.active', 'test'
 
-	testLogging {
-        showStandardStreams = true
-    }
+	// テストの標準出力をコンソールに表示する
+	// testLogging {
+    //     showStandardStreams = true
+    // }
 
 	finalizedBy 'jacocoTestReport'
 }
