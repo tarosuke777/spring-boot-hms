@@ -5,43 +5,10 @@ pipeline {
         stage('Docker Build & Extract Reports') {
             steps {
                 echo 'Forcibly cleaning up old root-owned artifacts...'
-                // root権限で生成されたbuildフォルダを強制的に削除
                 sh 'sudo rm -rf build'
 
                 echo 'Building Docker Compose services and running tests inside Docker...'
-                                
-                // 1. Docker Composeでビルド（この内部のマルチステージビルドでテストとJaCoCoが走ります）
                 sh 'sudo docker compose build'
-
-                echo 'Extracting JaCoCo reports from Docker builder stage...'
-                script {
-                    // 2. マルチステージビルドの "builder" ステージをターゲットに一時イメージを作成（キャッシュが効くので一瞬です）
-                    sh 'sudo docker build --target builder -t hms-builder:tmp .'
-                    
-                    // 3. 一時コンテナを作成
-                    sh 'sudo docker create --name tmp_reporter hms-builder:tmp'
-                    
-                    // 4. コンテナ内のレポートをJenkinsのワークスペースへコピー
-                    sh 'sudo docker cp tmp_reporter:/app/build build'
-                    
-                    // 5. 後片付け（一時コンテナと一時イメージの削除）
-                    sh 'sudo docker rm tmp_reporter'
-                    sh 'sudo docker rmi hms-builder:tmp'
-                    
-                    // 6. Jenkinsがファイルを読み取れるように権限を調整
-                    sh 'sudo chmod -R 755 build'
-                }
-
-                // 7. コピーしてきたレポートを Jenkins にパブリッシュ
-                publishHTML([
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: 'build/reports/jacoco/test/html',
-                    reportFiles: 'index.html',
-                    reportName: 'JaCoCo Report',
-                    reportTitles: ''
-                ])
             }
         }
 
@@ -57,6 +24,44 @@ pipeline {
     }
 
     post {
+        // 【重要】成功・失敗に関わらず、ビルドステージが終わったら必ず実行する
+        always {
+            script {
+                // テストの成否に関わらず、イメージが作られていればレポートを抽出する
+                echo 'Extracting JaCoCo reports from Docker builder stage (Always)...'
+                try {
+                    // 2. マルチステージビルドの "builder" ステージをターゲットに一時イメージを作成
+                    sh 'sudo docker build --target builder -t hms-builder:tmp .'
+                    
+                    // 3. 一時コンテナを作成
+                    sh 'sudo docker create --name tmp_reporter hms-builder:tmp'
+                    
+                    // 4. コンテナ内のレポートをJenkinsのワークスペースへコピー
+                    sh 'sudo docker cp tmp_reporter:/app/build build'
+                    
+                    // 5. 後片付け（一時コンテナと一時イメージの削除）
+                    sh 'sudo docker rm tmp_reporter'
+                    sh 'sudo docker rmi hms-builder:tmp'
+                    
+                    // 6. Jenkinsがファイルを読み取れるように権限を調整
+                    sh 'sudo chmod -R 755 build'
+
+                    // 7. コピーしてきたレポートを Jenkins にパブリッシュ
+                    publishHTML([
+                        allowMissing: true, // テストの極端な失敗でファイル自体がない場合を考慮してtrueに
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'build/reports/jacoco/test/html',
+                        reportFiles: 'index.html',
+                        reportName: 'JaCoCo Report',
+                        reportTitles: ''
+                    ])
+                } catch (Exception e) {
+                    echo "Failed to extract reports: ${e.message}"
+                }
+            }
+        }
+
         // ビルド成功時に実行
         success {
             echo 'Build succeeded! Analyzing JaCoCo report and sending notification...'
