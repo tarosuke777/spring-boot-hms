@@ -17,7 +17,7 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 
-// @Disabled("Jenkins上でPlaywrightのブラウザが起動できないため、E2Eテストを無効化")
+@Disabled("Jenkins上でPlaywrightのブラウザが起動できないため、E2Eテストを無効化")
 @Sql
 @Transactional
 @ActiveProfiles("test")
