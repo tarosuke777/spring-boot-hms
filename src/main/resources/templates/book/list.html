@@ -1,123 +1,171 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layout/layout}">
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout}"
+>
+  <head>
+    <th:block layout:fragment="page-css">
+      <link rel="stylesheet" th:href="@{/css/book/list.css}" />
+    </th:block>
 
-<head>
+    <th:block layout:fragment="page-scripts">
+      <script type="module" th:src="@{/js/common/modal.js}"></script>
+    </th:block>
 
-	<th:block layout:fragment="page-css">
-		<link rel="stylesheet" th:href="@{/css/book/list.css}" />
-	</th:block>
+    <title>Book</title>
+  </head>
 
-	<th:block layout:fragment="page-scripts">
-		<script type="module" th:src="@{/js/common/modal.js}"></script>
-	</th:block>
+  <body>
+    <div layout:fragment="content">
+      <div class="mt-3 mb-3 border-bottom">
+        <h1 class="h2">Book</h1>
+      </div>
+      <div class="row align-items-center mb-4 g-3">
+        <div class="col-auto">
+          <a class="btn btn-dark" th:href="@{'/book/register'}">新規登録</a>
+        </div>
 
-	<title>Book</title>
-</head>
+        <div class="col">
+          <form
+            th:action="@{/book/list}"
+            method="get"
+            class="row g-2 align-items-center"
+          >
+            <div class="col-auto">
+              <select class="form-select" name="genre">
+                <option value="" th:selected="${genre == null}">
+                  選択してください
+                </option>
+                <option
+                  th:each="g : ${T(com.tarosuke777.hms.enums.BookGenre).values()}"
+                  th:value="${g}"
+                  th:text="${g.label}"
+                  th:selected="${genre != null and g.code == genre.code}"
+                ></option>
+              </select>
+            </div>
 
-<body>
-	<div layout:fragment="content">
-		<div class="mt-3 mb-3 border-bottom">
-			<h1 class="h2">Book</h1>
-		</div>
-		<div class="row align-items-center mb-4 g-3">
-			<div class="col-auto">
-				<a class="btn btn-dark" th:href="@{'/book/register'}">新規登録</a>
-			</div>
+            <div class="col-auto">
+              <select class="form-select" name="authorId">
+                <option value="" th:selected="${authorId == null}">
+                  選択してください
+                </option>
+                <option
+                  th:each="entry : ${authorMap}"
+                  th:value="${entry.key}"
+                  th:text="${entry.value}"
+                  th:selected="${authorId != null and entry.key == authorId}"
+                ></option>
+              </select>
+            </div>
 
-			<div class="col">
-				<form th:action="@{/book/list}" method="get" class="row g-2 align-items-center">
+            <div class="col-auto">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  name="isAdult"
+                  id="isAdult"
+                  th:checked="${isAdult}"
+                />
+                <label class="form-check-label" for="isAdult">18+のみ</label>
+              </div>
+            </div>
 
-					<div class="col-auto">
-						<select class="form-select" name="genre">
-							<option value="" th:selected="${genre == null}">選択してください</option>
-							<option th:each="g : ${T(com.tarosuke777.hms.enums.BookGenre).values()}" th:value="${g}"
-								th:text="${g.label}" th:selected="${genre != null and g.code == genre.code}"></option>
-						</select>
-					</div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-dark">検索</button>
+              <a th:href="@{/book/list}" class="btn btn-secondary">リセット</a>
+            </div>
+          </form>
+        </div>
+      </div>
 
-					<div class="col-auto">
-						<select class="form-select" name="authorId">
-							<option value="" th:selected="${authorId == null}">選択してください</option>
-							<option th:each="entry : ${authorMap}" th:value="${entry.key}" th:text="${entry.value}"
-								th:selected="${authorId != null and entry.key == authorId}"></option>
-						</select>
-					</div>
+      <nav th:if="${bookPage.totalPages > 1}" aria-label="Page navigation">
+        <ul class="pagination">
+          <li class="page-item" th:classappend="${bookPage.first} ? 'disabled'">
+            <a
+              class="page-link"
+              th:href="@{/book/list(page=${bookPage.number - 1}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}"
+              >&laquo;</a
+            >
+          </li>
 
-					<div class="col-auto">
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" name="isAdult" id="isAdult"
-								th:checked="${isAdult}">
-							<label class="form-check-label" for="isAdult">18+のみ</label>
-						</div>
-					</div>
+          <li
+            class="page-item"
+            th:each="i : ${#numbers.sequence(0, bookPage.totalPages - 1)}"
+            th:classappend="${i == bookPage.number} ? 'active'"
+          >
+            <a
+              class="page-link"
+              th:href="@{/book/list(page=${i}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}"
+              th:text="${i + 1}"
+              >1</a
+            >
+          </li>
 
-					<div class="col-auto">
-						<button type="submit" class="btn btn-dark">検索</button>
-						<a th:href="@{/book/list}" class="btn btn-secondary">リセット</a>
-					</div>
-				</form>
-			</div>
-		</div>
+          <li class="page-item" th:classappend="${bookPage.last} ? 'disabled'">
+            <a
+              class="page-link"
+              th:href="@{/book/list(page=${bookPage.number + 1}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}"
+              >&raquo;</a
+            >
+          </li>
+        </ul>
+      </nav>
 
-		<nav th:if="${bookPage.totalPages > 1}" aria-label="Page navigation">
-			<ul class="pagination">
-
-				<li class="page-item" th:classappend="${bookPage.first} ? 'disabled'">
-					<a class="page-link"
-						th:href="@{/book/list(page=${bookPage.number - 1}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}">&laquo;</a>
-				</li>
-
-				<li class="page-item" th:each="i : ${#numbers.sequence(0, bookPage.totalPages - 1)}"
-					th:classappend="${i == bookPage.number} ? 'active'">
-					<a class="page-link"
-						th:href="@{/book/list(page=${i}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}"
-						th:text="${i + 1}">1</a>
-				</li>
-
-				<li class="page-item" th:classappend="${bookPage.last} ? 'disabled'">
-					<a class="page-link"
-						th:href="@{/book/list(page=${bookPage.number + 1}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}">&raquo;</a>
-				</li>
-
-			</ul>
-		</nav>
-
-		<table class="table table-bordered table-hover align-middle">
-			<thead>
-				<tr class="table-dark">
-					<th>Genre</th>
-					<th>Book Name</th>
-					<th>Author Name</th>
-					<th>Link</th>
-					<th>Note</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="book: ${bookPage.content}">
-					<td th:text="${book.genre.label}"></td>
-					<td>
-						<span th:text="${book.name}"></span>
-						<span th:if="${book.isAdult}" class="badge bg-danger ms-1">18+</span>
-					</td>
-					<td th:text="${book.authorId != null ? authorMap.get(book.authorId) : ''}"></td>
-					<td class="text-center">
-						<a th:if="${not #strings.isEmpty(book.link)}" th:href="${book.link}" target="_blank"
-							class="btn btn-sm btn-link">Link</a>
-						<span th:unless="${not #strings.isEmpty(book.link)}">-</span>
-					</td>
-					<td class="text-truncate modal-trigger" style="max-width: 200px; cursor: pointer;"
-						data-bs-toggle="modal" data-bs-target="#globalModal" th:data-modal-text="${book.note}"
-						data-modal-title="Note">
-						<span th:text="${book.note}"></span>
-					</td>
-					<td><a class="btn btn-dark" th:href="@{'/book/detail/' + ${book.id}}">Detail</a>
-					</td>
-			</tbody>
-		</table>
-		<th:block th:replace="~{parts/parts :: globalModal }"></th:block>
-	</div>
-</body>
-
+      <table class="table table-bordered table-hover align-middle">
+        <thead>
+          <tr class="table-dark">
+            <th>Genre</th>
+            <th>Book Name</th>
+            <th>Author Name</th>
+            <th>Link</th>
+            <th>Note</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="book: ${bookPage.content}">
+            <td th:text="${book.genre.label}"></td>
+            <td>
+              <span th:text="${book.name}"></span>
+              <span th:if="${book.isAdult}" class="badge bg-danger ms-1"
+                >18+</span
+              >
+            </td>
+            <td
+              th:text="${book.authorId != null ? authorMap.get(book.authorId) : ''}"
+            ></td>
+            <td class="text-center">
+              <a
+                th:if="${not #strings.isEmpty(book.link)}"
+                th:href="${book.link}"
+                target="_blank"
+                class="btn btn-sm btn-link"
+                >Link</a
+              >
+              <span th:unless="${not #strings.isEmpty(book.link)}">-</span>
+            </td>
+            <td
+              class="text-truncate modal-trigger"
+              style="max-width: 200px; cursor: pointer"
+              data-bs-toggle="modal"
+              data-bs-target="#globalModal"
+              th:data-modal-text="${book.note}"
+              data-modal-title="Note"
+            >
+              <span th:text="${book.note}"></span>
+            </td>
+            <td>
+              <a class="btn btn-dark" th:href="@{'/book/detail/' + ${book.id}}"
+                >Detail</a
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <th:block th:replace="~{parts/parts :: globalModal }"></th:block>
+    </div>
+  </body>
 </html>

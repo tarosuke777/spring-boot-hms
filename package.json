@@ -1,0 +1,24 @@
+{
+  "name": "spring-boot-hms",
+  "version": "1.0.0",
+  "description": "このプロジェクトは、Spring Boot をベースとした個人の趣味管理システム（Hobby Management System）です。\r 音楽、書籍、映画、トレーニング、日記など、多岐にわたる趣味の記録と管理を目的としています。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tarosuke777/spring-boot-hms.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tarosuke777/spring-boot-hms/issues"
+  },
+  "homepage": "https://github.com/tarosuke777/spring-boot-hms#readme",
+  "devDependencies": {
+    "prettier": "^3.9.5"
+  }
+}

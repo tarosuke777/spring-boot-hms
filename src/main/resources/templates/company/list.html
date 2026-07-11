@@ -1,90 +1,137 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
-    layout:decorate="~{layout/layout}">
-
-<head>
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout}"
+>
+  <head>
     <th:block layout:fragment="page-scripts">
-        <script type="module" th:src="@{/js/common/modal.js}"></script>
+      <script type="module" th:src="@{/js/common/modal.js}"></script>
     </th:block>
     <title>Company</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div layout:fragment="content">
-        <div class="mt-3 mb-3 border-bottom">
-            <h1 class="h2">Company</h1>
+      <div class="mt-3 mb-3 border-bottom">
+        <h1 class="h2">Company</h1>
+      </div>
+      <div class="row align-items-center mb-4 g-3">
+        <div class="col-auto">
+          <a class="btn btn-dark" th:href="@{'/company/register'}">Register</a>
         </div>
-        <div class="row align-items-center mb-4 g-3">
+
+        <div class="col">
+          <form
+            th:action="@{/company/list}"
+            method="get"
+            class="row g-2 align-items-center"
+          >
             <div class="col-auto">
-                <a class="btn btn-dark" th:href="@{'/company/register'}">Register</a>
+              <input
+                type="text"
+                class="form-control"
+                name="name"
+                placeholder="Name"
+                th:value="${name}"
+              />
             </div>
 
-            <div class="col">
-                <form th:action="@{/company/list}" method="get" class="row g-2 align-items-center">
-
-                    <div class="col-auto">
-                        <input type="text" class="form-control" name="name" placeholder="Name" th:value="${name}" />
-                    </div>
-
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-dark">検索</button>
-                        <a th:href="@{/company/list}" class="btn btn-secondary">リセット</a>
-                    </div>
-                </form>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-dark">検索</button>
+              <a th:href="@{/company/list}" class="btn btn-secondary"
+                >リセット</a
+              >
             </div>
+          </form>
         </div>
+      </div>
 
-        <nav th:if="${companyPage.totalPages > 1}" aria-label="Page navigation">
-            <ul class="pagination">
+      <nav th:if="${companyPage.totalPages > 1}" aria-label="Page navigation">
+        <ul class="pagination">
+          <li
+            class="page-item"
+            th:classappend="${companyPage.first} ? 'disabled'"
+          >
+            <a
+              class="page-link"
+              th:href="@{/company/list(page=${companyPage.number - 1}, name=${name})}"
+              >&laquo;</a
+            >
+          </li>
 
-                <li class="page-item" th:classappend="${companyPage.first} ? 'disabled'">
-                    <a class="page-link"
-                        th:href="@{/company/list(page=${companyPage.number - 1}, name=${name})}">&laquo;</a>
-                </li>
+          <li
+            class="page-item"
+            th:each="i : ${#numbers.sequence(0, companyPage.totalPages - 1)}"
+            th:classappend="${i == companyPage.number} ? 'active'"
+          >
+            <a
+              class="page-link"
+              th:href="@{/company/list(page=${i}, name=${name})}"
+              th:text="${i + 1}"
+              >1</a
+            >
+          </li>
 
-                <li class="page-item" th:each="i : ${#numbers.sequence(0, companyPage.totalPages - 1)}"
-                    th:classappend="${i == companyPage.number} ? 'active'">
-                    <a class="page-link" th:href="@{/company/list(page=${i}, name=${name})}" th:text="${i + 1}">1</a>
-                </li>
+          <li
+            class="page-item"
+            th:classappend="${companyPage.last} ? 'disabled'"
+          >
+            <a
+              class="page-link"
+              th:href="@{/company/list(page=${companyPage.number + 1}, name=${name})}"
+              >&raquo;</a
+            >
+          </li>
+        </ul>
+      </nav>
 
-                <li class="page-item" th:classappend="${companyPage.last} ? 'disabled'">
-                    <a class="page-link"
-                        th:href="@{/company/list(page=${companyPage.number + 1}, name=${name})}">&raquo;</a>
-                </li>
-
-            </ul>
-        </nav>
-
-        <div>
-            <table class="table table-bordered table-hover align-middle">
-                <thead>
-                    <tr class="table-dark">
-                        <th>Name</th>
-                        <th>Note</th>
-                        <th>Job Application History</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="company: ${companyPage.content}">
-                        <td th:text="${company.name}"></td>
-                        <td class="text-truncate modal-trigger" style="max-width: 500px; cursor: pointer;"
-                            data-bs-toggle="modal" data-bs-target="#globalModal" th:data-modal-text="${company.note}"
-                            data-modal-title="Note">
-                            <span th:text="${company.note}"></span>
-                        </td>
-                        <td class="text-truncate modal-trigger" style="max-width: 500px; cursor: pointer;"
-                            data-bs-toggle="modal" data-bs-target="#globalModal"
-                            th:data-modal-text="${company.jobApplicationHistory}"
-                            data-modal-title="Job Application History">
-                            <span th:text="${company.jobApplicationHistory}"></span>
-                        </td>
-                        <td><a class="btn btn-dark" th:href="@{'/company/detail/' + ${company.id}}">Detail</a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <th:block th:replace="~{parts/parts :: globalModal }"></th:block>
-</body>
-
+      <div>
+        <table class="table table-bordered table-hover align-middle">
+          <thead>
+            <tr class="table-dark">
+              <th>Name</th>
+              <th>Note</th>
+              <th>Job Application History</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="company: ${companyPage.content}">
+              <td th:text="${company.name}"></td>
+              <td
+                class="text-truncate modal-trigger"
+                style="max-width: 500px; cursor: pointer"
+                data-bs-toggle="modal"
+                data-bs-target="#globalModal"
+                th:data-modal-text="${company.note}"
+                data-modal-title="Note"
+              >
+                <span th:text="${company.note}"></span>
+              </td>
+              <td
+                class="text-truncate modal-trigger"
+                style="max-width: 500px; cursor: pointer"
+                data-bs-toggle="modal"
+                data-bs-target="#globalModal"
+                th:data-modal-text="${company.jobApplicationHistory}"
+                data-modal-title="Job Application History"
+              >
+                <span th:text="${company.jobApplicationHistory}"></span>
+              </td>
+              <td>
+                <a
+                  class="btn btn-dark"
+                  th:href="@{'/company/detail/' + ${company.id}}"
+                  >Detail</a
+                >
+              </td>
+              table
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <th:block th:replace="~{parts/parts :: globalModal }"></th:block>
+    </div>
+  </body>
 </html>

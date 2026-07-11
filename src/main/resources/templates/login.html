@@ -1,37 +1,49 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-	layout:decorate="~{layout/layout}">
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  layout:decorate="~{layout/layout}"
+>
+  <head>
+    <title>Login</title>
+  </head>
 
-<head>
-	<title>Login</title>
-</head>
-
-<body>
-	<div layout:fragment="content">
-		<div class="container">
-			<div class="card text-center mt-5">
-				<div class="card-header text-bg-dark">
-					<h1 class="h4">Login</h1>
-				</div>
-				<div class="card-body">
-					<form method="post" th:action="@{/login}">
-						<p th:if="${param.error}" class="error">UserName or Password is
-							incorrect.</p>
-						<div class="mb-3">
-							<input type="text" class="form-control" placeholder="Name" name="userName">
-						</div>
-						<div class="mb-3">
-							<input type="password" class="form-control" placeholder="Password" name="password">
-						</div>
-						<div class="mb-3">
-							<input type="submit" value="login" class="btn btn-dark" />
-						</div>
-					</form>
-					<a th:href="@{/user/signup}">SignUp</a>
-				</div>
-			</div>
-		</div>
-	</div>
-</body>
-
+  <body>
+    <div layout:fragment="content">
+      <div class="container">
+        <div class="card text-center mt-5">
+          <div class="card-header text-bg-dark">
+            <h1 class="h4">Login</h1>
+          </div>
+          <div class="card-body">
+            <form method="post" th:action="@{/login}">
+              <p th:if="${param.error}" class="error">
+                UserName or Password is incorrect.
+              </p>
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Name"
+                  name="userName"
+                />
+              </div>
+              <div class="mb-3">
+                <input
+                  type="password"
+                  class="form-control"
+                  placeholder="Password"
+                  name="password"
+                />
+              </div>
+              <div class="mb-3">
+                <input type="submit" value="login" class="btn btn-dark" />
+              </div>
+            </form>
+            <a th:href="@{/user/signup}">SignUp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

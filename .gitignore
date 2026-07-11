@@ -39,3 +39,6 @@ out/
 ### Project ###
 /docker/secrets/
 /aws/
+
+# Node.jsの依存ライブラリフォルダを除外
+node_modules/

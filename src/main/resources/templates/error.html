@@ -1,36 +1,37 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-	layout:decorate="~{layout/layout}">
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  layout:decorate="~{layout/layout}"
+>
+  <head>
+    <title>Error</title>
+  </head>
 
-<head>
-	<title>Error</title>
-</head>
+  <body>
+    <div layout:fragment="content">
+      <div class="mt-3 mb-3 border-bottom">
+        <h1 class="h2">Error</h1>
+      </div>
 
-<body>
-	<div layout:fragment="content">
-		<div class="mt-3 mb-3 border-bottom">
-			<h1 class="h2">Error</h1>
-		</div>
+      <div th:if="${isOptimisticLockError}">
+        <div class="alert alert-warning">
+          他のユーザーによってデータが更新されたため、処理を完了できませんでした。<br />
+          一度一覧に戻り、最新の情報を確認してから再度やり直してください。
+        </div>
+      </div>
 
-		<div th:if="${isOptimisticLockError}">
-			<div class="alert alert-warning">
-				他のユーザーによってデータが更新されたため、処理を完了できませんでした。<br>
-				一度一覧に戻り、最新の情報を確認してから再度やり直してください。
-			</div>
-		</div>
-
-		<div th:unless="${isOptimisticLockError}">
-			<div class="mb-3 row">
-				<label class="col-sm-2">Error ID</label>
-				<div class="col-sm-10">
-					<code th:text="${errorId}"></code>
-				</div>
-			</div>
-			<div class="alert alert-danger">
-				申し訳ございません。システムエラーが発生しました。上記のエラーIDを管理者にお伝えください。
-			</div>
-		</div>
-	</div>
-</body>
-
+      <div th:unless="${isOptimisticLockError}">
+        <div class="mb-3 row">
+          <label class="col-sm-2">Error ID</label>
+          <div class="col-sm-10">
+            <code th:text="${errorId}"></code>
+          </div>
+        </div>
+        <div class="alert alert-danger">
+          申し訳ございません。システムエラーが発生しました。上記のエラーIDを管理者にお伝えください。
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
