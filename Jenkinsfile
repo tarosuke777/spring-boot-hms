@@ -9,7 +9,7 @@ pipeline {
                 sh 'ls -R build/reports || echo "フォルダはまだ存在しません"'
                 
                 // 1. Docker Composeでビルド（この内部のマルチステージビルドでテストとJaCoCoが走ります）
-                // sh 'sudo docker compose build'
+                sh 'sudo docker compose build'
 
                 echo 'Extracting JaCoCo reports from Docker builder stage...'
                 // script {
