@@ -7,6 +7,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      outputs:
+        - type: local
+          dest: build
+          target: export-stage
+          export_on_failure: true
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:mariadb://home-db-mariadb:3306/hms

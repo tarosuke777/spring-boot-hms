@@ -75,6 +75,12 @@ RUN chmod +x gradlew
 RUN ./gradlew clean build
 
 # ========================
+# レポート書き出し専用のステージ
+# ========================
+FROM scratch AS export-stage
+COPY --from=builder /app/build /
+
+# ========================
 # ステージ 2: 実行ステージ (JARの実行のみ)
 # ========================
 # FROM openjdk:21-jdk
