@@ -18,7 +18,7 @@ pipeline {
                     sh 'sudo docker compose build test'
 
                     echo 'Running tests inside Docker...'
-                    sh 'sudo docker compose run --rm test'
+                    sh 'sudo docker compose run test'
                 }
             }
         }
