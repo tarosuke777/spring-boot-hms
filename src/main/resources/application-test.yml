@@ -15,4 +15,13 @@ spring:
         initialize-schema: false
 logging:
   level:
-    org.hibernate.orm.jdbc.bind: TRACE
+    org:
+      springframework:
+        test:
+          context:
+            jdbc: DEBUG
+      hibernate:
+        SQL: DEBUG
+        orm:
+          jdbc:
+            bind: TRACE
