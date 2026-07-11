@@ -6,7 +6,7 @@
 # ※ コンテナ起動でビルドしている理由は、ビルド時にエラーが起きた場合、成果物をホストにコピーできないため
 # ========================
 # FROM gradle:jdk25 AS builder
-FROM mcr.microsoft.com/playwright/java:v1.61.0-jammy AS builder
+FROM mcr.microsoft.com/playwright/java:v1.61.0 AS builder
 
 WORKDIR /app
 COPY . /app
