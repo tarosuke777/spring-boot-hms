@@ -1,12 +1,12 @@
 name: hms
 
 services:
-  # test:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #     target: tester
-  #   command: ./gradlew test
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    command: ./gradlew test
 
   hms-ap:
     image: hms:1.0
@@ -14,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      # target: final-build
+      target: final-build
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:mariadb://home-db-mariadb:3306/hms

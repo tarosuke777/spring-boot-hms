@@ -14,38 +14,30 @@ pipeline {
             }
         }
 
-        // stage('Test & Report') {
-        //     steps {
-        //         script {
-        //             try{
-        //                 echo 'Building tests inside Docker...'
-        //                 sh 'sudo docker compose build test'
-
-        //                 echo 'Running tests inside Docker...'
-        //                 sh 'sudo docker compose run --name jenkins-test-container test'
-        //             } finally {
-        //                 echo 'Copying build artifacts from test container...'
-        //                 sh 'sudo docker cp jenkins-test-container:/app/build .'
-                        
-        //                 echo 'Cleaning up test container...'
-        //                 sh 'sudo docker rm -f jenkins-test-container || true'
-        //             }
-        //         }
-        //     }
-        // }
-
-        stage('Docker Build & Extract Reports') {
+        stage('Test & Report') {
             steps {
                 script {
-                    try {
-                        echo 'Building Docker Compose services and running tests inside Docker...'
-                        // sh 'sudo docker compose build hms-ap'
-                        sh 'sudo docker compose build'
+                    try{
+                        echo 'Building tests inside Docker...'
+                        sh 'sudo docker compose build test'
+
+                        echo 'Running tests inside Docker...'
+                        sh 'sudo docker compose run --name jenkins-test-container test'
                     } finally {
-                        echo 'Copying build artifacts from hms-ap container...'
-                        sh 'sudo docker cp $(sudo docker compose ps -q hms-ap):/app/build .'
+                        echo 'Copying build artifacts from test container...'
+                        sh 'sudo docker cp jenkins-test-container:/app/build .'
+                        
+                        echo 'Cleaning up test container...'
+                        sh 'sudo docker rm -f jenkins-test-container || true'
                     }
                 }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building Docker Compose services and running tests inside Docker...'
+                sh 'sudo docker compose build hms-ap'
             }
         }
 
@@ -61,24 +53,22 @@ pipeline {
     }
 
     post {
-        always {
-            echo 'Publishing JaCoCo Report...'
-            publishHTML([
-                allowMissing: true, 
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'build/reports/jacoco/test/html',
-                reportFiles: 'index.html',
-                reportName: 'JaCoCo Report',
-                reportTitles: ''
-            ])
-            sh 'sudo chmod -R 755 build'
-        }
-
         // ビルド成功時に実行
         success {
             echo 'Build succeeded! Analyzing JaCoCo report and sending notification...'
             script {
+
+                echo 'Publishing JaCoCo Report...'
+                publishHTML([
+                    allowMissing: true, 
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'build/reports/jacoco/test/html',
+                    reportFiles: 'index.html',
+                    reportName: 'JaCoCo Report',
+                    reportTitles: ''
+                ])
+
                 def coverageText = ""
                 
                 try {
