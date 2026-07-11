@@ -72,7 +72,7 @@ FROM mcr.microsoft.com/playwright/java:v1.61.0-jammy AS builder
 WORKDIR /app
 COPY . /app
 RUN chmod +x gradlew
-# RUN ./gradlew clean build
+RUN ./gradlew clean build
 
 # # ========================
 # # レポート書き出し専用のステージ
@@ -80,10 +80,10 @@ RUN chmod +x gradlew
 # FROM scratch AS export-stage
 # COPY --from=builder /app/build /
 
-FROM builder AS tester
+# FROM builder AS tester
 
-FROM builder AS final-build
-RUN ./gradlew bootJar -x test
+# FROM builder AS final-build
+# RUN ./gradlew bootJar -x test
 
 # ========================
 # ステージ 2: 実行ステージ (JARの実行のみ)
@@ -95,12 +95,12 @@ FROM eclipse-temurin:25-jre-alpine
 ENV TZ Asia/Tokyo 
 
 # ビルドステージから作成されたJARをコピー
-# COPY --from=builder /app/build/libs/*.jar app.jar
-COPY --from=final-build /app/build/libs/*.jar app.jar
+COPY --from=builder /app/build/libs/*.jar app.jar
+# COPY --from=final-build /app/build/libs/*.jar app.jar
 
 # # JenkinsのワークスペースでビルドされたJARをコンテナにコピー
 # COPY build/libs/*.jar app.jar
 
 # 実行
-# ENTRYPOINT ["java", "-jar", "app.jar"]
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
+# CMD ["java", "-jar", "app.jar"]

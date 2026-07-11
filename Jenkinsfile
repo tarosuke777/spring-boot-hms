@@ -14,31 +14,38 @@ pipeline {
             }
         }
 
-        stage('Test & Report') {
-            steps {
-                script {
-                    try{
-                        echo 'Building tests inside Docker...'
-                        sh 'sudo docker compose build test'
+        // stage('Test & Report') {
+        //     steps {
+        //         script {
+        //             try{
+        //                 echo 'Building tests inside Docker...'
+        //                 sh 'sudo docker compose build test'
 
-                        echo 'Running tests inside Docker...'
-                        sh 'sudo docker compose run --name jenkins-test-container test'
-                    } finally {
-                        echo 'Copying build artifacts from test container...'
-                        sh 'sudo docker cp jenkins-test-container:/app/build .'
+        //                 echo 'Running tests inside Docker...'
+        //                 sh 'sudo docker compose run --name jenkins-test-container test'
+        //             } finally {
+        //                 echo 'Copying build artifacts from test container...'
+        //                 sh 'sudo docker cp jenkins-test-container:/app/build .'
                         
-                        echo 'Cleaning up test container...'
-                        sh 'sudo docker rm -f jenkins-test-container || true'
-                    }
-                }
-            }
-        }
+        //                 echo 'Cleaning up test container...'
+        //                 sh 'sudo docker rm -f jenkins-test-container || true'
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Docker Build & Extract Reports') {
             steps {
-
-                echo 'Building Docker Compose services and running tests inside Docker...'
-                sh 'sudo docker compose build hms-ap'
+                script {
+                    try {
+                        echo 'Building Docker Compose services and running tests inside Docker...'
+                        // sh 'sudo docker compose build hms-ap'
+                        sh 'sudo docker compose build'
+                    } finally {
+                        echo 'Copying build artifacts from hms-ap container...'
+                        sh 'sudo docker cp $(sudo docker compose ps -q hms-ap):/app/build .'
+                    }
+                }
             }
         }
 
