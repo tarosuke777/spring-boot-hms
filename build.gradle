@@ -106,8 +106,6 @@ tasks.named('jar') {
 }
 
 tasks.named('test') {
-	// dependsOn 'playwrightInstallDeps'
-
 	useJUnitPlatform()
 	systemProperty 'spring.profiles.active', 'test'
 
@@ -133,12 +131,3 @@ tasks.withType(JavaCompile) {
         "-Amapstruct.unmappedTargetPolicy=ERROR"
     ]
 }
-
-// tasks.register('playwrightInstallDeps', JavaExec) {
-//     group = 'verification'
-//     description = 'Installs system dependencies for Playwright'
-    
-//     classpath = sourceSets.test.runtimeClasspath
-//     mainClass = 'com.microsoft.playwright.CLI'
-//     args = ['install-deps']
-// }

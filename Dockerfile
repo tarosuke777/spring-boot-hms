@@ -1,92 +1,21 @@
 # ========================
-# ステージ 1: ビルドステージ (JARの作成のみ)
+# ステージ 1: ビルドステージ
+# docker compose build builderで、ビルドまで行う。
+# docker compose run --name jenkins-builder-container builder ./gradlew build で、ビルドステージのコンテナを起動して、ビルドを実行する。
+# エラーの有無に関わらず、docker cp jenkins-builder-container:/app/build .　で、ビルド成果物をホストにコピーする。
+# ※ コンテナ起動でビルドしている理由は、ビルド時にエラーが起きた場合、成果物をホストにコピーできないため
 # ========================
-# FROM gradle:jdk25 AS builder 
-
-# ENV PLAYWRIGHT_BROWSERS_PATH=/tmp/ms-playwright
-
-# ENV GRADLE_USER_HOME=/tmp/.gradle
-# RUN echo "--- GRADLE_USER_HOME is: $GRADLE_USER_HOME ---"
-
-# # RUN apk update && apk add --no-cache bash build-base
-
-# # Playwrightの依存関係をインストールするために必要なパッケージを追加
-# # RUN apt-get update && apt-get install -y --no-install-recommends \
-# #     libxcb-shm0 \
-# #     libx11-xcb1 \
-# #     libxrandr2 \
-# #     libxcomposite1 \
-# #     libxcursor1 \
-# #     libxdamage1 \
-# #     libxi6 \
-# #     libxext6 \
-# #     libxfixes3 \
-# #     libx11-6 \
-# #     libxcb1 \
-# #     libgtk-3-0 \
-# #     libgdk-pixbuf2.0-0 \
-# #     libpangocairo-1.0-0 \
-# #     libpango-1.0-0 \
-# #     libatk1.0-0 \
-# #     libcairo-gobject2 \
-# #     libcairo2 \
-# #     libglib2.0-0 \
-# #     libxrender1 \
-# #     libasound2 \
-# #     libdbus-1-3 \
-# #     && rm -rf /var/lib/apt/lists/*
-
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#     libxcb-shm0 \
-#     libx11-xcb1 \
-#     libxrandr2 \
-#     libxcomposite1 \
-#     libxcursor1 \
-#     libxdamage1 \
-#     libxi6 \
-#     libxext6 \
-#     libxfixes3 \
-#     libx11-6 \
-#     libxcb1 \
-#     libgtk-3-0 \
-#     libpangocairo-1.0-0 \
-#     libpango-1.0-0 \
-#     libatk1.0-0 \
-#     libcairo-gobject2 \
-#     libcairo2 \
-#     libglib2.0-0 \
-#     libxrender1 \
-#     libdbus-1-3 \
-#     libgdk-pixbuf2.0-bin \
-#     libasound2t64 \
-#     libglib2.0-0t64 \
-#     && rm -rf /var/lib/apt/lists/*
-
+# FROM gradle:jdk25 AS builder
 FROM mcr.microsoft.com/playwright/java:v1.61.0-jammy AS builder
-
-# Jenkinsのshコマンド内容をDockerに移す
-# COPY . /app
-
-# RUN find /app -maxdepth 3
 
 WORKDIR /app
 COPY . /app
 RUN chmod +x gradlew
-# RUN ./gradlew clean build
-
-# # ========================
-# # レポート書き出し専用のステージ
-# # ========================
-# FROM scratch AS export-stage
-# COPY --from=builder /app/build /
-
-# FROM builder AS tester
-
-# FROM builder AS final-build
-# RUN ./gradlew bootJar -x test
 
 # ========================
-# ステージ 2: 実行ステージ (JARの実行のみ)
+# ステージ 2: 実行ステージ
+# docker compose build hms-ap で、実行ステージのイメージを作成する。
+# docker compose up -d hms-ap で、実行ステージのコンテナを起動する。
 # ========================
 # FROM openjdk:21-jdk
 # FROM eclipse-temurin:21-jre-ubi10-minimal
@@ -96,11 +25,6 @@ ENV TZ Asia/Tokyo
 
 # ビルドステージから作成されたJARをコピー
 COPY --from=builder /app/build/libs/*.jar app.jar
-# COPY --from=final-build /app/build/libs/*.jar app.jar
-
-# # JenkinsのワークスペースでビルドされたJARをコンテナにコピー
-# COPY build/libs/*.jar app.jar
 
 # 実行
 ENTRYPOINT ["java", "-jar", "app.jar"]
-# CMD ["java", "-jar", "app.jar"]
