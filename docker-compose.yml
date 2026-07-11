@@ -17,7 +17,6 @@ services:
       context: .
       dockerfile: Dockerfile
       target: final-build
-    command: ./gradlew bootJar -x test
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:mariadb://home-db-mariadb:3306/hms
