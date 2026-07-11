@@ -74,13 +74,13 @@ pipeline {
                     if (fileExists(csvPath)) {
                         def covPct = sh(script: 'awk -F, \'NR > 1 {missed+=$4; covered+=$5} END {if (missed+covered > 0) printf "%.0f%%", (covered/(missed+covered))*100; else print "0%"}\' ' + csvPath, returnStdout: true).trim()
 
-                        coverageText = "\n📊 JaCoCoカバレッジレポート:\n・命令カバレッジ: ${covPct}\n🔗 レポート詳細: ${env.BUILD_URL}JaCoCo_20Report/"
+                        coverageText = "📊 命令カバレッジ: ${covPct} 🔗 ビルド詳細: ${env.BUILD_URL}"
                     } else {
-                        coverageText = "\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
+                        coverageText = "🔗 ビルド詳細: ${env.BUILD_URL}"
                     }
                 } catch (Exception e) {
                     echo "エラー: ${e.message}"
-                    coverageText = "\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
+                    coverageText = "🔗 ビルド詳細: ${env.BUILD_URL}"
                 }
                 
                 // 3. 取得したカバレッジ情報を結合してWebhookを送信
@@ -97,7 +97,7 @@ pipeline {
             echo 'Build failed! Sending notification...'
             sh """
                 curl -X POST -H "Content-Type: application/json" \
-                -d '{"content":"❌ ビルド失敗: ${env.JOB_NAME} #${env.BUILD_NUMBER}", "channelId":"1"}' \
+                -d '{"content":"❌ ビルド失敗: ${env.JOB_NAME} #${env.BUILD_NUMBER} 🔗 ビルド詳細: ${env.BUILD_URL}", "channelId":"1"}' \
                 http://hc-ap:8080/hc/ap/messages/webhook
             """
         }
