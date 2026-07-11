@@ -24,7 +24,6 @@ class ArchitectureTest {
     }
   }
 
-  // @formatter:off
   @ArchTest
   static final ArchRule layer_dependencies_are_respected =
       layeredArchitecture()
@@ -43,5 +42,4 @@ class ArchitectureTest {
           .mayOnlyBeAccessedByLayers("Controller", "Runner")
           .whereLayer("Repository")
           .mayOnlyBeAccessedByLayers("Service");
-  // @formatter:on
 }

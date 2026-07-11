@@ -1,12 +1,9 @@
 package com.tarosuke777.hms.enums;
 
 public enum MovieGenre {
-
-  // @formatter:off
   REAL(1, "実写"),
   ANIME(2, "アニメ"),
   OTHER(99, "その他");
-  // @formatter:on
 
   private final int code;
   private final String label;
