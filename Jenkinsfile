@@ -68,21 +68,52 @@ pipeline {
                 ])
 
                 def coverageText = ""
-                
+
                 try {
-                    // JaCoCoのindex.htmlの「Total」行からパーセンテージを抽出するシェル芸
-                    def htmlPath = "build/reports/jacoco/test/html/index.html"
-                    if (fileExists(htmlPath)) {
-                        // 最初のパーセンテージ（通常これが全体の命令カバレッジ）を取得
-                        def covPct = sh(script: "grep -oE '[0-9]+%' ${htmlPath} | head -n 1", returnStdout: true).trim()
-                        coverageText = "\\n📊 JaCoCoカバレッジレポート:\\n・命令カバレッジ: ${covPct}\\n🔗 レポート詳細: ${env.BUILD_URL}JaCoCo_20Report/"
+                    def xmlPath = "build/reports/jacoco/test/jacocoTestReport.xml"
+                    
+                    if (fileExists(xmlPath)) {
+                        // XMLファイルを読み込んでパース
+                        def xmlText = readFile(xmlPath)
+                        def report = new XmlParser(false, false).parseText(xmlText)
+                        
+                        // <counter type="INSTRUCTION"> を探す
+                        def instructionCounter = report.counter.find { it.'@type' == 'INSTRUCTION' }
+                        
+                        if (instructionCounter) {
+                            double missed = instructionCounter.'@missed'.toDouble()
+                            double covered = instructionCounter.'@covered'.toDouble()
+                            double total = missed + covered
+                            
+                            // カバレッジのパーセンテージを計算 (四捨五入して整数に)
+                            int coveragePct = total > 0 ? Math.round((covered / total) * 100) : 0
+                            
+                            coverageText = "\n📊 JaCoCoカバレッジレポート:\n・命令カバレッジ: ${coveragePct}%\n🔗 レポート詳細: ${env.BUILD_URL}JaCoCo_20Report/"
+                        } else {
+                            coverageText = "\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
+                        }
                     } else {
-                        coverageText = "\\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
+                        coverageText = "\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
                     }
                 } catch (Exception e) {
-                    // パースに失敗した場合は安全にリンクのみにする
-                    coverageText = "\\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
+                    echo "XMLパースエラー: ${e.message}"
+                    coverageText = "\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
                 }
+
+                // try {
+                //     // JaCoCoのindex.htmlの「Total」行からパーセンテージを抽出するシェル芸
+                //     def htmlPath = "build/reports/jacoco/test/html/index.html"
+                //     if (fileExists(htmlPath)) {
+                //         // 最初のパーセンテージ（通常これが全体の命令カバレッジ）を取得
+                //         def covPct = sh(script: "grep -oE '[0-9]+%' ${htmlPath} | head -n 1", returnStdout: true).trim()
+                //         coverageText = "\\n📊 JaCoCoカバレッジレポート:\\n・命令カバレッジ: ${covPct}\\n🔗 レポート詳細: ${env.BUILD_URL}JaCoCo_20Report/"
+                //     } else {
+                //         coverageText = "\\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
+                //     }
+                // } catch (Exception e) {
+                //     // パースに失敗した場合は安全にリンクのみにする
+                //     coverageText = "\\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
+                // }
                 
                 // 3. 取得したカバレッジ情報を結合してWebhookを送信
                 sh """
