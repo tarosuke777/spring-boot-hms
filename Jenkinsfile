@@ -72,9 +72,7 @@ pipeline {
                 try {
                     def csvPath = "build/reports/jacoco/test/jacocoTestReport.csv"
                     if (fileExists(csvPath)) {
-                        def covPct = sh(script: """
-                            awk -F, 'NR > 1 {missed+=$4; covered+=$5} END {if (missed+covered > 0) printf "%.0f%%", (covered/(missed+covered))*100; else print "0%"}' ${csvPath}
-                        """, returnStdout: true).trim()
+                        def covPct = sh(script: 'awk -F, \'NR > 1 {missed+=$4; covered+=$5} END {if (missed+covered > 0) printf "%.0f%%", (covered/(missed+covered))*100; else print "0%"}\' ' + csvPath, returnStdout: true).trim()
                         
                         coverageText = "\n📊 JaCoCoカバレッジレポート:\n・命令カバレッジ: ${covPct}\n🔗 レポート詳細: ${env.BUILD_URL}JaCoCo_20Report/"
                     } else {
