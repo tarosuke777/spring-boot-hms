@@ -4,6 +4,13 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.tarosuke777.hms.entity.DiaryEntity;
+import com.tarosuke777.hms.form.DiaryForm;
+import com.tarosuke777.hms.mapper.DiaryMapper;
+import com.tarosuke777.hms.repository.DiaryRepository;
+import com.tarosuke777.hms.security.LoginUser;
+import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -20,12 +27,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-import com.tarosuke777.hms.entity.DiaryEntity;
-import com.tarosuke777.hms.form.DiaryForm;
-import com.tarosuke777.hms.mapper.DiaryMapper;
-import com.tarosuke777.hms.repository.DiaryRepository;
-import com.tarosuke777.hms.security.LoginUser;
-import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,14 +36,10 @@ import jakarta.persistence.EntityManager;
 @WithUserDetails("admin")
 public class DiaryControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private DiaryRepository diaryRepository; // Repositoryへ変更
-  @Autowired
-  private EntityManager entityManager; // キャッシュクリア用
-  @Autowired
-  private DiaryMapper diaryMapper;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private DiaryRepository diaryRepository; // Repositoryへ変更
+  @Autowired private EntityManager entityManager; // キャッシュクリア用
+  @Autowired private DiaryMapper diaryMapper;
 
   private static final String LIST_ENDPOINT = "/diary/list";
   private static final String LIST_VIEW = "diary/list";
@@ -67,14 +64,15 @@ public class DiaryControllerTest {
 
     List<DiaryForm> expectedDiaryList =
         diaryRepository.findByCreatedBy(currentUserId, Sort.by("diaryDate").descending()).stream()
-            .map(diaryMapper::toForm).toList();
+            .map(diaryMapper::toForm)
+            .toList();
 
     // When & Then
-    performGetListRequest().andExpect(status().isOk())
+    performGetListRequest()
+        .andExpect(status().isOk())
         .andExpect(model().attribute("diaryList", expectedDiaryList))
         .andExpect(view().name(LIST_VIEW));
   }
-
 
   @Test
   void getDetail_ShouldReturnDiaryDetail() throws Exception {
@@ -84,11 +82,12 @@ public class DiaryControllerTest {
     DiaryForm expectedDiaryForm = diaryMapper.toForm(entity);
 
     // When & Then
-    performGetDetailRequest(entity.getDiaryId()).andExpect(status().isOk())
+    performGetDetailRequest(entity.getDiaryId())
+        .andExpect(status().isOk())
         .andExpect(model().attribute("diaryForm", expectedDiaryForm))
-        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
+        .andExpect(view().name(DETAIL_VIEW))
+        .andExpect(model().hasNoErrors());
   }
-
 
   @Test
   void getRegister_ShouldReturnRegisterPage() throws Exception {
@@ -96,10 +95,11 @@ public class DiaryControllerTest {
     // Given
 
     // When & Then
-    performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
+    performGetRegisterRequest()
+        .andExpect(status().isOk())
+        .andExpect(view().name(REGISTER_VIEW))
         .andExpect(model().hasNoErrors());
   }
-
 
   @Test
   void register_WithValidData_ShouldRedirectToList() throws Exception {
@@ -115,7 +115,8 @@ public class DiaryControllerTest {
     form.setCommentActual("頑張った");
 
     // When & Then
-    performRegisterRequest(form).andExpect(status().is3xxRedirection())
+    performRegisterRequest(form)
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -142,7 +143,8 @@ public class DiaryControllerTest {
     form.setTodoPlan("update Todo Plan");
 
     // When & Then
-    performUpdateRequest(form).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form)
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
@@ -173,7 +175,9 @@ public class DiaryControllerTest {
     form.setVersion(currentVersion);
 
     // When & Then
-    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(form)
+        .andExpect(status().isOk())
+        .andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -185,7 +189,8 @@ public class DiaryControllerTest {
     Integer targetDiaryId = targetDiary.getDiaryId();
 
     // When & Then
-    performDeleteRequest(targetDiary.getDiaryId()).andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetDiary.getDiaryId())
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -215,29 +220,41 @@ public class DiaryControllerTest {
   }
 
   private ResultActions performRegisterRequest(DiaryForm form) throws Exception {
-    return mockMvc.perform(
-        post(REGISTER_ENDPOINT).with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .param("diaryDate", form.getDiaryDate().toString())
-            .param("todoPlan", form.getTodoPlan()).param("todoActual", form.getTodoActual())
-            .param("funPlan", String.valueOf(form.getFunPlan()))
-            .param("funActual", String.valueOf(form.getFunActual()))
-            .param("commentPlan", form.getCommentPlan())
-            .param("commentActual", form.getCommentActual()))
+    return mockMvc
+        .perform(
+            post(REGISTER_ENDPOINT)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("diaryDate", form.getDiaryDate().toString())
+                .param("todoPlan", form.getTodoPlan())
+                .param("todoActual", form.getTodoActual())
+                .param("funPlan", String.valueOf(form.getFunPlan()))
+                .param("funActual", String.valueOf(form.getFunActual()))
+                .param("commentPlan", form.getCommentPlan())
+                .param("commentActual", form.getCommentActual()))
         .andDo(print());
   }
 
   private ResultActions performUpdateRequest(DiaryForm form) throws Exception {
     return mockMvc
-        .perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-            .param("diaryId", form.getDiaryId().toString())
-            .param("diaryDate", form.getDiaryDate().toString())
-            .param("todoPlan", form.getTodoPlan()).param("version", form.getVersion().toString()))
+        .perform(
+            post(UPDATE_ENDPOINT)
+                .with(csrf())
+                .param("update", "")
+                .param("diaryId", form.getDiaryId().toString())
+                .param("diaryDate", form.getDiaryDate().toString())
+                .param("todoPlan", form.getTodoPlan())
+                .param("version", form.getVersion().toString()))
         .andDo(print());
   }
 
   private ResultActions performDeleteRequest(int diaryId) throws Exception {
-    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("diaryId",
-        String.valueOf(diaryId))).andDo(print());
+    return mockMvc
+        .perform(
+            post(DELETE_ENDPOINT)
+                .with(csrf())
+                .param("delete", "")
+                .param("diaryId", String.valueOf(diaryId)))
+        .andDo(print());
   }
-
 }

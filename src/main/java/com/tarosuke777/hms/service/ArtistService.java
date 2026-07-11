@@ -1,18 +1,18 @@
 package com.tarosuke777.hms.service;
 
+import com.tarosuke777.hms.entity.ArtistEntity;
+import com.tarosuke777.hms.form.ArtistForm;
+import com.tarosuke777.hms.mapper.ArtistMapper;
+import com.tarosuke777.hms.repository.ArtistRepository;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.tarosuke777.hms.entity.ArtistEntity;
-import com.tarosuke777.hms.form.ArtistForm;
-import com.tarosuke777.hms.mapper.ArtistMapper;
-import com.tarosuke777.hms.repository.ArtistRepository;
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -22,13 +22,16 @@ public class ArtistService {
   private final ArtistMapper artistMapper;
 
   public List<ArtistForm> getArtistList(Integer currentUserId) {
-    return artistRepository.findByCreatedBy(currentUserId).stream().map(artistMapper::toForm)
+    return artistRepository.findByCreatedBy(currentUserId).stream()
+        .map(artistMapper::toForm)
         .toList();
   }
 
   public ArtistForm getArtist(Integer artistId, Integer currentUserId) {
-    ArtistEntity artist = artistRepository.findByIdAndCreatedBy(artistId, currentUserId)
-        .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
+    ArtistEntity artist =
+        artistRepository
+            .findByIdAndCreatedBy(artistId, currentUserId)
+            .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
     return artistMapper.toForm(artist);
   }
 
@@ -40,8 +43,10 @@ public class ArtistService {
 
   @Transactional
   public void updateArtist(ArtistForm form, Integer currentUserId) {
-    ArtistEntity existEntity = artistRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
-        .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
+    ArtistEntity existEntity =
+        artistRepository
+            .findByIdAndCreatedBy(form.getId(), currentUserId)
+            .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
     ArtistEntity entity = Objects.requireNonNull(artistMapper.copy(existEntity));
     artistMapper.updateEntityFromForm(form, entity);
     artistRepository.save(entity);
@@ -56,7 +61,12 @@ public class ArtistService {
   }
 
   public Map<Integer, String> getArtistMap() {
-    return artistRepository.findAll().stream().collect(Collectors.toMap(ArtistEntity::getId,
-        ArtistEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
+    return artistRepository.findAll().stream()
+        .collect(
+            Collectors.toMap(
+                ArtistEntity::getId,
+                ArtistEntity::getName,
+                (existing, replacement) -> existing,
+                LinkedHashMap::new));
   }
 }

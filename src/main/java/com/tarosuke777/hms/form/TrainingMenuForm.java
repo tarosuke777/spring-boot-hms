@@ -33,5 +33,4 @@ public class TrainingMenuForm {
 
   @NotNull(groups = UpdateGroup.class)
   private Integer version;
-
 }

@@ -1,6 +1,5 @@
 package com.tarosuke777.hms.form;
 
-import org.hibernate.validator.constraints.URL;
 import com.tarosuke777.hms.enums.BookGenre;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
@@ -11,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
+import org.hibernate.validator.constraints.URL;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,8 +25,7 @@ public class BookForm {
   @Size(min = 1, max = 50)
   private String name;
 
-  @NotNull
-  private Integer authorId;
+  @NotNull private Integer authorId;
 
   @URL
   @Size(max = 255)
@@ -41,5 +40,4 @@ public class BookForm {
 
   @NotNull(groups = UpdateGroup.class)
   private Integer version;
-
 }

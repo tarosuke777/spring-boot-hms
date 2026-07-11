@@ -1,18 +1,18 @@
 package com.tarosuke777.hms.service;
 
+import com.tarosuke777.hms.entity.AuthorEntity;
+import com.tarosuke777.hms.form.AuthorForm;
+import com.tarosuke777.hms.mapper.AuthorMapper;
+import com.tarosuke777.hms.repository.AuthorRepository;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.tarosuke777.hms.entity.AuthorEntity;
-import com.tarosuke777.hms.form.AuthorForm;
-import com.tarosuke777.hms.mapper.AuthorMapper;
-import com.tarosuke777.hms.repository.AuthorRepository;
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -22,13 +22,16 @@ public class AuthorService {
   private final AuthorMapper authorMapper;
 
   public List<AuthorForm> getAuthorList(Integer currentUserId) {
-    return authorRepository.findByCreatedBy(currentUserId).stream().map(authorMapper::toForm)
+    return authorRepository.findByCreatedBy(currentUserId).stream()
+        .map(authorMapper::toForm)
         .toList();
   }
 
   public AuthorForm getAuthor(Integer authorId, Integer currentUserId) {
-    AuthorEntity author = authorRepository.findByIdAndCreatedBy(authorId, currentUserId)
-        .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
+    AuthorEntity author =
+        authorRepository
+            .findByIdAndCreatedBy(authorId, currentUserId)
+            .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
     return authorMapper.toForm(author);
   }
 
@@ -40,8 +43,10 @@ public class AuthorService {
 
   @Transactional
   public void updateAuthor(AuthorForm form, Integer currentUserId) {
-    AuthorEntity existEntity = authorRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
-        .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
+    AuthorEntity existEntity =
+        authorRepository
+            .findByIdAndCreatedBy(form.getId(), currentUserId)
+            .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
     AuthorEntity entity = Objects.requireNonNull(authorMapper.copy(existEntity));
     authorMapper.updateEntityFromForm(form, entity);
     authorRepository.save(entity);
@@ -56,7 +61,12 @@ public class AuthorService {
   }
 
   public Map<Integer, String> getAuthorMap() {
-    return authorRepository.findAll().stream().collect(Collectors.toMap(AuthorEntity::getId,
-        AuthorEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
+    return authorRepository.findAll().stream()
+        .collect(
+            Collectors.toMap(
+                AuthorEntity::getId,
+                AuthorEntity::getName,
+                (existing, replacement) -> existing,
+                LinkedHashMap::new));
   }
 }

@@ -4,6 +4,16 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.tarosuke777.hms.entity.CastEntity;
+import com.tarosuke777.hms.entity.MovieEntity;
+import com.tarosuke777.hms.enums.MovieGenre;
+import com.tarosuke777.hms.form.MovieForm;
+import com.tarosuke777.hms.mapper.MovieMapper;
+import com.tarosuke777.hms.repository.CastRepository;
+import com.tarosuke777.hms.repository.MovieRepository;
+import com.tarosuke777.hms.security.LoginUser;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,15 +28,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-import com.tarosuke777.hms.entity.CastEntity;
-import com.tarosuke777.hms.entity.MovieEntity;
-import com.tarosuke777.hms.enums.MovieGenre;
-import com.tarosuke777.hms.form.MovieForm;
-import com.tarosuke777.hms.mapper.MovieMapper;
-import com.tarosuke777.hms.repository.CastRepository;
-import com.tarosuke777.hms.repository.MovieRepository;
-import com.tarosuke777.hms.security.LoginUser;
-import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -36,16 +37,11 @@ import jakarta.persistence.EntityManager;
 @WithUserDetails("admin")
 public class MovieControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private MovieRepository movieRepository; // Repositoryへ変更
-  @Autowired
-  private EntityManager entityManager; // キャッシュクリア用
-  @Autowired
-  private MovieMapper movieMapper;
-  @Autowired
-  private CastRepository castRepository;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private MovieRepository movieRepository; // Repositoryへ変更
+  @Autowired private EntityManager entityManager; // キャッシュクリア用
+  @Autowired private MovieMapper movieMapper;
+  @Autowired private CastRepository castRepository;
 
   private static final String LIST_ENDPOINT = "/movie/list";
   private static final String LIST_VIEW = "movie/list";
@@ -68,18 +64,21 @@ public class MovieControllerTest {
         (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Integer currentUserId = loginUser.getId();
     List<MovieForm> expectedMovieList =
-        movieRepository.findByCreatedBy(currentUserId).stream().map(entity -> {
-          MovieForm form = movieMapper.toForm(entity);
-          form.setCastId(entity.getCast() != null ? entity.getCast().getId() : null);
-          return form;
-        }).toList();
+        movieRepository.findByCreatedBy(currentUserId).stream()
+            .map(
+                entity -> {
+                  MovieForm form = movieMapper.toForm(entity);
+                  form.setCastId(entity.getCast() != null ? entity.getCast().getId() : null);
+                  return form;
+                })
+            .toList();
 
     // When & Then
-    performGetListRequest().andExpect(status().isOk())
+    performGetListRequest()
+        .andExpect(status().isOk())
         .andExpect(model().attribute("movieList", expectedMovieList))
         .andExpect(view().name(LIST_VIEW));
   }
-
 
   @Test
   void getDetail_ShouldReturnMovieDetail() throws Exception {
@@ -90,11 +89,12 @@ public class MovieControllerTest {
     expectedMovieForm.setCastId(entity.getCast() != null ? entity.getCast().getId() : null);
 
     // When & Then
-    performGetDetailRequest(entity.getId()).andExpect(status().isOk())
+    performGetDetailRequest(entity.getId())
+        .andExpect(status().isOk())
         .andExpect(model().attribute("movieForm", expectedMovieForm))
-        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
+        .andExpect(view().name(DETAIL_VIEW))
+        .andExpect(model().hasNoErrors());
   }
-
 
   @Test
   void getRegister_ShouldReturnRegisterPage() throws Exception {
@@ -102,21 +102,31 @@ public class MovieControllerTest {
     // Given
 
     // When & Then
-    performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
+    performGetRegisterRequest()
+        .andExpect(status().isOk())
+        .andExpect(view().name(REGISTER_VIEW))
         .andExpect(model().hasNoErrors());
   }
-
 
   @Test
   void register_WithValidData_ShouldRedirectToList() throws Exception {
 
     // Given
     CastEntity castEntity = castRepository.findAll().get(0);
-    MovieForm movieForm = new MovieForm(null, "test", castEntity.getId(), "http://test.com",
-        MovieGenre.ANIME, true, null, null);
+    MovieForm movieForm =
+        new MovieForm(
+            null,
+            "test",
+            castEntity.getId(),
+            "http://test.com",
+            MovieGenre.ANIME,
+            true,
+            null,
+            null);
 
     // When & Then
-    performRegisterRequest(movieForm).andExpect(status().is3xxRedirection())
+    performRegisterRequest(movieForm)
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -139,7 +149,8 @@ public class MovieControllerTest {
     form.setName("著者２");
 
     // When & Then
-    performUpdateRequest(form).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form)
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
@@ -171,7 +182,9 @@ public class MovieControllerTest {
     form.setVersion(currentVersion);
 
     // When & Then
-    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(form)
+        .andExpect(status().isOk())
+        .andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -183,7 +196,8 @@ public class MovieControllerTest {
     Integer targetMovieId = targetMovie.getId();
 
     // When & Then
-    performDeleteRequest(targetMovie.getId()).andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetMovie.getId())
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -212,20 +226,34 @@ public class MovieControllerTest {
   }
 
   private ResultActions performRegisterRequest(MovieForm form) throws Exception {
-    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
-        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", form.getName())
-        .param("castId", form.getCastId().toString()).param("genre", form.getGenre().toString())
-        .param("adult", String.valueOf(form.isAdult())).param("link", form.getLink())
-        .param("note", form.getNote())).andDo(print());
+    return mockMvc
+        .perform(
+            post(REGISTER_ENDPOINT)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", form.getName())
+                .param("castId", form.getCastId().toString())
+                .param("genre", form.getGenre().toString())
+                .param("adult", String.valueOf(form.isAdult()))
+                .param("link", form.getLink())
+                .param("note", form.getNote()))
+        .andDo(print());
   }
 
   private ResultActions performUpdateRequest(MovieForm form) throws Exception {
     return mockMvc
-        .perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
-            .param("id", form.getId().toString()).param("name", form.getName())
-            .param("castId", form.getCastId().toString()).param("genre", form.getGenre().toString())
-            .param("adult", String.valueOf(form.isAdult())).param("link", form.getLink())
-            .param("note", form.getNote()).param("version", form.getVersion().toString()))
+        .perform(
+            post(UPDATE_ENDPOINT)
+                .with(csrf())
+                .param("update", "")
+                .param("id", form.getId().toString())
+                .param("name", form.getName())
+                .param("castId", form.getCastId().toString())
+                .param("genre", form.getGenre().toString())
+                .param("adult", String.valueOf(form.isAdult()))
+                .param("link", form.getLink())
+                .param("note", form.getNote())
+                .param("version", form.getVersion().toString()))
         .andDo(print());
   }
 

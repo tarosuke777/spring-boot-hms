@@ -15,17 +15,17 @@ import lombok.experimental.FieldNameConstants;
 @Data
 @FieldNameConstants
 public class CompanyForm {
-    @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
-    private Integer id;
+  @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
+  private Integer id;
 
-    @NotBlank
-    @Size(min = 1, max = 255)
-    private String name;
+  @NotBlank
+  @Size(min = 1, max = 255)
+  private String name;
 
-    private String note;
+  private String note;
 
-    private String jobApplicationHistory;
+  private String jobApplicationHistory;
 
-    @NotNull(groups = UpdateGroup.class)
-    private Integer version;
+  @NotNull(groups = UpdateGroup.class)
+  private Integer version;
 }

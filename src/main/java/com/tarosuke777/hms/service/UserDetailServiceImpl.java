@@ -1,18 +1,18 @@
 package com.tarosuke777.hms.service;
 
+import com.tarosuke777.hms.entity.UserEntity;
+import com.tarosuke777.hms.enums.Role;
+import com.tarosuke777.hms.repository.UserRepository;
+import com.tarosuke777.hms.security.LoginUser;
 import java.util.Collections;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import com.tarosuke777.hms.entity.UserEntity;
-import com.tarosuke777.hms.enums.Role;
-import com.tarosuke777.hms.repository.UserRepository;
-import com.tarosuke777.hms.security.LoginUser;
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -23,15 +23,17 @@ public class UserDetailServiceImpl implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-    UserEntity loginUser = userRepository.findByName(userName)
-        .orElseThrow(() -> new UsernameNotFoundException("user not found."));
+    UserEntity loginUser =
+        userRepository
+            .findByName(userName)
+            .orElseThrow(() -> new UsernameNotFoundException("user not found."));
 
     Role userRole = loginUser.getRole();
 
     List<GrantedAuthority> authorities =
         Collections.singletonList(new SimpleGrantedAuthority(userRole.getAuthority()));
 
-    return new LoginUser(loginUser.getId(), loginUser.getName(), loginUser.getPassword(),
-        authorities);
+    return new LoginUser(
+        loginUser.getId(), loginUser.getName(), loginUser.getPassword(), authorities);
   }
 }

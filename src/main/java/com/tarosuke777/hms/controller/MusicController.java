@@ -1,7 +1,15 @@
 package com.tarosuke777.hms.controller;
 
+import com.tarosuke777.hms.form.MusicForm;
+import com.tarosuke777.hms.security.LoginUser;
+import com.tarosuke777.hms.service.ArtistService;
+import com.tarosuke777.hms.service.MusicService;
+import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import java.util.Map;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -15,14 +23,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.tarosuke777.hms.form.MusicForm;
-import com.tarosuke777.hms.security.LoginUser;
-import com.tarosuke777.hms.service.ArtistService;
-import com.tarosuke777.hms.service.MusicService;
-import com.tarosuke777.hms.validation.DeleteGroup;
-import com.tarosuke777.hms.validation.UpdateGroup;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
@@ -39,7 +39,9 @@ public class MusicController {
   private final ArtistService artistService;
 
   @GetMapping("/list")
-  public String getList(@PageableDefault(size = 10) Pageable pageable, Model model,
+  public String getList(
+      @PageableDefault(size = 10) Pageable pageable,
+      Model model,
       @AuthenticationPrincipal LoginUser user) {
 
     Page<MusicForm> musicPage =
@@ -52,8 +54,8 @@ public class MusicController {
   }
 
   @GetMapping("/detail/{id}")
-  public String getDetail(@PathVariable("id") Integer id, Model model,
-      @AuthenticationPrincipal LoginUser user) {
+  public String getDetail(
+      @PathVariable("id") Integer id, Model model, @AuthenticationPrincipal LoginUser user) {
 
     MusicForm musicForm = musicService.getMusicDetails(id, user.getId());
     Map<Integer, String> artistMap = artistService.getArtistMap();
@@ -74,8 +76,8 @@ public class MusicController {
   }
 
   @PostMapping("/register")
-  public String register(@ModelAttribute @Validated MusicForm form, BindingResult bindingResult,
-      Model model) {
+  public String register(
+      @ModelAttribute @Validated MusicForm form, BindingResult bindingResult, Model model) {
 
     if (bindingResult.hasErrors()) {
       return getRegister(form, model);
@@ -87,8 +89,8 @@ public class MusicController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@Validated(UpdateGroup.class) MusicForm form,
-      @AuthenticationPrincipal LoginUser user) {
+  public String update(
+      @Validated(UpdateGroup.class) MusicForm form, @AuthenticationPrincipal LoginUser user) {
 
     musicService.updateMusic(form, user.getId());
 
@@ -96,7 +98,9 @@ public class MusicController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(@Validated(DeleteGroup.class) MusicForm form, Model model,
+  public String delete(
+      @Validated(DeleteGroup.class) MusicForm form,
+      Model model,
       @AuthenticationPrincipal LoginUser user) {
 
     musicService.deleteMusic(Objects.requireNonNull(form.getId()), user.getId());
@@ -104,14 +108,14 @@ public class MusicController {
     return REDIRECT_LIST;
   }
 
-  private void addAttributesToModel(Model model, Page<MusicForm> musicPage,
-      Map<Integer, String> artistMap) {
+  private void addAttributesToModel(
+      Model model, Page<MusicForm> musicPage, Map<Integer, String> artistMap) {
     model.addAttribute("artistMap", artistMap);
     model.addAttribute("musicPage", musicPage);
   }
 
-  private void addAttributesToModel(Model model, MusicForm musicForm,
-      Map<Integer, String> artistMap) {
+  private void addAttributesToModel(
+      Model model, MusicForm musicForm, Map<Integer, String> artistMap) {
     model.addAttribute("musicForm", musicForm);
     model.addAttribute("artistMap", artistMap);
   }

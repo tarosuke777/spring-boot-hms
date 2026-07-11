@@ -12,12 +12,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @Order(4)
 public class McpSecurityConifg {
-    @Bean
-    @Order(2)
-    SecurityFilterChain mcpSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/sse/**", "/mcp/**");
-        http.authorizeHttpRequests((authz) -> authz.anyRequest().permitAll());
-        http.csrf(CsrfConfigurer::disable);
-        return http.build();
-    }
+  @Bean
+  @Order(2)
+  SecurityFilterChain mcpSecurityFilterChain(HttpSecurity http) throws Exception {
+    http.securityMatcher("/sse/**", "/mcp/**");
+    http.authorizeHttpRequests((authz) -> authz.anyRequest().permitAll());
+    http.csrf(CsrfConfigurer::disable);
+    return http.build();
+  }
 }

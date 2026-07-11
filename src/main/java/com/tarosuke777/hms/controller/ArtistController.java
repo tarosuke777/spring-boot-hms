@@ -1,6 +1,14 @@
 package com.tarosuke777.hms.controller;
 
+import com.tarosuke777.hms.exception.IllegalRequestException;
+import com.tarosuke777.hms.form.ArtistForm;
+import com.tarosuke777.hms.security.LoginUser;
+import com.tarosuke777.hms.service.ArtistService;
+import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,14 +19,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.tarosuke777.hms.exception.IllegalRequestException;
-import com.tarosuke777.hms.form.ArtistForm;
-import com.tarosuke777.hms.security.LoginUser;
-import com.tarosuke777.hms.service.ArtistService;
-import com.tarosuke777.hms.validation.DeleteGroup;
-import com.tarosuke777.hms.validation.UpdateGroup;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
@@ -55,7 +55,9 @@ public class ArtistController {
   }
 
   @GetMapping("/detail/{artistId}")
-  public String getDetail(@PathVariable("artistId") Integer artistId, Model model,
+  public String getDetail(
+      @PathVariable("artistId") Integer artistId,
+      Model model,
       @AuthenticationPrincipal LoginUser user) {
     ArtistForm form = artistService.getArtist(artistId, user.getId());
     model.addAttribute("artistForm", form);
@@ -63,8 +65,10 @@ public class ArtistController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@ModelAttribute @Validated(UpdateGroup.class) ArtistForm form,
-      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
+  public String update(
+      @ModelAttribute @Validated(UpdateGroup.class) ArtistForm form,
+      BindingResult bindingResult,
+      @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(ArtistForm.Fields.id)
@@ -81,7 +85,9 @@ public class ArtistController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(@Validated(DeleteGroup.class) ArtistForm form, BindingResult bindingResult,
+  public String delete(
+      @Validated(DeleteGroup.class) ArtistForm form,
+      BindingResult bindingResult,
       @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー

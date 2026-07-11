@@ -1,77 +1,85 @@
 package com.tarosuke777.hms.service;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.CompanyEntity;
 import com.tarosuke777.hms.form.CompanyForm;
 import com.tarosuke777.hms.mapper.CompanyMapper;
 import com.tarosuke777.hms.repository.CompanyRepository;
 import com.tarosuke777.hms.specification.CompanySpecifications;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class CompanyService {
 
-    private final CompanyRepository companyRepository;
-    private final CompanyMapper companyMapper;
+  private final CompanyRepository companyRepository;
+  private final CompanyMapper companyMapper;
 
-    public List<CompanyForm> getCompanyList(Integer currentUserId, String name) {
-        var spec = CompanySpecifications.withFilters(currentUserId, name);
-        return companyRepository.findAll(spec).stream().map(companyMapper::toForm)
-                .toList();
-    }
+  public List<CompanyForm> getCompanyList(Integer currentUserId, String name) {
+    var spec = CompanySpecifications.withFilters(currentUserId, name);
+    return companyRepository.findAll(spec).stream().map(companyMapper::toForm).toList();
+  }
 
-    public Page<CompanyForm> getCompanyList(Integer currentUserId, String name, @NonNull Pageable pageable) {
-        var spec = CompanySpecifications.withFilters(currentUserId, name);
-        
-        // Page<Entity> を取得
-        Page<CompanyEntity> companyPage = companyRepository.findAll(spec, pageable);
-        
-        // ページ内の Entity を Form に詰め替える
-        return companyPage.map(companyMapper::toForm);
-    }
+  public Page<CompanyForm> getCompanyList(
+      Integer currentUserId, String name, @NonNull Pageable pageable) {
+    var spec = CompanySpecifications.withFilters(currentUserId, name);
 
-    public CompanyForm getCompany(@NonNull Integer companyId, Integer currentUserId) {
-        CompanyEntity company = companyRepository.findByIdAndCreatedBy(companyId, currentUserId)
-                .orElseThrow(() -> new RuntimeException("Company not found or access denied"));
-        return companyMapper.toForm(company);
-    }
+    // Page<Entity> を取得
+    Page<CompanyEntity> companyPage = companyRepository.findAll(spec, pageable);
 
-    @Transactional
-    public void registerCompany(CompanyForm form) {
-        CompanyEntity entity = Objects.requireNonNull(companyMapper.toEntity(form));
-        companyRepository.save(entity);
-    }
+    // ページ内の Entity を Form に詰め替える
+    return companyPage.map(companyMapper::toForm);
+  }
 
-    @Transactional
-    public void updateCompany(CompanyForm form, Integer currentUserId) {
-        CompanyEntity existEntity =
-                companyRepository.findByIdAndCreatedBy(form.getId(), currentUserId).orElseThrow(
-                        () -> new RuntimeException("Company not found or access denied"));
-        CompanyEntity entity = Objects.requireNonNull(companyMapper.copy(existEntity));
-        companyMapper.updateEntityFromForm(form, entity);
-        companyRepository.save(entity);
-    }
+  public CompanyForm getCompany(@NonNull Integer companyId, Integer currentUserId) {
+    CompanyEntity company =
+        companyRepository
+            .findByIdAndCreatedBy(companyId, currentUserId)
+            .orElseThrow(() -> new RuntimeException("Company not found or access denied"));
+    return companyMapper.toForm(company);
+  }
 
-    @Transactional
-    public void deleteCompany(@NonNull Integer companyId, Integer currentUserId) {
-        if (!companyRepository.existsByIdAndCreatedBy(companyId, currentUserId)) {
-            throw new RuntimeException("Company not found or access denied");
-        }
-        companyRepository.deleteById(companyId);
-    }
+  @Transactional
+  public void registerCompany(CompanyForm form) {
+    CompanyEntity entity = Objects.requireNonNull(companyMapper.toEntity(form));
+    companyRepository.save(entity);
+  }
 
-    public Map<Integer, String> getCompanyMap() {
-        return companyRepository.findAll().stream().collect(Collectors.toMap(CompanyEntity::getId,
-                CompanyEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
+  @Transactional
+  public void updateCompany(CompanyForm form, Integer currentUserId) {
+    CompanyEntity existEntity =
+        companyRepository
+            .findByIdAndCreatedBy(form.getId(), currentUserId)
+            .orElseThrow(() -> new RuntimeException("Company not found or access denied"));
+    CompanyEntity entity = Objects.requireNonNull(companyMapper.copy(existEntity));
+    companyMapper.updateEntityFromForm(form, entity);
+    companyRepository.save(entity);
+  }
+
+  @Transactional
+  public void deleteCompany(@NonNull Integer companyId, Integer currentUserId) {
+    if (!companyRepository.existsByIdAndCreatedBy(companyId, currentUserId)) {
+      throw new RuntimeException("Company not found or access denied");
     }
+    companyRepository.deleteById(companyId);
+  }
+
+  public Map<Integer, String> getCompanyMap() {
+    return companyRepository.findAll().stream()
+        .collect(
+            Collectors.toMap(
+                CompanyEntity::getId,
+                CompanyEntity::getName,
+                (existing, replacement) -> existing,
+                LinkedHashMap::new));
+  }
 }

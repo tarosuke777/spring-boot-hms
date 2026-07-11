@@ -1,6 +1,5 @@
 package com.tarosuke777.hms.form;
 
-import org.hibernate.validator.constraints.URL;
 import com.tarosuke777.hms.enums.MovieGenre;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
@@ -10,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,8 +23,7 @@ public class MovieForm {
   @Size(min = 1, max = 50)
   private String name;
 
-  @NotNull
-  private Integer castId;
+  @NotNull private Integer castId;
 
   @URL
   @Size(max = 255)

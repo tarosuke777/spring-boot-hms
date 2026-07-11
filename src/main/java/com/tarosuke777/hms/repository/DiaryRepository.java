@@ -1,18 +1,18 @@
 package com.tarosuke777.hms.repository;
 
+import com.tarosuke777.hms.entity.DiaryEntity;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.tarosuke777.hms.entity.DiaryEntity;
 
 @Repository
 public interface DiaryRepository extends JpaRepository<DiaryEntity, Integer> {
 
-    Optional<DiaryEntity> findByDiaryIdAndCreatedBy(Integer diaryId, Integer createdBy);
+  Optional<DiaryEntity> findByDiaryIdAndCreatedBy(Integer diaryId, Integer createdBy);
 
-    List<DiaryEntity> findByCreatedBy(Integer createdBy, Sort sort);
+  List<DiaryEntity> findByCreatedBy(Integer createdBy, Sort sort);
 
-    boolean existsByDiaryIdAndCreatedBy(Integer diaryId, Integer createdBy);
+  boolean existsByDiaryIdAndCreatedBy(Integer diaryId, Integer createdBy);
 }

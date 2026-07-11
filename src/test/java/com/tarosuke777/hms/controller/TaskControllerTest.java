@@ -4,6 +4,13 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.tarosuke777.hms.entity.TaskEntity;
+import com.tarosuke777.hms.form.TaskForm;
+import com.tarosuke777.hms.mapper.TaskMapper;
+import com.tarosuke777.hms.repository.TaskRepository;
+import com.tarosuke777.hms.security.LoginUser;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
@@ -19,12 +26,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-import com.tarosuke777.hms.entity.TaskEntity;
-import com.tarosuke777.hms.form.TaskForm;
-import com.tarosuke777.hms.mapper.TaskMapper;
-import com.tarosuke777.hms.repository.TaskRepository;
-import com.tarosuke777.hms.security.LoginUser;
-import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,14 +35,10 @@ import jakarta.persistence.EntityManager;
 @WithUserDetails("admin")
 public class TaskControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private TaskRepository taskRepository;
-  @Autowired
-  private TaskMapper taskMapper;
-  @Autowired
-  private EntityManager entityManager; // キャッシュクリア用
+  @Autowired private MockMvc mockMvc;
+  @Autowired private TaskRepository taskRepository;
+  @Autowired private TaskMapper taskMapper;
+  @Autowired private EntityManager entityManager; // キャッシュクリア用
 
   private static final String LIST_ENDPOINT = "/task/list";
   private static final String LIST_VIEW = "task/list";
@@ -61,12 +58,16 @@ public class TaskControllerTest {
     LoginUser loginUser =
         (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Integer currentUserId = loginUser.getId();
-    List<TaskForm> expectedTaskList = taskRepository.findByCreatedBy(currentUserId).stream()
-        .map(taskMapper::toForm).collect(Collectors.toList());
+    List<TaskForm> expectedTaskList =
+        taskRepository.findByCreatedBy(currentUserId).stream()
+            .map(taskMapper::toForm)
+            .collect(Collectors.toList());
 
     // When & Then
-    performGetListRequest().andExpect(status().isOk())
-        .andExpect(model().attribute("tasks", expectedTaskList)).andExpect(view().name(LIST_VIEW));
+    performGetListRequest()
+        .andExpect(status().isOk())
+        .andExpect(model().attribute("tasks", expectedTaskList))
+        .andExpect(view().name(LIST_VIEW));
   }
 
   @Test
@@ -75,10 +76,11 @@ public class TaskControllerTest {
     // Given
 
     // When & Then
-    performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
+    performGetRegisterRequest()
+        .andExpect(status().isOk())
+        .andExpect(view().name(REGISTER_VIEW))
         .andExpect(model().hasNoErrors());
   }
-
 
   @Test
   void register_WithValidData_ShouldRedirectToList() throws Exception {
@@ -87,7 +89,8 @@ public class TaskControllerTest {
     String taskName = "TestTaskName";
 
     // When & Then
-    performRegisterRequest(taskName).andExpect(status().is3xxRedirection())
+    performRegisterRequest(taskName)
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -107,7 +110,8 @@ public class TaskControllerTest {
     form.setName("UpdatedName");
 
     // When & Then
-    performUpdateRequest(form).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form)
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
@@ -137,7 +141,9 @@ public class TaskControllerTest {
     form.setVersion(currentVersion);
 
     // When & Then
-    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(form)
+        .andExpect(status().isOk())
+        .andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -149,7 +155,8 @@ public class TaskControllerTest {
     Integer targetTaskId = targetTask.getId();
 
     // When & Then
-    performDeleteRequest(targetTaskId).andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetTaskId)
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -172,20 +179,34 @@ public class TaskControllerTest {
   }
 
   private ResultActions performRegisterRequest(String name) throws Exception {
-    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
-        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
+    return mockMvc
+        .perform(
+            post(REGISTER_ENDPOINT)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", name))
+        .andDo(print());
   }
 
   private ResultActions performUpdateRequest(TaskForm form) throws Exception {
-    return mockMvc.perform(
-        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
-            .param("name", form.getName()).param("version", form.getVersion().toString()))
+    return mockMvc
+        .perform(
+            post(UPDATE_ENDPOINT)
+                .with(csrf())
+                .param("update", "")
+                .param("id", form.getId().toString())
+                .param("name", form.getName())
+                .param("version", form.getVersion().toString()))
         .andDo(print());
   }
 
   private ResultActions performDeleteRequest(int taskId) throws Exception {
-    return mockMvc.perform(
-        post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("id", String.valueOf(taskId)))
+    return mockMvc
+        .perform(
+            post(DELETE_ENDPOINT)
+                .with(csrf())
+                .param("delete", "")
+                .param("id", String.valueOf(taskId)))
         .andDo(print());
   }
 }

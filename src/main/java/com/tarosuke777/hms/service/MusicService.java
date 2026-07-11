@@ -1,13 +1,5 @@
 package com.tarosuke777.hms.service;
 
-import java.util.List;
-import java.util.Objects;
-import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.ArtistEntity;
 import com.tarosuke777.hms.entity.MusicEntity;
 import com.tarosuke777.hms.form.MusicForm;
@@ -15,7 +7,14 @@ import com.tarosuke777.hms.mapper.MusicMapper;
 import com.tarosuke777.hms.repository.MusicRepository;
 import com.tarosuke777.hms.specification.MusicSpecifications;
 import jakarta.persistence.EntityManager;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,18 +28,21 @@ public class MusicService {
     var spec = MusicSpecifications.withFilters(currentUserId);
     Page<MusicEntity> musicPage = musicRepository.findAll(spec, pageable);
 
-    return musicPage.map(music -> {
-      MusicForm form = musicMapper.toForm(music);
-      if (music.getArtist() != null) {
-        form.setArtistId(music.getArtist().getId());
-      }
-      return form;
-    });
+    return musicPage.map(
+        music -> {
+          MusicForm form = musicMapper.toForm(music);
+          if (music.getArtist() != null) {
+            form.setArtistId(music.getArtist().getId());
+          }
+          return form;
+        });
   }
 
   public MusicForm getMusicDetails(Integer id, Integer currentUserId) {
-    MusicEntity music = musicRepository.findByIdAndCreatedBy(id, currentUserId)
-        .orElseThrow(() -> new RuntimeException("Music not found"));
+    MusicEntity music =
+        musicRepository
+            .findByIdAndCreatedBy(id, currentUserId)
+            .orElseThrow(() -> new RuntimeException("Music not found"));
     MusicForm musicForm = musicMapper.toForm(music);
     if (music.getArtist() != null) {
       musicForm.setArtistId(music.getArtist().getId());
@@ -63,8 +65,10 @@ public class MusicService {
 
   @Transactional
   public void updateMusic(MusicForm form, Integer currentUserId) {
-    MusicEntity existEntity = musicRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
-        .orElseThrow(() -> new RuntimeException("Music not found"));
+    MusicEntity existEntity =
+        musicRepository
+            .findByIdAndCreatedBy(form.getId(), currentUserId)
+            .orElseThrow(() -> new RuntimeException("Music not found"));
     MusicEntity entity = Objects.requireNonNull(musicMapper.copy(existEntity));
     if (existEntity.getArtist() != null) {
       entity.setArtist(
@@ -89,7 +93,9 @@ public class MusicService {
 
   @Tool(description = "好きな曲名の一覧を取得する")
   public String getMusicListForMcp(Integer currentUserId) {
-    return musicRepository.findAll().stream().map(MusicEntity::getName)
-        .reduce((a, b) -> a + ", " + b).orElse("No music available");
+    return musicRepository.findAll().stream()
+        .map(MusicEntity::getName)
+        .reduce((a, b) -> a + ", " + b)
+        .orElse("No music available");
   }
 }

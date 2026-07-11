@@ -1,12 +1,5 @@
 package com.tarosuke777.hms.entity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -18,10 +11,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "training")
@@ -32,39 +32,38 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TrainingEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer trainingId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer trainingId;
 
-	@Column(nullable = false)
-	private LocalDate trainingDate;
+  @Column(nullable = false)
+  private LocalDate trainingDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "training_menu_id")
-	private TrainingMenuEntity trainingMenu;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "training_menu_id")
+  private TrainingMenuEntity trainingMenu;
 
-	private Integer weight;
+  private Integer weight;
 
-	private Integer reps;
+  private Integer reps;
 
-	private Integer sets;
+  private Integer sets;
 
-	@CreatedDate
-	@Column(updatable = false, nullable = false)
-	private LocalDateTime createdAt;
+  @CreatedDate
+  @Column(updatable = false, nullable = false)
+  private LocalDateTime createdAt;
 
-	@LastModifiedDate
-	@Column(nullable = false)
-	private LocalDateTime updatedAt;
+  @LastModifiedDate
+  @Column(nullable = false)
+  private LocalDateTime updatedAt;
 
-	@CreatedBy
-	@Column(updatable = false, nullable = false)
-	private Integer createdBy;
+  @CreatedBy
+  @Column(updatable = false, nullable = false)
+  private Integer createdBy;
 
-	@LastModifiedBy
-	@Column(nullable = false)
-	private Integer updatedBy;
+  @LastModifiedBy
+  @Column(nullable = false)
+  private Integer updatedBy;
 
-	@Version
-	private Integer version;
+  @Version private Integer version;
 }

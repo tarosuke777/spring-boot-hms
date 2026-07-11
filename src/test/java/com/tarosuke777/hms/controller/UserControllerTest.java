@@ -4,6 +4,12 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.tarosuke777.hms.entity.UserEntity;
+import com.tarosuke777.hms.form.UserForm;
+import com.tarosuke777.hms.mapper.UserMapper;
+import com.tarosuke777.hms.repository.UserRepository;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,19 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.TestSecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-import com.tarosuke777.hms.entity.UserEntity;
-import com.tarosuke777.hms.form.UserForm;
-import com.tarosuke777.hms.mapper.UserMapper;
-import com.tarosuke777.hms.repository.UserRepository;
-import com.tarosuke777.hms.security.LoginUser;
-import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,14 +32,10 @@ import jakarta.persistence.EntityManager;
 @WithUserDetails("admin")
 public class UserControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private UserRepository userRepository;
-  @Autowired
-  private UserMapper userMapper;
-  @Autowired
-  private EntityManager entityManager;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private UserRepository userRepository;
+  @Autowired private UserMapper userMapper;
+  @Autowired private EntityManager entityManager;
 
   private static final String SIGNUP_ENDPOINT = "/user/signup";
   private static final String SIGNUP_VIEW = "user/signup";
@@ -52,7 +47,6 @@ public class UserControllerTest {
   private static final String UPDATE_ENDPOINT = "/user/detail";
   private static final String DELETE_ENDPOINT = "/user/detail";
 
-
   @Test
   void getList_ShouldReturnUserList() throws Exception {
     // Given
@@ -60,7 +54,8 @@ public class UserControllerTest {
         userRepository.findAll().stream().map(userMapper::toForm).toList();
 
     // When & Then
-    performGetListRequest().andExpect(status().isOk())
+    performGetListRequest()
+        .andExpect(status().isOk())
         .andExpect(model().attribute("userList", expectedUserList))
         .andExpect(view().name(LIST_VIEW));
   }
@@ -72,9 +67,11 @@ public class UserControllerTest {
     UserForm expectedUserForm = userMapper.toForm(entity);
 
     // When & Then
-    performGetDetailRequest(entity.getId()).andExpect(status().isOk())
+    performGetDetailRequest(entity.getId())
+        .andExpect(status().isOk())
         .andExpect(model().attribute("userForm", expectedUserForm))
-        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
+        .andExpect(view().name(DETAIL_VIEW))
+        .andExpect(model().hasNoErrors());
   }
 
   @Test
@@ -86,7 +83,8 @@ public class UserControllerTest {
     form.setPassword("newPassword123");
 
     // When & Then
-    performUpdateRequest(form).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form)
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -103,7 +101,8 @@ public class UserControllerTest {
     Integer targetUserId = targetUser.getId();
 
     // When & Then
-    performDeleteRequest(targetUserId).andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetUserId)
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -121,23 +120,32 @@ public class UserControllerTest {
 
   private ResultActions performGetDetailRequest(int userId) throws Exception {
     return mockMvc
-        .perform(get(DETAIL_ENDPOINT, userId).accept(MediaType.TEXT_HTML)
-            .characterEncoding("UTF-8"))
+        .perform(
+            get(DETAIL_ENDPOINT, userId).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
         .andDo(print());
   }
 
   private ResultActions performUpdateRequest(UserForm form) throws Exception {
-    return mockMvc.perform(
-        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
-            .param("name", form.getName()).param("password", form.getPassword() != null ? form.getPassword() : "")
-            .param("role", form.getRole().toString()).param("version", form.getVersion().toString()))
+    return mockMvc
+        .perform(
+            post(UPDATE_ENDPOINT)
+                .with(csrf())
+                .param("update", "")
+                .param("id", form.getId().toString())
+                .param("name", form.getName())
+                .param("password", form.getPassword() != null ? form.getPassword() : "")
+                .param("role", form.getRole().toString())
+                .param("version", form.getVersion().toString()))
         .andDo(print());
   }
 
   private ResultActions performDeleteRequest(int userId) throws Exception {
     return mockMvc
-        .perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "")
-            .param("id", String.valueOf(userId)))
+        .perform(
+            post(DELETE_ENDPOINT)
+                .with(csrf())
+                .param("delete", "")
+                .param("id", String.valueOf(userId)))
         .andDo(print());
   }
 }

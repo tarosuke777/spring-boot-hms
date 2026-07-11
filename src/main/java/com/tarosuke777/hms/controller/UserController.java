@@ -1,6 +1,13 @@
 package com.tarosuke777.hms.controller;
 
+import com.tarosuke777.hms.enums.Role;
+import com.tarosuke777.hms.form.UserForm;
+import com.tarosuke777.hms.service.UserService;
+import com.tarosuke777.hms.validation.InsertGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Controller;
@@ -12,13 +19,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.tarosuke777.hms.enums.Role;
-import com.tarosuke777.hms.form.UserForm;
-import com.tarosuke777.hms.service.UserService;
-import com.tarosuke777.hms.validation.InsertGroup;
-import com.tarosuke777.hms.validation.UpdateGroup;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
@@ -34,8 +34,10 @@ public class UserController {
   }
 
   @PostMapping("/signup")
-  public String signup(@ModelAttribute @Validated(InsertGroup.class) UserForm form,
-      BindingResult bindingResult, @CurrentSecurityContext SecurityContext context) {
+  public String signup(
+      @ModelAttribute @Validated(InsertGroup.class) UserForm form,
+      BindingResult bindingResult,
+      @CurrentSecurityContext SecurityContext context) {
 
     if (bindingResult.hasErrors()) {
       return "user/signup";
@@ -63,8 +65,10 @@ public class UserController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@ModelAttribute @Validated(UpdateGroup.class) UserForm form,
-      BindingResult bindingResult, Model model) {
+  public String update(
+      @ModelAttribute @Validated(UpdateGroup.class) UserForm form,
+      BindingResult bindingResult,
+      Model model) {
     if (bindingResult.hasErrors()) {
       log.warn("Validation errors: {}", bindingResult.getAllErrors());
       return "user/detail";

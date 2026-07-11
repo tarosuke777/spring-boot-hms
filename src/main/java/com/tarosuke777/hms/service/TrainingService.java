@@ -1,97 +1,102 @@
 package com.tarosuke777.hms.service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.ai.tool.annotation.ToolParam;
-import org.springframework.data.domain.Sort;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.TrainingEntity;
 import com.tarosuke777.hms.entity.TrainingMenuEntity;
 import com.tarosuke777.hms.form.TrainingForm;
 import com.tarosuke777.hms.mapper.TrainingMapper;
 import com.tarosuke777.hms.repository.TrainingRepository;
 import jakarta.persistence.EntityManager;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.data.domain.Sort;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class TrainingService {
 
-	private final TrainingRepository trainingRepository;
-	private final EntityManager entityManager;
-	private final TrainingMapper trainingMapper;
+  private final TrainingRepository trainingRepository;
+  private final EntityManager entityManager;
+  private final TrainingMapper trainingMapper;
 
-	public List<TrainingForm> getTrainingList(String orderBy, String sortDirection,
-			Integer currentUserId) {
-		Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by(orderBy).descending()
-				: Sort.by(orderBy).ascending();
-		return trainingRepository.findByCreatedBy(currentUserId, sort).stream()
-				.map(this::convertToForm).toList();
-	}
+  public List<TrainingForm> getTrainingList(
+      String orderBy, String sortDirection, Integer currentUserId) {
+    Sort sort =
+        sortDirection.equalsIgnoreCase("desc")
+            ? Sort.by(orderBy).descending()
+            : Sort.by(orderBy).ascending();
+    return trainingRepository.findByCreatedBy(currentUserId, sort).stream()
+        .map(this::convertToForm)
+        .toList();
+  }
 
-	public TrainingForm getTrainingDetails(Integer trainingId, Integer currentUserId) {
-		return trainingRepository.findByTrainingIdAndCreatedBy(trainingId, currentUserId)
-				.map(this::convertToForm)
-				.orElseThrow(() -> new RuntimeException("Training not found or access denied"));
-	}
+  public TrainingForm getTrainingDetails(Integer trainingId, Integer currentUserId) {
+    return trainingRepository
+        .findByTrainingIdAndCreatedBy(trainingId, currentUserId)
+        .map(this::convertToForm)
+        .orElseThrow(() -> new RuntimeException("Training not found or access denied"));
+  }
 
-	@Transactional
-	public void registerTraining(TrainingForm form) {
-		TrainingEntity entity = Objects.requireNonNull(trainingMapper.toEntity(form));
-		if (form.getTrainingMenuId() != null) {
-			entity.setTrainingMenu(
-					entityManager.getReference(TrainingMenuEntity.class, form.getTrainingMenuId()));
-		}
-		trainingRepository.save(entity);
-	}
+  @Transactional
+  public void registerTraining(TrainingForm form) {
+    TrainingEntity entity = Objects.requireNonNull(trainingMapper.toEntity(form));
+    if (form.getTrainingMenuId() != null) {
+      entity.setTrainingMenu(
+          entityManager.getReference(TrainingMenuEntity.class, form.getTrainingMenuId()));
+    }
+    trainingRepository.save(entity);
+  }
 
-	@Transactional
-	public void updateTraining(TrainingForm form, Integer currentUserId) {
-		TrainingEntity existingEntity = trainingRepository
-				.findByTrainingIdAndCreatedBy(form.getTrainingId(), currentUserId)
-				.orElseThrow(() -> new RuntimeException("Training not found or access denied"));
+  @Transactional
+  public void updateTraining(TrainingForm form, Integer currentUserId) {
+    TrainingEntity existingEntity =
+        trainingRepository
+            .findByTrainingIdAndCreatedBy(form.getTrainingId(), currentUserId)
+            .orElseThrow(() -> new RuntimeException("Training not found or access denied"));
 
-		TrainingEntity entity = Objects.requireNonNull(trainingMapper.copy(existingEntity));
-		if (existingEntity.getTrainingMenu() != null) {
-			entity.setTrainingMenu(entityManager.getReference(TrainingMenuEntity.class,
-					existingEntity.getTrainingMenu().getId()));
-		}
+    TrainingEntity entity = Objects.requireNonNull(trainingMapper.copy(existingEntity));
+    if (existingEntity.getTrainingMenu() != null) {
+      entity.setTrainingMenu(
+          entityManager.getReference(
+              TrainingMenuEntity.class, existingEntity.getTrainingMenu().getId()));
+    }
 
-		trainingMapper.updateEntityFromForm(form, entity);
-		if (form.getTrainingMenuId() != null) {
-			entity.setTrainingMenu(
-					entityManager.getReference(TrainingMenuEntity.class, form.getTrainingMenuId()));
-		}
-		trainingRepository.save(entity);
-	}
+    trainingMapper.updateEntityFromForm(form, entity);
+    if (form.getTrainingMenuId() != null) {
+      entity.setTrainingMenu(
+          entityManager.getReference(TrainingMenuEntity.class, form.getTrainingMenuId()));
+    }
+    trainingRepository.save(entity);
+  }
 
-	@Transactional
-	public void deleteTraining(@NonNull Integer trainingId, Integer currentUserId) {
-		if (!trainingRepository.existsByTrainingIdAndCreatedBy(trainingId, currentUserId)) {
-			throw new RuntimeException("Training not found or access denied");
-		}
-		trainingRepository.deleteById(trainingId);
-	}
+  @Transactional
+  public void deleteTraining(@NonNull Integer trainingId, Integer currentUserId) {
+    if (!trainingRepository.existsByTrainingIdAndCreatedBy(trainingId, currentUserId)) {
+      throw new RuntimeException("Training not found or access denied");
+    }
+    trainingRepository.deleteById(trainingId);
+  }
 
+  /** Entity から Form への変換（リレーションのID詰め替え含む） */
+  private TrainingForm convertToForm(TrainingEntity entity) {
+    TrainingForm form = trainingMapper.toForm(entity);
+    if (entity.getTrainingMenu() != null) {
+      form.setTrainingMenuId(entity.getTrainingMenu().getId());
+      form.setTrainingAreaId(entity.getTrainingMenu().getTargetAreaId());
+    }
+    return form;
+  }
 
-	/** Entity から Form への変換（リレーションのID詰め替え含む） */
-	private TrainingForm convertToForm(TrainingEntity entity) {
-		TrainingForm form = trainingMapper.toForm(entity);
-		if (entity.getTrainingMenu() != null) {
-			form.setTrainingMenuId(entity.getTrainingMenu().getId());
-			form.setTrainingAreaId(entity.getTrainingMenu().getTargetAreaId());
-		}
-		return form;
-	}
-
-	@Tool(description = "日付でトレーニングを取得する", name = "getTraining")
-	public String getTrainingForMcp(@ToolParam(description = "日付") String date) {
-		var dateWithTraining =
-				Map.of("2025-01-01", "チェストプレス", "2025-01-02", "ランニング", "2025-01-03", "水泳");
-		return dateWithTraining.getOrDefault(date, "No training scheduled for this date");
-	}
+  @Tool(description = "日付でトレーニングを取得する", name = "getTraining")
+  public String getTrainingForMcp(@ToolParam(description = "日付") String date) {
+    var dateWithTraining =
+        Map.of("2025-01-01", "チェストプレス", "2025-01-02", "ランニング", "2025-01-03", "水泳");
+    return dateWithTraining.getOrDefault(date, "No training scheduled for this date");
+  }
 }

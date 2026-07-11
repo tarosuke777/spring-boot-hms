@@ -30,5 +30,4 @@ public class UserForm {
 
   @NotNull(groups = UpdateGroup.class)
   private Integer version;
-
 }

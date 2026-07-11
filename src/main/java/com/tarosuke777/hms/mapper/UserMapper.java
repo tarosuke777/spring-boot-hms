@@ -1,23 +1,22 @@
 package com.tarosuke777.hms.mapper;
 
+import com.tarosuke777.hms.entity.UserEntity;
+import com.tarosuke777.hms.form.UserForm;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import com.tarosuke777.hms.entity.UserEntity;
-import com.tarosuke777.hms.form.UserForm;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    @IgnoreAuditFields
-    UserEntity toEntity(UserForm form);
+  @IgnoreAuditFields
+  UserEntity toEntity(UserForm form);
 
-    @Mapping(target = "password", ignore = true)
-    UserForm toForm(UserEntity entity);
+  @Mapping(target = "password", ignore = true)
+  UserForm toForm(UserEntity entity);
 
-    UserEntity copy(UserEntity entity);
+  UserEntity copy(UserEntity entity);
 
-    @IgnoreAuditFields
-    void updateEntityFromForm(UserForm form, @MappingTarget UserEntity entity);
-
+  @IgnoreAuditFields
+  void updateEntityFromForm(UserForm form, @MappingTarget UserEntity entity);
 }

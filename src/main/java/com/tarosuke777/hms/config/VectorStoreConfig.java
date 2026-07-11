@@ -13,16 +13,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Configuration
 public class VectorStoreConfig {
 
-    @Bean
-    @Profile({"local", "test"}) // H2を使うローカル環境用
-    public VectorStore simpleVectorStore(EmbeddingModel embeddingModel) {
-        return SimpleVectorStore.builder(Objects.requireNonNull(embeddingModel)).build();
-    }
+  @Bean
+  @Profile({"local", "test"}) // H2を使うローカル環境用
+  public VectorStore simpleVectorStore(EmbeddingModel embeddingModel) {
+    return SimpleVectorStore.builder(Objects.requireNonNull(embeddingModel)).build();
+  }
 
-    @Bean
-    @Profile("dev") // MariaDBを使う開発環境用
-    public VectorStore mysqlVectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
-        return MariaDBVectorStore.builder(Objects.requireNonNull(jdbcTemplate),
-                Objects.requireNonNull(embeddingModel)).build();
-    }
+  @Bean
+  @Profile("dev") // MariaDBを使う開発環境用
+  public VectorStore mysqlVectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
+    return MariaDBVectorStore.builder(
+            Objects.requireNonNull(jdbcTemplate), Objects.requireNonNull(embeddingModel))
+        .build();
+  }
 }

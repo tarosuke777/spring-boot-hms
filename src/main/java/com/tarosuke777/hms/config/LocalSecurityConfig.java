@@ -25,6 +25,4 @@ public class LocalSecurityConfig {
         .headers((headers) -> headers.frameOptions(FrameOptionsConfig::sameOrigin));
     return http.build();
   }
-
-
 }

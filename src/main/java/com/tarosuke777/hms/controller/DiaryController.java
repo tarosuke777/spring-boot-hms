@@ -1,7 +1,14 @@
 package com.tarosuke777.hms.controller;
 
+import com.tarosuke777.hms.form.DiaryForm;
+import com.tarosuke777.hms.security.LoginUser;
+import com.tarosuke777.hms.service.DiaryService;
+import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import java.util.List;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,13 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import com.tarosuke777.hms.form.DiaryForm;
-import com.tarosuke777.hms.security.LoginUser;
-import com.tarosuke777.hms.service.DiaryService;
-import com.tarosuke777.hms.validation.DeleteGroup;
-import com.tarosuke777.hms.validation.UpdateGroup;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
@@ -27,57 +27,60 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class DiaryController {
 
-    private static final String REDIRECT_LIST = "redirect:/diary/list";
-    private static final String LIST_VIEW = "diary/list";
-    private static final String DETAIL_VIEW = "diary/detail";
-    private static final String REGISTER_VIEW = "diary/register";
+  private static final String REDIRECT_LIST = "redirect:/diary/list";
+  private static final String LIST_VIEW = "diary/list";
+  private static final String DETAIL_VIEW = "diary/detail";
+  private static final String REGISTER_VIEW = "diary/register";
 
-    private final DiaryService diaryService;
+  private final DiaryService diaryService;
 
-    @GetMapping("/list")
-    public String getList(Model model,
-            @RequestParam(name = "orderBy", defaultValue = "diaryDate") String orderBy,
-            @RequestParam(name = "sort", defaultValue = "desc") String sort,
-            @AuthenticationPrincipal LoginUser user) {
-        List<DiaryForm> diaryList = diaryService.getDiaryList(orderBy, sort, user.getId());
-        model.addAttribute("diaryList", diaryList);
-        return LIST_VIEW;
+  @GetMapping("/list")
+  public String getList(
+      Model model,
+      @RequestParam(name = "orderBy", defaultValue = "diaryDate") String orderBy,
+      @RequestParam(name = "sort", defaultValue = "desc") String sort,
+      @AuthenticationPrincipal LoginUser user) {
+    List<DiaryForm> diaryList = diaryService.getDiaryList(orderBy, sort, user.getId());
+    model.addAttribute("diaryList", diaryList);
+    return LIST_VIEW;
+  }
+
+  @GetMapping("/detail/{diaryId}")
+  public String getDetail(
+      @PathVariable("diaryId") Integer diaryId,
+      Model model,
+      @AuthenticationPrincipal LoginUser user) {
+    DiaryForm diaryForm = diaryService.getDiaryDetails(diaryId, user.getId());
+    model.addAttribute("diaryForm", diaryForm);
+    return DETAIL_VIEW;
+  }
+
+  @GetMapping("/register")
+  public String getRegister(DiaryForm diaryForm, Model model) {
+    return REGISTER_VIEW;
+  }
+
+  @PostMapping("/register")
+  public String register(
+      @ModelAttribute @Validated DiaryForm form, BindingResult bindingResult, Model model) {
+    if (bindingResult.hasErrors()) {
+      return getRegister(form, model);
     }
+    diaryService.registerDiary(form);
+    return REDIRECT_LIST;
+  }
 
-    @GetMapping("/detail/{diaryId}")
-    public String getDetail(@PathVariable("diaryId") Integer diaryId, Model model,
-            @AuthenticationPrincipal LoginUser user) {
-        DiaryForm diaryForm = diaryService.getDiaryDetails(diaryId, user.getId());
-        model.addAttribute("diaryForm", diaryForm);
-        return DETAIL_VIEW;
-    }
+  @PostMapping(value = "/detail", params = "update")
+  public String update(
+      @Validated(UpdateGroup.class) DiaryForm form, @AuthenticationPrincipal LoginUser user) {
+    diaryService.updateDiary(form, user.getId());
+    return REDIRECT_LIST;
+  }
 
-    @GetMapping("/register")
-    public String getRegister(DiaryForm diaryForm, Model model) {
-        return REGISTER_VIEW;
-    }
-
-    @PostMapping("/register")
-    public String register(@ModelAttribute @Validated DiaryForm form, BindingResult bindingResult,
-            Model model) {
-        if (bindingResult.hasErrors()) {
-            return getRegister(form, model);
-        }
-        diaryService.registerDiary(form);
-        return REDIRECT_LIST;
-    }
-
-    @PostMapping(value = "/detail", params = "update")
-    public String update(@Validated(UpdateGroup.class) DiaryForm form,
-            @AuthenticationPrincipal LoginUser user) {
-        diaryService.updateDiary(form, user.getId());
-        return REDIRECT_LIST;
-    }
-
-    @PostMapping(value = "/detail", params = "delete")
-    public String delete(@Validated(DeleteGroup.class) DiaryForm form,
-            @AuthenticationPrincipal LoginUser user) {
-        diaryService.deleteDiary(Objects.requireNonNull(form.getDiaryId()), user.getId());
-        return REDIRECT_LIST;
-    }
+  @PostMapping(value = "/detail", params = "delete")
+  public String delete(
+      @Validated(DeleteGroup.class) DiaryForm form, @AuthenticationPrincipal LoginUser user) {
+    diaryService.deleteDiary(Objects.requireNonNull(form.getDiaryId()), user.getId());
+    return REDIRECT_LIST;
+  }
 }

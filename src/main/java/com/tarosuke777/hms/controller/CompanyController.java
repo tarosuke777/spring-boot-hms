@@ -1,8 +1,16 @@
 package com.tarosuke777.hms.controller;
 
+import com.tarosuke777.hms.exception.IllegalRequestException;
+import com.tarosuke777.hms.form.CompanyForm;
+import com.tarosuke777.hms.security.LoginUser;
+import com.tarosuke777.hms.service.CompanyService;
+import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,14 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.util.UriComponentsBuilder;
-import com.tarosuke777.hms.exception.IllegalRequestException;
-import com.tarosuke777.hms.form.CompanyForm;
-import com.tarosuke777.hms.security.LoginUser;
-import com.tarosuke777.hms.service.CompanyService;
-import com.tarosuke777.hms.validation.DeleteGroup;
-import com.tarosuke777.hms.validation.UpdateGroup;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
@@ -33,80 +33,88 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class CompanyController {
 
-    private static final String REDIRECT_LIST = "redirect:/company/list";
-    private static final String LIST_VIEW = "company/list";
-    private static final String DETAIL_VIEW = "company/detail";
-    private static final String REDIRECT_DETAIL_VIEW = "redirect:/company/detail/{id}";
-    private static final String REGISTER_VIEW = "company/register";
+  private static final String REDIRECT_LIST = "redirect:/company/list";
+  private static final String LIST_VIEW = "company/list";
+  private static final String DETAIL_VIEW = "company/detail";
+  private static final String REDIRECT_DETAIL_VIEW = "redirect:/company/detail/{id}";
+  private static final String REGISTER_VIEW = "company/register";
 
-    private final CompanyService companyService;
+  private final CompanyService companyService;
 
-    @GetMapping("/list")
-    public String getList(@RequestParam(required = false) String name,
-            @PageableDefault(size = 10) Pageable pageable, Model model,
-            @AuthenticationPrincipal LoginUser user) {
-        Page<CompanyForm> companyPage = companyService.getCompanyList(user.getId(), name, Objects.requireNonNull(pageable));
-        model.addAttribute("companyPage", companyPage);
-        model.addAttribute("name", name);
-        return LIST_VIEW;
+  @GetMapping("/list")
+  public String getList(
+      @RequestParam(required = false) String name,
+      @PageableDefault(size = 10) Pageable pageable,
+      Model model,
+      @AuthenticationPrincipal LoginUser user) {
+    Page<CompanyForm> companyPage =
+        companyService.getCompanyList(user.getId(), name, Objects.requireNonNull(pageable));
+    model.addAttribute("companyPage", companyPage);
+    model.addAttribute("name", name);
+    return LIST_VIEW;
+  }
+
+  @GetMapping("/register")
+  public String getRegister(@ModelAttribute CompanyForm form) {
+    return REGISTER_VIEW;
+  }
+
+  @PostMapping("/register")
+  public String register(
+      @ModelAttribute @Validated CompanyForm form, BindingResult bindingResult, Model model) {
+    if (bindingResult.hasErrors()) {
+      return REGISTER_VIEW;
+    }
+    companyService.registerCompany(form);
+    return REDIRECT_LIST;
+  }
+
+  @GetMapping("/detail/{companyId}")
+  public String getDetail(
+      @PathVariable("companyId") Integer companyId,
+      Model model,
+      @AuthenticationPrincipal LoginUser user) {
+    CompanyForm form = companyService.getCompany(Objects.requireNonNull(companyId), user.getId());
+    model.addAttribute("companyForm", form);
+    return DETAIL_VIEW;
+  }
+
+  @PostMapping(value = "detail", params = "update")
+  public String update(
+      @ModelAttribute @Validated(UpdateGroup.class) CompanyForm form,
+      BindingResult bindingResult,
+      @AuthenticationPrincipal LoginUser user) {
+
+    // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
+    if (bindingResult.hasFieldErrors(CompanyForm.Fields.id)
+        || bindingResult.hasFieldErrors(CompanyForm.Fields.version)) {
+      throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
     }
 
-    @GetMapping("/register")
-    public String getRegister(@ModelAttribute CompanyForm form) {
-        return REGISTER_VIEW;
+    if (bindingResult.hasErrors()) {
+      return DETAIL_VIEW;
+    }
+    companyService.updateCompany(form, user.getId());
+
+    final Map<String, Object> uriVariables = new HashMap<>();
+    uriVariables.put(CompanyForm.Fields.id, form.getId());
+    return UriComponentsBuilder.fromUriString(REDIRECT_DETAIL_VIEW)
+        .buildAndExpand(uriVariables)
+        .toUriString();
+  }
+
+  @PostMapping(value = "/detail", params = "delete")
+  public String delete(
+      @Validated(DeleteGroup.class) CompanyForm form,
+      BindingResult bindingResult,
+      @AuthenticationPrincipal LoginUser user) {
+
+    // id にエラーがある場合は改ざんとみなしてシステムエラー
+    if (bindingResult.hasFieldErrors(CompanyForm.Fields.id)) {
+      throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
     }
 
-    @PostMapping("/register")
-    public String register(@ModelAttribute @Validated CompanyForm form, BindingResult bindingResult,
-            Model model) {
-        if (bindingResult.hasErrors()) {
-            return REGISTER_VIEW;
-        }
-        companyService.registerCompany(form);
-        return REDIRECT_LIST;
-    }
-
-    @GetMapping("/detail/{companyId}")
-    public String getDetail(@PathVariable("companyId") Integer companyId, Model model,
-            @AuthenticationPrincipal LoginUser user) {
-        CompanyForm form =
-                companyService.getCompany(Objects.requireNonNull(companyId), user.getId());
-        model.addAttribute("companyForm", form);
-        return DETAIL_VIEW;
-    }
-
-    @PostMapping(value = "detail", params = "update")
-    public String update(@ModelAttribute @Validated(UpdateGroup.class) CompanyForm form,
-            BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
-
-        // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
-        if (bindingResult.hasFieldErrors(CompanyForm.Fields.id)
-                || bindingResult.hasFieldErrors(CompanyForm.Fields.version)) {
-            throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
-        }
-
-        if (bindingResult.hasErrors()) {
-            return DETAIL_VIEW;
-        }
-        companyService.updateCompany(form, user.getId());
-
-        final Map<String, Object> uriVariables = new HashMap<>();
-        uriVariables.put(CompanyForm.Fields.id, form.getId());
-        return UriComponentsBuilder.fromUriString(REDIRECT_DETAIL_VIEW).buildAndExpand(uriVariables)
-                .toUriString();
-    }
-
-    @PostMapping(value = "/detail", params = "delete")
-    public String delete(@Validated(DeleteGroup.class) CompanyForm form,
-            BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
-
-        // id にエラーがある場合は改ざんとみなしてシステムエラー
-        if (bindingResult.hasFieldErrors(CompanyForm.Fields.id)) {
-            throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
-        }
-
-        companyService.deleteCompany(Objects.requireNonNull(form.getId()), user.getId());
-        return REDIRECT_LIST;
-    }
-
+    companyService.deleteCompany(Objects.requireNonNull(form.getId()), user.getId());
+    return REDIRECT_LIST;
+  }
 }

@@ -4,6 +4,13 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.tarosuke777.hms.entity.TrainingMenuEntity;
+import com.tarosuke777.hms.form.TrainingMenuForm;
+import com.tarosuke777.hms.mapper.TrainingMenuMapper;
+import com.tarosuke777.hms.repository.TrainingMenuRepository;
+import com.tarosuke777.hms.security.LoginUser;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,12 +25,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-import com.tarosuke777.hms.entity.TrainingMenuEntity;
-import com.tarosuke777.hms.form.TrainingMenuForm;
-import com.tarosuke777.hms.mapper.TrainingMenuMapper;
-import com.tarosuke777.hms.repository.TrainingMenuRepository;
-import com.tarosuke777.hms.security.LoginUser;
-import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,14 +34,10 @@ import jakarta.persistence.EntityManager;
 @WithUserDetails("admin")
 public class TrainingMenuControllerTest {
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private TrainingMenuRepository trainingMenuRepository; // Repositoryへ変更
-  @Autowired
-  private TrainingMenuMapper trainingMenuMapper; // TrainingMenuMapper追加
-  @Autowired
-  private EntityManager entityManager; // キャッシュクリア用
+  @Autowired private MockMvc mockMvc;
+  @Autowired private TrainingMenuRepository trainingMenuRepository; // Repositoryへ変更
+  @Autowired private TrainingMenuMapper trainingMenuMapper; // TrainingMenuMapper追加
+  @Autowired private EntityManager entityManager; // キャッシュクリア用
 
   private static final String LIST_ENDPOINT = "/trainingMenu/list";
   private static final String LIST_VIEW = "trainingMenu/list";
@@ -62,11 +59,14 @@ public class TrainingMenuControllerTest {
     LoginUser loginUser =
         (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Integer currentUserId = loginUser.getId();
-    List<TrainingMenuForm> expectedTrainingMenuList = trainingMenuRepository
-        .findByCreatedBy(currentUserId).stream().map(trainingMenuMapper::toForm).toList();
+    List<TrainingMenuForm> expectedTrainingMenuList =
+        trainingMenuRepository.findByCreatedBy(currentUserId).stream()
+            .map(trainingMenuMapper::toForm)
+            .toList();
 
     // When & Then
-    performGetListRequest().andExpect(status().isOk())
+    performGetListRequest()
+        .andExpect(status().isOk())
         .andExpect(model().attribute("trainingMenuList", expectedTrainingMenuList))
         .andExpect(view().name(LIST_VIEW));
   }
@@ -79,9 +79,11 @@ public class TrainingMenuControllerTest {
     TrainingMenuForm expectedTrainingMenuForm = trainingMenuMapper.toForm(entity);
 
     // When & Then
-    performGetDetailRequest(entity.getId()).andExpect(status().isOk())
+    performGetDetailRequest(entity.getId())
+        .andExpect(status().isOk())
         .andExpect(model().attribute("trainingMenuForm", expectedTrainingMenuForm))
-        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
+        .andExpect(view().name(DETAIL_VIEW))
+        .andExpect(model().hasNoErrors());
   }
 
   @Test
@@ -90,7 +92,9 @@ public class TrainingMenuControllerTest {
     // Given
 
     // When & Then
-    performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
+    performGetRegisterRequest()
+        .andExpect(status().isOk())
+        .andExpect(view().name(REGISTER_VIEW))
         .andExpect(model().hasNoErrors());
   }
 
@@ -101,7 +105,8 @@ public class TrainingMenuControllerTest {
     String TrainingMenuName = "TestTrainingMenuName";
 
     // When & Then
-    performRegisterRequest(TrainingMenuName).andExpect(status().is3xxRedirection())
+    performRegisterRequest(TrainingMenuName)
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -120,7 +125,8 @@ public class TrainingMenuControllerTest {
     form.setName("著者２");
 
     // When & Then
-    performUpdateRequest(form).andExpect(status().is3xxRedirection())
+    performUpdateRequest(form)
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
@@ -151,7 +157,9 @@ public class TrainingMenuControllerTest {
     form.setVersion(currentVersion);
 
     // When & Then
-    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
+    performUpdateRequest(form)
+        .andExpect(status().isOk())
+        .andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -163,7 +171,8 @@ public class TrainingMenuControllerTest {
     Integer targetTrainingMenuId = targetTrainingMenu.getId();
 
     // When & Then
-    performDeleteRequest(targetTrainingMenu.getId()).andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetTrainingMenu.getId())
+        .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -193,14 +202,24 @@ public class TrainingMenuControllerTest {
   }
 
   private ResultActions performRegisterRequest(String name) throws Exception {
-    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
-        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
+    return mockMvc
+        .perform(
+            post(REGISTER_ENDPOINT)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", name))
+        .andDo(print());
   }
 
   private ResultActions performUpdateRequest(TrainingMenuForm form) throws Exception {
-    return mockMvc.perform(
-        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
-            .param("name", form.getName()).param("version", form.getVersion().toString()))
+    return mockMvc
+        .perform(
+            post(UPDATE_ENDPOINT)
+                .with(csrf())
+                .param("update", "")
+                .param("id", form.getId().toString())
+                .param("name", form.getName())
+                .param("version", form.getVersion().toString()))
         .andDo(print());
   }
 

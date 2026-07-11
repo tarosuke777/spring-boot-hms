@@ -15,13 +15,13 @@ import lombok.experimental.FieldNameConstants;
 @Data
 @FieldNameConstants
 public class CastForm {
-    @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
-    private Integer id;
+  @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
+  private Integer id;
 
-    @NotBlank
-    @Size(min = 1, max = 50)
-    private String name;
+  @NotBlank
+  @Size(min = 1, max = 50)
+  private String name;
 
-    @NotNull(groups = UpdateGroup.class)
-    private Integer version;
+  @NotNull(groups = UpdateGroup.class)
+  private Integer version;
 }

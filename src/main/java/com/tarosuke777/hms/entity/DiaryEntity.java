@@ -1,12 +1,5 @@
 package com.tarosuke777.hms.entity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -15,10 +8,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "diary")
@@ -29,45 +29,44 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DiaryEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer diaryId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer diaryId;
 
-    @Column(nullable = false)
-    private LocalDate diaryDate;
+  @Column(nullable = false)
+  private LocalDate diaryDate;
 
-    @Column(length = 255)
-    private String todoPlan;
+  @Column(length = 255)
+  private String todoPlan;
 
-    @Column(length = 255)
-    private String todoActual;
+  @Column(length = 255)
+  private String todoActual;
 
-    private Integer funPlan;
+  private Integer funPlan;
 
-    private Integer funActual;
+  private Integer funActual;
 
-    @Column(length = 255)
-    private String commentPlan;
+  @Column(length = 255)
+  private String commentPlan;
 
-    @Column(length = 255)
-    private String commentActual;
+  @Column(length = 255)
+  private String commentActual;
 
-    @CreatedDate
-    @Column(updatable = false, nullable = false)
-    private LocalDateTime createdAt;
+  @CreatedDate
+  @Column(updatable = false, nullable = false)
+  private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+  @LastModifiedDate
+  @Column(nullable = false)
+  private LocalDateTime updatedAt;
 
-    @CreatedBy
-    @Column(updatable = false, nullable = false)
-    private Integer createdBy;
+  @CreatedBy
+  @Column(updatable = false, nullable = false)
+  private Integer createdBy;
 
-    @LastModifiedBy
-    @Column(nullable = false)
-    private Integer updatedBy;
+  @LastModifiedBy
+  @Column(nullable = false)
+  private Integer updatedBy;
 
-    @Version
-    private Integer version;
+  @Version private Integer version;
 }

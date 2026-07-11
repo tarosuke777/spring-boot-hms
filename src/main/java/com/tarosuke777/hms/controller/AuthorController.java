@@ -1,6 +1,14 @@
 package com.tarosuke777.hms.controller;
 
+import com.tarosuke777.hms.exception.IllegalRequestException;
+import com.tarosuke777.hms.form.AuthorForm;
+import com.tarosuke777.hms.security.LoginUser;
+import com.tarosuke777.hms.service.AuthorService;
+import com.tarosuke777.hms.validation.DeleteGroup;
+import com.tarosuke777.hms.validation.UpdateGroup;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,14 +19,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.tarosuke777.hms.exception.IllegalRequestException;
-import com.tarosuke777.hms.form.AuthorForm;
-import com.tarosuke777.hms.security.LoginUser;
-import com.tarosuke777.hms.service.AuthorService;
-import com.tarosuke777.hms.validation.DeleteGroup;
-import com.tarosuke777.hms.validation.UpdateGroup;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
@@ -45,8 +45,8 @@ public class AuthorController {
   }
 
   @PostMapping("/register")
-  public String register(@ModelAttribute @Validated AuthorForm form, BindingResult bindingResult,
-      Model model) {
+  public String register(
+      @ModelAttribute @Validated AuthorForm form, BindingResult bindingResult, Model model) {
     if (bindingResult.hasErrors()) {
       return REGISTER_VIEW;
     }
@@ -55,7 +55,9 @@ public class AuthorController {
   }
 
   @GetMapping("/detail/{authorId}")
-  public String getDetail(@PathVariable("authorId") Integer authorId, Model model,
+  public String getDetail(
+      @PathVariable("authorId") Integer authorId,
+      Model model,
       @AuthenticationPrincipal LoginUser user) {
     AuthorForm form = authorService.getAuthor(authorId, user.getId());
     model.addAttribute("authorForm", form);
@@ -63,8 +65,10 @@ public class AuthorController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(@ModelAttribute @Validated(UpdateGroup.class) AuthorForm form,
-      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
+  public String update(
+      @ModelAttribute @Validated(UpdateGroup.class) AuthorForm form,
+      BindingResult bindingResult,
+      @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(AuthorForm.Fields.id)
@@ -80,7 +84,9 @@ public class AuthorController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(@Validated(DeleteGroup.class) AuthorForm form, BindingResult bindingResult,
+  public String delete(
+      @Validated(DeleteGroup.class) AuthorForm form,
+      BindingResult bindingResult,
       @AuthenticationPrincipal LoginUser user) {
 
     // id にエラーがある場合は改ざんとみなしてシステムエラー
@@ -91,5 +97,4 @@ public class AuthorController {
     authorService.deleteAuthor(Objects.requireNonNull(form.getId()), user.getId());
     return REDIRECT_LIST;
   }
-
 }

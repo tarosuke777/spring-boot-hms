@@ -1,16 +1,5 @@
 package com.tarosuke777.hms.service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.tarosuke777.hms.entity.AuthorEntity;
 import com.tarosuke777.hms.entity.BookEntity;
 import com.tarosuke777.hms.enums.BookGenre;
@@ -19,8 +8,19 @@ import com.tarosuke777.hms.mapper.BookMapper;
 import com.tarosuke777.hms.repository.BookRepository;
 import com.tarosuke777.hms.specification.BookSpecifications;
 import jakarta.persistence.EntityManager;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -32,26 +32,33 @@ public class BookService {
 
   private final VectorStore vectorStore;
 
-  public Page<BookForm> getBookList(Integer currentUserId, BookGenre genre, Integer authorId,
-      Boolean isAdult, @NonNull Pageable pageable) {
+  public Page<BookForm> getBookList(
+      Integer currentUserId,
+      BookGenre genre,
+      Integer authorId,
+      Boolean isAdult,
+      @NonNull Pageable pageable) {
     var spec = BookSpecifications.withFilters(currentUserId, genre, authorId, isAdult);
 
     // Page<Entity> を取得
     Page<BookEntity> bookPage = bookRepository.findAll(spec, pageable);
 
     // Pageの中身(Entity)をFormに詰め替える
-    return bookPage.map(book -> {
-      BookForm form = bookMapper.toForm(book);
-      if (book.getAuthor() != null) {
-        form.setAuthorId(book.getAuthor().getId());
-      }
-      return form;
-    });
+    return bookPage.map(
+        book -> {
+          BookForm form = bookMapper.toForm(book);
+          if (book.getAuthor() != null) {
+            form.setAuthorId(book.getAuthor().getId());
+          }
+          return form;
+        });
   }
 
   public BookForm getBookDetails(Integer id, Integer currentUserId) {
-    BookEntity book = bookRepository.findByIdAndCreatedBy(id, currentUserId)
-        .orElseThrow(() -> new RuntimeException("Book not found"));
+    BookEntity book =
+        bookRepository
+            .findByIdAndCreatedBy(id, currentUserId)
+            .orElseThrow(() -> new RuntimeException("Book not found"));
     BookForm bookForm = bookMapper.toForm(book);
     bookForm.setAuthorId(book.getAuthor().getId());
     return bookForm;
@@ -71,8 +78,10 @@ public class BookService {
 
   @Transactional
   public void updateBook(BookForm form, Integer currentUserId) {
-    BookEntity existEntity = bookRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
-        .orElseThrow(() -> new RuntimeException("Book not found"));
+    BookEntity existEntity =
+        bookRepository
+            .findByIdAndCreatedBy(form.getId(), currentUserId)
+            .orElseThrow(() -> new RuntimeException("Book not found"));
 
     BookEntity entity = Objects.requireNonNull(bookMapper.copy(existEntity));
     if (existEntity.getAuthor() != null) {
@@ -106,14 +115,13 @@ public class BookService {
     }
   }
 
-  /**
-   * Entity の内容をベクトルストアに同期する共通メソッド
-   */
+  /** Entity の内容をベクトルストアに同期する共通メソッド */
   public void syncVectorStore(BookEntity entity) {
 
     StringBuilder content = new StringBuilder();
-    content.append(String.format("蔵書情報: タイトルは「%s」、ジャンルは「%s」です。", entity.getName(),
-        entity.getGenre().getLabel()));
+    content.append(
+        String.format(
+            "蔵書情報: タイトルは「%s」、ジャンルは「%s」です。", entity.getName(), entity.getGenre().getLabel()));
 
     if (entity.getLink() != null && !entity.getLink().isBlank()) {
       content.append(String.format(" 詳細リンクはこちら: %s", entity.getLink()));
