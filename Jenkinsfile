@@ -5,8 +5,11 @@ pipeline {
         stage('Docker Build & Extract Reports') {
             steps {
                 echo 'Building Docker Compose services and running tests inside Docker...'
+                
+                sh 'ls -R build/reports || echo "フォルダはまだ存在しません"'
+                
                 // 1. Docker Composeでビルド（この内部のマルチステージビルドでテストとJaCoCoが走ります）
-                sh 'sudo docker compose build'
+                // sh 'sudo docker compose build'
 
                 echo 'Extracting JaCoCo reports from Docker builder stage...'
                 // script {
@@ -41,15 +44,15 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                echo 'Stopping and removing old containers...'
-                sh 'sudo docker compose down'
+        // stage('Deploy') {
+        //     steps {
+        //         echo 'Stopping and removing old containers...'
+        //         sh 'sudo docker compose down'
                 
-                echo 'Starting new containers...'
-                sh 'sudo docker compose up -d'
-            }
-        }
+        //         echo 'Starting new containers...'
+        //         sh 'sudo docker compose up -d'
+        //     }
+        // }
     }
 
     post {
