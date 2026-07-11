@@ -4,37 +4,35 @@ pipeline {
     stages {
         stage('init') {
             steps {
-                script {
-                    echo 'Forcibly cleaning up old root-owned artifacts...'
-                    sh 'sudo rm -rf build'
-
-                    echo 'Creating build directory...'
-                    sh 'sudo mkdir build'
-                }
+                echo 'Forcibly cleaning up old root-owned artifacts...'
+                sh 'sudo rm -rf build'
+                
+                echo 'Creating build directory...'
+                sh 'sudo mkdir build'
             }
         }
 
-        stage('Test & Report') {
+        stage('Build & Test & Report') {
             steps {
                 script {
                     try{
-                        echo 'Building tests inside Docker...'
-                        sh 'sudo docker compose build test'
+                        echo 'Building builder inside Docker...'
+                        sh 'sudo docker compose build builder'
 
-                        echo 'Running tests inside Docker...'
-                        sh 'sudo docker compose run --name jenkins-test-container test'
+                        echo 'Running builder inside Docker...'
+                        sh 'sudo docker compose run --name jenkins-builder-container builder'
                     } finally {
-                        echo 'Copying build artifacts from test container...'
-                        sh 'sudo docker cp jenkins-test-container:/app/build .'
+                        echo 'Copying build artifacts from builder container...'
+                        sh 'sudo docker cp jenkins-builder-container:/app/build .'
                         
-                        echo 'Cleaning up test container...'
-                        sh 'sudo docker rm -f jenkins-test-container || true'
+                        echo 'Cleaning up builder container...'
+                        sh 'sudo docker rm -f jenkins-builder-container || true'
                     }
                 }
             }
         }
 
-        stage('Build') {
+        stage('Create Docker Images') {
             steps {
                 echo 'Building Docker Compose services and running tests inside Docker...'
                 sh 'sudo docker compose build hms-ap'
@@ -44,7 +42,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Stopping and removing old containers...'
-                sh 'sudo docker compose down'
+                sh 'sudo docker compose down hms-ap'
                 
                 echo 'Starting new containers...'
                 sh 'sudo docker compose up -d hms-ap'

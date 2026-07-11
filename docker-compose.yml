@@ -1,12 +1,11 @@
 name: hms
 
 services:
-  test:
+  builder:
     build:
       context: .
       dockerfile: Dockerfile
       target: builder
-    # command: ./gradlew test
     command: ./gradlew build
 
   hms-ap:
