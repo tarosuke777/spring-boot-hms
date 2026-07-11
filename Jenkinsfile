@@ -2,13 +2,29 @@ pipeline {
     agent any
 
     stages {
+        stage('init') {
+            steps {
+                script {
+                    echo 'Forcibly cleaning up old root-owned artifacts...'
+                    sh 'sudo rm -rf build'
+                }
+            }
+        }
+
+        stage('Test & Report') {
+            steps {
+                script {
+                    echo 'Building Docker Compose services and running tests inside Docker...'
+                    sh 'sudo docker compose build test' 
+                }
+            }
+        }
+
         stage('Docker Build & Extract Reports') {
             steps {
-                echo 'Forcibly cleaning up old root-owned artifacts...'
-                sh 'sudo rm -rf build'
 
                 echo 'Building Docker Compose services and running tests inside Docker...'
-                sh 'sudo docker compose build'
+                sh 'sudo docker compose build hms-ap'
             }
         }
 

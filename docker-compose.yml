@@ -1,17 +1,19 @@
 name: hms
 
 services:
+  test:
+    build:
+      context: .
+      target: tester
+    volumes:
+      - ./build:/app/build
+
   hms-ap:
     image: hms:1.0
     container_name: hms-ap
     build:
       context: .
       dockerfile: Dockerfile
-      outputs:
-        - type: local
-          dest: build
-          target: export-stage
-          export_on_failure: true
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:mariadb://home-db-mariadb:3306/hms
