@@ -4,11 +4,10 @@ pipeline {
     stages {
         stage('Docker Build & Extract Reports') {
             steps {
-                    echo 'Forcibly cleaning up old root-owned artifacts...'
-                    // root権限で生成されたbuildフォルダを強制的に削除
-                    sh 'sudo rm -rf build'
-            }
-            steps {
+                echo 'Forcibly cleaning up old root-owned artifacts...'
+                // root権限で生成されたbuildフォルダを強制的に削除
+                sh 'sudo rm -rf build'
+
                 echo 'Building Docker Compose services and running tests inside Docker...'
                                 
                 // 1. Docker Composeでビルド（この内部のマルチステージビルドでテストとJaCoCoが走ります）
