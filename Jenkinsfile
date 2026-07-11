@@ -28,7 +28,11 @@ pipeline {
                         // sh 'sudo docker cp jenkins-test-container:/app/build .'
                         // echo '--- Displaying /app/build contents due to failure ---'
                         // sh 'sudo docker compose run --name jenkins-test-container test ls -la /app/build'
+
                         throw e // Rethrow to mark the build as failed
+                    } finally {
+                        echo 'Cleaning up test container...'
+                        sh 'sudo docker rm -f jenkins-test-container || true'
                     }
                 }
             }

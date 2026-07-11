@@ -8,7 +8,7 @@ services:
       target: tester
     # command: ./gradlew test
     volumes:
-      - ./build:/app/build
+      - .:/app
 
   hms-ap:
     image: hms:1.0
