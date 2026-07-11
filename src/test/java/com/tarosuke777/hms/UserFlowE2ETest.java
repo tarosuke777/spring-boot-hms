@@ -18,7 +18,8 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 
 // @Disabled("Jenkins上でPlaywrightのブラウザが起動できないため、E2Eテストを無効化")
-@Sql
+// @Sql
+@Sql(scripts = "classpath:com/tarosuke777/hms/UserFlowE2ETest.sql")
 @Transactional
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
