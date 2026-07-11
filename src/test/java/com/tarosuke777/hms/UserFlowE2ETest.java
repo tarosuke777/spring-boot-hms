@@ -12,7 +12,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.transaction.annotation.Transactional;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
@@ -20,11 +19,14 @@ import com.microsoft.playwright.Playwright;
 
 // @Disabled("Jenkins上でPlaywrightのブラウザが起動できないため、E2Eテストを無効化")
 // @Sql
-@Sql(scripts = "/com/tarosuke777/hms/UserFlowE2ETest.sql",
-        config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
-@Transactional
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Sql(scripts = "/com/tarosuke777/hms/UserFlowE2ETest.sql",
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+        config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+@Sql(scripts = "/com/tarosuke777/hms/UserFlowE2ETest_cleanup.sql",
+        executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+        config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
 class UserFlowE2ETest {
 
     @LocalServerPort
