@@ -110,6 +110,11 @@ tasks.named('test') {
 
 	useJUnitPlatform()
 	systemProperty 'spring.profiles.active', 'test'
+
+	testLogging {
+        showStandardStreams = true
+    }
+
 	finalizedBy 'jacocoTestReport'
 }
 
