@@ -44,15 +44,15 @@ pipeline {
             }
         }
 
-        // stage('Deploy') {
-        //     steps {
-        //         echo 'Stopping and removing old containers...'
-        //         sh 'sudo docker compose down'
+        stage('Deploy') {
+            steps {
+                echo 'Stopping and removing old containers...'
+                sh 'sudo docker compose down'
                 
-        //         echo 'Starting new containers...'
-        //         sh 'sudo docker compose up -d'
-        //     }
-        // }
+                echo 'Starting new containers...'
+                sh 'sudo docker compose up -d'
+            }
+        }
     }
 
     post {
