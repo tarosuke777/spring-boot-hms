@@ -6,9 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: tester
-    # command: ./gradlew test
-    # volumes:
-    #   - .:/app
+    command: ./gradlew test
 
   hms-ap:
     image: hms:1.0

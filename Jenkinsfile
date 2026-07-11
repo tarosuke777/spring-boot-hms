@@ -22,7 +22,7 @@ pipeline {
                         sh 'sudo docker compose build test'
 
                         echo 'Running tests inside Docker...'
-                        sh 'sudo docker compose run --name jenkins-test-container test ./gradlew test'
+                        sh 'sudo docker compose run --name jenkins-test-container test'
                     } finally {
                         echo 'Copying build artifacts from test container...'
                         sh 'sudo docker cp jenkins-test-container:/app/build .'
