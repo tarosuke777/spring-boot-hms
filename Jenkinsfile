@@ -4,10 +4,13 @@ pipeline {
     stages {
         stage('Docker Build & Extract Reports') {
             steps {
+                    echo 'Forcibly cleaning up old root-owned artifacts...'
+                    // root権限で生成されたbuildフォルダを強制的に削除
+                    sh 'sudo rm -rf build'
+            }
+            steps {
                 echo 'Building Docker Compose services and running tests inside Docker...'
-                
-                sh 'ls -R build/reports || echo "フォルダはまだ存在しません"'
-                
+                                
                 // 1. Docker Composeでビルド（この内部のマルチステージビルドでテストとJaCoCoが走ります）
                 sh 'sudo docker compose build'
 
@@ -20,15 +23,14 @@ pipeline {
                     sh 'sudo docker create --name tmp_reporter hms-builder:tmp'
                     
                     // 4. コンテナ内のレポートをJenkinsのワークスペースへコピー
-                    sh 'mkdir -p build/reports/jacoco/test'
-                    sh 'sudo docker cp tmp_reporter:/app/build/reports/jacoco/test/html build/reports/jacoco/test/'
+                    sh 'sudo docker cp tmp_reporter:/app/build build'
                     
                     // 5. 後片付け（一時コンテナと一時イメージの削除）
                     sh 'sudo docker rm tmp_reporter'
                     sh 'sudo docker rmi hms-builder:tmp'
                     
                     // 6. Jenkinsがファイルを読み取れるように権限を調整
-                    sh 'sudo chmod -R 755 build/reports'
+                    sh 'sudo chmod -R 755 build'
                 }
 
                 // 7. コピーしてきたレポートを Jenkins にパブリッシュ
