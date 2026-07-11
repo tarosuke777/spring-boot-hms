@@ -22,16 +22,13 @@ public class ArtistService {
   private final ArtistMapper artistMapper;
 
   public List<ArtistForm> getArtistList(Integer currentUserId) {
-    return artistRepository.findByCreatedBy(currentUserId).stream()
-        .map(artistMapper::toForm)
+    return artistRepository.findByCreatedBy(currentUserId).stream().map(artistMapper::toForm)
         .toList();
   }
 
   public ArtistForm getArtist(Integer artistId, Integer currentUserId) {
-    ArtistEntity artist =
-        artistRepository
-            .findByIdAndCreatedBy(artistId, currentUserId)
-            .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
+    ArtistEntity artist = artistRepository.findByIdAndCreatedBy(artistId, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
     return artistMapper.toForm(artist);
   }
 
@@ -43,10 +40,8 @@ public class ArtistService {
 
   @Transactional
   public void updateArtist(ArtistForm form, Integer currentUserId) {
-    ArtistEntity existEntity =
-        artistRepository
-            .findByIdAndCreatedBy(form.getId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
+    ArtistEntity existEntity = artistRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Artist not found or access denied"));
     ArtistEntity entity = Objects.requireNonNull(artistMapper.copy(existEntity));
     artistMapper.updateEntityFromForm(form, entity);
     artistRepository.save(entity);
@@ -61,12 +56,7 @@ public class ArtistService {
   }
 
   public Map<Integer, String> getArtistMap() {
-    return artistRepository.findAll().stream()
-        .collect(
-            Collectors.toMap(
-                ArtistEntity::getId,
-                ArtistEntity::getName,
-                (existing, replacement) -> existing,
-                LinkedHashMap::new));
+    return artistRepository.findAll().stream().collect(Collectors.toMap(ArtistEntity::getId,
+        ArtistEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 }

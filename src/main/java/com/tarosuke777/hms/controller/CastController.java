@@ -45,8 +45,8 @@ public class CastController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated CastForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated CastForm form, BindingResult bindingResult,
+      Model model) {
     if (bindingResult.hasErrors()) {
       return REGISTER_VIEW;
     }
@@ -55,9 +55,7 @@ public class CastController {
   }
 
   @GetMapping("/detail/{castId}")
-  public String getDetail(
-      @PathVariable("castId") Integer castId,
-      Model model,
+  public String getDetail(@PathVariable("castId") Integer castId, Model model,
       @AuthenticationPrincipal LoginUser user) {
     CastForm form = castService.getCast(castId, user.getId());
     model.addAttribute("castForm", form);
@@ -65,10 +63,8 @@ public class CastController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(
-      @ModelAttribute @Validated(UpdateGroup.class) CastForm form,
-      BindingResult bindingResult,
-      @AuthenticationPrincipal LoginUser user) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) CastForm form,
+      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(CastForm.Fields.id)
@@ -84,9 +80,7 @@ public class CastController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(
-      @Validated(DeleteGroup.class) CastForm form,
-      BindingResult bindingResult,
+  public String delete(@Validated(DeleteGroup.class) CastForm form, BindingResult bindingResult,
       @AuthenticationPrincipal LoginUser user) {
 
     // id にエラーがある場合は改ざんとみなしてシステムエラー

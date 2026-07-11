@@ -22,8 +22,8 @@ public class VectorStoreConfig {
   @Bean
   @Profile("dev") // MariaDBを使う開発環境用
   public VectorStore mysqlVectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
-    return MariaDBVectorStore.builder(
-            Objects.requireNonNull(jdbcTemplate), Objects.requireNonNull(embeddingModel))
+    return MariaDBVectorStore
+        .builder(Objects.requireNonNull(jdbcTemplate), Objects.requireNonNull(embeddingModel))
         .build();
   }
 }

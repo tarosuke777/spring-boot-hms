@@ -41,10 +41,8 @@ public class UserService {
 
   @Transactional
   public void updateUser(UserForm form) {
-    UserEntity entity =
-        userRepository
-            .findById(Objects.requireNonNull(form.getId()))
-            .orElseThrow(() -> new RuntimeException("User not found"));
+    UserEntity entity = userRepository.findById(Objects.requireNonNull(form.getId()))
+        .orElseThrow(() -> new RuntimeException("User not found"));
 
     entity.setName(form.getName());
 

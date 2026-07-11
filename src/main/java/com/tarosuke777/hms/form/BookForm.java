@@ -25,7 +25,8 @@ public class BookForm {
   @Size(min = 1, max = 50)
   private String name;
 
-  @NotNull private Integer authorId;
+  @NotNull
+  private Integer authorId;
 
   @URL
   @Size(max = 255)

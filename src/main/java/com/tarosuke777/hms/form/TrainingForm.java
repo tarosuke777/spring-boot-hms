@@ -16,7 +16,8 @@ public class TrainingForm {
   @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
   private Integer trainingId;
 
-  @NotNull private LocalDate trainingDate;
+  @NotNull
+  private LocalDate trainingDate;
 
   private Integer trainingAreaId;
 

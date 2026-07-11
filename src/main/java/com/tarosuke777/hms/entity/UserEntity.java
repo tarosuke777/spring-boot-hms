@@ -57,5 +57,6 @@ public class UserEntity {
   @Column(nullable = false)
   private Integer updatedBy;
 
-  @Version private Integer version;
+  @Version
+  private Integer version;
 }

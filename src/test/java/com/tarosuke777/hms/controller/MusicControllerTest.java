@@ -42,11 +42,16 @@ import org.springframework.transaction.annotation.Transactional;
 @WithUserDetails("admin")
 public class MusicControllerTest {
 
-  @Autowired private MockMvc mockMvc;
-  @Autowired private MusicRepository musicRepository;
-  @Autowired private ArtistRepository artistRepository;
-  @Autowired private MusicMapper musicMapper;
-  @Autowired private EntityManager entityManager;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private MusicRepository musicRepository;
+  @Autowired
+  private ArtistRepository artistRepository;
+  @Autowired
+  private MusicMapper musicMapper;
+  @Autowired
+  private EntityManager entityManager;
 
   private static final String LIST_ENDPOINT = "/music/list";
   private static final String LIST_VIEW = "music/list";
@@ -73,8 +78,7 @@ public class MusicControllerTest {
     Map<Integer, String> expectedArtistMap = getArtistMap();
 
     // When & Then
-    performGetListRequest()
-        .andExpect(status().isOk())
+    performGetListRequest().andExpect(status().isOk())
         .andExpect(model().attribute("artistMap", expectedArtistMap))
         .andExpect(model().attribute("musicPage", expectedMusicPage))
         .andExpect(view().name(LIST_VIEW));
@@ -92,8 +96,7 @@ public class MusicControllerTest {
     Map<Integer, String> expectedArtistMap = getArtistMap();
 
     // When & Then
-    performGetListRequest(1)
-        .andExpect(status().isOk())
+    performGetListRequest(1).andExpect(status().isOk())
         .andExpect(model().attribute("artistMap", expectedArtistMap))
         .andExpect(model().attribute("musicPage", expectedMusicPage))
         .andExpect(view().name(LIST_VIEW));
@@ -108,12 +111,10 @@ public class MusicControllerTest {
     Map<Integer, String> expectedArtistMap = getArtistMap();
 
     // When & Then
-    performGetDetailRequest(musicEntity.getId())
-        .andExpect(status().isOk())
+    performGetDetailRequest(musicEntity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("artistMap", expectedArtistMap))
         .andExpect(model().attribute("musicForm", expectedMusicForm))
-        .andExpect(view().name(DETAIL_VIEW))
-        .andExpect(model().hasNoErrors());
+        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
   }
 
   @Test
@@ -123,11 +124,9 @@ public class MusicControllerTest {
     Map<Integer, String> expectedArtistMap = getArtistMap();
 
     // When & Then
-    performGetRegisterRequest()
-        .andExpect(status().isOk())
+    performGetRegisterRequest().andExpect(status().isOk())
         .andExpect(model().attribute("artistMap", expectedArtistMap))
-        .andExpect(view().name(REGISTER_VIEW))
-        .andExpect(model().hasNoErrors());
+        .andExpect(view().name(REGISTER_VIEW)).andExpect(model().hasNoErrors());
   }
 
   @Test
@@ -138,8 +137,7 @@ public class MusicControllerTest {
     MusicForm musicForm = new MusicForm(null, "test", artistEntity.getId(), null, null);
 
     // When & Then
-    performRegisterRequest(musicForm)
-        .andExpect(status().is3xxRedirection())
+    performRegisterRequest(musicForm).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -162,8 +160,7 @@ public class MusicControllerTest {
     form.setName("更新後の曲名");
 
     // When & Then
-    performUpdateRequest(form)
-        .andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
@@ -195,9 +192,7 @@ public class MusicControllerTest {
     form.setArtistId(currentArtist.getId());
 
     // When & Then
-    performUpdateRequest(form)
-        .andExpect(status().isOk())
-        .andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -208,8 +203,7 @@ public class MusicControllerTest {
     MusicEntity targetMusic = musicRepository.findAll().getFirst();
 
     // When & Then
-    performDeleteRequest(targetMusic.getId())
-        .andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetMusic.getId()).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush(); // 未処理のSQLを全部出す
@@ -221,27 +215,19 @@ public class MusicControllerTest {
 
   // --- Helper Methods ---
   private Map<Integer, String> getArtistMap() {
-    return artistRepository.findAll().stream()
-        .collect(
-            Collectors.toMap(
-                ArtistEntity::getId,
-                ArtistEntity::getName,
-                (existing, replacement) -> existing,
-                LinkedHashMap::new));
+    return artistRepository.findAll().stream().collect(Collectors.toMap(ArtistEntity::getId,
+        ArtistEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 
   private Page<MusicForm> getExpectedMusicPage(Integer currentUserId, Pageable pageable) {
     var spec = MusicSpecifications.withFilters(currentUserId);
-    return musicRepository
-        .findAll(spec, pageable)
-        .map(
-            music -> {
-              MusicForm form = musicMapper.toForm(music);
-              if (music.getArtist() != null) {
-                form.setArtistId(music.getArtist().getId());
-              }
-              return form;
-            });
+    return musicRepository.findAll(spec, pageable).map(music -> {
+      MusicForm form = musicMapper.toForm(music);
+      if (music.getArtist() != null) {
+        form.setArtistId(music.getArtist().getId());
+      }
+      return form;
+    });
   }
 
   private ResultActions performGetListRequest() throws Exception {
@@ -265,26 +251,17 @@ public class MusicControllerTest {
   }
 
   private ResultActions performRegisterRequest(MusicForm form) throws Exception {
-    return mockMvc
-        .perform(
-            post(REGISTER_ENDPOINT)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("name", form.getName())
-                .param("artistId", String.valueOf(form.getArtistId())))
+    return mockMvc.perform(
+        post(REGISTER_ENDPOINT).with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("name", form.getName()).param("artistId", String.valueOf(form.getArtistId())))
         .andDo(print());
   }
 
   private ResultActions performUpdateRequest(MusicForm form) throws Exception {
-    return mockMvc
-        .perform(
-            post(UPDATE_ENDPOINT)
-                .with(csrf())
-                .param("update", "")
-                .param("id", form.getId().toString())
-                .param("name", form.getName())
-                .param("artistId", String.valueOf(form.getArtistId()))
-                .param("version", form.getVersion().toString()))
+    return mockMvc.perform(
+        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
+            .param("name", form.getName()).param("artistId", String.valueOf(form.getArtistId()))
+            .param("version", form.getVersion().toString()))
         .andDo(print());
   }
 

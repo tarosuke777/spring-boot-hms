@@ -22,8 +22,8 @@ public interface CompanyRepository
 
   @Override
   @NonNull
-  Page<CompanyEntity> findAll(
-      @Nullable Specification<CompanyEntity> spec, @NonNull Pageable pageable);
+  Page<CompanyEntity> findAll(@Nullable Specification<CompanyEntity> spec,
+      @NonNull Pageable pageable);
 
   Optional<CompanyEntity> findByIdAndCreatedBy(Integer id, Integer createdBy);
 

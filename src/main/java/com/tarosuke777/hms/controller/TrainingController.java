@@ -40,8 +40,7 @@ public class TrainingController {
   private final TrainingMenuService trainingMenuService;
 
   @GetMapping("/list")
-  public String getList(
-      Model model,
+  public String getList(Model model,
       @RequestParam(name = "orderBy", defaultValue = "trainingDate") String orderBy,
       @RequestParam(name = "sort", defaultValue = "desc") String sort,
       @AuthenticationPrincipal LoginUser user) {
@@ -56,9 +55,7 @@ public class TrainingController {
   }
 
   @GetMapping("/detail/{trainingId}")
-  public String getDetail(
-      @PathVariable("trainingId") Integer trainingId,
-      Model model,
+  public String getDetail(@PathVariable("trainingId") Integer trainingId, Model model,
       @AuthenticationPrincipal LoginUser user) {
 
     TrainingForm trainingForm = trainingService.getTrainingDetails(trainingId, user.getId());
@@ -82,8 +79,8 @@ public class TrainingController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated TrainingForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated TrainingForm form, BindingResult bindingResult,
+      Model model) {
 
     if (bindingResult.hasErrors()) {
       return getRegister(form, model);
@@ -95,8 +92,8 @@ public class TrainingController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(
-      @Validated(UpdateGroup.class) TrainingForm form, @AuthenticationPrincipal LoginUser user) {
+  public String update(@Validated(UpdateGroup.class) TrainingForm form,
+      @AuthenticationPrincipal LoginUser user) {
 
     trainingService.updateTraining(form, user.getId());
 
@@ -104,9 +101,7 @@ public class TrainingController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(
-      @Validated(DeleteGroup.class) TrainingForm form,
-      Model model,
+  public String delete(@Validated(DeleteGroup.class) TrainingForm form, Model model,
       @AuthenticationPrincipal LoginUser user) {
 
     trainingService.deleteTraining(Objects.requireNonNull(form.getTrainingId()), user.getId());
@@ -114,24 +109,20 @@ public class TrainingController {
     return REDIRECT_LIST;
   }
 
-  private void addAttributesToModel(
-      Model model,
-      List<TrainingForm> trainingList,
-      Map<Integer, String> trainingMenuMap,
-      Map<Integer, String> trainingAreaMap) {
+  private void addAttributesToModel(Model model, List<TrainingForm> trainingList,
+      Map<Integer, String> trainingMenuMap, Map<Integer, String> trainingAreaMap) {
     model.addAttribute("trainingAreaMap", trainingAreaMap);
     model.addAttribute("trainingMenuMap", trainingMenuMap);
     model.addAttribute("trainingList", trainingList);
   }
 
-  private void addAttributesToModel(
-      Model model, TrainingForm trainingForm, Map<Integer, String> trainingMenuMap) {
+  private void addAttributesToModel(Model model, TrainingForm trainingForm,
+      Map<Integer, String> trainingMenuMap) {
     model.addAttribute("trainingForm", trainingForm);
     model.addAttribute("trainingMenuMap", trainingMenuMap);
   }
 
-  private void addAttributesToModel(
-      Model model,
+  private void addAttributesToModel(Model model,
       List<SelectOptionTrainingMenu> trainingMenuSelectList,
       Map<Integer, String> trainingTargetAreaMap) {
     model.addAttribute("trainingMenuSelectList", trainingMenuSelectList);

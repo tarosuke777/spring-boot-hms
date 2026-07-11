@@ -51,11 +51,8 @@ public class TaskController {
   }
 
   @PostMapping("/update")
-  public String update(
-      @Validated(UpdateGroup.class) @ModelAttribute TaskForm taskForm,
-      BindingResult bindingResult,
-      Model model,
-      @AuthenticationPrincipal LoginUser user) {
+  public String update(@Validated(UpdateGroup.class) @ModelAttribute TaskForm taskForm,
+      BindingResult bindingResult, Model model, @AuthenticationPrincipal LoginUser user) {
     if (bindingResult.hasErrors()) {
       // エラー時は一覧を再取得して戻る
       model.addAttribute("tasks", taskService.getTaskList(user.getId()));

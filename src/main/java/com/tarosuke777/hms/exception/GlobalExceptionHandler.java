@@ -28,8 +28,8 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
-  public String handleOptimisticLockingFailureException(
-      ObjectOptimisticLockingFailureException e, Model model) {
+  public String handleOptimisticLockingFailureException(ObjectOptimisticLockingFailureException e,
+      Model model) {
     log.warn("Optimistic locking failure: {}", e.getMessage());
 
     // 排他制御エラーであることを示すフラグやメッセージを渡す

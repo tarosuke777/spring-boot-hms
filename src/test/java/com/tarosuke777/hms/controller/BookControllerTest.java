@@ -44,11 +44,16 @@ import org.springframework.transaction.annotation.Transactional;
 @WithUserDetails("admin")
 public class BookControllerTest {
 
-  @Autowired private MockMvc mockMvc;
-  @Autowired private BookRepository bookRepository;
-  @Autowired private AuthorRepository authorRepository;
-  @Autowired private EntityManager entityManager;
-  @Autowired private BookMapper bookMapper;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private BookRepository bookRepository;
+  @Autowired
+  private AuthorRepository authorRepository;
+  @Autowired
+  private EntityManager entityManager;
+  @Autowired
+  private BookMapper bookMapper;
 
   private static final String LIST_ENDPOINT = "/book/list";
   private static final String LIST_VIEW = "book/list";
@@ -82,21 +87,18 @@ public class BookControllerTest {
     Page<BookEntity> bookPage = bookRepository.findAll(spec, pageable);
 
     // Pageの中身(Entity)をFormに詰め替える
-    Page<BookForm> expectedBookPage =
-        bookPage.map(
-            book -> {
-              BookForm form = bookMapper.toForm(book);
-              if (book.getAuthor() != null) {
-                form.setAuthorId(book.getAuthor().getId());
-              }
-              return form;
-            });
+    Page<BookForm> expectedBookPage = bookPage.map(book -> {
+      BookForm form = bookMapper.toForm(book);
+      if (book.getAuthor() != null) {
+        form.setAuthorId(book.getAuthor().getId());
+      }
+      return form;
+    });
 
     Map<Integer, String> expectedAuthorMap = getAuthorMap();
 
     // When & Then
-    performGetListRequest()
-        .andExpect(status().isOk())
+    performGetListRequest().andExpect(status().isOk())
         .andExpect(model().attribute("authorMap", expectedAuthorMap))
         .andExpect(model().attribute("bookPage", expectedBookPage))
         .andExpect(view().name(LIST_VIEW));
@@ -111,12 +113,10 @@ public class BookControllerTest {
     Map<Integer, String> expectedAuthorMap = getAuthorMap();
 
     // When & Then
-    performGetDetailRequest(bookEntity.getId())
-        .andExpect(status().isOk())
+    performGetDetailRequest(bookEntity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("authorMap", expectedAuthorMap))
         .andExpect(model().attribute("bookForm", expectedBookForm))
-        .andExpect(view().name(DETAIL_VIEW))
-        .andExpect(model().hasNoErrors());
+        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
   }
 
   @Test
@@ -125,11 +125,9 @@ public class BookControllerTest {
     // Given
     Map<Integer, String> expectedAuthorMap = getAuthorMap();
     // When & Then
-    performGetRegisterRequest()
-        .andExpect(status().isOk())
+    performGetRegisterRequest().andExpect(status().isOk())
         .andExpect(model().attribute("authorMap", expectedAuthorMap))
-        .andExpect(view().name(REGISTER_VIEW))
-        .andExpect(model().hasNoErrors());
+        .andExpect(view().name(REGISTER_VIEW)).andExpect(model().hasNoErrors());
   }
 
   @Test
@@ -141,8 +139,7 @@ public class BookControllerTest {
         new BookForm(null, "test", authorEntity.getId(), null, BookGenre.MANGA, true, null, null);
 
     // When & Then
-    performRegisterRequest(bookForm)
-        .andExpect(status().is3xxRedirection())
+    performRegisterRequest(bookForm).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -165,8 +162,7 @@ public class BookControllerTest {
     form.setName("更新後の本タイトル");
 
     // When & Then
-    performUpdateRequest(form)
-        .andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/book/detail/" + form.getId()));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
@@ -199,9 +195,7 @@ public class BookControllerTest {
     form.setVersion(currentVersion);
     form.setAuthorId(currentAuthor.getId());
     // When & Then
-    performUpdateRequest(form)
-        .andExpect(status().isOk())
-        .andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -212,8 +206,7 @@ public class BookControllerTest {
     BookEntity expectedBook = bookRepository.findAll().get(0);
 
     // When & Then
-    performDeleteRequest(expectedBook.getId())
-        .andExpect(status().is3xxRedirection())
+    performDeleteRequest(expectedBook.getId()).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -225,13 +218,8 @@ public class BookControllerTest {
 
   // --- Helper Methods ---
   private Map<Integer, String> getAuthorMap() {
-    return authorRepository.findAll().stream()
-        .collect(
-            Collectors.toMap(
-                AuthorEntity::getId,
-                AuthorEntity::getName,
-                (existing, replacement) -> existing,
-                LinkedHashMap::new));
+    return authorRepository.findAll().stream().collect(Collectors.toMap(AuthorEntity::getId,
+        AuthorEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 
   private ResultActions performGetListRequest() throws Exception {
@@ -251,30 +239,21 @@ public class BookControllerTest {
   }
 
   private ResultActions performRegisterRequest(BookForm form) throws Exception {
-    return mockMvc
-        .perform(
-            post(REGISTER_ENDPOINT)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("name", form.getName())
-                .param("authorId", String.valueOf(form.getAuthorId()))
-                .param("genre", String.valueOf(form.getGenre()))
-                .param("isAdult", String.valueOf(form.isAdult())))
+    return mockMvc.perform(
+        post(REGISTER_ENDPOINT).with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("name", form.getName()).param("authorId", String.valueOf(form.getAuthorId()))
+            .param("genre", String.valueOf(form.getGenre()))
+            .param("isAdult", String.valueOf(form.isAdult())))
         .andDo(print());
   }
 
   private ResultActions performUpdateRequest(BookForm form) throws Exception {
-    return mockMvc
-        .perform(
-            post(UPDATE_ENDPOINT)
-                .with(csrf())
-                .param("update", "")
-                .param("id", form.getId().toString())
-                .param("name", form.getName())
-                .param("authorId", String.valueOf(form.getAuthorId()))
-                .param("genre", String.valueOf(form.getGenre()))
-                .param("isAdult", String.valueOf(form.isAdult()))
-                .param("version", form.getVersion().toString()))
+    return mockMvc.perform(
+        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
+            .param("name", form.getName()).param("authorId", String.valueOf(form.getAuthorId()))
+            .param("genre", String.valueOf(form.getGenre()))
+            .param("isAdult", String.valueOf(form.isAdult()))
+            .param("version", form.getVersion().toString()))
         .andDo(print());
   }
 

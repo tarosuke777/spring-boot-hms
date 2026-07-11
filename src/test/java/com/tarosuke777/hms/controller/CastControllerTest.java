@@ -34,13 +34,17 @@ import org.springframework.transaction.annotation.Transactional;
 @WithUserDetails("admin")
 public class CastControllerTest {
 
-  @Autowired private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-  @Autowired private CastRepository castRepository;
+  @Autowired
+  private CastRepository castRepository;
 
-  @Autowired private CastMapper castMapper;
+  @Autowired
+  private CastMapper castMapper;
 
-  @Autowired private EntityManager entityManager;
+  @Autowired
+  private EntityManager entityManager;
 
   private static final String LIST_ENDPOINT = "/cast/list";
   private static final String LIST_VIEW = "cast/list";
@@ -65,8 +69,7 @@ public class CastControllerTest {
         castRepository.findByCreatedBy(currentUserId).stream().map(castMapper::toForm).toList();
 
     // When & Then
-    performGetListRequest()
-        .andExpect(status().isOk())
+    performGetListRequest().andExpect(status().isOk())
         .andExpect(model().attribute("castList", expectedCastList))
         .andExpect(view().name(LIST_VIEW));
   }
@@ -78,19 +81,15 @@ public class CastControllerTest {
     CastForm expectedCastForm = castMapper.toForm(entity);
 
     // When & Then
-    performGetDetailRequest(entity.getId())
-        .andExpect(status().isOk())
+    performGetDetailRequest(entity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("castForm", expectedCastForm))
-        .andExpect(view().name(DETAIL_VIEW))
-        .andExpect(model().hasNoErrors());
+        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
   }
 
   @Test
   void getRegister_ShouldReturnRegisterPage() throws Exception {
     // When & Then
-    performGetRegisterRequest()
-        .andExpect(status().isOk())
-        .andExpect(view().name(REGISTER_VIEW))
+    performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
         .andExpect(model().hasNoErrors());
   }
 
@@ -100,8 +99,7 @@ public class CastControllerTest {
     String name = "Test Cast Name";
 
     // When & Then
-    performRegisterRequest(name)
-        .andExpect(status().is3xxRedirection())
+    performRegisterRequest(name).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -120,8 +118,7 @@ public class CastControllerTest {
     form.setName("更新後のキャスト名");
 
     // When & Then
-    performUpdateRequest(form)
-        .andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -138,8 +135,7 @@ public class CastControllerTest {
     CastEntity targetCast = castRepository.findAll().get(0);
 
     // When & Then
-    performDeleteRequest(targetCast.getId())
-        .andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetCast.getId()).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -166,24 +162,14 @@ public class CastControllerTest {
   }
 
   private ResultActions performRegisterRequest(String name) throws Exception {
-    return mockMvc
-        .perform(
-            post(REGISTER_ENDPOINT)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("name", name))
-        .andDo(print());
+    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
   }
 
   private ResultActions performUpdateRequest(CastForm form) throws Exception {
-    return mockMvc
-        .perform(
-            post(UPDATE_ENDPOINT)
-                .with(csrf())
-                .param("update", "")
-                .param("id", form.getId().toString())
-                .param("name", form.getName())
-                .param("version", form.getVersion().toString()))
+    return mockMvc.perform(
+        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
+            .param("name", form.getName()).param("version", form.getVersion().toString()))
         .andDo(print());
   }
 

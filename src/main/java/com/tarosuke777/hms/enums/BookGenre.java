@@ -1,11 +1,8 @@
 package com.tarosuke777.hms.enums;
 
 public enum BookGenre {
-  TECHNICAL(1, "技術書/仕事"),
-  MANGA(2, "漫画"),
-  NOVEL(3, "小説/ラノベ"),
-  PHOTO_BOOK(4, "写真集"),
-  OTHER(99, "その他");
+  TECHNICAL(1, "技術書/仕事"), MANGA(2, "漫画"), NOVEL(3, "小説/ラノベ"), PHOTO_BOOK(4, "写真集"), OTHER(99,
+      "その他");
 
   private final int code;
   private final String label;

@@ -26,10 +26,8 @@ public class CastService {
   }
 
   public CastForm getCast(Integer castId, Integer currentUserId) {
-    CastEntity cast =
-        castRepository
-            .findByIdAndCreatedBy(castId, currentUserId)
-            .orElseThrow(() -> new RuntimeException("Cast not found or access denied"));
+    CastEntity cast = castRepository.findByIdAndCreatedBy(castId, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Cast not found or access denied"));
     return castMapper.toForm(cast);
   }
 
@@ -41,10 +39,8 @@ public class CastService {
 
   @Transactional
   public void updateCast(CastForm form, Integer currentUserId) {
-    CastEntity existEntity =
-        castRepository
-            .findByIdAndCreatedBy(form.getId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Cast not found or access denied"));
+    CastEntity existEntity = castRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Cast not found or access denied"));
     CastEntity entity = Objects.requireNonNull(castMapper.copy(existEntity));
     castMapper.updateEntityFromForm(form, entity);
     castRepository.save(entity);
@@ -59,12 +55,7 @@ public class CastService {
   }
 
   public Map<Integer, String> getCastMap() {
-    return castRepository.findAll().stream()
-        .collect(
-            Collectors.toMap(
-                CastEntity::getId,
-                CastEntity::getName,
-                (existing, replacement) -> existing,
-                LinkedHashMap::new));
+    return castRepository.findAll().stream().collect(Collectors.toMap(CastEntity::getId,
+        CastEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 }

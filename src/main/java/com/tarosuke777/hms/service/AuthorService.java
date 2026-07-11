@@ -22,16 +22,13 @@ public class AuthorService {
   private final AuthorMapper authorMapper;
 
   public List<AuthorForm> getAuthorList(Integer currentUserId) {
-    return authorRepository.findByCreatedBy(currentUserId).stream()
-        .map(authorMapper::toForm)
+    return authorRepository.findByCreatedBy(currentUserId).stream().map(authorMapper::toForm)
         .toList();
   }
 
   public AuthorForm getAuthor(Integer authorId, Integer currentUserId) {
-    AuthorEntity author =
-        authorRepository
-            .findByIdAndCreatedBy(authorId, currentUserId)
-            .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
+    AuthorEntity author = authorRepository.findByIdAndCreatedBy(authorId, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
     return authorMapper.toForm(author);
   }
 
@@ -43,10 +40,8 @@ public class AuthorService {
 
   @Transactional
   public void updateAuthor(AuthorForm form, Integer currentUserId) {
-    AuthorEntity existEntity =
-        authorRepository
-            .findByIdAndCreatedBy(form.getId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
+    AuthorEntity existEntity = authorRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Author not found or access denied"));
     AuthorEntity entity = Objects.requireNonNull(authorMapper.copy(existEntity));
     authorMapper.updateEntityFromForm(form, entity);
     authorRepository.save(entity);
@@ -61,12 +56,7 @@ public class AuthorService {
   }
 
   public Map<Integer, String> getAuthorMap() {
-    return authorRepository.findAll().stream()
-        .collect(
-            Collectors.toMap(
-                AuthorEntity::getId,
-                AuthorEntity::getName,
-                (existing, replacement) -> existing,
-                LinkedHashMap::new));
+    return authorRepository.findAll().stream().collect(Collectors.toMap(AuthorEntity::getId,
+        AuthorEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 }

@@ -24,13 +24,12 @@ public class AuditorAwareImpl implements AuditorAware<Integer> {
         // 4. Principal（ログインユーザー本体）を取得
         .map(Authentication::getPrincipal)
         // 5. ログイン中のユーザー名を取り出す
-        .map(
-            principal -> {
-              if (principal instanceof LoginUser user) {
-                return user.getId();
-              }
-              // 「ログインしていない」または「匿名ユーザー」の状態
-              return null;
-            });
+        .map(principal -> {
+          if (principal instanceof LoginUser user) {
+            return user.getId();
+          }
+          // 「ログインしていない」または「匿名ユーザー」の状態
+          return null;
+        });
   }
 }

@@ -45,8 +45,8 @@ public class AuthorController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated AuthorForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated AuthorForm form, BindingResult bindingResult,
+      Model model) {
     if (bindingResult.hasErrors()) {
       return REGISTER_VIEW;
     }
@@ -55,9 +55,7 @@ public class AuthorController {
   }
 
   @GetMapping("/detail/{authorId}")
-  public String getDetail(
-      @PathVariable("authorId") Integer authorId,
-      Model model,
+  public String getDetail(@PathVariable("authorId") Integer authorId, Model model,
       @AuthenticationPrincipal LoginUser user) {
     AuthorForm form = authorService.getAuthor(authorId, user.getId());
     model.addAttribute("authorForm", form);
@@ -65,10 +63,8 @@ public class AuthorController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(
-      @ModelAttribute @Validated(UpdateGroup.class) AuthorForm form,
-      BindingResult bindingResult,
-      @AuthenticationPrincipal LoginUser user) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) AuthorForm form,
+      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(AuthorForm.Fields.id)
@@ -84,9 +80,7 @@ public class AuthorController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(
-      @Validated(DeleteGroup.class) AuthorForm form,
-      BindingResult bindingResult,
+  public String delete(@Validated(DeleteGroup.class) AuthorForm form, BindingResult bindingResult,
       @AuthenticationPrincipal LoginUser user) {
 
     // id にエラーがある場合は改ざんとみなしてシステムエラー

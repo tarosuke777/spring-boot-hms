@@ -42,10 +42,8 @@ public class CompanyController {
   private final CompanyService companyService;
 
   @GetMapping("/list")
-  public String getList(
-      @RequestParam(required = false) String name,
-      @PageableDefault(size = 10) Pageable pageable,
-      Model model,
+  public String getList(@RequestParam(required = false) String name,
+      @PageableDefault(size = 10) Pageable pageable, Model model,
       @AuthenticationPrincipal LoginUser user) {
     Page<CompanyForm> companyPage =
         companyService.getCompanyList(user.getId(), name, Objects.requireNonNull(pageable));
@@ -60,8 +58,8 @@ public class CompanyController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated CompanyForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated CompanyForm form, BindingResult bindingResult,
+      Model model) {
     if (bindingResult.hasErrors()) {
       return REGISTER_VIEW;
     }
@@ -70,9 +68,7 @@ public class CompanyController {
   }
 
   @GetMapping("/detail/{companyId}")
-  public String getDetail(
-      @PathVariable("companyId") Integer companyId,
-      Model model,
+  public String getDetail(@PathVariable("companyId") Integer companyId, Model model,
       @AuthenticationPrincipal LoginUser user) {
     CompanyForm form = companyService.getCompany(Objects.requireNonNull(companyId), user.getId());
     model.addAttribute("companyForm", form);
@@ -80,10 +76,8 @@ public class CompanyController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(
-      @ModelAttribute @Validated(UpdateGroup.class) CompanyForm form,
-      BindingResult bindingResult,
-      @AuthenticationPrincipal LoginUser user) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) CompanyForm form,
+      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(CompanyForm.Fields.id)
@@ -98,15 +92,12 @@ public class CompanyController {
 
     final Map<String, Object> uriVariables = new HashMap<>();
     uriVariables.put(CompanyForm.Fields.id, form.getId());
-    return UriComponentsBuilder.fromUriString(REDIRECT_DETAIL_VIEW)
-        .buildAndExpand(uriVariables)
+    return UriComponentsBuilder.fromUriString(REDIRECT_DETAIL_VIEW).buildAndExpand(uriVariables)
         .toUriString();
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(
-      @Validated(DeleteGroup.class) CompanyForm form,
-      BindingResult bindingResult,
+  public String delete(@Validated(DeleteGroup.class) CompanyForm form, BindingResult bindingResult,
       @AuthenticationPrincipal LoginUser user) {
 
     // id にエラーがある場合は改ざんとみなしてシステムエラー

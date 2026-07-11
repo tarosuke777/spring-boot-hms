@@ -1,8 +1,7 @@
 package com.tarosuke777.hms.enums;
 
 public enum Role {
-  ADMIN(1, "管理者"),
-  GENERAL(2, "一般ユーザー");
+  ADMIN(1, "管理者"), GENERAL(2, "一般ユーザー");
 
   private final int value;
   private final String displayName;

@@ -4,7 +4,8 @@
   "description": "このプロジェクトは、Spring Boot をベースとした個人の趣味管理システム（Hobby Management System）です。\r 音楽、書籍、映画、トレーニング、日記など、多岐にわたる趣味の記録と管理を目的としています。",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "repository": {
     "type": "git",

@@ -51,5 +51,6 @@ public class AuthorEntity {
   @Column(nullable = false)
   private Integer updatedBy;
 
-  @Version private Integer version;
+  @Version
+  private Integer version;
 }

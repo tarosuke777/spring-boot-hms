@@ -24,15 +24,12 @@ public class TrainingMenuService {
 
   public List<TrainingMenuForm> getTrainingMenuList(Integer currentUserId) {
     return trainingMenuRepository.findByCreatedBy(currentUserId).stream()
-        .map(trainingMenuMapper::toForm)
-        .toList();
+        .map(trainingMenuMapper::toForm).toList();
   }
 
   public TrainingMenuForm getTrainingMenuDetails(Integer id, Integer currentUserId) {
-    TrainingMenuEntity entity =
-        trainingMenuRepository
-            .findByIdAndCreatedBy(id, currentUserId)
-            .orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
+    TrainingMenuEntity entity = trainingMenuRepository.findByIdAndCreatedBy(id, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
     return trainingMenuMapper.toForm(entity);
   }
 
@@ -45,8 +42,7 @@ public class TrainingMenuService {
   @Transactional
   public void updateTrainingMenu(TrainingMenuForm form, Integer currentUserId) {
     TrainingMenuEntity existEntity =
-        trainingMenuRepository
-            .findByIdAndCreatedBy(form.getId(), currentUserId)
+        trainingMenuRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
             .orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
     TrainingMenuEntity entity = Objects.requireNonNull(trainingMenuMapper.copy(existEntity));
     trainingMenuMapper.updateEntityFromForm(form, entity);
@@ -63,25 +59,15 @@ public class TrainingMenuService {
 
   public Map<Integer, String> getTrainingMenuMap() {
     return trainingMenuRepository.findAll().stream()
-        .collect(
-            Collectors.toMap(
-                TrainingMenuEntity::getId,
-                TrainingMenuEntity::getName,
-                (existing, replacement) -> existing,
-                LinkedHashMap::new));
+        .collect(Collectors.toMap(TrainingMenuEntity::getId, TrainingMenuEntity::getName,
+            (existing, replacement) -> existing, LinkedHashMap::new));
   }
 
   public List<SelectOptionTrainingMenu> getTrainingMenuSelectList() {
     return trainingMenuRepository.findAll().stream()
-        .map(
-            entity ->
-                new SelectOptionTrainingMenu(
-                    entity.getId().toString(),
-                    entity.getName(),
-                    entity.getTargetAreaId(),
-                    entity.getMaxWeight(),
-                    entity.getMaxReps(),
-                    entity.getMaxSets()))
+        .map(entity -> new SelectOptionTrainingMenu(entity.getId().toString(), entity.getName(),
+            entity.getTargetAreaId(), entity.getMaxWeight(), entity.getMaxReps(),
+            entity.getMaxSets()))
         .collect(Collectors.toList());
   }
 }

@@ -23,7 +23,8 @@ public class MovieForm {
   @Size(min = 1, max = 50)
   private String name;
 
-  @NotNull private Integer castId;
+  @NotNull
+  private Integer castId;
 
   @URL
   @Size(max = 255)

@@ -48,8 +48,8 @@ public class MovieController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated MovieForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated MovieForm form, BindingResult bindingResult,
+      Model model) {
     if (bindingResult.hasErrors()) {
       model.addAttribute("castMap", castService.getCastMap());
       return REGISTER_VIEW;
@@ -59,8 +59,8 @@ public class MovieController {
   }
 
   @GetMapping("/detail/{id}")
-  public String getDetail(
-      @PathVariable("id") Integer id, Model model, @AuthenticationPrincipal LoginUser user) {
+  public String getDetail(@PathVariable("id") Integer id, Model model,
+      @AuthenticationPrincipal LoginUser user) {
 
     model.addAttribute("castMap", castService.getCastMap());
     model.addAttribute("movieForm", movieService.getMovie(id, user.getId()));
@@ -68,11 +68,8 @@ public class MovieController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(
-      @ModelAttribute @Validated(UpdateGroup.class) MovieForm form,
-      BindingResult bindingResult,
-      @AuthenticationPrincipal LoginUser user,
-      Model model) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) MovieForm form,
+      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user, Model model) {
     if (bindingResult.hasErrors()) {
       model.addAttribute("castMap", castService.getCastMap());
       return DETAIL_VIEW;
@@ -82,8 +79,8 @@ public class MovieController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(
-      @Validated(DeleteGroup.class) MovieForm form, @AuthenticationPrincipal LoginUser user) {
+  public String delete(@Validated(DeleteGroup.class) MovieForm form,
+      @AuthenticationPrincipal LoginUser user) {
     movieService.deleteMovie(Objects.requireNonNull(form.getId()), user.getId());
     return REDIRECT_LIST;
   }

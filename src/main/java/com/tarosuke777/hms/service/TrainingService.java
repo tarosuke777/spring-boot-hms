@@ -25,20 +25,16 @@ public class TrainingService {
   private final EntityManager entityManager;
   private final TrainingMapper trainingMapper;
 
-  public List<TrainingForm> getTrainingList(
-      String orderBy, String sortDirection, Integer currentUserId) {
-    Sort sort =
-        sortDirection.equalsIgnoreCase("desc")
-            ? Sort.by(orderBy).descending()
-            : Sort.by(orderBy).ascending();
-    return trainingRepository.findByCreatedBy(currentUserId, sort).stream()
-        .map(this::convertToForm)
+  public List<TrainingForm> getTrainingList(String orderBy, String sortDirection,
+      Integer currentUserId) {
+    Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by(orderBy).descending()
+        : Sort.by(orderBy).ascending();
+    return trainingRepository.findByCreatedBy(currentUserId, sort).stream().map(this::convertToForm)
         .toList();
   }
 
   public TrainingForm getTrainingDetails(Integer trainingId, Integer currentUserId) {
-    return trainingRepository
-        .findByTrainingIdAndCreatedBy(trainingId, currentUserId)
+    return trainingRepository.findByTrainingIdAndCreatedBy(trainingId, currentUserId)
         .map(this::convertToForm)
         .orElseThrow(() -> new RuntimeException("Training not found or access denied"));
   }
@@ -56,15 +52,13 @@ public class TrainingService {
   @Transactional
   public void updateTraining(TrainingForm form, Integer currentUserId) {
     TrainingEntity existingEntity =
-        trainingRepository
-            .findByTrainingIdAndCreatedBy(form.getTrainingId(), currentUserId)
+        trainingRepository.findByTrainingIdAndCreatedBy(form.getTrainingId(), currentUserId)
             .orElseThrow(() -> new RuntimeException("Training not found or access denied"));
 
     TrainingEntity entity = Objects.requireNonNull(trainingMapper.copy(existingEntity));
     if (existingEntity.getTrainingMenu() != null) {
-      entity.setTrainingMenu(
-          entityManager.getReference(
-              TrainingMenuEntity.class, existingEntity.getTrainingMenu().getId()));
+      entity.setTrainingMenu(entityManager.getReference(TrainingMenuEntity.class,
+          existingEntity.getTrainingMenu().getId()));
     }
 
     trainingMapper.updateEntityFromForm(form, entity);

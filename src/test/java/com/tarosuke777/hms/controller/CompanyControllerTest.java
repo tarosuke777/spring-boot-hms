@@ -31,10 +31,14 @@ import org.springframework.transaction.annotation.Transactional;
 @WithUserDetails("admin")
 public class CompanyControllerTest {
 
-  @Autowired private MockMvc mockMvc;
-  @Autowired private CompanyRepository companyRepository;
-  @Autowired private EntityManager entityManager;
-  @Autowired private CompanyMapper companyMapper;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private CompanyRepository companyRepository;
+  @Autowired
+  private EntityManager entityManager;
+  @Autowired
+  private CompanyMapper companyMapper;
 
   private static final String LIST_VIEW = "company/list";
   private static final String LIST_URL = "/company/list";
@@ -51,63 +55,49 @@ public class CompanyControllerTest {
   @Test
   void getList_ShouldReturnCompanyPageWithPagination() throws Exception {
     // When & Then
-    performGetListRequest(null, null)
-        .andExpect(status().isOk())
-        .andExpect(model().attributeExists("companyPage"))
-        .andExpect(view().name(LIST_VIEW));
+    performGetListRequest(null, null).andExpect(status().isOk())
+        .andExpect(model().attributeExists("companyPage")).andExpect(view().name(LIST_VIEW));
   }
 
   @Test
   void getList_WithPage1_ShouldReturnFirstTenCompanies() throws Exception {
     // When & Then
-    performGetListRequest(null, "0")
-        .andExpect(status().isOk())
-        .andExpect(model().attributeExists("companyPage"))
-        .andExpect(view().name(LIST_VIEW));
+    performGetListRequest(null, "0").andExpect(status().isOk())
+        .andExpect(model().attributeExists("companyPage")).andExpect(view().name(LIST_VIEW));
   }
 
   @Test
   void getList_WithPage2_ShouldReturnNextPage() throws Exception {
     // When & Then
-    performGetListRequest(null, "1")
-        .andExpect(status().isOk())
-        .andExpect(model().attributeExists("companyPage"))
-        .andExpect(view().name(LIST_VIEW));
+    performGetListRequest(null, "1").andExpect(status().isOk())
+        .andExpect(model().attributeExists("companyPage")).andExpect(view().name(LIST_VIEW));
   }
 
   @Test
   void getList_WithNameFilter_ShouldReturnFilteredPagedList() throws Exception {
     // When & Then
-    performGetListRequest("panyA", null)
-        .andExpect(status().isOk())
-        .andExpect(model().attributeExists("companyPage"))
-        .andExpect(view().name(LIST_VIEW));
+    performGetListRequest("panyA", null).andExpect(status().isOk())
+        .andExpect(model().attributeExists("companyPage")).andExpect(view().name(LIST_VIEW));
   }
 
   @Test
   void getList_WithNameFilterAndPaging_ShouldReturnFilteredPage() throws Exception {
     // When & Then
-    performGetListRequest("Company", "0")
-        .andExpect(status().isOk())
-        .andExpect(model().attributeExists("companyPage"))
-        .andExpect(view().name(LIST_VIEW));
+    performGetListRequest("Company", "0").andExpect(status().isOk())
+        .andExpect(model().attributeExists("companyPage")).andExpect(view().name(LIST_VIEW));
   }
 
   @Test
   void getList_WithNoMatchName_ShouldReturnEmptyPage() throws Exception {
     // When & Then
-    performGetListRequest("NonExistent", null)
-        .andExpect(status().isOk())
-        .andExpect(model().attributeExists("companyPage"))
-        .andExpect(view().name(LIST_VIEW));
+    performGetListRequest("NonExistent", null).andExpect(status().isOk())
+        .andExpect(model().attributeExists("companyPage")).andExpect(view().name(LIST_VIEW));
   }
 
   @Test
   void getRegister_ShouldReturnRegisterPage() throws Exception {
     // When & Then
-    performGetRegisterRequest()
-        .andExpect(status().isOk())
-        .andExpect(view().name(REGISTER_VIEW))
+    performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
         .andExpect(model().hasNoErrors());
   }
 
@@ -120,8 +110,7 @@ public class CompanyControllerTest {
 
     // When & Then
     performRegisterRequest(companyName, companyNote, jobApplicationHistory)
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl(LIST_URL));
+        .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
     entityManager.clear();
@@ -139,8 +128,7 @@ public class CompanyControllerTest {
 
     // When & Then
     performRegisterRequest(emptyName, "SomeNote", "SomeJobApplicationHistory")
-        .andExpect(status().isOk())
-        .andExpect(view().name(REGISTER_VIEW))
+        .andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
         .andExpect(model().hasErrors());
   }
 
@@ -151,11 +139,9 @@ public class CompanyControllerTest {
     CompanyForm expectedCompanyForm = companyMapper.toForm(expectedCompanyEntity);
 
     // When & Then
-    performGetDetailRequest(expectedCompanyEntity.getId())
-        .andExpect(status().isOk())
+    performGetDetailRequest(expectedCompanyEntity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("companyForm", expectedCompanyForm))
-        .andExpect(view().name(DETAIL_VIEW))
-        .andExpect(model().hasNoErrors());
+        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
   }
 
   @Test
@@ -168,8 +154,7 @@ public class CompanyControllerTest {
     companyForm.setJobApplicationHistory("UpdatedJobApplicationHistory");
 
     // When & Then
-    performUpdateRequest(companyForm)
-        .andExpect(status().is3xxRedirection())
+    performUpdateRequest(companyForm).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/company/detail/" + targetCompany.getId()));
 
     entityManager.flush();
@@ -179,8 +164,8 @@ public class CompanyControllerTest {
     Assertions.assertNotNull(updatedEntity);
     Assertions.assertEquals(companyForm.getName(), updatedEntity.getName());
     Assertions.assertEquals(companyForm.getNote(), updatedEntity.getNote());
-    Assertions.assertEquals(
-        companyForm.getJobApplicationHistory(), updatedEntity.getJobApplicationHistory());
+    Assertions.assertEquals(companyForm.getJobApplicationHistory(),
+        updatedEntity.getJobApplicationHistory());
   }
 
   @Test
@@ -199,33 +184,22 @@ public class CompanyControllerTest {
     companyForm.setVersion(currentVersion); // old version
 
     // When & Then
-    performUpdateRequest(companyForm)
-        .andExpect(status().isOk())
-        .andExpect(view().name("error"))
+    performUpdateRequest(companyForm).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
   @Test
   void update_WithTamperedId_ShouldThrowIllegalRequestException() throws Exception {
     // Given
-    CompanyEntity targetCompany =
-        companyRepository.findAll().stream()
-            .filter(c -> "CompanyA".equals(c.getName()))
-            .findFirst()
-            .orElseThrow();
+    CompanyEntity targetCompany = companyRepository.findAll().stream()
+        .filter(c -> "CompanyA".equals(c.getName())).findFirst().orElseThrow();
 
     // When & Then
-    mockMvc
-        .perform(
-            post(UPDATE_ENDPOINT)
-                .with(csrf())
-                .param("update", "")
-                // ID parameter is missing (null), which triggers validation error on id (NotNull in
-                // UpdateGroup)
-                .param("name", "Some Name")
-                .param("version", targetCompany.getVersion().toString()))
-        .andExpect(status().isOk())
-        .andExpect(view().name("error"))
+    mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
+        // ID parameter is missing (null), which triggers validation error on id (NotNull in
+        // UpdateGroup)
+        .param("name", "Some Name").param("version", targetCompany.getVersion().toString()))
+        .andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isNotDisplayMenu", true));
   }
 
@@ -236,8 +210,7 @@ public class CompanyControllerTest {
     Integer targetCompanyId = targetCompany.getId();
 
     // When & Then
-    performDeleteRequest(targetCompanyId)
-        .andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetCompanyId).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -266,16 +239,12 @@ public class CompanyControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performRegisterRequest(
-      String name, String note, String jobApplicationHistory) throws Exception {
+  private ResultActions performRegisterRequest(String name, String note,
+      String jobApplicationHistory) throws Exception {
     return mockMvc
-        .perform(
-            post(REGISTER_ENDPOINT)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("name", name)
-                .param("note", note)
-                .param("jobApplicationHistory", jobApplicationHistory))
+        .perform(post(REGISTER_ENDPOINT).with(csrf())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)
+            .param("note", note).param("jobApplicationHistory", jobApplicationHistory))
         .andDo(print());
   }
 
@@ -287,26 +256,15 @@ public class CompanyControllerTest {
   }
 
   private ResultActions performUpdateRequest(CompanyForm companyForm) throws Exception {
-    return mockMvc
-        .perform(
-            post(UPDATE_ENDPOINT)
-                .with(csrf())
-                .param("update", "")
-                .param("id", companyForm.getId().toString())
-                .param("name", companyForm.getName())
-                .param("note", companyForm.getNote())
-                .param("jobApplicationHistory", companyForm.getJobApplicationHistory())
-                .param("version", companyForm.getVersion().toString()))
-        .andDo(print());
+    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
+        .param("id", companyForm.getId().toString()).param("name", companyForm.getName())
+        .param("note", companyForm.getNote())
+        .param("jobApplicationHistory", companyForm.getJobApplicationHistory())
+        .param("version", companyForm.getVersion().toString())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int companyId) throws Exception {
-    return mockMvc
-        .perform(
-            post(DELETE_ENDPOINT)
-                .with(csrf())
-                .param("delete", "")
-                .param("id", String.valueOf(companyId)))
-        .andDo(print());
+    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("id",
+        String.valueOf(companyId))).andDo(print());
   }
 }

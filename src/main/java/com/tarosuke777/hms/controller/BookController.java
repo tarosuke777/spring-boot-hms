@@ -45,17 +45,14 @@ public class BookController {
   private final AuthorService authorService;
 
   @GetMapping("/list")
-  public String getList(
-      @RequestParam(required = false) BookGenre genre,
+  public String getList(@RequestParam(required = false) BookGenre genre,
       @RequestParam(required = false) Integer authorId,
       @RequestParam(required = false) Boolean isAdult,
-      @PageableDefault(size = 10) Pageable pageable,
-      Model model,
+      @PageableDefault(size = 10) Pageable pageable, Model model,
       @AuthenticationPrincipal LoginUser user) {
 
-    Page<BookForm> bookPage =
-        bookService.getBookList(
-            user.getId(), genre, authorId, isAdult, Objects.requireNonNull(pageable));
+    Page<BookForm> bookPage = bookService.getBookList(user.getId(), genre, authorId, isAdult,
+        Objects.requireNonNull(pageable));
     Map<Integer, String> authorMap = authorService.getAuthorMap();
 
     model.addAttribute("bookPage", bookPage);
@@ -68,8 +65,8 @@ public class BookController {
   }
 
   @GetMapping("/detail/{id}")
-  public String getDetail(
-      @PathVariable("id") Integer id, Model model, @AuthenticationPrincipal LoginUser user) {
+  public String getDetail(@PathVariable("id") Integer id, Model model,
+      @AuthenticationPrincipal LoginUser user) {
 
     BookForm bookForm = bookService.getBookDetails(id, user.getId());
     Map<Integer, String> authorMap = authorService.getAuthorMap();
@@ -90,8 +87,8 @@ public class BookController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated BookForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated BookForm form, BindingResult bindingResult,
+      Model model) {
 
     if (bindingResult.hasErrors()) {
       return getRegister(form, model);
@@ -103,11 +100,8 @@ public class BookController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(
-      @ModelAttribute @Validated(UpdateGroup.class) BookForm form,
-      BindingResult bindingResult,
-      Model model,
-      @AuthenticationPrincipal LoginUser user) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) BookForm form,
+      BindingResult bindingResult, Model model, @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(BookForm.Fields.id)
@@ -125,15 +119,12 @@ public class BookController {
 
     final Map<String, Object> uriVariables = new HashMap<>();
     uriVariables.put(BookForm.Fields.id, form.getId());
-    return UriComponentsBuilder.fromUriString(REDIRECT_DETAIL_VIEW)
-        .buildAndExpand(uriVariables)
+    return UriComponentsBuilder.fromUriString(REDIRECT_DETAIL_VIEW).buildAndExpand(uriVariables)
         .toUriString();
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(
-      @Validated(DeleteGroup.class) BookForm form,
-      BindingResult bindingResult,
+  public String delete(@Validated(DeleteGroup.class) BookForm form, BindingResult bindingResult,
       @AuthenticationPrincipal LoginUser user) {
 
     // id にエラーがある場合は改ざんとみなしてシステムエラー
@@ -146,8 +137,8 @@ public class BookController {
     return REDIRECT_LIST;
   }
 
-  private void addAttributesToModel(
-      Model model, BookForm bookForm, Map<Integer, String> authorMap) {
+  private void addAttributesToModel(Model model, BookForm bookForm,
+      Map<Integer, String> authorMap) {
     model.addAttribute("bookForm", bookForm);
     model.addAttribute("authorMap", authorMap);
   }

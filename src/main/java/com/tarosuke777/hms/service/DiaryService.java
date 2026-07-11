@@ -20,21 +20,16 @@ public class DiaryService {
   private final DiaryMapper diaryMapper;
 
   public List<DiaryForm> getDiaryList(String orderBy, String sortDirection, Integer currentUserId) {
-    Sort sort =
-        sortDirection.equalsIgnoreCase("desc")
-            ? Sort.by(orderBy).descending()
-            : Sort.by(orderBy).ascending();
+    Sort sort = sortDirection.equalsIgnoreCase("desc") ? Sort.by(orderBy).descending()
+        : Sort.by(orderBy).ascending();
 
-    return diaryRepository.findByCreatedBy(currentUserId, sort).stream()
-        .map(diaryMapper::toForm)
+    return diaryRepository.findByCreatedBy(currentUserId, sort).stream().map(diaryMapper::toForm)
         .toList();
   }
 
   public DiaryForm getDiaryDetails(Integer diaryId, Integer currentUserId) {
-    DiaryEntity diary =
-        diaryRepository
-            .findByDiaryIdAndCreatedBy(diaryId, currentUserId)
-            .orElseThrow(() -> new RuntimeException("Diary not found or access denied"));
+    DiaryEntity diary = diaryRepository.findByDiaryIdAndCreatedBy(diaryId, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Diary not found or access denied"));
     return diaryMapper.toForm(diary);
   }
 
@@ -47,8 +42,7 @@ public class DiaryService {
   @Transactional
   public void updateDiary(DiaryForm form, Integer currentUserId) {
     DiaryEntity existEntity =
-        diaryRepository
-            .findByDiaryIdAndCreatedBy(form.getDiaryId(), currentUserId)
+        diaryRepository.findByDiaryIdAndCreatedBy(form.getDiaryId(), currentUserId)
             .orElseThrow(() -> new RuntimeException("Diary not found or access denied"));
     DiaryEntity entity = Objects.requireNonNull(diaryMapper.copy(existEntity));
     diaryMapper.updateEntityFromForm(form, entity);

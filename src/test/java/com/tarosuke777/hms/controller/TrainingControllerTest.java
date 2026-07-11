@@ -44,11 +44,16 @@ import org.springframework.transaction.annotation.Transactional;
 @WithUserDetails("admin")
 public class TrainingControllerTest {
 
-  @Autowired private MockMvc mockMvc;
-  @Autowired private TrainingRepository trainingRepository;
-  @Autowired private TrainingMenuRepository trainingMenuRepository;
-  @Autowired private TrainingMapper trainingMapper;
-  @Autowired private EntityManager entityManager;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private TrainingRepository trainingRepository;
+  @Autowired
+  private TrainingMenuRepository trainingMenuRepository;
+  @Autowired
+  private TrainingMapper trainingMapper;
+  @Autowired
+  private EntityManager entityManager;
 
   private static final String LIST_ENDPOINT = "/training/list";
   private static final String LIST_VIEW = "training/list";
@@ -71,17 +76,13 @@ public class TrainingControllerTest {
         (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Integer currentUserId = loginUser.getId();
     List<TrainingForm> expectedTrainingList =
-        trainingRepository
-            .findByCreatedBy(currentUserId, Sort.by("trainingDate").descending())
-            .stream()
-            .map(this::convertToForm)
-            .toList();
+        trainingRepository.findByCreatedBy(currentUserId, Sort.by("trainingDate").descending())
+            .stream().map(this::convertToForm).toList();
     Map<Integer, String> expectedTrainingAreaMap = TargetArea.getTargetAreaMap();
     Map<Integer, String> expectedTrainingMenuMap = getTrainingMenuMap();
 
     // When & Then
-    performGetListRequest()
-        .andExpect(status().isOk())
+    performGetListRequest().andExpect(status().isOk())
         .andExpect(model().attribute("trainingAreaMap", expectedTrainingAreaMap))
         .andExpect(model().attribute("trainingMenuMap", expectedTrainingMenuMap))
         .andExpect(model().attribute("trainingList", expectedTrainingList))
@@ -96,12 +97,10 @@ public class TrainingControllerTest {
     Map<Integer, String> expectedTrainingMenuMap = getTrainingMenuMap();
 
     // When & Then
-    performGetDetailRequest(expectedTrainingForm.getTrainingId())
-        .andExpect(status().isOk())
+    performGetDetailRequest(expectedTrainingForm.getTrainingId()).andExpect(status().isOk())
         .andExpect(model().attribute("trainingMenuMap", expectedTrainingMenuMap))
         .andExpect(model().attribute("trainingForm", expectedTrainingForm))
-        .andExpect(view().name(DETAIL_VIEW))
-        .andExpect(model().hasNoErrors());
+        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
   }
 
   @Test
@@ -112,12 +111,10 @@ public class TrainingControllerTest {
     Map<Integer, String> trainingTargetAreaMap = TargetArea.getTargetAreaMap();
 
     // When & Then
-    performGetRegisterRequest()
-        .andExpect(status().isOk())
+    performGetRegisterRequest().andExpect(status().isOk())
         .andExpect(model().attribute("trainingMenuSelectList", trainingMenuSelectList))
         .andExpect(model().attribute("trainingTargetAreaMap", trainingTargetAreaMap))
-        .andExpect(view().name(REGISTER_VIEW))
-        .andExpect(model().hasNoErrors());
+        .andExpect(view().name(REGISTER_VIEW)).andExpect(model().hasNoErrors());
   }
 
   @Test
@@ -128,21 +125,18 @@ public class TrainingControllerTest {
 
     // LocalDateを使用するため、テスト用の日付を準備します
     LocalDate testDate = LocalDate.now();
-    TrainingForm trainingForm =
-        new TrainingForm(
-            null, // trainingId
-            testDate, // trainingDate (String "test" から修正)
-            1, // trainingAreaId (適切なID、またはnull)
-            trainingMenuEntity.getId(), // trainingMenuId
-            60, // weight (例: 60kg)
-            10, // reps (例: 10回)
-            3, // sets (例: 3セット)
-            0 // version (例: 0)
-            );
+    TrainingForm trainingForm = new TrainingForm(null, // trainingId
+        testDate, // trainingDate (String "test" から修正)
+        1, // trainingAreaId (適切なID、またはnull)
+        trainingMenuEntity.getId(), // trainingMenuId
+        60, // weight (例: 60kg)
+        10, // reps (例: 10回)
+        3, // sets (例: 3セット)
+        0 // version (例: 0)
+    );
 
     // When & Then
-    performRegisterRequest(trainingForm)
-        .andExpect(status().is3xxRedirection())
+    performRegisterRequest(trainingForm).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -151,8 +145,8 @@ public class TrainingControllerTest {
     TrainingEntity savedTraining = trainingRepository.findAll().getLast();
 
     Assertions.assertEquals(trainingForm.getTrainingDate(), savedTraining.getTrainingDate());
-    Assertions.assertEquals(
-        trainingForm.getTrainingMenuId(), savedTraining.getTrainingMenu().getId());
+    Assertions.assertEquals(trainingForm.getTrainingMenuId(),
+        savedTraining.getTrainingMenu().getId());
     Assertions.assertEquals(trainingForm.getWeight(), savedTraining.getWeight());
     Assertions.assertEquals(trainingForm.getReps(), savedTraining.getReps());
     Assertions.assertEquals(trainingForm.getSets(), savedTraining.getSets());
@@ -171,8 +165,7 @@ public class TrainingControllerTest {
     form.setWeight(newWeight);
 
     // When & Then
-    performUpdateRequest(form)
-        .andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
@@ -208,9 +201,7 @@ public class TrainingControllerTest {
     form.setSets(999);
 
     // When & Then
-    performUpdateRequest(form)
-        .andExpect(status().isOk())
-        .andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -221,8 +212,7 @@ public class TrainingControllerTest {
     TrainingEntity expectedTraining = trainingRepository.findAll().getFirst();
 
     // When & Then
-    performDeleteRequest(expectedTraining.getTrainingId())
-        .andExpect(status().is3xxRedirection())
+    performDeleteRequest(expectedTraining.getTrainingId()).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -247,25 +237,15 @@ public class TrainingControllerTest {
 
   private Map<Integer, String> getTrainingMenuMap() {
     return trainingMenuRepository.findAll().stream()
-        .collect(
-            Collectors.toMap(
-                TrainingMenuEntity::getId,
-                TrainingMenuEntity::getName,
-                (existing, replacement) -> existing,
-                LinkedHashMap::new));
+        .collect(Collectors.toMap(TrainingMenuEntity::getId, TrainingMenuEntity::getName,
+            (existing, replacement) -> existing, LinkedHashMap::new));
   }
 
   public List<SelectOptionTrainingMenu> getTrainingMenuSelectList() {
     return trainingMenuRepository.findAll().stream()
-        .map(
-            entity ->
-                new SelectOptionTrainingMenu(
-                    entity.getId().toString(),
-                    entity.getName(),
-                    entity.getTargetAreaId(),
-                    entity.getMaxWeight(),
-                    entity.getMaxReps(),
-                    entity.getMaxSets()))
+        .map(entity -> new SelectOptionTrainingMenu(entity.getId().toString(), entity.getName(),
+            entity.getTargetAreaId(), entity.getMaxWeight(), entity.getMaxReps(),
+            entity.getMaxSets()))
         .collect(Collectors.toList());
   }
 
@@ -287,43 +267,29 @@ public class TrainingControllerTest {
   }
 
   private ResultActions performRegisterRequest(TrainingForm form) throws Exception {
-    return mockMvc
-        .perform(
-            post(REGISTER_ENDPOINT)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("trainingDate", form.getTrainingDate().toString())
-                .param("trainingAreaId", String.valueOf(form.getTrainingAreaId()))
-                .param("trainingMenuId", String.valueOf(form.getTrainingMenuId()))
-                .param("weight", String.valueOf(form.getWeight()))
-                .param("reps", String.valueOf(form.getReps()))
-                .param("sets", String.valueOf(form.getSets())))
+    return mockMvc.perform(
+        post(REGISTER_ENDPOINT).with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("trainingDate", form.getTrainingDate().toString())
+            .param("trainingAreaId", String.valueOf(form.getTrainingAreaId()))
+            .param("trainingMenuId", String.valueOf(form.getTrainingMenuId()))
+            .param("weight", String.valueOf(form.getWeight()))
+            .param("reps", String.valueOf(form.getReps()))
+            .param("sets", String.valueOf(form.getSets())))
         .andDo(print());
   }
 
   private ResultActions performUpdateRequest(TrainingForm form) throws Exception {
-    return mockMvc
-        .perform(
-            post(UPDATE_ENDPOINT)
-                .with(csrf())
-                .param("update", "")
-                .param("trainingId", form.getTrainingId().toString())
-                .param("trainingDate", form.getTrainingDate().toString())
-                .param("trainingMenuId", String.valueOf(form.getTrainingMenuId()))
-                .param("weight", String.valueOf(form.getWeight()))
-                .param("reps", String.valueOf(form.getReps()))
-                .param("sets", String.valueOf(form.getSets()))
-                .param("version", String.valueOf(form.getVersion())))
-        .andDo(print());
+    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
+        .param("trainingId", form.getTrainingId().toString())
+        .param("trainingDate", form.getTrainingDate().toString())
+        .param("trainingMenuId", String.valueOf(form.getTrainingMenuId()))
+        .param("weight", String.valueOf(form.getWeight()))
+        .param("reps", String.valueOf(form.getReps())).param("sets", String.valueOf(form.getSets()))
+        .param("version", String.valueOf(form.getVersion()))).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int trainingId) throws Exception {
-    return mockMvc
-        .perform(
-            post(DELETE_ENDPOINT)
-                .with(csrf())
-                .param("delete", "")
-                .param("trainingId", String.valueOf(trainingId)))
-        .andDo(print());
+    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "")
+        .param("trainingId", String.valueOf(trainingId))).andDo(print());
   }
 }

@@ -19,17 +19,16 @@ import org.springframework.test.context.jdbc.SqlConfig;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(
-    scripts = "/com/tarosuke777/hms/UserFlowE2ETest.sql",
+@Sql(scripts = "/com/tarosuke777/hms/UserFlowE2ETest.sql",
     executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
     config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
-@Sql(
-    scripts = "/com/tarosuke777/hms/UserFlowE2ETest_cleanup.sql",
+@Sql(scripts = "/com/tarosuke777/hms/UserFlowE2ETest_cleanup.sql",
     executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
     config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
 class UserFlowE2ETest {
 
-  @LocalServerPort private int port;
+  @LocalServerPort
+  private int port;
 
   private static Playwright playwright;
   private Browser browser;

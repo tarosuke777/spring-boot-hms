@@ -47,8 +47,8 @@ public class TrainingMenuController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated TrainingMenuForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated TrainingMenuForm form,
+      BindingResult bindingResult, Model model) {
     if (bindingResult.hasErrors()) {
       return getRegister(form, model);
     }
@@ -57,8 +57,8 @@ public class TrainingMenuController {
   }
 
   @GetMapping("/detail/{id}")
-  public String getDetail(
-      @PathVariable("id") Integer id, Model model, @AuthenticationPrincipal LoginUser user) {
+  public String getDetail(@PathVariable("id") Integer id, Model model,
+      @AuthenticationPrincipal LoginUser user) {
     TrainingMenuForm form = trainingMenuService.getTrainingMenuDetails(id, user.getId());
     model.addAttribute("trainingMenuForm", form);
     model.addAttribute("targetAreaMap", TargetArea.getTargetAreaMap());
@@ -66,11 +66,8 @@ public class TrainingMenuController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(
-      @ModelAttribute @Validated(UpdateGroup.class) TrainingMenuForm form,
-      BindingResult bindingResult,
-      Model model,
-      @AuthenticationPrincipal LoginUser user) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) TrainingMenuForm form,
+      BindingResult bindingResult, Model model, @AuthenticationPrincipal LoginUser user) {
     if (bindingResult.hasErrors()) {
       return DETAIL_VIEW;
     }
@@ -79,10 +76,8 @@ public class TrainingMenuController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(
-      @ModelAttribute @Validated(DeleteGroup.class) TrainingMenuForm form,
-      Model model,
-      @AuthenticationPrincipal LoginUser user) {
+  public String delete(@ModelAttribute @Validated(DeleteGroup.class) TrainingMenuForm form,
+      Model model, @AuthenticationPrincipal LoginUser user) {
     trainingMenuService.deleteTrainingMenu(Objects.requireNonNull(form.getId()), user.getId());
     return REDIRECT_LIST;
   }

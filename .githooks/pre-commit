@@ -1,23 +1,14 @@
 #!/bin/sh
 
-# --- 1. Javaの処理 ---
-java_files=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.java$')
-if [ -n "$java_files" ]; then
-    JAR_PATH="$HOME/.google-java-format/google-java-format-1.35.0-all-deps.jar"
-    if [ -f "$JAR_PATH" ]; then
-        echo "Javaファイルを自動整形中..."
-        java -jar "$JAR_PATH" --replace $java_files
-        git add $java_files
-    else
-        echo "【エラー】JavaのJARファイルが見つかりません: $JAR_PATH"
-        exit 1
-    fi
-fi
+# ステージングされた変更ファイル（Java、HTML、CSS、JSなどすべて）を取得
+staged_files=$(git diff --cached --name-only --diff-filter=ACMR)
 
-# --- 2. HTML/CSS/JSの処理 ---
-web_files=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(html|css|js)$')
-if [ -n "$web_files" ]; then
-    echo "HTML/CSS/JSファイルを自動整形中..."
-    ./node_modules/.bin/prettier --write $web_files
-    git add $web_files
+if [ -n "$staged_files" ]; then
+    echo "Spotlessでプロジェクト全体のコードを自動整形中..."
+    
+    # 変更されたファイルだけを対象にSpotlessを実行（超高速）
+    ./gradlew spotlessApply -PspotlessFiles="$(echo "$staged_files" | paste -sd "," -)"
+    
+    # 整形されたファイルを再ステージング
+    echo "$staged_files" | xargs git add
 fi

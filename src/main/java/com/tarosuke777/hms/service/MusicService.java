@@ -28,21 +28,18 @@ public class MusicService {
     var spec = MusicSpecifications.withFilters(currentUserId);
     Page<MusicEntity> musicPage = musicRepository.findAll(spec, pageable);
 
-    return musicPage.map(
-        music -> {
-          MusicForm form = musicMapper.toForm(music);
-          if (music.getArtist() != null) {
-            form.setArtistId(music.getArtist().getId());
-          }
-          return form;
-        });
+    return musicPage.map(music -> {
+      MusicForm form = musicMapper.toForm(music);
+      if (music.getArtist() != null) {
+        form.setArtistId(music.getArtist().getId());
+      }
+      return form;
+    });
   }
 
   public MusicForm getMusicDetails(Integer id, Integer currentUserId) {
-    MusicEntity music =
-        musicRepository
-            .findByIdAndCreatedBy(id, currentUserId)
-            .orElseThrow(() -> new RuntimeException("Music not found"));
+    MusicEntity music = musicRepository.findByIdAndCreatedBy(id, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Music not found"));
     MusicForm musicForm = musicMapper.toForm(music);
     if (music.getArtist() != null) {
       musicForm.setArtistId(music.getArtist().getId());
@@ -65,10 +62,8 @@ public class MusicService {
 
   @Transactional
   public void updateMusic(MusicForm form, Integer currentUserId) {
-    MusicEntity existEntity =
-        musicRepository
-            .findByIdAndCreatedBy(form.getId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Music not found"));
+    MusicEntity existEntity = musicRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Music not found"));
     MusicEntity entity = Objects.requireNonNull(musicMapper.copy(existEntity));
     if (existEntity.getArtist() != null) {
       entity.setArtist(
@@ -93,9 +88,7 @@ public class MusicService {
 
   @Tool(description = "好きな曲名の一覧を取得する")
   public String getMusicListForMcp(Integer currentUserId) {
-    return musicRepository.findAll().stream()
-        .map(MusicEntity::getName)
-        .reduce((a, b) -> a + ", " + b)
-        .orElse("No music available");
+    return musicRepository.findAll().stream().map(MusicEntity::getName)
+        .reduce((a, b) -> a + ", " + b).orElse("No music available");
   }
 }

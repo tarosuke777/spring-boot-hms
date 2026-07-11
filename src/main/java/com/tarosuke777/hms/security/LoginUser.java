@@ -11,10 +11,7 @@ public class LoginUser extends User {
 
   private final Integer id; // データベース上の主キーを保持
 
-  public LoginUser(
-      Integer id,
-      String username,
-      String password,
+  public LoginUser(Integer id, String username, String password,
       Collection<? extends GrantedAuthority> authorities) {
     super(username, password, authorities);
     this.id = id;

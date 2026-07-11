@@ -55,9 +55,7 @@ public class ArtistController {
   }
 
   @GetMapping("/detail/{artistId}")
-  public String getDetail(
-      @PathVariable("artistId") Integer artistId,
-      Model model,
+  public String getDetail(@PathVariable("artistId") Integer artistId, Model model,
       @AuthenticationPrincipal LoginUser user) {
     ArtistForm form = artistService.getArtist(artistId, user.getId());
     model.addAttribute("artistForm", form);
@@ -65,10 +63,8 @@ public class ArtistController {
   }
 
   @PostMapping(value = "detail", params = "update")
-  public String update(
-      @ModelAttribute @Validated(UpdateGroup.class) ArtistForm form,
-      BindingResult bindingResult,
-      @AuthenticationPrincipal LoginUser user) {
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) ArtistForm form,
+      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
     if (bindingResult.hasFieldErrors(ArtistForm.Fields.id)
@@ -85,9 +81,7 @@ public class ArtistController {
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(
-      @Validated(DeleteGroup.class) ArtistForm form,
-      BindingResult bindingResult,
+  public String delete(@Validated(DeleteGroup.class) ArtistForm form, BindingResult bindingResult,
       @AuthenticationPrincipal LoginUser user) {
 
     // id や version にエラーがある場合は、改ざんとみなしてシステムエラー

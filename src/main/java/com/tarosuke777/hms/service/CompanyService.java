@@ -29,8 +29,8 @@ public class CompanyService {
     return companyRepository.findAll(spec).stream().map(companyMapper::toForm).toList();
   }
 
-  public Page<CompanyForm> getCompanyList(
-      Integer currentUserId, String name, @NonNull Pageable pageable) {
+  public Page<CompanyForm> getCompanyList(Integer currentUserId, String name,
+      @NonNull Pageable pageable) {
     var spec = CompanySpecifications.withFilters(currentUserId, name);
 
     // Page<Entity> を取得
@@ -41,10 +41,8 @@ public class CompanyService {
   }
 
   public CompanyForm getCompany(@NonNull Integer companyId, Integer currentUserId) {
-    CompanyEntity company =
-        companyRepository
-            .findByIdAndCreatedBy(companyId, currentUserId)
-            .orElseThrow(() -> new RuntimeException("Company not found or access denied"));
+    CompanyEntity company = companyRepository.findByIdAndCreatedBy(companyId, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Company not found or access denied"));
     return companyMapper.toForm(company);
   }
 
@@ -56,10 +54,8 @@ public class CompanyService {
 
   @Transactional
   public void updateCompany(CompanyForm form, Integer currentUserId) {
-    CompanyEntity existEntity =
-        companyRepository
-            .findByIdAndCreatedBy(form.getId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Company not found or access denied"));
+    CompanyEntity existEntity = companyRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Company not found or access denied"));
     CompanyEntity entity = Objects.requireNonNull(companyMapper.copy(existEntity));
     companyMapper.updateEntityFromForm(form, entity);
     companyRepository.save(entity);
@@ -74,12 +70,7 @@ public class CompanyService {
   }
 
   public Map<Integer, String> getCompanyMap() {
-    return companyRepository.findAll().stream()
-        .collect(
-            Collectors.toMap(
-                CompanyEntity::getId,
-                CompanyEntity::getName,
-                (existing, replacement) -> existing,
-                LinkedHashMap::new));
+    return companyRepository.findAll().stream().collect(Collectors.toMap(CompanyEntity::getId,
+        CompanyEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
   }
 }

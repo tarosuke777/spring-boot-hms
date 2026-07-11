@@ -23,24 +23,19 @@ public class MovieService {
 
   /** 一覧取得 */
   public List<MovieForm> getMovieList(Integer currentUserId) {
-    return movieRepository.findByCreatedBy(currentUserId).stream()
-        .map(
-            movie -> {
-              MovieForm form = movieMapper.toForm(movie);
-              if (movie.getCast() != null) {
-                form.setCastId(movie.getCast().getId());
-              }
-              return form;
-            })
-        .toList();
+    return movieRepository.findByCreatedBy(currentUserId).stream().map(movie -> {
+      MovieForm form = movieMapper.toForm(movie);
+      if (movie.getCast() != null) {
+        form.setCastId(movie.getCast().getId());
+      }
+      return form;
+    }).toList();
   }
 
   /** 1件取得 */
   public MovieForm getMovie(Integer id, Integer currentUserId) {
-    MovieEntity movie =
-        movieRepository
-            .findByIdAndCreatedBy(id, currentUserId)
-            .orElseThrow(() -> new RuntimeException("Movie not found"));
+    MovieEntity movie = movieRepository.findByIdAndCreatedBy(id, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Movie not found"));
 
     MovieForm form = movieMapper.toForm(movie);
     if (movie.getCast() != null) {
@@ -65,10 +60,8 @@ public class MovieService {
   /** 更新 */
   @Transactional
   public void updateMovie(MovieForm form, Integer currentUserId) {
-    MovieEntity existEntity =
-        movieRepository
-            .findByIdAndCreatedBy(form.getId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Movie not found or access denied"));
+    MovieEntity existEntity = movieRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Movie not found or access denied"));
     MovieEntity entity = Objects.requireNonNull(movieMapper.copy(existEntity));
 
     if (existEntity.getCast() != null) {

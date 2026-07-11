@@ -16,7 +16,8 @@ public class DiaryForm {
   @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
   private Integer diaryId;
 
-  @NotNull private LocalDate diaryDate;
+  @NotNull
+  private LocalDate diaryDate;
 
   private String todoPlan;
 

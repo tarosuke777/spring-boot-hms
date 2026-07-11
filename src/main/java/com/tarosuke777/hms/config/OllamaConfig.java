@@ -18,29 +18,21 @@ import org.springframework.web.client.RestClient;
 public class OllamaConfig {
 
   @Bean
-  public OllamaEmbeddingModel ollamaEmbeddingModel(
-      OllamaConnectionProperties connectionProperties,
+  public OllamaEmbeddingModel ollamaEmbeddingModel(OllamaConnectionProperties connectionProperties,
       OllamaEmbeddingProperties embeddingProperties) {
 
-    ClientHttpRequestFactorySettings settings =
-        ClientHttpRequestFactorySettings.defaults()
-            .withConnectTimeout(Duration.ofSeconds(3))
-            .withReadTimeout(Duration.ofSeconds(30));
+    ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.defaults()
+        .withConnectTimeout(Duration.ofSeconds(3)).withReadTimeout(Duration.ofSeconds(30));
 
     ClientHttpRequestFactory requestFactory =
         ClientHttpRequestFactoryBuilder.detect().build(settings);
 
     RestClient.Builder restClientBuilder = RestClient.builder().requestFactory(requestFactory);
 
-    OllamaApi ollamaApi =
-        OllamaApi.builder()
-            .baseUrl(connectionProperties.getBaseUrl())
-            .restClientBuilder(restClientBuilder)
-            .build();
+    OllamaApi ollamaApi = OllamaApi.builder().baseUrl(connectionProperties.getBaseUrl())
+        .restClientBuilder(restClientBuilder).build();
 
-    return OllamaEmbeddingModel.builder()
-        .ollamaApi(ollamaApi)
-        .defaultOptions(embeddingProperties.getOptions())
-        .build();
+    return OllamaEmbeddingModel.builder().ollamaApi(ollamaApi)
+        .defaultOptions(embeddingProperties.getOptions()).build();
   }
 }

@@ -8,12 +8,8 @@ import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
-@AnalyzeClasses(
-    packages = "com.tarosuke777.hms",
-    importOptions = {
-      ImportOption.DoNotIncludeTests.class,
-      ArchitectureTest.ExcludeConfigAndMain.class
-    })
+@AnalyzeClasses(packages = "com.tarosuke777.hms", importOptions = {
+    ImportOption.DoNotIncludeTests.class, ArchitectureTest.ExcludeConfigAndMain.class})
 class ArchitectureTest {
 
   // 内部クラスとして除外条件を定義
@@ -25,21 +21,10 @@ class ArchitectureTest {
   }
 
   @ArchTest
-  static final ArchRule layer_dependencies_are_respected =
-      layeredArchitecture()
-          .consideringAllDependencies()
-          .layer("Controller")
-          .definedBy("..controller..")
-          .layer("Service")
-          .definedBy("..service..")
-          .layer("Repository")
-          .definedBy("..repository..")
-          .layer("Runner")
-          .definedBy("..runner..")
-          .whereLayer("Controller")
-          .mayNotBeAccessedByAnyLayer()
-          .whereLayer("Service")
-          .mayOnlyBeAccessedByLayers("Controller", "Runner")
-          .whereLayer("Repository")
-          .mayOnlyBeAccessedByLayers("Service");
+  static final ArchRule layer_dependencies_are_respected = layeredArchitecture()
+      .consideringAllDependencies().layer("Controller").definedBy("..controller..").layer("Service")
+      .definedBy("..service..").layer("Repository").definedBy("..repository..").layer("Runner")
+      .definedBy("..runner..").whereLayer("Controller").mayNotBeAccessedByAnyLayer()
+      .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller", "Runner")
+      .whereLayer("Repository").mayOnlyBeAccessedByLayers("Service");
 }

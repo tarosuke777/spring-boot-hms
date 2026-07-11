@@ -19,8 +19,7 @@ public class LoginController {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     // 認証情報が存在し、匿名ユーザーではない（＝ログイン済み）ことを確認
-    if (authentication != null
-        && authentication.isAuthenticated()
+    if (authentication != null && authentication.isAuthenticated()
         && !(authentication instanceof AnonymousAuthenticationToken)) {
       log.info("既にログイン済みのため、ログイン成功時のデフォルトURLへリダイレクトします。");
       return "redirect:/task/list";

@@ -35,8 +35,7 @@ public class DiaryController {
   private final DiaryService diaryService;
 
   @GetMapping("/list")
-  public String getList(
-      Model model,
+  public String getList(Model model,
       @RequestParam(name = "orderBy", defaultValue = "diaryDate") String orderBy,
       @RequestParam(name = "sort", defaultValue = "desc") String sort,
       @AuthenticationPrincipal LoginUser user) {
@@ -46,9 +45,7 @@ public class DiaryController {
   }
 
   @GetMapping("/detail/{diaryId}")
-  public String getDetail(
-      @PathVariable("diaryId") Integer diaryId,
-      Model model,
+  public String getDetail(@PathVariable("diaryId") Integer diaryId, Model model,
       @AuthenticationPrincipal LoginUser user) {
     DiaryForm diaryForm = diaryService.getDiaryDetails(diaryId, user.getId());
     model.addAttribute("diaryForm", diaryForm);
@@ -61,8 +58,8 @@ public class DiaryController {
   }
 
   @PostMapping("/register")
-  public String register(
-      @ModelAttribute @Validated DiaryForm form, BindingResult bindingResult, Model model) {
+  public String register(@ModelAttribute @Validated DiaryForm form, BindingResult bindingResult,
+      Model model) {
     if (bindingResult.hasErrors()) {
       return getRegister(form, model);
     }
@@ -71,15 +68,15 @@ public class DiaryController {
   }
 
   @PostMapping(value = "/detail", params = "update")
-  public String update(
-      @Validated(UpdateGroup.class) DiaryForm form, @AuthenticationPrincipal LoginUser user) {
+  public String update(@Validated(UpdateGroup.class) DiaryForm form,
+      @AuthenticationPrincipal LoginUser user) {
     diaryService.updateDiary(form, user.getId());
     return REDIRECT_LIST;
   }
 
   @PostMapping(value = "/detail", params = "delete")
-  public String delete(
-      @Validated(DeleteGroup.class) DiaryForm form, @AuthenticationPrincipal LoginUser user) {
+  public String delete(@Validated(DeleteGroup.class) DiaryForm form,
+      @AuthenticationPrincipal LoginUser user) {
     diaryService.deleteDiary(Objects.requireNonNull(form.getDiaryId()), user.getId());
     return REDIRECT_LIST;
   }

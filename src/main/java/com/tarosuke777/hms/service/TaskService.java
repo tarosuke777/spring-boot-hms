@@ -22,10 +22,8 @@ public class TaskService {
   }
 
   public TaskForm getTask(Integer id, Integer currentUserId) {
-    TaskEntity entity =
-        taskRepository
-            .findByIdAndCreatedBy(id, currentUserId)
-            .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
+    TaskEntity entity = taskRepository.findByIdAndCreatedBy(id, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
     return taskMapper.toForm(entity);
   }
 
@@ -37,10 +35,8 @@ public class TaskService {
 
   @Transactional
   public void updateTask(TaskForm form, Integer currentUserId) {
-    TaskEntity existEntity =
-        taskRepository
-            .findByIdAndCreatedBy(form.getId(), currentUserId)
-            .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
+    TaskEntity existEntity = taskRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
     TaskEntity entity = Objects.requireNonNull(taskMapper.copy(existEntity));
     taskMapper.updateEntityFromForm(form, entity);
     taskRepository.save(entity);

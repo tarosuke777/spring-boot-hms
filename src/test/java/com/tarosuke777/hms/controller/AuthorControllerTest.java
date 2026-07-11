@@ -34,10 +34,14 @@ import org.springframework.transaction.annotation.Transactional;
 @WithUserDetails("admin")
 public class AuthorControllerTest {
 
-  @Autowired private MockMvc mockMvc;
-  @Autowired private AuthorRepository authorRepository; // Repositoryへ変更
-  @Autowired private AuthorMapper authorMapper;
-  @Autowired private EntityManager entityManager; // キャッシュクリア用
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private AuthorRepository authorRepository; // Repositoryへ変更
+  @Autowired
+  private AuthorMapper authorMapper;
+  @Autowired
+  private EntityManager entityManager; // キャッシュクリア用
 
   private static final String LIST_ENDPOINT = "/author/list";
   private static final String LIST_VIEW = "author/list";
@@ -63,8 +67,7 @@ public class AuthorControllerTest {
         authorRepository.findByCreatedBy(currentUserId).stream().map(authorMapper::toForm).toList();
 
     // When & Then
-    performGetListRequest()
-        .andExpect(status().isOk())
+    performGetListRequest().andExpect(status().isOk())
         .andExpect(model().attribute("authorList", expectedAuthorList))
         .andExpect(view().name(LIST_VIEW));
   }
@@ -77,11 +80,9 @@ public class AuthorControllerTest {
     AuthorForm expectedAuthorForm = authorMapper.toForm(entity);
 
     // When & Then
-    performGetDetailRequest(entity.getId())
-        .andExpect(status().isOk())
+    performGetDetailRequest(entity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("authorForm", expectedAuthorForm))
-        .andExpect(view().name(DETAIL_VIEW))
-        .andExpect(model().hasNoErrors());
+        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
   }
 
   @Test
@@ -90,9 +91,7 @@ public class AuthorControllerTest {
     // Given
 
     // When & Then
-    performGetRegisterRequest()
-        .andExpect(status().isOk())
-        .andExpect(view().name(REGISTER_VIEW))
+    performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
         .andExpect(model().hasNoErrors());
   }
 
@@ -103,8 +102,7 @@ public class AuthorControllerTest {
     String authorName = "TestAuthorName";
 
     // When & Then
-    performRegisterRequest(authorName)
-        .andExpect(status().is3xxRedirection())
+    performRegisterRequest(authorName).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -124,8 +122,7 @@ public class AuthorControllerTest {
     form.setName("著者２");
 
     // When & Then
-    performUpdateRequest(form)
-        .andExpect(status().is3xxRedirection())
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
@@ -155,9 +152,7 @@ public class AuthorControllerTest {
     form.setVersion(currentVersion); // 古いバージョンをセット
 
     // When & Then
-    performUpdateRequest(form)
-        .andExpect(status().isOk())
-        .andExpect(view().name("error"))
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
         .andExpect(model().attribute("isOptimisticLockError", true));
   }
 
@@ -172,8 +167,7 @@ public class AuthorControllerTest {
     Integer targetAuthorId = targetAuthor.getId();
 
     // When & Then
-    performDeleteRequest(targetAuthorId)
-        .andExpect(status().is3xxRedirection())
+    performDeleteRequest(targetAuthorId).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -203,24 +197,14 @@ public class AuthorControllerTest {
   }
 
   private ResultActions performRegisterRequest(String name) throws Exception {
-    return mockMvc
-        .perform(
-            post(REGISTER_ENDPOINT)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("name", name))
-        .andDo(print());
+    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
   }
 
   private ResultActions performUpdateRequest(AuthorForm form) throws Exception {
-    return mockMvc
-        .perform(
-            post(UPDATE_ENDPOINT)
-                .with(csrf())
-                .param("update", "")
-                .param("id", form.getId().toString())
-                .param("name", form.getName())
-                .param("version", form.getVersion().toString()))
+    return mockMvc.perform(
+        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
+            .param("name", form.getName()).param("version", form.getVersion().toString()))
         .andDo(print());
   }
 

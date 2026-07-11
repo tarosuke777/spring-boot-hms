@@ -11,8 +11,8 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class BookSpecifications {
 
-  public static Specification<BookEntity> withFilters(
-      Integer userId, BookGenre genre, Integer authorId, Boolean isAdult) {
+  public static Specification<BookEntity> withFilters(Integer userId, BookGenre genre,
+      Integer authorId, Boolean isAdult) {
     return (root, query, cb) -> {
       List<Predicate> predicates = new ArrayList<>();
 
