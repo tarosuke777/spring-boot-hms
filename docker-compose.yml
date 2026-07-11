@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: tester
-    command: ./gradlew test
+    # command: ./gradlew test
     volumes:
       - ./build:/app/build
 
