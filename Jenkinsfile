@@ -70,35 +70,51 @@ pipeline {
                 def coverageText = ""
 
                 try {
-                    def xmlPath = "build/reports/jacoco/test/jacocoTestReport.xml"
-                    
-                    if (fileExists(xmlPath)) {
-                        // XMLファイルを読み込んでパース
-                        def xmlText = readFile(xmlPath)
-                        def report = new XmlParser(false, false).parseText(xmlText)
+                    def csvPath = "build/reports/jacoco/test/jacocoTestReport.csv"
+                    if (fileExists(csvPath)) {
+                        def covPct = sh(script: """
+                            awk -F, 'NR > 1 {missed+=\\\$4; covered+=\\\$5} END {if (missed+covered > 0) printf "%.0f%%", (covered/(missed+covered))*100; else print "0%"}' ${csvPath}
+                        """, returnStdout: true).trim()
                         
-                        // <counter type="INSTRUCTION"> を探す
-                        def instructionCounter = report.counter.find { it.'@type' == 'INSTRUCTION' }
-                        
-                        if (instructionCounter) {
-                            double missed = instructionCounter.'@missed'.toDouble()
-                            double covered = instructionCounter.'@covered'.toDouble()
-                            double total = missed + covered
-                            
-                            // カバレッジのパーセンテージを計算 (四捨五入して整数に)
-                            int coveragePct = total > 0 ? Math.round((covered / total) * 100) : 0
-                            
-                            coverageText = "\n📊 JaCoCoカバレッジレポート:\n・命令カバレッジ: ${coveragePct}%\n🔗 レポート詳細: ${env.BUILD_URL}JaCoCo_20Report/"
-                        } else {
-                            coverageText = "\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
-                        }
+                        coverageText = "\n📊 JaCoCoカバレッジレポート:\n・命令カバレッジ: ${covPct}\n🔗 レポート詳細: ${env.BUILD_URL}JaCoCo_20Report/"
                     } else {
                         coverageText = "\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
                     }
                 } catch (Exception e) {
-                    echo "XMLパースエラー: ${e.message}"
+                    echo "エラー: ${e.message}"
                     coverageText = "\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
                 }
+
+                // try {
+                //     def xmlPath = "build/reports/jacoco/test/jacocoTestReport.xml"
+                    
+                //     if (fileExists(xmlPath)) {
+                //         // XMLファイルを読み込んでパース
+                //         def xmlText = readFile(xmlPath)
+                //         def report = new XmlParser(false, false).parseText(xmlText)
+                        
+                //         // <counter type="INSTRUCTION"> を探す
+                //         def instructionCounter = report.counter.find { it.'@type' == 'INSTRUCTION' }
+                        
+                //         if (instructionCounter) {
+                //             double missed = instructionCounter.'@missed'.toDouble()
+                //             double covered = instructionCounter.'@covered'.toDouble()
+                //             double total = missed + covered
+                            
+                //             // カバレッジのパーセンテージを計算 (四捨五入して整数に)
+                //             int coveragePct = total > 0 ? Math.round((covered / total) * 100) : 0
+                            
+                //             coverageText = "\n📊 JaCoCoカバレッジレポート:\n・命令カバレッジ: ${coveragePct}%\n🔗 レポート詳細: ${env.BUILD_URL}JaCoCo_20Report/"
+                //         } else {
+                //             coverageText = "\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
+                //         }
+                //     } else {
+                //         coverageText = "\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
+                //     }
+                // } catch (Exception e) {
+                //     echo "XMLパースエラー: ${e.message}"
+                //     coverageText = "\n🔗 JaCoCoレポート詳細: ${env.BUILD_URL}jacoco/"
+                // }
 
                 // try {
                 //     // JaCoCoのindex.htmlの「Total」行からパーセンテージを抽出するシェル芸
