@@ -12,24 +12,24 @@ pipeline {
                 sh 'sudo docker compose build'
 
                 echo 'Extracting JaCoCo reports from Docker builder stage...'
-                // script {
-                //     // 2. マルチステージビルドの "builder" ステージをターゲットに一時イメージを作成（キャッシュが効くので一瞬です）
-                //     sh 'sudo docker build --target builder -t hms-builder:tmp .'
+                script {
+                    // 2. マルチステージビルドの "builder" ステージをターゲットに一時イメージを作成（キャッシュが効くので一瞬です）
+                    sh 'sudo docker build --target builder -t hms-builder:tmp .'
                     
-                //     // 3. 一時コンテナを作成
-                //     sh 'sudo docker create --name tmp_reporter hms-builder:tmp'
+                    // 3. 一時コンテナを作成
+                    sh 'sudo docker create --name tmp_reporter hms-builder:tmp'
                     
-                //     // 4. コンテナ内のレポートをJenkinsのワークスペースへコピー
-                //     sh 'mkdir -p build/reports/jacoco/test'
-                //     sh 'sudo docker cp tmp_reporter:/app/build/reports/jacoco/test/html build/reports/jacoco/test/'
+                    // 4. コンテナ内のレポートをJenkinsのワークスペースへコピー
+                    sh 'mkdir -p build/reports/jacoco/test'
+                    sh 'sudo docker cp tmp_reporter:/app/build/reports/jacoco/test/html build/reports/jacoco/test/'
                     
-                //     // 5. 後片付け（一時コンテナと一時イメージの削除）
-                //     sh 'sudo docker rm tmp_reporter'
-                //     sh 'sudo docker rmi hms-builder:tmp'
+                    // 5. 後片付け（一時コンテナと一時イメージの削除）
+                    sh 'sudo docker rm tmp_reporter'
+                    sh 'sudo docker rmi hms-builder:tmp'
                     
-                //     // 6. Jenkinsがファイルを読み取れるように権限を調整
-                //     sh 'sudo chmod -R 755 build/reports'
-                // }
+                    // 6. Jenkinsがファイルを読み取れるように権限を調整
+                    sh 'sudo chmod -R 755 build/reports'
+                }
 
                 // 7. コピーしてきたレポートを Jenkins にパブリッシュ
                 publishHTML([
