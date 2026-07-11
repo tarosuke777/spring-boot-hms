@@ -17,11 +17,18 @@ pipeline {
         stage('Test & Report') {
             steps {
                 script {
-                    echo 'Building tests inside Docker...'
-                    sh 'sudo docker compose build test'
+                    try{
+                        echo 'Building tests inside Docker...'
+                        sh 'sudo docker compose build test'
 
-                    echo 'Running tests inside Docker...'
-                    sh 'sudo docker compose run test'
+                        echo 'Running tests inside Docker...'
+                        sh 'sudo docker compose run test ./gradlew test'
+                    } catch (Exception e) {
+                        echo "Tests failed: ${e.getMessage()}"
+                        echo '--- Displaying /app/build contents due to failure ---'
+                        sh 'sudo docker compose run test ls -la /app/build'
+                        throw e // Rethrow to mark the build as failed
+                    }
                 }
             }
         }
