@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile
       target: tester
     # command: ./gradlew test
-    volumes:
-      - .:/app
+    # volumes:
+    #   - .:/app
 
   hms-ap:
     image: hms:1.0
