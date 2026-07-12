@@ -97,4 +97,15 @@ public class MovieService {
     }
     movieRepository.deleteById(id);
   }
+
+  /** Cast に紐づく Movie 一覧取得 */
+  public List<MovieForm> getMoviesByCast(Integer castId, Integer currentUserId) {
+    return movieRepository.findByCastIdAndCreatedBy(castId, currentUserId).stream().map(movie -> {
+      MovieForm form = movieMapper.toForm(movie);
+      if (movie.getCast() != null) {
+        form.setCastId(movie.getCast().getId());
+      }
+      return form;
+    }).toList();
+  }
 }

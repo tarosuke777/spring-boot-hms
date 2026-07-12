@@ -6,6 +6,9 @@
 >
   <head>
     <title>CastDetail</title>
+    <th:block layout:fragment="page-scripts">
+      <script type="module" th:src="@{/js/common/modal.js}"></script>
+    </th:block>
   </head>
 
   <body>
@@ -49,6 +52,52 @@
           </button>
         </div>
       </form>
+
+      <div class="mt-5 mb-3 border-bottom">
+        <h2 class="h4">Related Movies</h2>
+      </div>
+      <div th:if="${movies.isEmpty()}">
+        <p class="text-muted">この Cast に紐づく Movie はありません</p>
+      </div>
+      <div th:unless="${movies.isEmpty()}">
+        <table class="table table-bordered table-hover align-middle">
+          <thead>
+            <tr class="table-dark">
+              <th>Name</th>
+              <th>Link</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="movie: ${movies}">
+              <td th:text="${movie.name}"></td>
+              <td class="text-center">
+                <a
+                  th:if="${not #strings.isEmpty(movie.link)}"
+                  th:href="${movie.link}"
+                  target="_blank"
+                  class="btn btn-sm btn-link"
+                  >Link</a
+                >
+                <span th:unless="${not #strings.isEmpty(movie.link)}">-</span>
+              </td>
+              <td
+                class="text-truncate modal-trigger"
+                style="max-width: 200px; cursor: pointer"
+                data-bs-toggle="modal"
+                data-bs-target="#globalModal"
+                th:if="${not #strings.isEmpty(movie.note)}"
+                th:data-modal-text="${movie.note}"
+                data-modal-title="Note"
+              >
+                <span th:text="${movie.note}"></span>
+              </td>
+              <td th:unless="${not #strings.isEmpty(movie.note)}">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <th:block th:replace="~{parts/parts :: globalModal }"></th:block>
     </div>
   </body>
 </html>
