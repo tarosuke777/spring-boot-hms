@@ -57,19 +57,33 @@ public class AuthorControllerTest {
   private static final String DELETE_ENDPOINT = "/author/detail";
 
   @Test
-  void getList_ShouldReturnAuthorList() throws Exception {
+  void getList_ShouldReturnAuthorPageWithPagination() throws Exception {
 
     // Given
-    LoginUser loginUser =
-        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    Integer currentUserId = loginUser.getId();
-    List<AuthorForm> expectedAuthorList =
-        authorRepository.findByCreatedBy(currentUserId).stream().map(authorMapper::toForm).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
-        .andExpect(model().attribute("authorList", expectedAuthorList))
-        .andExpect(view().name(LIST_VIEW));
+        .andExpect(model().attributeExists("authorPage")).andExpect(view().name(LIST_VIEW));
+  }
+
+  @Test
+  void getList_WithPagination_ShouldReturnFirstPage() throws Exception {
+
+    // Given
+
+    // When & Then
+    performGetListRequestWithPage(0).andExpect(status().isOk())
+        .andExpect(model().attributeExists("authorPage")).andExpect(view().name(LIST_VIEW));
+  }
+
+  @Test
+  void getList_WithSecondPagePagination_ShouldReturnSecondPage() throws Exception {
+
+    // Given
+
+    // When & Then
+    performGetListRequestWithPage(1).andExpect(status().isOk())
+        .andExpect(model().attributeExists("authorPage")).andExpect(view().name(LIST_VIEW));
   }
 
   @Test
@@ -181,6 +195,10 @@ public class AuthorControllerTest {
 
   private ResultActions performGetListRequest() throws Exception {
     return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
+  }
+
+  private ResultActions performGetListRequestWithPage(int page) throws Exception {
+    return mockMvc.perform(get(LIST_ENDPOINT).param("page", String.valueOf(page))).andDo(print());
   }
 
   private ResultActions performGetDetailRequest(int authorId) throws Exception {
