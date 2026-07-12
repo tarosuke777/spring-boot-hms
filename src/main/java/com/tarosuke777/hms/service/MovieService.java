@@ -102,9 +102,7 @@ public class MovieService {
   public List<MovieForm> getMoviesByCast(Integer castId, Integer currentUserId) {
     return movieRepository.findByCastIdAndCreatedBy(castId, currentUserId).stream().map(movie -> {
       MovieForm form = movieMapper.toForm(movie);
-      if (movie.getCast() != null) {
-        form.setCastId(movie.getCast().getId());
-      }
+      form.setCastId(castId);
       return form;
     }).toList();
   }
