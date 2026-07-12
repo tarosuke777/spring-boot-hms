@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,10 @@ public class AuthorService {
   public List<AuthorForm> getAuthorList(Integer currentUserId) {
     return authorRepository.findByCreatedBy(currentUserId).stream().map(authorMapper::toForm)
         .toList();
+  }
+
+  public Page<AuthorForm> getAuthorPage(Integer currentUserId, @NonNull Pageable pageable) {
+    return authorRepository.findByCreatedBy(currentUserId, pageable).map(authorMapper::toForm);
   }
 
   public AuthorForm getAuthor(Integer authorId, Integer currentUserId) {
