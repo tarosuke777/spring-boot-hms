@@ -80,7 +80,7 @@
               <td>
                 <a
                   th:if="${movie.castId != null}"
-                  th:href="@{'/cast/detail/' + ${movie.castId}}"
+                  th:href="@{/cast/detail/{id}(id=${movie.castId})}"
                   class="btn btn-sm btn-link"
                   th:text="${castMap.get(movie.castId)}"
                   >Link</a
