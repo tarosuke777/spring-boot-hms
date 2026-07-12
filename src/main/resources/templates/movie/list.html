@@ -77,9 +77,16 @@
                   >18+</span
                 >
               </td>
-              <td
-                th:text="${movie.castId != null ? castMap.get(movie.castId) : ''}"
-              ></td>
+              <td>
+                <a
+                  th:if="${movie.castId != null}"
+                  th:href="@{'/cast/detail/' + ${movie.castId}}"
+                  class="btn btn-sm btn-link"
+                  th:text="${castMap.get(movie.castId)}"
+                  >Link</a
+                >
+                <span th:unless="${movie.castId != null}">-</span>
+              </td>
               <td class="text-center">
                 <a
                   th:if="${not #strings.isEmpty(movie.link)}"
