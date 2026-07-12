@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
+import org.hibernate.validator.constraints.URL;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,6 +23,11 @@ public class CastForm {
   @Size(min = 1, max = 50)
   private String name;
 
+  @URL
+  @Size(max = 255)
+  private String link;
+
   @NotNull(groups = UpdateGroup.class)
   private Integer version;
 }
+

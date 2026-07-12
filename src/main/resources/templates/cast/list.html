@@ -61,12 +61,23 @@
           <thead>
             <tr class="table-dark">
               <th>Name</th>
+              <th>Link</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr th:each="cast: ${castPage.content}">
               <td th:text="${cast.name}"></td>
+              <td class="text-center">
+                <a
+                  th:if="${not #strings.isEmpty(cast.link)}"
+                  th:href="${cast.link}"
+                  target="_blank"
+                  class="btn btn-sm btn-link"
+                  >Link</a
+                >
+                <span th:unless="${not #strings.isEmpty(cast.link)}">-</span>
+              </td>
               <td>
                 <a
                   class="btn btn-dark"
