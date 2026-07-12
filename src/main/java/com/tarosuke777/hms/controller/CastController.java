@@ -9,6 +9,9 @@ import com.tarosuke777.hms.validation.UpdateGroup;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,8 +37,11 @@ public class CastController {
   private final CastService castService;
 
   @GetMapping("/list")
-  public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
-    model.addAttribute("castList", castService.getCastList(user.getId()));
+  public String getList(@PageableDefault(size = 20) Pageable pageable, Model model,
+      @AuthenticationPrincipal LoginUser user) {
+    Page<CastForm> castPage =
+        castService.getCastPage(user.getId(), Objects.requireNonNull(pageable));
+    model.addAttribute("castPage", castPage);
     return LIST_VIEW;
   }
 

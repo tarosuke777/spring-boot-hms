@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,10 @@ public class CastService {
 
   public List<CastForm> getCastList(Integer currentUserId) {
     return castRepository.findByCreatedBy(currentUserId).stream().map(castMapper::toForm).toList();
+  }
+
+  public Page<CastForm> getCastPage(Integer currentUserId, @NonNull Pageable pageable) {
+    return castRepository.findByCreatedBy(currentUserId, pageable).map(castMapper::toForm);
   }
 
   public CastForm getCast(Integer castId, Integer currentUserId) {

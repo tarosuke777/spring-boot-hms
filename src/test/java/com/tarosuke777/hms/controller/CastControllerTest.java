@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.TestSecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -60,17 +62,18 @@ public class CastControllerTest {
   private static final String DELETE_ENDPOINT = "/cast/detail";
 
   @Test
-  void getList_ShouldReturnCastList() throws Exception {
+  void getList_ShouldReturnCastPage() throws Exception {
     // Given
     LoginUser loginUser =
         (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Integer currentUserId = loginUser.getId();
-    List<CastForm> expectedCastList =
-        castRepository.findByCreatedBy(currentUserId).stream().map(castMapper::toForm).toList();
+    Pageable pageable = Pageable.ofSize(20);
+    Page<CastForm> expectedCastPage =
+        castRepository.findByCreatedBy(currentUserId, pageable).map(castMapper::toForm);
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
-        .andExpect(model().attribute("castList", expectedCastList))
+        .andExpect(model().attribute("castPage", expectedCastPage))
         .andExpect(view().name(LIST_VIEW));
   }
 
