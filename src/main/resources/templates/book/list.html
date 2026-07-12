@@ -137,7 +137,7 @@
             <td>
               <a
                 th:if="${book.authorId != null}"
-                th:href="@{'/author/detail/' + ${book.authorId}}"
+                th:href="@{/author/detail/{id}(id=${book.authorId})}"
                 class="btn btn-sm btn-link"
                 th:text="${authorMap.get(book.authorId)}"
                 >Link</a
