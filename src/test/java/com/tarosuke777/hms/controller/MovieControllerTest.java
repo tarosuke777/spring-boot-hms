@@ -62,24 +62,39 @@ public class MovieControllerTest {
   private static final String DELETE_ENDPOINT = "/movie/detail";
 
   @Test
-  void getList_ShouldReturnMovieList() throws Exception {
+  void getList_ShouldReturnMoviePageWithPagination() throws Exception {
 
     // Given
     LoginUser loginUser =
         (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Integer currentUserId = loginUser.getId();
-    List<MovieForm> expectedMovieList =
-        movieRepository.findByCreatedBy(currentUserId).stream().map(entity -> {
-          MovieForm form = movieMapper.toForm(entity);
-          form.setCastId(entity.getCast() != null ? entity.getCast().getId() : null);
-          return form;
-        }).toList();
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
-        .andExpect(model().attribute("movieList", expectedMovieList))
-        .andExpect(view().name(LIST_VIEW));
+        .andExpect(model().attributeExists("moviePage"))
+        .andExpect(model().attributeExists("castMap")).andExpect(view().name(LIST_VIEW));
   }
+
+  @Test
+  void getList_WithPagination_ShouldReturnFirstPage() throws Exception {
+
+    // Given
+
+    // When & Then
+    performGetListRequestWithPage(0).andExpect(status().isOk())
+        .andExpect(model().attributeExists("moviePage")).andExpect(view().name(LIST_VIEW));
+  }
+
+  @Test
+  void getList_WithSecondPagePagination_ShouldReturnSecondPage() throws Exception {
+
+    // Given
+
+    // When & Then
+    performGetListRequestWithPage(1).andExpect(status().isOk())
+        .andExpect(model().attributeExists("moviePage")).andExpect(view().name(LIST_VIEW));
+  }
+
 
   @Test
   void getDetail_ShouldReturnMovieDetail() throws Exception {
@@ -195,6 +210,10 @@ public class MovieControllerTest {
 
   private ResultActions performGetListRequest() throws Exception {
     return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
+  }
+
+  private ResultActions performGetListRequestWithPage(int page) throws Exception {
+    return mockMvc.perform(get(LIST_ENDPOINT).param("page", String.valueOf(page))).andDo(print());
   }
 
   private ResultActions performGetDetailRequest(int id) throws Exception {

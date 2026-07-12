@@ -9,6 +9,8 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,17 @@ public class MovieService {
       }
       return form;
     }).toList();
+  }
+
+  /** ページング一覧取得 */
+  public Page<MovieForm> getMoviePage(Integer currentUserId, @NonNull Pageable pageable) {
+    return movieRepository.findByCreatedBy(currentUserId, pageable).map(movie -> {
+      MovieForm form = movieMapper.toForm(movie);
+      if (movie.getCast() != null) {
+        form.setCastId(movie.getCast().getId());
+      }
+      return form;
+    });
   }
 
   /** 1件取得 */
