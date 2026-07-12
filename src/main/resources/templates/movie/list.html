@@ -17,6 +17,46 @@
         <div class="mb-2">
           <a class="btn btn-dark" th:href="@{'/movie/register'}">Register</a>
         </div>
+
+        <nav th:if="${moviePage.totalPages > 1}" aria-label="Page navigation">
+          <ul class="pagination">
+            <li
+              class="page-item"
+              th:classappend="${moviePage.first} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/movie/list(page=${moviePage.number - 1})}"
+                >&laquo;</a
+              >
+            </li>
+
+            <li
+              class="page-item"
+              th:each="i : ${#numbers.sequence(0, moviePage.totalPages - 1)}"
+              th:classappend="${i == moviePage.number} ? 'active'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/movie/list(page=${i})}"
+                th:text="${i + 1}"
+                >1</a
+              >
+            </li>
+
+            <li
+              class="page-item"
+              th:classappend="${moviePage.last} ? 'disabled'"
+            >
+              <a
+                class="page-link"
+                th:href="@{/movie/list(page=${moviePage.number + 1})}"
+                >&raquo;</a
+              >
+            </li>
+          </ul>
+        </nav>
+
         <table class="table table-bordered table-hover align-middle">
           <thead>
             <tr class="table-dark">
@@ -29,7 +69,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:each="movie: ${movieList}">
+            <tr th:each="movie: ${moviePage.content}">
               <td th:text="${movie.genre.label}"></td>
               <td>
                 <span th:text="${movie.name}"></span>

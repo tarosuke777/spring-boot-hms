@@ -9,6 +9,9 @@ import com.tarosuke777.hms.validation.UpdateGroup;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,8 +38,11 @@ public class MovieController {
   private final CastService castService;
 
   @GetMapping("/list")
-  public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
-    model.addAttribute("movieList", movieService.getMovieList(user.getId()));
+  public String getList(@PageableDefault(size = 10) Pageable pageable, Model model,
+      @AuthenticationPrincipal LoginUser user) {
+    Page<MovieForm> moviePage =
+        movieService.getMoviePage(user.getId(), Objects.requireNonNull(pageable));
+    model.addAttribute("moviePage", moviePage);
     model.addAttribute("castMap", castService.getCastMap());
     return LIST_VIEW;
   }
