@@ -67,7 +67,7 @@ public class CastControllerTest {
     LoginUser loginUser =
         (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Integer currentUserId = loginUser.getId();
-    Pageable pageable = Pageable.ofSize(20);
+    Pageable pageable = Pageable.ofSize(10);
     Page<CastForm> expectedCastPage =
         castRepository.findByCreatedBy(currentUserId, pageable).map(castMapper::toForm);
 

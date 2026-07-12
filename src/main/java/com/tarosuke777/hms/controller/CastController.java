@@ -37,7 +37,7 @@ public class CastController {
   private final CastService castService;
 
   @GetMapping("/list")
-  public String getList(@PageableDefault(size = 20) Pageable pageable, Model model,
+  public String getList(@PageableDefault(size = 10) Pageable pageable, Model model,
       @AuthenticationPrincipal LoginUser user) {
     Page<CastForm> castPage =
         castService.getCastPage(user.getId(), Objects.requireNonNull(pageable));
