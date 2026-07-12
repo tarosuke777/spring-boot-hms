@@ -134,9 +134,16 @@
                 >18+</span
               >
             </td>
-            <td
-              th:text="${book.authorId != null ? authorMap.get(book.authorId) : ''}"
-            ></td>
+            <td>
+              <a
+                th:if="${book.authorId != null}"
+                th:href="@{'/author/detail/' + ${book.authorId}}"
+                class="btn btn-sm btn-link"
+                th:text="${authorMap.get(book.authorId)}"
+                >Link</a
+              >
+              <span th:unless="${book.authorId != null}">-</span>
+            </td>
             <td class="text-center">
               <a
                 th:if="${not #strings.isEmpty(book.link)}"
