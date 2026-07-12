@@ -35,6 +35,9 @@ public class CastEntity {
   @Column(length = 50, nullable = false)
   private String name;
 
+  @Column(length = 255)
+  private String link;
+
   @CreatedDate
   @Column(updatable = false, nullable = false)
   private LocalDateTime createdAt;
@@ -54,3 +57,4 @@ public class CastEntity {
   @Version
   private Integer version;
 }
+
