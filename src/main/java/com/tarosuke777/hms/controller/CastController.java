@@ -4,6 +4,7 @@ import com.tarosuke777.hms.exception.IllegalRequestException;
 import com.tarosuke777.hms.form.CastForm;
 import com.tarosuke777.hms.security.LoginUser;
 import com.tarosuke777.hms.service.CastService;
+import com.tarosuke777.hms.service.MovieService;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import java.util.Objects;
@@ -35,6 +36,7 @@ public class CastController {
   private static final String REGISTER_VIEW = "cast/register";
 
   private final CastService castService;
+  private final MovieService movieService;
 
   @GetMapping("/list")
   public String getList(@PageableDefault(size = 10) Pageable pageable, Model model,
@@ -64,7 +66,9 @@ public class CastController {
   public String getDetail(@PathVariable("castId") Integer castId, Model model,
       @AuthenticationPrincipal LoginUser user) {
     CastForm form = castService.getCast(castId, user.getId());
+    var movies = movieService.getMoviesByCast(castId, user.getId());
     model.addAttribute("castForm", form);
+    model.addAttribute("movies", movies);
     return DETAIL_VIEW;
   }
 

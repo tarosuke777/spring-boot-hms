@@ -8,3 +8,8 @@ VALUES ('Test Cast A', 'https://example.com/cast-a', CURRENT_TIMESTAMP, CURRENT_
 INSERT INTO casts(name, link, created_at, updated_at, created_by, updated_by, version)
 VALUES ('Test Cast B', null, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id FROM user WHERE name = 'user'), (SELECT id FROM user WHERE name = 'user'), 0);
 
+INSERT INTO movie(name, cast_id, link, note, genre, is_adult, created_at, updated_at, created_by, updated_by, version)
+VALUES ('Test Movie 1', (SELECT id FROM casts WHERE name = 'Test Cast A' LIMIT 1), 'https://example.com/movie-1', 'Test Note 1', 1, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id FROM user WHERE name = 'admin'), (SELECT id FROM user WHERE name = 'admin'), 0);
+INSERT INTO movie(name, cast_id, link, note, genre, is_adult, created_at, updated_at, created_by, updated_by, version)
+VALUES ('Test Movie 2', (SELECT id FROM casts WHERE name = 'Test Cast A' LIMIT 1), null, null, 2, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, (SELECT id FROM user WHERE name = 'admin'), (SELECT id FROM user WHERE name = 'admin'), 0);
+

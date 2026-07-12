@@ -22,4 +22,6 @@ public interface MovieRepository extends JpaRepository<MovieEntity, Integer> {
   Page<MovieEntity> findByCreatedBy(Integer createdBy, Pageable pageable);
 
   boolean existsByIdAndCreatedBy(Integer id, Integer createdBy);
+
+  List<MovieEntity> findByCastIdAndCreatedBy(Integer castId, Integer createdBy);
 }

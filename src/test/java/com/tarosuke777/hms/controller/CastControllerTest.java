@@ -86,7 +86,8 @@ public class CastControllerTest {
     // When & Then
     performGetDetailRequest(entity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("castForm", expectedCastForm))
-        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
+        .andExpect(model().attributeExists("movies")).andExpect(view().name(DETAIL_VIEW))
+        .andExpect(model().hasNoErrors());
   }
 
   @Test
