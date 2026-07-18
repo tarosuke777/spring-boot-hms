@@ -11,7 +11,6 @@ import com.tarosuke777.hms.mapper.AuthorMapper;
 import com.tarosuke777.hms.repository.AuthorRepository;
 import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
