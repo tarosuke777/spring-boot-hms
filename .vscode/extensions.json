@@ -1,5 +1,5 @@
 {
   "recommendations": [
-    "pleiades.java-extension-pack-jdk" //Extension Pack for Java Auto Config
+    "vscjava.vscode-java-pack" // Extension Pack for Java
   ]
 }
