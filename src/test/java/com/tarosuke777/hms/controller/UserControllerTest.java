@@ -1,9 +1,13 @@
 package com.tarosuke777.hms.controller;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import com.tarosuke777.hms.entity.UserEntity;
 import com.tarosuke777.hms.form.UserForm;
@@ -41,8 +45,6 @@ public class UserControllerTest {
   @Autowired
   private EntityManager entityManager;
 
-  private static final String SIGNUP_ENDPOINT = "/user/signup";
-  private static final String SIGNUP_VIEW = "user/signup";
   private static final String LIST_ENDPOINT = "/user/list";
   private static final String LIST_VIEW = "user/list";
   private static final String LIST_URL = "/user/list";

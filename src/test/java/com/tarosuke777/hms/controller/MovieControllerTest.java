@@ -12,7 +12,6 @@ import com.tarosuke777.hms.form.MovieForm;
 import com.tarosuke777.hms.mapper.MovieMapper;
 import com.tarosuke777.hms.repository.CastRepository;
 import com.tarosuke777.hms.repository.MovieRepository;
-import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -65,10 +64,6 @@ public class MovieControllerTest {
   void getList_ShouldReturnMoviePageWithPagination() throws Exception {
 
     // Given
-    LoginUser loginUser =
-        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    Integer currentUserId = loginUser.getId();
-
     // When & Then
     performGetListRequest().andExpect(status().isOk())
         .andExpect(model().attributeExists("moviePage"))
