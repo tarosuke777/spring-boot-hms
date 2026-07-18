@@ -5,6 +5,7 @@ plugins {
 	id 'org.owasp.dependencycheck' version '12.1.9'
 	id 'jacoco'
 	id 'com.diffplug.spotless' version '8.8.0'
+    id 'net.ltgt.errorprone' version "5.1.0"
 }
 
 group = 'com.tarosuke777.hms'
@@ -29,7 +30,8 @@ def versions = [
     jquery: "3.7.1",
     jqueryUi: "1.14.1",
 	archunit: "1.4.1",
-	playwright: "1.61.0"
+	playwright: "1.61.0",
+	errorprone: "2.50.0"
 ]
 
 dependencyManagement {
@@ -95,6 +97,7 @@ dependencies {
 	testImplementation "com.tngtech.archunit:archunit-junit5:${versions.archunit}"
 	testImplementation "com.microsoft.playwright:playwright:${versions.playwright}"
 
+	errorprone "com.google.errorprone:error_prone_core:${versions.errorprone}"
 }
 
 dependencyCheck {
@@ -172,4 +175,12 @@ tasks.withType(JavaCompile) {
     options.compilerArgs += [
         "-Amapstruct.unmappedTargetPolicy=ERROR"
     ]
+
+	options.errorprone {
+        // 未使用の変数・パラメータ・フィールドをエラーにする
+        check("UnusedVariable", net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
+
+		// 自動生成されたソースコード（build/generated/ 配下）を Error Prone のチェックから除外する
+		excludedPaths = ".*/build/generated/.*"
+    }
 }

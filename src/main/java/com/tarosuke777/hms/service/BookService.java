@@ -8,6 +8,8 @@ import com.tarosuke777.hms.mapper.BookMapper;
 import com.tarosuke777.hms.repository.BookRepository;
 import com.tarosuke777.hms.specification.BookSpecifications;
 import jakarta.persistence.EntityManager;
+
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -154,6 +156,6 @@ public class BookService {
 
   private String getVectorStoreId(Integer bookId) {
     String source = "BOOK_" + bookId;
-    return UUID.nameUUIDFromBytes(source.getBytes()).toString();
+    return UUID.nameUUIDFromBytes(source.getBytes(StandardCharsets.UTF_8)).toString();
   }
 }

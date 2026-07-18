@@ -17,6 +17,7 @@ import com.tarosuke777.hms.repository.TrainingRepository;
 import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,7 +125,7 @@ public class TrainingControllerTest {
     TrainingMenuEntity trainingMenuEntity = trainingMenuRepository.findAll().getFirst();
 
     // LocalDateを使用するため、テスト用の日付を準備します
-    LocalDate testDate = LocalDate.now();
+    LocalDate testDate = LocalDate.now(ZoneId.of("Asia/Tokyo"));
     TrainingForm trainingForm = new TrainingForm(null, // trainingId
         testDate, // trainingDate (String "test" から修正)
         1, // trainingAreaId (適切なID、またはnull)
