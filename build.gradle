@@ -105,12 +105,19 @@ dependencyCheck {
 spotless {
     java {
         eclipse().configFile project.file("config/formatter/eclipse-java-google-style.xml")
+
+		removeUnusedImports()
+		importOrder()
     }
 
 	format 'web', {
 		target 'src/main/resources/**/*.html', 'src/main/resources/**/*.css', 'src/main/resources/**/*.js'
 		prettier().nodeExecutable("${projectDir}/node_modules/.bin/node").configFile(project.file(".prettierrc"))
 	}
+}
+
+tasks.named('compileJava') {
+    dependsOn setupGitHooks
 }
 
 tasks.named('jar') {
@@ -136,6 +143,28 @@ tasks.named('jacocoTestReport') {
         html.required = true
         xml.required = false
 		csv.required = true
+    }
+}
+
+// Gitフックを自動設定するタスク
+tasks.register('setupGitHooks') {
+    doLast {
+        if (file('.githooks').exists()) {
+            // 1. フックの参照先を .githooks に変更
+			new ProcessBuilder('git', 'config', 'core.hooksPath', '.githooks')
+                .directory(projectDir)
+                .start()
+                .waitFor()
+            
+            // 2. Mac/Linux環境向けに実行権限（chmod +x）を付与
+            if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
+                new ProcessBuilder('chmod', '+x', '.githooks/pre-commit')
+                    .directory(projectDir)
+                    .start()
+                    .waitFor()
+            }
+            logger.quiet "✅ Git hooks path successfully configured to .githooks"
+        }
     }
 }
 
