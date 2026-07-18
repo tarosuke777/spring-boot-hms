@@ -18,19 +18,10 @@
             }
         },
         {
-            "label": "Open Browser",
-            "type": "shell",
-            "command": "start http://localhost:8080/hms/login",
-            "presentation": {
-                "reveal": "silent"
-            }
-        },
-        {
             "label": "Start Dev Environment",
             "dependsOn": [
                 "Watch Classes",
-                "Run Boot",
-                "Open Browser"
+                "Run Boot"
             ]
         }
     ],
