@@ -152,6 +152,20 @@ tasks.named('jacocoTestReport') {
 // Gitフックを自動設定するタスク
 tasks.register('setupGitHooks') {
     doLast {
+		// gitコマンドが利用可能かチェック
+        def gitExists = false
+        try {
+            def process = new ProcessBuilder('git', '--version').start()
+            gitExists = (process.waitFor() == 0)
+        } catch (Exception ignored) {
+            gitExists = false
+        }
+
+        if (!gitExists) {
+            logger.quiet "⚠️ 'git' コマンドが見つからないため、Gitフックの設定をスキップします。"
+            return
+        }
+
         if (file('.githooks').exists()) {
             // 1. フックの参照先を .githooks に変更
 			new ProcessBuilder('git', 'config', 'core.hooksPath', '.githooks')
