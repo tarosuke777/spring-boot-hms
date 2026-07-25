@@ -1,3 +1,6 @@
+// =============================================================================
+// 1. Plugins
+// =============================================================================
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.13'
@@ -9,6 +12,9 @@ plugins {
 	id 'com.github.ben-manes.versions' version '0.54.0'
 }
 
+// =============================================================================
+// 2. Project Metadata & Java Toolchain
+// =============================================================================
 group = 'com.tarosuke777.hms'
 version = '0.0.1-SNAPSHOT'
 
@@ -18,6 +24,9 @@ java {
 	}
 }
 
+// =============================================================================
+// 3. Repositories & Dependency Versions
+// =============================================================================
 repositories {
 	mavenCentral()
 }
@@ -35,6 +44,9 @@ def versions = [
 	errorprone: "2.50.0"
 ]
 
+// =============================================================================
+// 4. Dependencies
+// =============================================================================
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.ai:spring-ai-bom:${versions.springAi}"
@@ -98,9 +110,13 @@ dependencies {
 	testImplementation "com.tngtech.archunit:archunit-junit5:${versions.archunit}"
 	testImplementation "com.microsoft.playwright:playwright:${versions.playwright}"
 
+	// --- Static Analysis Tools ---
 	errorprone "com.google.errorprone:error_prone_core:${versions.errorprone}"
 }
 
+// =============================================================================
+// 5. Plugin Configurations
+// =============================================================================
 dependencyCheck {
 	failBuildOnCVSS = 7.0 // HIGH (高)の脆弱性のみビルドを失敗させる
 	suppressionFile = 'config/owasp/suppressions.xml' // 誤検知除外用ファイル
@@ -120,8 +136,25 @@ spotless {
 	}
 }
 
+// =============================================================================
+// 6. Standard Task Configurations
+// =============================================================================
+tasks.withType(JavaCompile) {
+    options.compilerArgs += [
+        "-Amapstruct.unmappedTargetPolicy=ERROR"
+    ]
+
+	options.errorprone {
+        // 未使用の変数・パラメータ・フィールドをエラーにする
+        check("UnusedVariable", net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
+
+		// 自動生成されたソースコード（build/generated/ 配下）を Error Prone のチェックから除外する
+		excludedPaths = ".*/build/generated/.*"
+    }
+}
+
 tasks.named('compileJava') {
-    dependsOn setupGitHooks
+    dependsOn 'setupGitHooks'
 }
 
 tasks.named('jar') {
@@ -150,6 +183,9 @@ tasks.named('jacocoTestReport') {
     }
 }
 
+// =============================================================================
+// 7. Custom Tasks
+// =============================================================================
 // Gitフックを自動設定するタスク
 tasks.register('setupGitHooks') {
     doLast {
@@ -183,19 +219,5 @@ tasks.register('setupGitHooks') {
             }
             logger.quiet "✅ Git hooks path successfully configured to .githooks"
         }
-    }
-}
-
-tasks.withType(JavaCompile) {
-    options.compilerArgs += [
-        "-Amapstruct.unmappedTargetPolicy=ERROR"
-    ]
-
-	options.errorprone {
-        // 未使用の変数・パラメータ・フィールドをエラーにする
-        check("UnusedVariable", net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
-
-		// 自動生成されたソースコード（build/generated/ 配下）を Error Prone のチェックから除外する
-		excludedPaths = ".*/build/generated/.*"
     }
 }
