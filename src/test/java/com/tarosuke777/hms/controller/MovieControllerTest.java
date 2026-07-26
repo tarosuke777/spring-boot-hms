@@ -116,6 +116,56 @@ public class MovieControllerTest {
   }
 
   @Test
+  void getRegister_WithCastId_ShouldPreselectCast() throws Exception {
+    // Given
+    CastEntity cast = castRepository.findAll().getFirst();
+    Integer castId = cast.getId();
+
+    // When & Then
+    mockMvc
+        .perform(get(REGISTER_ENDPOINT).param("castId", castId.toString())
+            .accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
+        .andExpect(model().attributeExists("movieForm")).andDo(result -> {
+          MovieForm form = (MovieForm) result.getModelAndView().getModel().get("movieForm");
+          Assertions.assertEquals(castId, form.getCastId());
+        });
+  }
+
+  @Test
+  void getRegister_WithCastName_ShouldPreselectCast() throws Exception {
+    // Given
+    CastEntity cast = castRepository.findAll().getFirst();
+    String castName = cast.getName();
+
+    // When & Then
+    mockMvc
+        .perform(get(REGISTER_ENDPOINT).param("castName", castName).accept(MediaType.TEXT_HTML)
+            .characterEncoding("UTF-8"))
+        .andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
+        .andExpect(model().attributeExists("movieForm")).andDo(result -> {
+          MovieForm form = (MovieForm) result.getModelAndView().getModel().get("movieForm");
+          Assertions.assertNotNull(form.getCastId());
+          CastEntity resolvedCast = castRepository.findById(form.getCastId()).orElse(null);
+          Assertions.assertNotNull(resolvedCast);
+          Assertions.assertEquals(castName, resolvedCast.getName());
+        });
+  }
+
+  @Test
+  void getRegister_WithInvalidCastName_ShouldNotPreselectCast() throws Exception {
+    // When & Then
+    mockMvc
+        .perform(get(REGISTER_ENDPOINT).param("castName", "NonExistentCastName123")
+            .accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
+        .andExpect(model().attributeExists("movieForm")).andDo(result -> {
+          MovieForm form = (MovieForm) result.getModelAndView().getModel().get("movieForm");
+          Assertions.assertNull(form.getCastId());
+        });
+  }
+
+  @Test
   void register_WithValidData_ShouldRedirectToList() throws Exception {
 
     // Given
