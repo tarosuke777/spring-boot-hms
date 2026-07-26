@@ -26,6 +26,8 @@ public class HmsDialect extends AbstractProcessorDialect {
   public Set<IProcessor> getProcessors(final String dialectPrefix) {
     final Set<IProcessor> processors = new HashSet<>();
     processors.add(new LineBreakProcessor(dialectPrefix, getDialectProcessorPrecedence()));
+    processors
+        .add(new PageHrefAttributeTagProcessor(dialectPrefix, getDialectProcessorPrecedence()));
     return processors;
   }
 }
