@@ -2,14 +2,14 @@
 // 1. Plugins
 // =============================================================================
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.5.13'
-	id 'io.spring.dependency-management' version '1.1.7'
-	id 'org.owasp.dependencycheck' version '12.1.9'
-	id 'jacoco'
-	id 'com.diffplug.spotless' version '8.8.0'
-    id 'net.ltgt.errorprone' version "5.1.0"
-	id 'com.github.ben-manes.versions' version '0.54.0'
+    id 'java'
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.dependency.management)
+    alias(libs.plugins.dependency.check)
+    id 'jacoco'
+    alias(libs.plugins.spotless)
+    alias(libs.plugins.errorprone)
+    alias(libs.plugins.versions)
 }
 
 // =============================================================================
@@ -19,121 +19,108 @@ group = 'com.tarosuke777.hms'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(libs.versions.java.get().toInteger())
+    }
 }
 
 // =============================================================================
-// 3. Repositories & Dependency Versions
+// 3. Repositories
 // =============================================================================
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
-
-def versions = [
-    springAi: "1.1.4",
-	springCloudAws: "3.4.0",
-	mapstruct: "1.6.3",
-    lombokMapstructBinding: "0.2.0",
-	bootstrap: "5.3.3",
-    jquery: "3.7.1",
-    jqueryUi: "1.14.1",
-	archunit: "1.4.1",
-	playwright: "1.61.0",
-	errorprone: "2.50.0"
-]
 
 // =============================================================================
 // 4. Dependencies
 // =============================================================================
 dependencyManagement {
-	imports {
-		mavenBom "org.springframework.ai:spring-ai-bom:${versions.springAi}"
-		mavenBom "io.awspring.cloud:spring-cloud-aws-dependencies:${versions.springCloudAws}"
-	}
+    imports {
+        mavenBom libs.spring.ai.bom.get().toString()
+        mavenBom libs.spring.cloud.aws.bom.get().toString()
+    }
 }
 
 dependencies {
-	// --- Spring Boot Starters ---
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // --- Spring Boot Starters ---
+    implementation libs.spring.boot.starter.web
+    implementation libs.spring.boot.starter.thymeleaf
+    implementation libs.spring.boot.starter.security
+    implementation libs.spring.boot.starter.validation
+    implementation libs.spring.boot.starter.data.jpa
+    developmentOnly libs.spring.boot.devtools
 
-	// --- AI & Cloud ---
-	implementation 'org.springframework.ai:spring-ai-starter-mcp-server-webmvc'
-    implementation 'org.springframework.ai:spring-ai-starter-vector-store-mariadb'
-	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+    // --- AI & Cloud ---
+    implementation libs.spring.ai.starter.mcp.server.webmvc
+    implementation libs.spring.ai.starter.vector.store.mariadb
+    implementation libs.spring.ai.starter.model.ollama
 
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter'
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-parameter-store'
+    implementation libs.spring.cloud.aws.starter
+    implementation libs.spring.cloud.aws.starter.parameter.store
 
-	// --- Template Engine & UI ---
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-    implementation 'org.webjars:webjars-locator-core'
-	implementation "org.webjars:bootstrap:${versions.bootstrap}"
-    implementation "org.webjars:jquery:${versions.jquery}"
-    implementation "org.webjars:jquery-ui:${versions.jqueryUi}"
+    // --- Template Engine & UI ---
+    implementation libs.thymeleaf.extras.springsecurity6
+    implementation libs.thymeleaf.layout.dialect
+    implementation libs.webjars.locator.core
+    implementation libs.webjars.bootstrap
+    implementation libs.webjars.jquery
+    implementation libs.webjars.jquery.ui
 
-	// --- Persistence & Migration ---
-    implementation 'org.flywaydb:flyway-core'
-    implementation 'org.flywaydb:flyway-mysql'
-	runtimeOnly 'com.h2database:h2'
-	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    // --- Persistence & Migration ---
+    implementation libs.flyway.core
+    implementation libs.flyway.mysql
+    runtimeOnly libs.h2
+    runtimeOnly libs.mariadb.client
 
-	// --- Utilities ---
-	implementation "org.mapstruct:mapstruct:${versions.mapstruct}"
+    // --- Utilities ---
+    implementation libs.mapstruct
 
-	// --- Lombok & Annotation Processors ---
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    // --- Lombok & Annotation Processors ---
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
 
-	annotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
-	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${versions.lombokMapstructBinding}"
-	annotationProcessor 'org.hibernate.orm:hibernate-jpamodelgen'
+    annotationProcessor libs.mapstruct.processor
+    annotationProcessor libs.lombok.mapstruct.binding
+    annotationProcessor libs.hibernate.jpamodelgen
 
-	testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly libs.lombok
+    testAnnotationProcessor libs.lombok
 
-	testAnnotationProcessor "org.mapstruct:mapstruct-processor:${versions.mapstruct}"
-	testAnnotationProcessor "org.projectlombok:lombok-mapstruct-binding:${versions.lombokMapstructBinding}"
+    testAnnotationProcessor libs.mapstruct.processor
+    testAnnotationProcessor libs.lombok.mapstruct.binding
 
-	// --- Testing ---
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.junit.jupiter:junit-jupiter'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	testImplementation "com.tngtech.archunit:archunit-junit5:${versions.archunit}"
-	testImplementation "com.microsoft.playwright:playwright:${versions.playwright}"
+    // --- Testing ---
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.spring.security.test
+    testImplementation libs.junit.jupiter
+    testRuntimeOnly libs.junit.platform.launcher
+    testImplementation libs.archunit.junit5
+    testImplementation libs.playwright
 
-	// --- Static Analysis Tools ---
-	errorprone "com.google.errorprone:error_prone_core:${versions.errorprone}"
+    // --- Static Analysis Tools ---
+    errorprone libs.errorprone.core
 }
 
 // =============================================================================
 // 5. Plugin Configurations
 // =============================================================================
 dependencyCheck {
-	failBuildOnCVSS = 7.0 // HIGH (高)の脆弱性のみビルドを失敗させる
-	suppressionFile = 'config/owasp/suppressions.xml' // 誤検知除外用ファイル
+    failBuildOnCVSS = 7.0 // HIGH (高)の脆弱性のみビルドを失敗させる
+    suppressionFile = 'config/owasp/suppressions.xml' // 誤検知除外用ファイル
 }
 
 spotless {
     java {
         eclipse().configFile project.file("config/formatter/eclipse-java-google-style.xml")
 
-		removeUnusedImports()
-		importOrder()
+        removeUnusedImports()
+        importOrder()
     }
 
-	format 'web', {
-		target 'src/main/resources/**/*.html', 'src/main/resources/**/*.css', 'src/main/resources/**/*.js'
-		prettier().nodeExecutable("${projectDir}/node_modules/.bin/node").configFile(project.file(".prettierrc"))
-	}
+    format 'web', {
+        target 'src/main/resources/**/*.html', 'src/main/resources/**/*.css', 'src/main/resources/**/*.js'
+        prettier().nodeExecutable("${projectDir}/node_modules/.bin/node").configFile(project.file(".prettierrc"))
+    }
 }
 
 // =============================================================================
@@ -144,12 +131,12 @@ tasks.withType(JavaCompile) {
         "-Amapstruct.unmappedTargetPolicy=ERROR"
     ]
 
-	options.errorprone {
+    options.errorprone {
         // 未使用の変数・パラメータ・フィールドをエラーにする
         check("UnusedVariable", net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
 
-		// 自動生成されたソースコード（build/generated/ 配下）を Error Prone のチェックから除外する
-		excludedPaths = ".*/build/generated/.*"
+        // 自動生成されたソースコード（build/generated/ 配下）を Error Prone のチェックから除外する
+        excludedPaths = ".*/build/generated/.*"
     }
 }
 
@@ -162,34 +149,27 @@ tasks.named('jar') {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
-	systemProperty 'spring.profiles.active', 'test'
+    useJUnitPlatform()
+    systemProperty 'spring.profiles.active', 'test'
 
-	// テストの標準出力をコンソールに表示する
-	// testLogging {
-    //     showStandardStreams = true
-    // }
-
-	finalizedBy 'jacocoTestReport'
+    finalizedBy 'jacocoTestReport'
 }
 
 tasks.named('jacocoTestReport') {
-	dependsOn tasks.named('test')
+    dependsOn tasks.named('test')
 
-	reports {
+    reports {
         html.required = true
         xml.required = false
-		csv.required = true
+        csv.required = true
     }
 }
 
 // =============================================================================
 // 7. Custom Tasks
 // =============================================================================
-// Gitフックを自動設定するタスク
 tasks.register('setupGitHooks') {
     doLast {
-		// gitコマンドが利用可能かチェック
         def gitExists = false
         try {
             def process = new ProcessBuilder('git', '--version').start()
@@ -204,13 +184,11 @@ tasks.register('setupGitHooks') {
         }
 
         if (file('.githooks').exists()) {
-            // 1. フックの参照先を .githooks に変更
-			new ProcessBuilder('git', 'config', 'core.hooksPath', '.githooks')
+            new ProcessBuilder('git', 'config', 'core.hooksPath', '.githooks')
                 .directory(projectDir)
                 .start()
                 .waitFor()
-            
-            // 2. Mac/Linux環境向けに実行権限（chmod +x）を付与
+
             if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
                 new ProcessBuilder('chmod', '+x', '.githooks/pre-commit')
                     .directory(projectDir)
