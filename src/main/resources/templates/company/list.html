@@ -47,44 +47,9 @@
         </div>
       </div>
 
-      <nav th:if="${companyPage.totalPages > 1}" aria-label="Page navigation">
-        <ul class="pagination">
-          <li
-            class="page-item"
-            th:classappend="${companyPage.first} ? 'disabled'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/company/list(page=${companyPage.number - 1}, name=${name})}"
-              >&laquo;</a
-            >
-          </li>
-
-          <li
-            class="page-item"
-            th:each="i : ${#numbers.sequence(0, companyPage.totalPages - 1)}"
-            th:classappend="${i == companyPage.number} ? 'active'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/company/list(page=${i}, name=${name})}"
-              th:text="${i + 1}"
-              >1</a
-            >
-          </li>
-
-          <li
-            class="page-item"
-            th:classappend="${companyPage.last} ? 'disabled'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/company/list(page=${companyPage.number + 1}, name=${name})}"
-              >&raquo;</a
-            >
-          </li>
-        </ul>
-      </nav>
+      <div
+        th:replace="~{parts/pagination :: pagination(page=${companyPage})}"
+      ></div>
 
       <div>
         <table class="table table-bordered table-hover align-middle">
