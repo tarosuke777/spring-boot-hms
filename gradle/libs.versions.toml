@@ -1,0 +1,83 @@
+[versions]
+# --- Toolchain & Core ---
+java = "25"
+
+# --- Plugins ---
+spring-boot = "3.5.13"
+dependency-management = "1.1.7"
+dependency-check = "12.1.9"
+spotless = "8.8.0"
+errorprone-plugin = "5.1.0"
+versions-plugin = "0.54.0"
+
+# --- Libraries ---
+spring-ai = "1.1.4"
+spring-cloud-aws = "3.4.0"
+mapstruct = "1.6.3"
+lombok-mapstruct-binding = "0.2.0"
+bootstrap = "5.3.3"
+jquery = "3.7.1"
+jquery-ui = "1.14.1"
+archunit = "1.4.1"
+playwright = "1.61.0"
+errorprone-core = "2.50.0"
+
+[libraries]
+# --- Spring AI & AWS BOMs ---
+spring-ai-bom = { group = "org.springframework.ai", name = "spring-ai-bom", version.ref = "spring-ai" }
+spring-cloud-aws-bom = { group = "io.awspring.cloud", name = "spring-cloud-aws-dependencies", version.ref = "spring-cloud-aws" }
+
+# --- Spring Boot Starters ---
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+spring-boot-starter-thymeleaf = { group = "org.springframework.boot", name = "spring-boot-starter-thymeleaf" }
+spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
+spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
+spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
+
+# --- AI & Cloud ---
+spring-ai-starter-mcp-server-webmvc = { group = "org.springframework.ai", name = "spring-ai-starter-mcp-server-webmvc" }
+spring-ai-starter-vector-store-mariadb = { group = "org.springframework.ai", name = "spring-ai-starter-vector-store-mariadb" }
+spring-ai-starter-model-ollama = { group = "org.springframework.ai", name = "spring-ai-starter-model-ollama" }
+spring-cloud-aws-starter = { group = "io.awspring.cloud", name = "spring-cloud-aws-starter" }
+spring-cloud-aws-starter-parameter-store = { group = "io.awspring.cloud", name = "spring-cloud-aws-starter-parameter-store" }
+
+# --- Template Engine & UI ---
+thymeleaf-extras-springsecurity6 = { group = "org.thymeleaf.extras", name = "thymeleaf-extras-springsecurity6" }
+thymeleaf-layout-dialect = { group = "nz.net.ultraq.thymeleaf", name = "thymeleaf-layout-dialect" }
+webjars-locator-core = { group = "org.webjars", name = "webjars-locator-core" }
+webjars-bootstrap = { group = "org.webjars", name = "bootstrap", version.ref = "bootstrap" }
+webjars-jquery = { group = "org.webjars", name = "jquery", version.ref = "jquery" }
+webjars-jquery-ui = { group = "org.webjars", name = "jquery-ui", version.ref = "jquery-ui" }
+
+# --- Persistence & Migration ---
+flyway-core = { group = "org.flywaydb", name = "flyway-core" }
+flyway-mysql = { group = "org.flywaydb", name = "flyway-mysql" }
+h2 = { group = "com.h2database", name = "h2" }
+mariadb-client = { group = "org.mariadb.jdbc", name = "mariadb-java-client" }
+
+# --- Utilities & Processors ---
+mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
+lombok = { group = "org.projectlombok", name = "lombok" }
+lombok-mapstruct-binding = { group = "org.projectlombok", name = "lombok-mapstruct-binding", version.ref = "lombok-mapstruct-binding" }
+hibernate-jpamodelgen = { group = "org.hibernate.orm", name = "hibernate-jpamodelgen" }
+
+# --- Testing ---
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+spring-security-test = { group = "org.springframework.security", name = "spring-security-test" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+archunit-junit5 = { group = "com.tngtech.archunit", name = "archunit-junit5", version.ref = "archunit" }
+playwright = { group = "com.microsoft.playwright", name = "playwright", version.ref = "playwright" }
+
+# --- Static Analysis ---
+errorprone-core = { group = "com.google.errorprone", name = "error_prone_core", version.ref = "errorprone-core" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+dependency-management = { id = "io.spring.dependency-management", version.ref = "dependency-management" }
+dependency-check = { id = "org.owasp.dependencycheck", version.ref = "dependency-check" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+errorprone = { id = "net.ltgt.errorprone", version.ref = "errorprone-plugin" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions-plugin" }
