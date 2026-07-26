@@ -81,38 +81,9 @@
         </div>
       </div>
 
-      <nav th:if="${bookPage.totalPages > 1}" aria-label="Page navigation">
-        <ul class="pagination">
-          <li class="page-item" th:classappend="${bookPage.first} ? 'disabled'">
-            <a
-              class="page-link"
-              th:href="@{/book/list(page=${bookPage.number - 1}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}"
-              >&laquo;</a
-            >
-          </li>
-
-          <li
-            class="page-item"
-            th:each="i : ${#numbers.sequence(0, bookPage.totalPages - 1)}"
-            th:classappend="${i == bookPage.number} ? 'active'"
-          >
-            <a
-              class="page-link"
-              th:href="@{/book/list(page=${i}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}"
-              th:text="${i + 1}"
-              >1</a
-            >
-          </li>
-
-          <li class="page-item" th:classappend="${bookPage.last} ? 'disabled'">
-            <a
-              class="page-link"
-              th:href="@{/book/list(page=${bookPage.number + 1}, genre=${genre}, authorId=${authorId}, isAdult=${isAdult})}"
-              >&raquo;</a
-            >
-          </li>
-        </ul>
-      </nav>
+      <div
+        th:replace="~{parts/pagination :: pagination(page=${bookPage})}"
+      ></div>
 
       <table class="table table-bordered table-hover align-middle">
         <thead>

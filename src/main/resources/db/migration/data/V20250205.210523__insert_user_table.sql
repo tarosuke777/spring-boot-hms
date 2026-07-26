@@ -12,4 +12,9 @@ INSERT INTO user(
      'user'
     ,'{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92u.e5m'
     ,'ROLE_USER'
+),
+(
+     'test'
+    ,'{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92u.e5m'
+    ,'ROLE_ADMIN'
 );
