@@ -1,6 +1,7 @@
 package com.tarosuke777.hms.service;
 
 import com.tarosuke777.hms.entity.TaskEntity;
+import com.tarosuke777.hms.enums.TaskStatus;
 import com.tarosuke777.hms.form.TaskForm;
 import com.tarosuke777.hms.mapper.TaskMapper;
 import com.tarosuke777.hms.repository.TaskRepository;
@@ -30,6 +31,7 @@ public class TaskService {
   @Transactional
   public void createTask(TaskForm form) {
     TaskEntity entity = Objects.requireNonNull(taskMapper.toEntity(form));
+    entity.setStatus(TaskStatus.TODO);
     taskRepository.save(entity);
   }
 

@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.tarosuke777.hms.entity.TaskEntity;
+import com.tarosuke777.hms.enums.TaskStatus;
 import com.tarosuke777.hms.form.TaskForm;
 import com.tarosuke777.hms.mapper.TaskMapper;
 import com.tarosuke777.hms.repository.TaskRepository;
@@ -135,6 +136,7 @@ public class TaskControllerTest {
     form.setId(currentId);
     form.setName("Try to Update");
     form.setVersion(currentVersion);
+    form.setStatus(TaskStatus.TODO);
 
     // When & Then
     performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
@@ -177,9 +179,9 @@ public class TaskControllerTest {
   }
 
   private ResultActions performUpdateRequest(TaskForm form) throws Exception {
-    return mockMvc.perform(
-        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
-            .param("name", form.getName()).param("version", form.getVersion().toString()))
+    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
+        .param("id", form.getId().toString()).param("name", form.getName())
+        .param("version", form.getVersion().toString()).param("status", form.getStatus().name()))
         .andDo(print());
   }
 

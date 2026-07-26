@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.form;
 
+import com.tarosuke777.hms.enums.TaskStatus;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +20,9 @@ public class TaskForm implements Serializable {
   private String name;
 
   private String note;
+
+  @NotNull(groups = UpdateGroup.class)
+  private TaskStatus status;
 
   @NotNull(groups = UpdateGroup.class)
   private Integer version;

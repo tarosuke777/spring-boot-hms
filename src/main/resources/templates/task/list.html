@@ -62,6 +62,15 @@
                     rows="5"
                     th:text="${task.note}"
                   ></textarea>
+
+                  <select name="status" class="form-select mt-2">
+                    <option
+                      th:each="status : ${T(com.tarosuke777.hms.enums.TaskStatus).values()}"
+                      th:value="${status}"
+                      th:text="${status.label}"
+                      th:selected="${task.status == status}"
+                    ></option>
+                  </select>
                 </div>
               </form>
               <div class="card-footer text-center">

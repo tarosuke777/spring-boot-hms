@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.entity;
 
+import com.tarosuke777.hms.enums.TaskStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -38,6 +39,9 @@ public class TaskEntity implements Serializable {
 
   @Column(columnDefinition = "TEXT")
   private String note;
+
+  @Column(nullable = false)
+  private TaskStatus status;
 
   @CreatedDate
   @Column(updatable = false, nullable = false)
