@@ -6,6 +6,7 @@ import com.tarosuke777.hms.service.CastService;
 import com.tarosuke777.hms.service.MovieService;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
+import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @Slf4j
@@ -48,7 +50,13 @@ public class MovieController {
   }
 
   @GetMapping("/register")
-  public String getRegister(@ModelAttribute MovieForm form, Model model) {
+  public String getRegister(@ModelAttribute MovieForm form,
+      @RequestParam(value = "castName", required = false) String castName, Model model) {
+    if (form.getCastId() == null && castName != null && !castName.isBlank()) {
+      castService.getCastMap().entrySet().stream()
+          .filter(entry -> entry.getValue().equalsIgnoreCase(castName.trim()))
+          .map(Map.Entry::getKey).findFirst().ifPresent(form::setCastId);
+    }
     model.addAttribute("castMap", castService.getCastMap());
     return REGISTER_VIEW;
   }

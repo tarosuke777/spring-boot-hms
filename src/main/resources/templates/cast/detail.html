@@ -53,8 +53,15 @@
         </div>
       </form>
 
-      <div class="mt-5 mb-3 border-bottom">
-        <h2 class="h4">Related Movies</h2>
+      <div
+        class="mt-5 mb-3 border-bottom d-flex justify-content-between align-items-center"
+      >
+        <h2 class="h4 mb-0">Related Movies</h2>
+        <a
+          th:href="@{/movie/register(castId=${castForm.id}, castName=${castForm.name})}"
+          class="btn btn-primary btn-sm"
+          >Register Movie</a
+        >
       </div>
       <div th:if="${movies.isEmpty()}">
         <p class="text-muted">この Cast に紐づく Movie はありません</p>

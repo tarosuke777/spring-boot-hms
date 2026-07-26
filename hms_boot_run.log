@@ -1,0 +1,146 @@
+
+> Task :setupGitHooks
+✅ Git hooks path successfully configured to .githooks
+
+> Task :compileJava
+Note: Hibernate compile-time tooling 6.6.45.Final
+
+> Task :processResources
+> Task :classes
+> Task :resolveMainClassName
+
+> Task :bootRun
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::               (v3.5.13)
+
+2026-07-26T09:43:53.455Z  INFO 64501 --- [hms] [  restartedMain] com.tarosuke777.hms.HmsApplication       : Starting HmsApplication using Java 21.0.10 with PID 64501 (/app/build/classes/java/main started by jules in /app)
+2026-07-26T09:43:53.458Z  INFO 64501 --- [hms] [  restartedMain] com.tarosuke777.hms.HmsApplication       : The following 1 profile is active: "local"
+2026-07-26T09:43:53.719Z  INFO 64501 --- [hms] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-07-26T09:43:53.720Z  INFO 64501 --- [hms] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-07-26T09:43:54.890Z  INFO 64501 --- [hms] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-26T09:43:55.116Z  INFO 64501 --- [hms] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 216 ms. Found 12 JPA repository interfaces.
+2026-07-26T09:43:55.624Z  WARN 64501 --- [hms] [  restartedMain] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration' of type [org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [serverAnnotatedMethodBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-07-26T09:43:55.626Z  WARN 64501 --- [hms] [  restartedMain] trationDelegate$BeanPostProcessorChecker : Bean 'serverAnnotatedBeanRegistry' of type [org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerAutoConfiguration$ServerMcpAnnotatedBeans] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [serverAnnotatedMethodBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-07-26T09:43:55.636Z  WARN 64501 --- [hms] [  restartedMain] trationDelegate$BeanPostProcessorChecker : Bean 'stringOrNumberMigrationVersionConverter' of type [org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration$StringOrNumberToMigrationVersionConverter] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [serverAnnotatedMethodBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-07-26T09:43:55.640Z  WARN 64501 --- [hms] [  restartedMain] trationDelegate$BeanPostProcessorChecker : Bean 'spring.ai.mcp.server.annotation-scanner-org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerProperties' of type [org.springframework.ai.mcp.server.common.autoconfigure.annotations.McpServerAnnotationScannerProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [serverAnnotatedMethodBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-07-26T09:43:56.008Z  INFO 64501 --- [hms] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-07-26T09:43:56.026Z  INFO 64501 --- [hms] [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-26T09:43:56.027Z  INFO 64501 --- [hms] [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.53]
+2026-07-26T09:43:56.079Z  INFO 64501 --- [hms] [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/hms]    : Initializing Spring embedded WebApplicationContext
+2026-07-26T09:43:56.081Z  INFO 64501 --- [hms] [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2359 ms
+2026-07-26T09:43:56.389Z  INFO 64501 --- [hms] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-07-26T09:43:56.581Z  INFO 64501 --- [hms] [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2026-07-26T09:43:56.583Z  INFO 64501 --- [hms] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-07-26T09:43:56.641Z  INFO 64501 --- [hms] [  restartedMain] org.flywaydb.core.FlywayExecutor         : Database: jdbc:h2:mem:testdb (H2 2.3)
+2026-07-26T09:43:56.709Z  INFO 64501 --- [hms] [  restartedMain] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "PUBLIC"."flyway_schema_history" does not exist yet
+2026-07-26T09:43:56.713Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbValidate     : Successfully validated 50 migrations (execution time 00:00.046s)
+2026-07-26T09:43:56.722Z  INFO 64501 --- [hms] [  restartedMain] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "PUBLIC"."flyway_schema_history" ...
+2026-07-26T09:43:56.764Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Current version of schema "PUBLIC": << Empty Schema >>
+2026-07-26T09:43:56.770Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250205.202733 - create user table"
+2026-07-26T09:43:56.787Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250205.203007 - create artist table"
+2026-07-26T09:43:56.796Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250205.203039 - create music table"
+2026-07-26T09:43:56.803Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250205.210523 - insert user table"
+2026-07-26T09:43:56.810Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250205.210524 - insert artist table"
+2026-07-26T09:43:56.818Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250205.210525 - insert music table"
+2026-07-26T09:43:56.825Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250206.075431 - alter add link to music table"
+2026-07-26T09:43:56.839Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250207.082805 - create author table"
+2026-07-26T09:43:56.846Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250208.074945 - create book table"
+2026-07-26T09:43:56.852Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250208.085931 - insert author table"
+2026-07-26T09:43:56.861Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250208.090059 - insert book table"
+2026-07-26T09:43:56.866Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250209.083054 - alter drop email from user table"
+2026-07-26T09:43:56.876Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250216.112825 - create training menu table"
+2026-07-26T09:43:56.882Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250216.164307 - create training menu table2"
+2026-07-26T09:43:56.887Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250217.081335 - alter add set to training table"
+2026-07-26T09:43:56.895Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250219.220249 - create movie table"
+2026-07-26T09:43:56.900Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250309.161845 - insert training menu table"
+2026-07-26T09:43:56.906Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250314.212831 - alter add colum to trainging menu table"
+2026-07-26T09:43:56.920Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250315.093539 - update trainging menu"
+2026-07-26T09:43:56.930Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250508.085716 - create diary table"
+2026-07-26T09:43:56.935Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20250817.100000 - create task table"
+2026-07-26T09:43:56.941Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260112.205500 - add version column to artist"
+2026-07-26T09:43:56.964Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260115.082523 - add audit columns to music"
+2026-07-26T09:43:56.980Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260116.075253 - add audit columns to author"
+2026-07-26T09:43:56.995Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260116.131802 - add audit columns to book"
+2026-07-26T09:43:57.008Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260117.151447 - add audit columns to training menu"
+2026-07-26T09:43:57.036Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260120.203924 - add audit columns to training"
+2026-07-26T09:43:57.047Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260123.161501 - add audit columns to movie"
+2026-07-26T09:43:57.058Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260123.173200 - add audit columns to diary"
+2026-07-26T09:43:57.070Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260123.184154 - add audit columns to task"
+2026-07-26T09:43:57.081Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260131.083527 - alter diary modify diary date not null"
+2026-07-26T09:43:57.086Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260131.084051 - alter training modify training date not null"
+2026-07-26T09:43:57.091Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260131.094629 - alter artist modify artist name not null"
+2026-07-26T09:43:57.096Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260131.135738 - rename artist columns"
+2026-07-26T09:43:57.099Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260210.215126 - rename author columns"
+2026-07-26T09:43:57.103Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260221.115221 - add audit columns to user"
+2026-07-26T09:43:57.113Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260302.000001 - rename book columns"
+2026-07-26T09:43:57.117Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260303.000000 - rename movie columns"
+2026-07-26T09:43:57.120Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260304.000000 - rename music columns"
+2026-07-26T09:43:57.124Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260305.000000 - rename training menu columns"
+2026-07-26T09:43:57.127Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260306.000000 - rename user columns"
+2026-07-26T09:43:57.131Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260306.000001 - modify user role to integer"
+2026-07-26T09:43:57.140Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260308.161308 - modify audit columns"
+2026-07-26T09:43:57.187Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260310.085903 - add genre and is adult columns"
+2026-07-26T09:43:57.195Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260320.071506 - create cast table"
+2026-07-26T09:43:57.198Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260321.092533 - add genre and is adult and link columns"
+2026-07-26T09:43:57.205Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260323.104944 - create company table"
+2026-07-26T09:43:57.209Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260421.092446 - modify diary columns to text"
+2026-07-26T09:43:57.212Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260630.083752 - add job application history to company table"
+2026-07-26T09:43:57.216Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "20260712.140900 - add link to cast table"
+2026-07-26T09:43:57.224Z  INFO 64501 --- [hms] [  restartedMain] o.f.core.internal.command.DbMigrate      : Successfully applied 50 migrations to schema "PUBLIC", now at version v20260712.140900 (execution time 00:00.233s)
+2026-07-26T09:43:57.321Z  INFO 64501 --- [hms] [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-07-26T09:43:57.373Z  INFO 64501 --- [hms] [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.45.Final
+2026-07-26T09:43:57.408Z  INFO 64501 --- [hms] [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-07-26T09:43:57.745Z  INFO 64501 --- [hms] [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-26T09:43:57.824Z  INFO 64501 --- [hms] [  restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-07-26T09:43:59.202Z  INFO 64501 --- [hms] [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-26T09:43:59.206Z  INFO 64501 --- [hms] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-26T09:44:00.405Z  INFO 64501 --- [hms] [  restartedMain] o.s.a.v.mariadb.MariaDBVectorStore       : Using the vector table name: vector_store. Is empty: false
+2026-07-26T09:44:00.410Z  INFO 64501 --- [hms] [  restartedMain] o.s.a.v.mariadb.MariaDBVectorStore       : Initializing MariaDBVectorStore schema for table: vector_store in schema: null
+2026-07-26T09:44:00.411Z  INFO 64501 --- [hms] [  restartedMain] o.s.a.v.mariadb.MariaDBVectorStore       : vectorTableValidationsEnabled false
+2026-07-26T09:44:00.837Z  WARN 64501 --- [hms] [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-26T09:44:01.677Z  INFO 64501 --- [hms] [  restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userDetailServiceImpl
+2026-07-26T09:44:02.531Z  WARN 64501 --- [hms] [  restartedMain] o.s.m.provider.tool.SyncMcpToolProvider  : No tool methods found in the provided tool objects: []
+2026-07-26T09:44:02.544Z  INFO 64501 --- [hms] [  restartedMain] o.s.a.m.s.c.a.McpServerAutoConfiguration : Enable tools capabilities, notification: true
+2026-07-26T09:44:02.546Z  INFO 64501 --- [hms] [  restartedMain] o.s.a.m.s.c.a.McpServerAutoConfiguration : Registered tools: 2
+2026-07-26T09:44:02.547Z  INFO 64501 --- [hms] [  restartedMain] o.s.a.m.s.c.a.McpServerAutoConfiguration : Enable resources capabilities, notification: true
+2026-07-26T09:44:02.547Z  INFO 64501 --- [hms] [  restartedMain] o.s.a.m.s.c.a.McpServerAutoConfiguration : Enable resources templates capabilities, notification: true
+2026-07-26T09:44:02.548Z  INFO 64501 --- [hms] [  restartedMain] o.s.a.m.s.c.a.McpServerAutoConfiguration : Enable prompts capabilities, notification: true
+2026-07-26T09:44:02.548Z  INFO 64501 --- [hms] [  restartedMain] o.s.a.m.s.c.a.McpServerAutoConfiguration : Enable completions capabilities
+2026-07-26T09:44:02.777Z  INFO 64501 --- [hms] [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2026-07-26T09:44:02.833Z  INFO 64501 --- [hms] [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-07-26T09:44:02.874Z  INFO 64501 --- [hms] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/hms'
+2026-07-26T09:44:02.889Z  INFO 64501 --- [hms] [  restartedMain] com.tarosuke777.hms.HmsApplication       : Started HmsApplication in 9.986 seconds (process running for 10.526)
+2026-07-26T09:44:43.270Z  INFO 64501 --- [hms] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/hms]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-26T09:44:43.270Z  INFO 64501 --- [hms] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-26T09:44:43.273Z  INFO 64501 --- [hms] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+Hibernate: select ue1_0.id,ue1_0.created_at,ue1_0.created_by,ue1_0.name,ue1_0.password,ue1_0.role,ue1_0.updated_at,ue1_0.updated_by,ue1_0.version from user ue1_0 where ue1_0.name=?
+Hibernate: select me1_0.id,a1_0.id,a1_0.created_at,a1_0.created_by,a1_0.name,a1_0.updated_at,a1_0.updated_by,a1_0.version,me1_0.created_at,me1_0.created_by,me1_0.link,me1_0.name,me1_0.updated_at,me1_0.updated_by,me1_0.version from music me1_0 left join artist a1_0 on a1_0.id=me1_0.artist_id where me1_0.created_by=? offset ? rows fetch first ? rows only
+Hibernate: select ae1_0.id,ae1_0.created_at,ae1_0.created_by,ae1_0.name,ae1_0.updated_at,ae1_0.updated_by,ae1_0.version from artist ae1_0
+Hibernate: select ce1_0.id,ce1_0.created_at,ce1_0.created_by,ce1_0.link,ce1_0.name,ce1_0.updated_at,ce1_0.updated_by,ce1_0.version from casts ce1_0 where ce1_0.created_by=? fetch first ? rows only
+Hibernate: select ue1_0.id,ue1_0.created_at,ue1_0.created_by,ue1_0.name,ue1_0.password,ue1_0.role,ue1_0.updated_at,ue1_0.updated_by,ue1_0.version from user ue1_0 where ue1_0.name=?
+Hibernate: select me1_0.id,a1_0.id,a1_0.created_at,a1_0.created_by,a1_0.name,a1_0.updated_at,a1_0.updated_by,a1_0.version,me1_0.created_at,me1_0.created_by,me1_0.link,me1_0.name,me1_0.updated_at,me1_0.updated_by,me1_0.version from music me1_0 left join artist a1_0 on a1_0.id=me1_0.artist_id where me1_0.created_by=? offset ? rows fetch first ? rows only
+Hibernate: select ae1_0.id,ae1_0.created_at,ae1_0.created_by,ae1_0.name,ae1_0.updated_at,ae1_0.updated_by,ae1_0.version from artist ae1_0
+Hibernate: select ce1_0.id,ce1_0.created_at,ce1_0.created_by,ce1_0.link,ce1_0.name,ce1_0.updated_at,ce1_0.updated_by,ce1_0.version from casts ce1_0 where ce1_0.created_by=? fetch first ? rows only
+Hibernate: select ue1_0.id,ue1_0.created_at,ue1_0.created_by,ue1_0.name,ue1_0.password,ue1_0.role,ue1_0.updated_at,ue1_0.updated_by,ue1_0.version from user ue1_0 where ue1_0.name=?
+Hibernate: select me1_0.id,a1_0.id,a1_0.created_at,a1_0.created_by,a1_0.name,a1_0.updated_at,a1_0.updated_by,a1_0.version,me1_0.created_at,me1_0.created_by,me1_0.link,me1_0.name,me1_0.updated_at,me1_0.updated_by,me1_0.version from music me1_0 left join artist a1_0 on a1_0.id=me1_0.artist_id where me1_0.created_by=? offset ? rows fetch first ? rows only
+Hibernate: select ae1_0.id,ae1_0.created_at,ae1_0.created_by,ae1_0.name,ae1_0.updated_at,ae1_0.updated_by,ae1_0.version from artist ae1_0
+Hibernate: select ue1_0.id,ue1_0.created_at,ue1_0.created_by,ue1_0.name,ue1_0.password,ue1_0.role,ue1_0.updated_at,ue1_0.updated_by,ue1_0.version from user ue1_0 where ue1_0.name=?
+Hibernate: select me1_0.id,a1_0.id,a1_0.created_at,a1_0.created_by,a1_0.name,a1_0.updated_at,a1_0.updated_by,a1_0.version,me1_0.created_at,me1_0.created_by,me1_0.link,me1_0.name,me1_0.updated_at,me1_0.updated_by,me1_0.version from music me1_0 left join artist a1_0 on a1_0.id=me1_0.artist_id where me1_0.created_by=? offset ? rows fetch first ? rows only
+Hibernate: select ae1_0.id,ae1_0.created_at,ae1_0.created_by,ae1_0.name,ae1_0.updated_at,ae1_0.updated_by,ae1_0.version from artist ae1_0
+Hibernate: select ue1_0.id,ue1_0.created_at,ue1_0.created_by,ue1_0.name,ue1_0.password,ue1_0.role,ue1_0.updated_at,ue1_0.updated_by,ue1_0.version from user ue1_0 where ue1_0.name=?
+Hibernate: select me1_0.id,a1_0.id,a1_0.created_at,a1_0.created_by,a1_0.name,a1_0.updated_at,a1_0.updated_by,a1_0.version,me1_0.created_at,me1_0.created_by,me1_0.link,me1_0.name,me1_0.updated_at,me1_0.updated_by,me1_0.version from music me1_0 left join artist a1_0 on a1_0.id=me1_0.artist_id where me1_0.created_by=? offset ? rows fetch first ? rows only
+Hibernate: select ae1_0.id,ae1_0.created_at,ae1_0.created_by,ae1_0.name,ae1_0.updated_at,ae1_0.updated_by,ae1_0.version from artist ae1_0
