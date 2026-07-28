@@ -5,6 +5,7 @@ import com.tarosuke777.hms.enums.TaskStatus;
 import com.tarosuke777.hms.form.TaskForm;
 import com.tarosuke777.hms.mapper.TaskMapper;
 import com.tarosuke777.hms.repository.TaskRepository;
+import com.tarosuke777.hms.specification.TaskSpecifications;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,11 @@ public class TaskService {
   private final TaskRepository taskRepository;
   private final TaskMapper taskMapper;
 
-  public List<TaskForm> getTaskList(Integer currentUserId) {
-    return taskRepository.findByCreatedBy(currentUserId).stream().map(taskMapper::toForm).toList();
+  public List<TaskForm> getTaskList(Integer currentUserId, TaskStatus status) {
+
+    var spec = TaskSpecifications.withFilters(currentUserId, status);
+
+    return taskRepository.findAll(spec).stream().map(taskMapper::toForm).toList();
   }
 
   public TaskForm getTask(Integer id, Integer currentUserId) {
