@@ -4,6 +4,7 @@ import com.tarosuke777.hms.exception.IllegalRequestException;
 import com.tarosuke777.hms.form.AuthorForm;
 import com.tarosuke777.hms.security.LoginUser;
 import com.tarosuke777.hms.service.AuthorService;
+import com.tarosuke777.hms.service.BookService;
 import com.tarosuke777.hms.validation.DeleteGroup;
 import com.tarosuke777.hms.validation.UpdateGroup;
 import java.util.Objects;
@@ -35,6 +36,7 @@ public class AuthorController {
   private static final String REGISTER_VIEW = "author/register";
 
   private final AuthorService authorService;
+  private final BookService bookService;
 
   @GetMapping("/list")
   public String getList(@PageableDefault(size = 10) Pageable pageable, Model model,
@@ -64,7 +66,10 @@ public class AuthorController {
   public String getDetail(@PathVariable("authorId") Integer authorId, Model model,
       @AuthenticationPrincipal LoginUser user) {
     AuthorForm form = authorService.getAuthor(authorId, user.getId());
+    var books = bookService.getBooksByAuthor(authorId, user.getId());
     model.addAttribute("authorForm", form);
+    model.addAttribute("books", books);
+
     return DETAIL_VIEW;
   }
 
