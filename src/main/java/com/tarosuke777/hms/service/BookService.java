@@ -108,6 +108,15 @@ public class BookService {
     }
   }
 
+  /** Author に紐づく Book 一覧取得 */
+  public List<BookForm> getBooksByAuthor(Integer authorId, Integer currentUserId) {
+    return bookRepository.findByAuthorIdAndCreatedBy(authorId, currentUserId).stream().map(book -> {
+      BookForm form = bookMapper.toForm(book);
+      form.setAuthorId(authorId);
+      return form;
+    }).toList();
+  }
+
   /** Entity の内容をベクトルストアに同期する共通メソッド */
   public void syncVectorStore(BookEntity entity) {
 
