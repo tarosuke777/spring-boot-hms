@@ -42,18 +42,80 @@
 
     <div class="container-fluid">
       <div class="row">
+        <!-- スマホではスライドメニュー(Offcanvas) / PC(sm以上)では左サイドバー -->
         <nav
           id="sidebarMenu"
           sec:authorize="isAuthenticated()"
           th:if="${isNotDisplayMenu == null}"
-          class="col-sm-3 col-md-2 col-lg-1 bg-light mt-1 small collapse d-sm-block"
+          class="offcanvas-sm offcanvas-start w-75 col-md-2 col-lg-1 bg-light mt-1 small"
+          tabindex="-1"
+          aria-labelledby="sidebarMenuLabel"
         >
-          <div layout:replace="~{layout/menu::menu}"></div>
+          <!-- スマホ時のみ表示されるヘッダー(閉じるボタン) -->
+          <div class="offcanvas-header border-bottom d-sm-none">
+            <h5 class="offcanvas-title" id="sidebarMenuLabel">HMS Menu</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="offcanvas"
+              data-bs-target="#sidebarMenu"
+              aria-label="Close"
+            ></button>
+          </div>
+          <!-- メニュー本体 -->
+          <div class="offcanvas-body">
+            <div layout:replace="~{layout/menu::menu}"></div>
+          </div>
         </nav>
         <div class="col">
           <div layout:fragment="content"></div>
         </div>
       </div>
     </div>
+
+    <!-- スマホ用ボトムナビゲーション -->
+    <nav
+      class="navbar fixed-bottom navbar-dark bg-dark border-top border-secondary d-sm-none"
+      sec:authorize="isAuthenticated()"
+    >
+      <div
+        class="container-fluid d-flex justify-content-around text-center py-1"
+      >
+        <a
+          th:href="@{'/book/list'}"
+          class="text-decoration-none text-light small"
+        >
+          <div class="lh-1 mb-1" style="font-size: 1.2rem">📖</div>
+          <span style="font-size: 0.75rem">Book</span>
+        </a>
+
+        <a
+          th:href="@{'/movie/list'}"
+          class="text-decoration-none text-light small"
+        >
+          <div class="lh-1 mb-1" style="font-size: 1.2rem">🎬</div>
+          <span style="font-size: 0.75rem">Movie</span>
+        </a>
+
+        <a
+          th:href="@{'/training/list'}"
+          class="text-decoration-none text-light small"
+        >
+          <div class="lh-1 mb-1" style="font-size: 1.2rem">💪</div>
+          <span style="font-size: 0.75rem">Training</span>
+        </a>
+
+        <button
+          class="btn btn-link text-decoration-none text-light small p-0 border-0"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#sidebarMenu"
+          aria-controls="sidebarMenu"
+        >
+          <div class="lh-1 mb-1" style="font-size: 1.2rem">☰</div>
+          <span style="font-size: 0.75rem">Menu</span>
+        </button>
+      </div>
+    </nav>
   </body>
 </html>
