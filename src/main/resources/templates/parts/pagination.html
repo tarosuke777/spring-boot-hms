@@ -10,6 +10,9 @@
       th:fragment="pagination(page)"
       th:if="${page != null and page.totalPages > 1}"
       aria-label="Page navigation"
+      th:with="
+        start=${T(java.lang.Math).max(0, page.number - 2)},
+        end=${T(java.lang.Math).min(page.totalPages - 1, page.number + 2)}"
     >
       <ul class="pagination">
         <!-- 前へボタン -->
@@ -25,7 +28,7 @@
         <!-- ページ番号 -->
         <li
           class="page-item"
-          th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+          th:each="i : ${#numbers.sequence(start, end)}"
           th:classappend="${i == page.number} ? 'active'"
         >
           <a class="page-link" hms:page-href="${i}" th:text="${i + 1}">1</a>
