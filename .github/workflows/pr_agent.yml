@@ -19,7 +19,11 @@ jobs:
         uses: Codium-ai/pr-agent@main
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          OPENAI_KEY: ${{ secrets.GEMINI_API_KEY }}
-          CONFIG.MODEL: "gemini/gemini-2.0-flash"
-          CONFIG.MODEL_TURBO: "gemini/gemini-2.0-flash"
+          # OPENAI_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CONFIG.MODEL: "gemini/gemini-3.5-flash-lite"
+          CONFIG.MODEL_TURBO: "gemini/gemini-3.5-flash-lite"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG.RESPONSE_LANGUAGE: "ja-JP"
+          PR_REVIEWER.EXTRA_INSTRUCTIONS: "日本語で回答してください。"
+          PR_DESCRIPTION.EXTRA_INSTRUCTIONS: "日本語で回答してください。"
+          PR_CODE_SUGGESTIONS.EXTRA_INSTRUCTIONS: "日本語で回答してください。"
