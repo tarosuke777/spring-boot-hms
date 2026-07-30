@@ -1,8 +1,0 @@
-[config]
-model = "gemini-3.5-flash-lite"
-
-[pr_reviewer]
-extra_instructions = "Please respond in Japanese."
-
-[pr_description]
-extra_instructions = "Please respond in Japanese. Titles should have prefix of commitlint pattern such as `feat:`, `chore:`, `test:`, `fix:`, `ci:`, `docs:` etc."
