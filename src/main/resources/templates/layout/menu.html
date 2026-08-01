@@ -10,18 +10,11 @@
   <body>
     <ul layout:fragment="menu" class="list-unstyled">
       <li class="my-2">
-        <button class="btn collapsed">Hobby</button>
+        <button class="btn collapsed">Personal</button>
         <ul class="list-unstyled ps-3">
           <li class="mb-2">
             <a class="text-decoration-none link-dark" th:href="@{'/music/list'}"
               >Music</a
-            >
-          </li>
-          <li class="mb-2">
-            <a
-              class="text-decoration-none link-dark"
-              th:href="@{'/artist/list'}"
-              >Artist</a
             >
           </li>
           <li class="mb-2">
@@ -32,32 +25,13 @@
           <li class="mb-2">
             <a
               class="text-decoration-none link-dark"
-              th:href="@{'/author/list'}"
-              >Author</a
-            >
-          </li>
-          <li class="mb-2">
-            <a
-              class="text-decoration-none link-dark"
               th:href="@{'/training/list'}"
               >Training</a
             >
           </li>
           <li class="mb-2">
-            <a
-              class="text-decoration-none link-dark"
-              th:href="@{'/trainingMenu/list'}"
-              >TrainingMenu</a
-            >
-          </li>
-          <li class="mb-2">
             <a class="text-decoration-none link-dark" th:href="@{'/movie/list'}"
               >Movie</a
-            >
-          </li>
-          <li class="mb-2">
-            <a class="text-decoration-none link-dark" th:href="@{'/cast/list'}"
-              >Cast</a
             >
           </li>
           <li class="mb-2">
@@ -81,57 +55,8 @@
         <button class="btn collapsed">Link</button>
         <ul class="list-unstyled ps-3">
           <li class="mb-2">
-            <a
-              class="text-decoration-none link-dark"
-              href="/hc/"
-              target="hc_chat"
-              rel="noopener noreferrer"
-              >Chat</a
-            >
-          </li>
-          <li class="mb-2">
-            <a
-              class="text-decoration-none link-dark"
-              href="/hb/"
-              target="hb_blog"
-              rel="noopener noreferrer"
-              >Blog</a
-            >
-          </li>
-          <li class="mb-2">
-            <a
-              class="text-decoration-none link-dark"
-              href="/hv/videos/"
-              target="hv_videos"
-              rel="noopener noreferrer"
-              >Videos</a
-            >
-          </li>
-          <li class="mb-2">
-            <a
-              class="text-decoration-none link-dark"
-              href="/hv/books/"
-              target="hv_books"
-              rel="noopener noreferrer"
-              >Books</a
-            >
-          </li>
-          <li class="mb-2">
-            <a
-              class="text-decoration-none link-dark"
-              href="/jenkins/"
-              target="jenkins"
-              rel="noopener noreferrer"
-              >Jenkins</a
-            >
-          </li>
-          <li class="mb-2">
-            <a
-              class="text-decoration-none link-dark"
-              href="/grafana/"
-              target="grafana"
-              rel="noopener noreferrer"
-              >Grafana</a
+            <a class="text-decoration-none link-dark" th:href="@{'/link/list'}"
+              >External Links</a
             >
           </li>
         </ul>
