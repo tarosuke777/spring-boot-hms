@@ -22,17 +22,17 @@
         <h1 class="h2">Book</h1>
       </div>
       <div class="row align-items-center mb-4 g-3">
-        <div class="col-auto">
+        <div class="col-12 col-md-auto">
           <a class="btn btn-dark" th:href="@{'/book/register'}">新規登録</a>
         </div>
 
-        <div class="col">
+        <div class="col-12 col-md">
           <form
             th:action="@{/book/list}"
             method="get"
             class="row g-2 align-items-center"
           >
-            <div class="col-auto">
+            <div class="col-12 col-sm-auto">
               <select class="form-select" name="genre">
                 <option value="" th:selected="${genre == null}">
                   選択してください
@@ -46,7 +46,7 @@
               </select>
             </div>
 
-            <div class="col-auto">
+            <div class="col-12 col-sm-auto">
               <select class="form-select" name="authorId">
                 <option value="" th:selected="${authorId == null}">
                   選択してください
