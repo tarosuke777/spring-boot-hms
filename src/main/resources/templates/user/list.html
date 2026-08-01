@@ -23,21 +23,19 @@
               <th>Id</th>
               <th>Name</th>
               <th>Role</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr th:each="user: ${userList}">
               <td th:text="${user.id}"></td>
-              <td th:text="${user.name}"></td>
-              <td th:text="${user.role.displayName}"></td>
               <td>
                 <a
-                  class="btn btn-dark"
                   th:href="@{'/user/detail/' + ${user.id}}"
-                  >Detail</a
-                >
+                  th:text="${user.name}"
+                  class="text-decoration-none"
+                ></a>
               </td>
+              <td th:text="${user.role.displayName}"></td>
             </tr>
           </tbody>
         </table>
