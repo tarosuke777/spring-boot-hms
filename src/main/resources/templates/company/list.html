@@ -58,12 +58,18 @@
               <th>Name</th>
               <th>Note</th>
               <th>Job Application History</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr th:each="company: ${companyPage.content}">
-              <td th:text="${company.name}"></td>
+              <td>
+                <a
+                  th:href="@{'/company/detail/' + ${company.id}}"
+                  th:text="${company.name}"
+                  class="text-decoration-none"
+                ></a>
+              </td>
+
               <td
                 class="text-truncate modal-trigger"
                 style="max-width: 500px; cursor: pointer"
@@ -83,13 +89,6 @@
                 data-modal-title="Job Application History"
               >
                 <span th:text="${company.jobApplicationHistory}"></span>
-              </td>
-              <td>
-                <a
-                  class="btn btn-dark"
-                  th:href="@{'/company/detail/' + ${company.id}}"
-                  >Detail</a
-                >
               </td>
             </tr>
           </tbody>

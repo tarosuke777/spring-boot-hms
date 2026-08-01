@@ -40,27 +40,20 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              th:each="diary: ${diaryList}"
-              th:onclick="'window.location.href=\'' + @{/diary/detail/{id}(id=${diary.diaryId})} + '\''"
-              style="cursor: pointer"
-            >
-              <td
-                th:text="${#temporals.format(diary.diaryDate, 'yyyy-MM-dd (E)')}"
-              ></td>
+            <tr th:each="diary: ${diaryList}">
+              <td>
+                <a
+                  th:href="@{'/diary/detail/' + ${diary.diaryId}}"
+                  th:text="${#temporals.format(diary.diaryDate, 'yyyy-MM-dd (E)')}"
+                  class="text-decoration-none"
+                ></a>
+              </td>
               <td hms:linebreak="${diary.todoPlan}"></td>
               <td hms:linebreak="${diary.todoActual}"></td>
               <td th:text="${diary.funPlan}"></td>
               <td th:text="${diary.funActual}"></td>
               <td hms:linebreak="${diary.commentPlan}"></td>
               <td hms:linebreak="${diary.commentActual}"></td>
-              <td>
-                <a
-                  class="btn btn-dark"
-                  th:href="@{'/diary/detail/' + ${diary.diaryId}}"
-                  >Detail</a
-                >
-              </td>
             </tr>
           </tbody>
         </table>

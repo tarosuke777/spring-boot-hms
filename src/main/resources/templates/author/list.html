@@ -26,18 +26,16 @@
           <thead>
             <tr class="table-dark">
               <th>Name</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr th:each="author: ${authorPage.content}">
-              <td th:text="${author.name}"></td>
               <td>
                 <a
-                  class="btn btn-dark"
                   th:href="@{'/author/detail/' + ${author.id}}"
-                  >Detail</a
-                >
+                  th:text="${author.name}"
+                  class="text-decoration-none"
+                ></a>
               </td>
             </tr>
           </tbody>

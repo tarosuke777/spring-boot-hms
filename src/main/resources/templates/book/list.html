@@ -93,14 +93,17 @@
             <th>Author Name</th>
             <th>Link</th>
             <th>Note</th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
           <tr th:each="book: ${bookPage.content}">
             <td th:text="${book.genre.label}"></td>
             <td>
-              <span th:text="${book.name}"></span>
+              <a
+                th:href="@{'/book/detail/' + ${book.id}}"
+                th:text="${book.name}"
+                class="text-decoration-none"
+              ></a>
               <span th:if="${book.isAdult}" class="badge bg-danger ms-1"
                 >18+</span
               >
@@ -134,11 +137,6 @@
               data-modal-title="Note"
             >
               <span th:text="${book.note}"></span>
-            </td>
-            <td>
-              <a class="btn btn-dark" th:href="@{'/book/detail/' + ${book.id}}"
-                >Detail</a
-              >
             </td>
           </tr>
         </tbody>

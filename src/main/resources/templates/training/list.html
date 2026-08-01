@@ -36,14 +36,17 @@
               <th>Weight</th>
               <th>Reps</th>
               <th>Sets</th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr th:each="training: ${trainingList}">
-              <td
-                th:text="${#temporals.format(training.trainingDate, 'yyyy-MM-dd (E)')}"
-              ></td>
+              <td>
+                <a
+                  th:href="@{'/training/detail/' + ${training.trainingId}}"
+                  th:text="${#temporals.format(training.trainingDate, 'yyyy-MM-dd (E)')}"
+                  class="text-decoration-none"
+                ></a>
+              </td>
               <td
                 th:text="${training.trainingAreaId != null ? trainingAreaMap.get(training.trainingAreaId) : ''}"
               ></td>
@@ -53,13 +56,6 @@
               <td th:text="${training.weight}"></td>
               <td th:text="${training.reps}"></td>
               <td th:text="${training.sets}"></td>
-              <td>
-                <a
-                  class="btn btn-dark"
-                  th:href="@{'/training/detail/' + ${training.trainingId}}"
-                  >Detail</a
-                >
-              </td>
             </tr>
           </tbody>
         </table>
