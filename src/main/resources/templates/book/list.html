@@ -22,17 +22,17 @@
         <h1 class="h2">Book</h1>
       </div>
       <div class="row align-items-center mb-4 g-3">
-        <div class="col-auto">
+        <div class="col-12 col-md-auto">
           <a class="btn btn-dark" th:href="@{'/book/register'}">新規登録</a>
         </div>
 
-        <div class="col">
+        <div class="col-12 col-md">
           <form
             th:action="@{/book/list}"
             method="get"
             class="row g-2 align-items-center"
           >
-            <div class="col-auto">
+            <div class="col-12 col-sm-auto">
               <select class="form-select" name="genre">
                 <option value="" th:selected="${genre == null}">
                   選択してください
@@ -46,7 +46,7 @@
               </select>
             </div>
 
-            <div class="col-auto">
+            <div class="col-12 col-sm-auto">
               <select class="form-select" name="authorId">
                 <option value="" th:selected="${authorId == null}">
                   選択してください
@@ -85,62 +85,64 @@
         th:replace="~{parts/pagination :: pagination(page=${bookPage})}"
       ></div>
 
-      <table class="table table-bordered table-hover align-middle">
-        <thead>
-          <tr class="table-dark">
-            <th>Genre</th>
-            <th>Book Name</th>
-            <th>Author Name</th>
-            <th>Link</th>
-            <th>Note</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="book: ${bookPage.content}">
-            <td th:text="${book.genre.label}"></td>
-            <td>
-              <a
-                th:href="@{'/book/detail/' + ${book.id}}"
-                th:text="${book.name}"
-                class="text-decoration-none"
-              ></a>
-              <span th:if="${book.isAdult}" class="badge bg-danger ms-1"
-                >18+</span
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+          <thead>
+            <tr class="table-dark">
+              <th>Genre</th>
+              <th>Book Name</th>
+              <th>Author Name</th>
+              <th>Link</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="book: ${bookPage.content}">
+              <td th:text="${book.genre.label}"></td>
+              <td>
+                <a
+                  th:href="@{'/book/detail/' + ${book.id}}"
+                  th:text="${book.name}"
+                  class="text-decoration-none"
+                ></a>
+                <span th:if="${book.isAdult}" class="badge bg-danger ms-1"
+                  >18+</span
+                >
+              </td>
+              <td>
+                <a
+                  th:if="${book.authorId != null}"
+                  th:href="@{/author/detail/{id}(id=${book.authorId})}"
+                  class="btn btn-sm btn-link"
+                  th:text="${authorMap.get(book.authorId)}"
+                  >Link</a
+                >
+                <span th:unless="${book.authorId != null}">-</span>
+              </td>
+              <td class="text-center">
+                <a
+                  th:if="${not #strings.isEmpty(book.link)}"
+                  th:href="${book.link}"
+                  target="_blank"
+                  class="btn btn-sm btn-link"
+                  >Link</a
+                >
+                <span th:unless="${not #strings.isEmpty(book.link)}">-</span>
+              </td>
+              <td
+                class="text-truncate modal-trigger"
+                style="max-width: 100px; cursor: pointer"
+                data-bs-toggle="modal"
+                data-bs-target="#globalModal"
+                th:data-modal-text="${book.note}"
+                data-modal-title="Note"
               >
-            </td>
-            <td>
-              <a
-                th:if="${book.authorId != null}"
-                th:href="@{/author/detail/{id}(id=${book.authorId})}"
-                class="btn btn-sm btn-link"
-                th:text="${authorMap.get(book.authorId)}"
-                >Link</a
-              >
-              <span th:unless="${book.authorId != null}">-</span>
-            </td>
-            <td class="text-center">
-              <a
-                th:if="${not #strings.isEmpty(book.link)}"
-                th:href="${book.link}"
-                target="_blank"
-                class="btn btn-sm btn-link"
-                >Link</a
-              >
-              <span th:unless="${not #strings.isEmpty(book.link)}">-</span>
-            </td>
-            <td
-              class="text-truncate modal-trigger"
-              style="max-width: 200px; cursor: pointer"
-              data-bs-toggle="modal"
-              data-bs-target="#globalModal"
-              th:data-modal-text="${book.note}"
-              data-modal-title="Note"
-            >
-              <span th:text="${book.note}"></span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                <span th:text="${book.note}"></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <th:block th:replace="~{parts/parts :: globalModal }"></th:block>
     </div>
   </body>
