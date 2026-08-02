@@ -31,6 +31,11 @@
         <div class="mb-2">
           <a class="btn btn-dark" th:href="@{'/artist/register'}">Register</a>
         </div>
+
+        <div
+          th:replace="~{parts/pagination :: pagination(page=${artistPage})}"
+        ></div>
+
         <table class="table table-bordered table-hover align-middle">
           <thead>
             <tr class="table-dark">
@@ -38,7 +43,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:each="artist: ${artistList}">
+            <tr th:each="artist: ${artistPage.content}">
               <td>
                 <a
                   th:href="@{'/artist/detail/' + ${artist.id}}"

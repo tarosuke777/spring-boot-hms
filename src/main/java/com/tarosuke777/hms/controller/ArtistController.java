@@ -9,6 +9,9 @@ import com.tarosuke777.hms.validation.UpdateGroup;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,8 +37,10 @@ public class ArtistController {
   private final ArtistService artistService;
 
   @GetMapping("/list")
-  public String getList(Model model, @AuthenticationPrincipal LoginUser user) {
-    model.addAttribute("artistList", artistService.getArtistList(user.getId()));
+  public String getList(@PageableDefault(size = 10) Pageable pageable, Model model,
+      @AuthenticationPrincipal LoginUser user) {
+    Page<ArtistForm> artistPage = artistService.getArtistPage(user.getId(), pageable);
+    model.addAttribute("artistPage", artistPage);
     return LIST_VIEW;
   }
 
