@@ -70,6 +70,6 @@ class UserFlowE2ETest {
 
     // 遷移後のURLや画面要素を検証
     assertEquals(baseUrl + "/music/list", page.url());
-    assertEquals("Music", page.textContent(".h2"));
+    assertEquals("Music Management", page.textContent(".h2"));
   }
 }
