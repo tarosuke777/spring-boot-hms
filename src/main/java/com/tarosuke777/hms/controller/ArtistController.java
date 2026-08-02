@@ -39,8 +39,7 @@ public class ArtistController {
   @GetMapping("/list")
   public String getList(@PageableDefault(size = 10) Pageable pageable, Model model,
       @AuthenticationPrincipal LoginUser user) {
-    Page<ArtistForm> artistPage =
-        artistService.getArtistPage(user.getId(), Objects.requireNonNull(pageable));
+    Page<ArtistForm> artistPage = artistService.getArtistPage(user.getId(), pageable);
     model.addAttribute("artistPage", artistPage);
     return LIST_VIEW;
   }
