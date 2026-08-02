@@ -90,13 +90,23 @@ public class DiaryControllerTest {
   }
 
   @Test
-  void getRegister_ShouldReturnRegisterPage() throws Exception {
+  void getRegister_ShouldReturnRegisterPageWithDefaultTemplate() throws Exception {
 
     // Given
+    String expectedDefaultTodoPlan = """
+        【開発】
+        １．
+        ２．
+        【転職活動】
+        １．
+        【その他】
+        ０．""";
 
     // When & Then
     performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
-        .andExpect(model().hasNoErrors());
+        .andExpect(model().hasNoErrors())
+        .andExpect(model().attribute("diaryForm", org.hamcrest.Matchers.hasProperty("todoPlan",
+            org.hamcrest.Matchers.is(expectedDefaultTodoPlan))));
   }
 
   @Test
