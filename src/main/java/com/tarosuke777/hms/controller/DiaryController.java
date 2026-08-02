@@ -34,6 +34,15 @@ public class DiaryController {
 
   private final DiaryService diaryService;
 
+  private static final String DEFAULT_TODO_PLAN = """
+      【開発】
+      １．
+      ２．
+      【転職活動】
+      １．
+      【その他】
+      ０．""";
+
   @GetMapping("/list")
   public String getList(Model model,
       @RequestParam(name = "orderBy", defaultValue = "diaryDate") String orderBy,
@@ -54,6 +63,9 @@ public class DiaryController {
 
   @GetMapping("/register")
   public String getRegister(DiaryForm diaryForm, Model model) {
+    if (diaryForm.getTodoPlan() == null) {
+      diaryForm.setTodoPlan(DEFAULT_TODO_PLAN);
+    }
     return REGISTER_VIEW;
   }
 
