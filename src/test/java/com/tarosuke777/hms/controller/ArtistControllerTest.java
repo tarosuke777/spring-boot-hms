@@ -9,10 +9,8 @@ import com.tarosuke777.hms.entity.ArtistEntity;
 import com.tarosuke777.hms.form.ArtistForm;
 import com.tarosuke777.hms.mapper.ArtistMapper;
 import com.tarosuke777.hms.repository.ArtistRepository;
-import com.tarosuke777.hms.security.LoginUser;
 import jakarta.persistence.EntityManager;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,19 +56,33 @@ public class ArtistControllerTest {
   private static final String DELETE_ENDPOINT = "/artist/detail";
 
   @Test
-  void getList_ShouldReturnArtistList() throws Exception {
+  void getList_ShouldReturnArtistPageWithPagination() throws Exception {
 
     // Given
-    LoginUser loginUser =
-        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    Integer currentUserId = loginUser.getId();
-    List<ArtistForm> expectedArtistList = artistRepository.findByCreatedBy(currentUserId).stream()
-        .map(entity -> artistMapper.toForm(entity)).collect(Collectors.toList());
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
-        .andExpect(model().attribute("artistList", expectedArtistList))
-        .andExpect(view().name(LIST_VIEW));
+        .andExpect(model().attributeExists("artistPage")).andExpect(view().name(LIST_VIEW));
+  }
+
+  @Test
+  void getList_WithPagination_ShouldReturnFirstPage() throws Exception {
+
+    // Given
+
+    // When & Then
+    performGetListRequestWithPage(0).andExpect(status().isOk())
+        .andExpect(model().attributeExists("artistPage")).andExpect(view().name(LIST_VIEW));
+  }
+
+  @Test
+  void getList_WithSecondPagePagination_ShouldReturnSecondPage() throws Exception {
+
+    // Given
+
+    // When & Then
+    performGetListRequestWithPage(1).andExpect(status().isOk())
+        .andExpect(model().attributeExists("artistPage")).andExpect(view().name(LIST_VIEW));
   }
 
   @Test
@@ -187,6 +199,10 @@ public class ArtistControllerTest {
 
   private ResultActions performGetListRequest() throws Exception {
     return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
+  }
+
+  private ResultActions performGetListRequestWithPage(int page) throws Exception {
+    return mockMvc.perform(get(LIST_ENDPOINT).param("page", String.valueOf(page))).andDo(print());
   }
 
   private ResultActions performGetRegisterRequest() throws Exception {
