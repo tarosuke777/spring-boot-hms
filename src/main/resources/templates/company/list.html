@@ -8,13 +8,13 @@
     <th:block layout:fragment="page-scripts">
       <script type="module" th:src="@{/js/common/modal.js}"></script>
     </th:block>
-    <title>Company</title>
+    <title>企業一覧</title>
   </head>
 
   <body>
     <div layout:fragment="content">
       <div class="mt-3 mb-3 border-bottom">
-        <h1 class="h2">Company</h1>
+        <h1 class="h2">企業一覧</h1>
       </div>
       <div class="row align-items-center mb-4 g-3">
         <div class="col-auto">
@@ -32,7 +32,7 @@
                 type="text"
                 class="form-control"
                 name="name"
-                placeholder="Name"
+                placeholder="企業名"
                 th:value="${name}"
               />
             </div>
@@ -55,9 +55,9 @@
         <table class="table table-bordered table-hover align-middle">
           <thead>
             <tr class="table-dark">
-              <th>Name</th>
-              <th>Note</th>
-              <th>Job Application History</th>
+              <th>企業名</th>
+              <th>備考</th>
+              <th>選考履歴</th>
             </tr>
           </thead>
           <tbody>
@@ -76,7 +76,7 @@
                 data-bs-toggle="modal"
                 data-bs-target="#globalModal"
                 th:data-modal-text="${company.note}"
-                data-modal-title="Note"
+                data-modal-title="備考"
               >
                 <span th:text="${company.note}"></span>
               </td>
@@ -86,7 +86,7 @@
                 data-bs-toggle="modal"
                 data-bs-target="#globalModal"
                 th:data-modal-text="${company.jobApplicationHistory}"
-                data-modal-title="Job Application History"
+                data-modal-title="選考履歴"
               >
                 <span th:text="${company.jobApplicationHistory}"></span>
               </td>
