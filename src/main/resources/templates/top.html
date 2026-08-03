@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout}"
+>
+  <head>
+    <title>Top</title>
+  </head>
+
+  <body>
+    <div layout:fragment="content">
+      <div
+        class="mt-3 mb-3 border-bottom d-flex justify-content-between align-items-center"
+      >
+        <h1 class="h2">Dashboard</h1>
+        <span
+          class="text-muted fw-bold"
+          th:text="${#temporals.format(today, 'yyyy-MM-dd (E)')}"
+          >2026-08-03 (月)</span
+        >
+      </div>
+
+      <!-- 本日のDiaryカード -->
+      <div class="card mb-4 shadow-sm">
+        <div
+          class="card-header bg-dark text-white d-flex justify-content-between align-items-center"
+        >
+          <h2 class="h5 mb-0">📌 本日の Diary / TODO</h2>
+          <div th:if="${todayDiary != null}">
+            <a
+              th:href="@{'/diary/detail/' + ${todayDiary.diaryId}}"
+              class="btn btn-sm btn-outline-light"
+            >
+              詳細・編集
+            </a>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- データが存在する場合：予定と実績を対比表示 -->
+          <div th:if="${todayDiary != null}">
+            <!-- やること（予定 vs 実績） -->
+            <div class="mb-4">
+              <h3 class="h6 fw-bold border-bottom pb-1">■ やること</h3>
+              <div class="row">
+                <div class="col-md-6 mb-2">
+                  <div class="p-3 bg-light rounded border h-100">
+                    <div class="small text-muted fw-bold mb-1">（予定）</div>
+                    <div
+                      class="text-break"
+                      style="white-space: pre-wrap"
+                      th:text="${#strings.isEmpty(todayDiary.todoPlan) ? '（未入力）' : todayDiary.todoPlan}"
+                    ></div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-2">
+                  <div class="p-3 bg-light rounded border h-100">
+                    <div class="small text-muted fw-bold mb-1">（実績）</div>
+                    <div
+                      class="text-break"
+                      style="white-space: pre-wrap"
+                      th:text="${#strings.isEmpty(todayDiary.todoActual) ? '（未入力）' : todayDiary.todoActual}"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 楽しさ度 & 一言コメント（サマリ表示） -->
+            <div class="row">
+              <!-- 楽しさ度 -->
+              <div class="col-md-4 mb-3">
+                <h3 class="h6 fw-bold border-bottom pb-1">
+                  ■ 楽しさ度 (Max: 5)
+                </h3>
+                <div
+                  class="d-flex align-items-center gap-3 p-2 bg-light rounded border"
+                >
+                  <div>
+                    予定:
+                    <span
+                      class="fw-bold"
+                      th:text="${todayDiary.funPlan != null ? todayDiary.funPlan : '-'}"
+                      >3</span
+                    >
+                  </div>
+                  <div>/</div>
+                  <div>
+                    実績:
+                    <span
+                      class="fw-bold text-primary"
+                      th:text="${todayDiary.funActual != null ? todayDiary.funActual : '-'}"
+                      >4</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- 一言 -->
+              <div class="col-md-8 mb-3">
+                <h3 class="h6 fw-bold border-bottom pb-1">■ 一言コメント</h3>
+                <div class="row">
+                  <div class="col-6">
+                    <div class="small text-muted">（予定）</div>
+                    <div
+                      class="small text-break"
+                      style="white-space: pre-wrap"
+                      th:text="${#strings.isEmpty(todayDiary.commentPlan) ? '（未入力）' : todayDiary.commentPlan}"
+                    ></div>
+                  </div>
+                  <div class="col-6">
+                    <div class="small text-muted">（実績）</div>
+                    <div
+                      class="small text-break"
+                      style="white-space: pre-wrap"
+                      th:text="${#strings.isEmpty(todayDiary.commentActual) ? '（未入力）' : todayDiary.commentActual}"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- データが存在しない場合 -->
+          <div th:if="${todayDiary == null}" class="text-center py-5">
+            <p class="text-muted mb-3">
+              本日の Diary / TODO はまだ登録されていません。
+            </p>
+            <a
+              th:href="@{/diary/register(diaryDate=${today})}"
+              class="btn btn-dark"
+            >
+              ＋ 本日の TODO を新規登録する
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
