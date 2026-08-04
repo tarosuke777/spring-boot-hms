@@ -5,17 +5,17 @@
   layout:decorate="~{layout/layout}"
 >
   <head>
-    <title>BookRegister</title>
+    <title>書籍登録</title>
   </head>
 
   <body>
     <div layout:fragment="content">
       <div class="mt-3 mb-3 border-bottom">
-        <h1 class="h2">Book Register</h1>
+        <h1 class="h2">書籍登録</h1>
       </div>
       <form method="post" th:action="@{/book/register}" th:object="${bookForm}">
         <div class="mb-3 row">
-          <label for="name" class="col-sm-2 col-form-label">Book Name</label>
+          <label for="name" class="col-sm-2 col-form-label">書籍名</label>
           <div class="col-sm-10">
             <input
               type="text"
@@ -27,9 +27,7 @@
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="authorName" class="col-sm-2 col-form-label"
-            >Author Name</label
-          >
+          <label for="authorName" class="col-sm-2 col-form-label">著者名</label>
           <div class="col-sm-10">
             <th:block
               th:replace="~{parts/parts :: commonSelect(${authorMap}, authorId, 'authorId', true)}"
@@ -39,7 +37,7 @@
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="genre" class="col-sm-2 col-form-label">Genre</label>
+          <label for="genre" class="col-sm-2 col-form-label">ジャンル</label>
           <div class="col-sm-10">
             <select
               class="form-select"
@@ -73,7 +71,7 @@
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="link" class="col-sm-2 col-form-label">Link</label>
+          <label for="link" class="col-sm-2 col-form-label">リンク</label>
           <div class="col-sm-10">
             <input
               type="text"
