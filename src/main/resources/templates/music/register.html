@@ -5,13 +5,13 @@
   layout:decorate="~{layout/layout}"
 >
   <head>
-    <title>MusicRegister</title>
+    <title>楽曲登録</title>
   </head>
 
   <body>
     <div layout:fragment="content">
       <div class="mt-3 mb-3 border-bottom">
-        <h1 class="h2">Music Register</h1>
+        <h1 class="h2">楽曲登録</h1>
       </div>
       <form
         method="post"
@@ -19,7 +19,7 @@
         th:object="${musicForm}"
       >
         <div class="mb-3 row">
-          <label for="name" class="col-sm-2 col-form-label">Music Name</label>
+          <label for="name" class="col-sm-2 col-form-label">曲名</label>
           <div class="col-sm-10">
             <input
               type="text"
@@ -32,7 +32,7 @@
         </div>
         <div class="mb-3 row">
           <label for="artistName" class="col-sm-2 col-form-label"
-            >Artist Name</label
+            >アーティスト名</label
           >
           <div
             class="col-sm-10"
@@ -40,7 +40,7 @@
           ></div>
         </div>
         <div class="mb-3 row">
-          <label for="link" class="col-sm-2 col-form-label">Link</label>
+          <label for="link" class="col-sm-2 col-form-label">リンク</label>
           <div class="col-sm-10">
             <input
               type="text"

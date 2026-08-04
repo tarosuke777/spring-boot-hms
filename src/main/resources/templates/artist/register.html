@@ -5,13 +5,13 @@
   layout:decorate="~{layout/layout}"
 >
   <head>
-    <title>ArtistRegister</title>
+    <title>アーティスト登録</title>
   </head>
 
   <body>
     <div layout:fragment="content">
       <div class="mt-3 mb-3 border-bottom">
-        <h1 class="h2">Artist Register</h1>
+        <h1 class="h2">アーティスト登録</h1>
       </div>
       <form
         method="post"
@@ -19,7 +19,9 @@
         th:object="${artistForm}"
       >
         <div class="mb-3 row">
-          <label for="name" class="col-sm-2 col-form-label">Name</label>
+          <label for="name" class="col-sm-2 col-form-label"
+            >アーティスト名</label
+          >
           <div class="col-sm-10">
             <input
               type="text"
