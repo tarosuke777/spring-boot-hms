@@ -42,7 +42,3 @@ out/
 
 # Node.jsの依存ライブラリフォルダを除外
 node_modules/
-
-# Log files
-*.log
-/bootRun.log
