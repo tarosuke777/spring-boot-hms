@@ -5,13 +5,13 @@
   layout:decorate="~{layout/layout}"
 >
   <head>
-    <title>TrainingDetail</title>
+    <title>トレーニング記録詳細</title>
   </head>
 
   <body>
     <div layout:fragment="content">
       <div class="mt-3 mb-3 border-bottom">
-        <h1 class="h2">Training Detail</h1>
+        <h1 class="h2">トレーニング記録詳細</h1>
       </div>
       <form
         method="post"
@@ -22,7 +22,7 @@
         <input type="hidden" th:field="*{version}" />
         <div class="mb-3 row">
           <label for="trainingName" class="col-sm-2 col-form-label"
-            >Training Date</label
+            >実施日</label
           >
           <div class="col-sm-10">
             <input
@@ -34,7 +34,7 @@
         </div>
         <div class="mb-3 row">
           <label for="trainingMenuName" class="col-sm-2 col-form-label"
-            >TrainingMenu Name</label
+            >種目名</label
           >
           <div
             class="col-sm-10"
@@ -42,19 +42,19 @@
           ></div>
         </div>
         <div class="mb-3 row">
-          <label for="weight" class="col-sm-2 col-form-label">Weight</label>
+          <label for="weight" class="col-sm-2 col-form-label">重量(kg)</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" th:field="*{weight}" />
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="reps" class="col-sm-2 col-form-label">Reps</label>
+          <label for="reps" class="col-sm-2 col-form-label">回数</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" th:field="*{reps}" />
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="sets" class="col-sm-2 col-form-label">Sets</label>
+          <label for="sets" class="col-sm-2 col-form-label">セット数</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" th:field="*{sets}" />
           </div>

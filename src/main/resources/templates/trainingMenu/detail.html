@@ -5,13 +5,13 @@
   layout:decorate="~{layout/layout}"
 >
   <head>
-    <title>TrainingMenuDetail</title>
+    <title>種目詳細</title>
   </head>
 
   <body>
     <div layout:fragment="content">
       <div class="mt-3 mb-3 border-bottom">
-        <h1 class="h2">Training Menu Detail</h1>
+        <h1 class="h2">種目詳細</h1>
       </div>
       <form
         method="post"
@@ -20,16 +20,14 @@
       >
         <input type="hidden" th:field="*{id}" />
         <div class="mb-3 row">
-          <label for="name" class="col-sm-2 col-form-label"
-            >Training Menu Name</label
-          >
+          <label for="name" class="col-sm-2 col-form-label">種目名</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" th:field="*{name}" />
           </div>
         </div>
         <div class="mb-3 row">
           <label for="targetAreaName" class="col-sm-2 col-form-label"
-            >Target Area Name</label
+            >部位</label
           >
           <div
             class="col-sm-10"
@@ -37,27 +35,29 @@
           ></div>
         </div>
         <div class="mb-3 row">
-          <label for="link" class="col-sm-2 col-form-label">Link</label>
+          <label for="link" class="col-sm-2 col-form-label">リンク</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" th:field="*{link}" />
           </div>
         </div>
         <div class="mb-3 row">
           <label for="maxWeigth" class="col-sm-2 col-form-label"
-            >Max Weight</label
+            >最高重量</label
           >
           <div class="col-sm-10">
             <input type="text" class="form-control" th:field="*{maxWeight}" />
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="maxReps" class="col-sm-2 col-form-label">Max Reps</label>
+          <label for="maxReps" class="col-sm-2 col-form-label">最高回数</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" th:field="*{maxReps}" />
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="maxSets" class="col-sm-2 col-form-label">Max Sets</label>
+          <label for="maxSets" class="col-sm-2 col-form-label"
+            >最高セット数</label
+          >
           <div class="col-sm-10">
             <input type="text" class="form-control" th:field="*{maxSets}" />
           </div>
