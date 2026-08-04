@@ -5,17 +5,17 @@
   layout:decorate="~{layout/layout}"
 >
   <head>
-    <title>CastRegister</title>
+    <title>キャスト登録</title>
   </head>
 
   <body>
     <div layout:fragment="content">
       <div class="mt-3 mb-3 border-bottom">
-        <h1 class="h2">Cast Register</h1>
+        <h1 class="h2">キャスト登録</h1>
       </div>
       <form method="post" th:action="@{/cast/register}" th:object="${castForm}">
         <div class="mb-3 row">
-          <label for="name" class="col-sm-2 col-form-label">Name</label>
+          <label for="name" class="col-sm-2 col-form-label">キャスト</label>
           <div class="col-sm-10">
             <input
               type="text"
@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="link" class="col-sm-2 col-form-label">Link</label>
+          <label for="link" class="col-sm-2 col-form-label">リンク</label>
           <div class="col-sm-10">
             <input
               type="text"

@@ -69,7 +69,7 @@ class UserFlowE2ETest {
     page.click("input[type='submit']");
 
     // 遷移後のURLや画面要素を検証
-    assertEquals(baseUrl + "/music/list", page.url());
-    assertEquals("音楽管理", page.textContent(".h2"));
+    assertEquals(baseUrl + "/top", page.url());
+    assertEquals("Dashboard", page.textContent(".h2"));
   }
 }

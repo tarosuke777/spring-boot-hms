@@ -4,8 +4,10 @@ import com.tarosuke777.hms.entity.DiaryEntity;
 import com.tarosuke777.hms.form.DiaryForm;
 import com.tarosuke777.hms.mapper.DiaryMapper;
 import com.tarosuke777.hms.repository.DiaryRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.lang.NonNull;
@@ -31,6 +33,11 @@ public class DiaryService {
     DiaryEntity diary = diaryRepository.findByDiaryIdAndCreatedBy(diaryId, currentUserId)
         .orElseThrow(() -> new RuntimeException("Diary not found or access denied"));
     return diaryMapper.toForm(diary);
+  }
+
+  public Optional<DiaryForm> getDiaryByDate(LocalDate date, Integer currentUserId) {
+    return diaryRepository.findByDiaryDateAndCreatedBy(date, currentUserId)
+        .map(diaryMapper::toForm);
   }
 
   @Transactional

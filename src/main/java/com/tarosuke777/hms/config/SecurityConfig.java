@@ -31,8 +31,8 @@ public class SecurityConfig {
   @Order(4)
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.formLogin(login -> login.loginProcessingUrl("/login").loginPage("/login")
-        .usernameParameter("userName").passwordParameter("password")
-        .defaultSuccessUrl("/music/list", true).failureUrl("/login?error").permitAll());
+        .usernameParameter("userName").passwordParameter("password").defaultSuccessUrl("/top", true)
+        .failureUrl("/login?error").permitAll());
 
     http.logout(logout -> logout.logoutSuccessUrl("/login"));
 
