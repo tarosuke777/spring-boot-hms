@@ -5,19 +5,19 @@
   layout:decorate="~{layout/layout}"
 >
   <head>
-    <title>UserDetail</title>
+    <title>ユーザー詳細</title>
   </head>
 
   <body>
     <div layout:fragment="content">
       <div class="mt-3 mb-3 border-bottom">
-        <h1 class="h2">User Detail</h1>
+        <h1 class="h2">ユーザー詳細</h1>
       </div>
       <form method="post" th:action="@{/user/detail}" th:object="${userForm}">
         <input type="hidden" th:field="*{id}" />
         <input type="hidden" th:field="*{version}" />
         <div class="mb-3 row">
-          <label for="name" class="col-sm-2 col-form-label">Name</label>
+          <label for="name" class="col-sm-2 col-form-label">ユーザー名</label>
           <div class="col-sm-10">
             <input
               type="text"
@@ -29,7 +29,9 @@
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="password" class="col-sm-2 col-form-label">Password</label>
+          <label for="password" class="col-sm-2 col-form-label"
+            >パスワード</label
+          >
           <div class="col-sm-10">
             <input
               type="text"
@@ -41,7 +43,7 @@
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="role" class="col-sm-2 col-form-label">Role</label>
+          <label for="role" class="col-sm-2 col-form-label">ロール</label>
           <div class="col-sm-10">
             <select class="form-control" th:field="*{role}">
               <option
