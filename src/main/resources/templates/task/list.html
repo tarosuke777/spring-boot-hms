@@ -33,9 +33,6 @@
           >
             <div class="col-auto">
               <select class="form-select" name="status">
-                <option value="" th:selected="${status == null}">
-                  選択してください
-                </option>
                 <option
                   th:each="g : ${T(com.tarosuke777.hms.enums.TaskStatus).values()}"
                   th:value="${g}"
@@ -76,6 +73,7 @@
                   name="version"
                   th:value="${task.version}"
                 />
+                <input type="hidden" name="searchStatus" th:value="${status}" />
                 <div class="card-header">
                   <input
                     type="text"
@@ -116,6 +114,11 @@
                   style="display: inline-block"
                 >
                   <input type="hidden" name="id" th:value="${task.id}" />
+                  <input
+                    type="hidden"
+                    name="searchStatus"
+                    th:value="${status}"
+                  />
                   <button
                     type="submit"
                     class="btn btn-danger btn-sm"
