@@ -3,6 +3,7 @@ package com.tarosuke777.hms.mapper;
 import com.tarosuke777.hms.entity.TaskEntity;
 import com.tarosuke777.hms.form.TaskForm;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
@@ -11,6 +12,7 @@ public interface TaskMapper {
   @IgnoreAuditFields
   TaskEntity toEntity(TaskForm form);
 
+  @Mapping(target = "searchStatus", ignore = true)
   TaskForm toForm(TaskEntity entity);
 
   TaskEntity copy(TaskEntity entity);
