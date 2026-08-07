@@ -26,4 +26,7 @@ public class TaskForm implements Serializable {
 
   @NotNull(groups = UpdateGroup.class)
   private Integer version;
+
+  @NotNull(groups = UpdateGroup.class)
+  private TaskStatus searchStatus;
 }

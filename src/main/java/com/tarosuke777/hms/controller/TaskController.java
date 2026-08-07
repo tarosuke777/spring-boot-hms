@@ -31,11 +31,15 @@ public class TaskController {
   private final TaskService taskService;
 
   @GetMapping("/list")
-  public String list(@RequestParam(required = false, defaultValue = "TODO") TaskStatus status,
-      Model model, @AuthenticationPrincipal LoginUser user) {
+  public String list(@ModelAttribute TaskForm taskForm, Model model,
+      @AuthenticationPrincipal LoginUser user) {
 
-    model.addAttribute("tasks", taskService.getTaskList(user.getId(), status));
-    model.addAttribute("status", status);
+    if (taskForm.getSearchStatus() == null) {
+      taskForm.setSearchStatus(TaskStatus.TODO);
+    }
+
+    model.addAttribute("tasks", taskService.getTaskList(user.getId(), taskForm.getSearchStatus()));
+    model.addAttribute("status", taskForm.getSearchStatus());
     return LIST_VIEW;
   }
 
@@ -57,21 +61,22 @@ public class TaskController {
 
   @PostMapping("/update")
   public String update(@Validated(UpdateGroup.class) @ModelAttribute TaskForm taskForm,
-      BindingResult bindingResult, @RequestParam(required = true) TaskStatus status, Model model,
-      @AuthenticationPrincipal LoginUser user, RedirectAttributes redirectAttributes) {
+      BindingResult bindingResult, Model model, @AuthenticationPrincipal LoginUser user,
+      RedirectAttributes redirectAttributes) {
 
     if (bindingResult.hasErrors()) {
       // エラー時は一覧を再取得して戻る
-      model.addAttribute("status", status);
-      model.addAttribute("tasks", taskService.getTaskList(user.getId(), status));
+      model.addAttribute("status", taskForm.getSearchStatus());
+      model.addAttribute("tasks",
+          taskService.getTaskList(user.getId(), taskForm.getSearchStatus()));
       return LIST_VIEW;
     }
 
     // ServiceのupdateTask(TaskForm)を呼び出す
     taskService.updateTask(taskForm, user.getId());
 
-    if (status != null) {
-      redirectAttributes.addAttribute("status", status);
+    if (taskForm.getSearchStatus() != null) {
+      redirectAttributes.addAttribute("status", taskForm.getSearchStatus());
     }
 
     return REDIRECT_LIST;
@@ -79,10 +84,11 @@ public class TaskController {
 
   @PostMapping("/delete")
   public String delete(@RequestParam("id") Integer id, @AuthenticationPrincipal LoginUser user,
-      @RequestParam(required = false) TaskStatus status, RedirectAttributes redirectAttributes) {
+      @RequestParam(required = false, name = "searchStatus") TaskStatus searchStatus,
+      RedirectAttributes redirectAttributes) {
 
-    if (status != null) {
-      redirectAttributes.addAttribute("status", status);
+    if (searchStatus != null) {
+      redirectAttributes.addAttribute("status", searchStatus);
     }
 
     taskService.deleteTask(Objects.requireNonNull(id), user.getId());

@@ -106,6 +106,7 @@ public class TaskControllerTest {
     TaskEntity task = taskRepository.findAll().getFirst();
     TaskForm form = taskMapper.toForm(task);
     form.setName("UpdatedName");
+    form.setSearchStatus(TaskStatus.TODO);
 
     // When & Then
     performUpdateRequest(form).andExpect(status().is3xxRedirection())
