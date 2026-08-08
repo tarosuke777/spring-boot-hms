@@ -247,12 +247,8 @@
         function openChatModal() {
           const iframe = document.getElementById("chatIframe");
           // 未読み込みの場合のみURLをセット（2回目以降は表示をスムーズにするため）
-          if (
-            !iframe.src ||
-            iframe.src === "about:blank" ||
-            iframe.src === window.location.href
-          ) {
-            iframe.src = "https://192.168.10.10/hc/";
+          if (!iframe.src || iframe.src === window.location.href) {
+            iframe.src = "/hc/";
           }
           document.getElementById("chatModal").style.display = "flex";
         }
