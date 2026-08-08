@@ -117,5 +117,158 @@
         </button>
       </div>
     </nav>
+    <!-- ========================================== -->
+    <!-- チャットモーダル ＆ フローティングボタン (ここから追加) -->
+    <!-- ========================================== -->
+    <div sec:authorize="isAuthenticated()">
+      <!-- 画面右下のフローティングボタン -->
+      <button
+        type="button"
+        id="chatFloatingBtn"
+        class="btn btn-primary rounded-circle shadow-lg"
+        onclick="openChatModal()"
+        title="Chatを開く"
+      >
+        💬
+      </button>
+
+      <!-- モーダル本体 -->
+      <div
+        id="chatModal"
+        class="chat-modal-backdrop"
+        onclick="closeChatOnClickOutside(event)"
+        style="display: none"
+      >
+        <div class="chat-modal-container">
+          <div
+            class="chat-modal-header d-flex justify-content-between align-items-center bg-dark text-white px-3 py-2"
+          >
+            <span class="fw-bold">HMS Chat</span>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              onclick="closeChatModal()"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="chat-modal-body">
+            <iframe id="chatIframe" src="" frameborder="0"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- チャット用スタイル -->
+      <style>
+        /* 右下固定フローティングボタン */
+        #chatFloatingBtn {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          width: 56px;
+          height: 56px;
+          font-size: 1.5rem;
+          z-index: 1030; /* スマホ用ボトムナビ(1030付近)より前面に表示 */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          border: none;
+        }
+
+        /* スマホ用ボトムナビが表示される端末(sm未満)ではボタン位置を少し上げる */
+        @media (max-width: 575.98px) {
+          #chatFloatingBtn {
+            bottom: 70px;
+          }
+        }
+
+        /* モーダル背景（画面覆い） */
+        .chat-modal-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background-color: rgba(
+            0,
+            0,
+            0,
+            0.4
+          ); /* 少し透過を浅くすると背後の画面が見やすくなります */
+          z-index: 1050;
+          display: flex;
+
+          /* 中央寄せから「右下寄せ」に変更 */
+          justify-content: flex-end; /* 横方向：右寄せ */
+          align-items: flex-end; /* 縦方向：下寄せ */
+
+          padding: 0 20px 85px 0; /* 右と下に余白を作る（ボタンと重ならない位置調整） */
+        }
+
+        /* モーダル本体ウィンドウ */
+        .chat-modal-container {
+          width: 500px; /* 右下ウィジェット風にするため横幅を指定（お好みのサイズに調整可） */
+          height: 700px; /* 高さ（お好みのサイズに調整可） */
+          max-width: 90vw;
+          max-height: 80vh;
+          background-color: #1e222d;
+          border-radius: 12px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.5);
+        }
+
+        .chat-modal-body {
+          flex: 1;
+          width: 100%;
+          height: 100%;
+        }
+
+        .chat-modal-body iframe {
+          width: 100%;
+          height: 100%;
+          border: none;
+        }
+
+        /* -------------------------------------------------- */
+        /* スマホ（画面幅 575.98px 以下）ではボタンとモーダルを非表示 */
+        /* -------------------------------------------------- */
+        @media (max-width: 575.98px) {
+          #chatFloatingBtn,
+          #chatModal {
+            display: none !important;
+          }
+        }
+      </style>
+
+      <!-- チャット用JavaScript -->
+      <script>
+        function openChatModal() {
+          const iframe = document.getElementById("chatIframe");
+          // 未読み込みの場合のみURLをセット（2回目以降は表示をスムーズにするため）
+          if (
+            !iframe.src ||
+            iframe.src === "about:blank" ||
+            iframe.src === window.location.href
+          ) {
+            iframe.src = "https://192.168.10.10/hc/";
+          }
+          document.getElementById("chatModal").style.display = "flex";
+        }
+
+        function closeChatModal() {
+          document.getElementById("chatModal").style.display = "none";
+        }
+
+        // チャット枠外（黒背景）をクリックした場合のみ閉じる関数
+        function closeChatOnClickOutside(event) {
+          // クリックされた要素(event.target)が背景自身(chatModal)であるか判定
+          if (event.target.id === "chatModal") {
+            closeChatModal();
+          }
+        }
+      </script>
+    </div>
   </body>
 </html>
