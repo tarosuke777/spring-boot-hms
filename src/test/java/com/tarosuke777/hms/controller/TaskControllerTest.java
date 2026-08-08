@@ -110,7 +110,7 @@ public class TaskControllerTest {
 
     // When & Then
     performUpdateRequest(form).andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl(LIST_URL));
+        .andExpect(redirectedUrl(LIST_URL + "?searchStatus=" + form.getSearchStatus().name()));
 
     TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
     entityManager.flush();
@@ -150,16 +150,17 @@ public class TaskControllerTest {
 
     // Given
     TaskEntity targetTask = taskRepository.findAll().getFirst();
-    Integer targetTaskId = targetTask.getId();
+    TaskForm form = taskMapper.toForm(targetTask);
+    form.setSearchStatus(TaskStatus.TODO);
 
     // When & Then
-    performDeleteRequest(targetTaskId).andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl(LIST_URL));
+    performDeleteRequest(form).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL + "?searchStatus=" + form.getSearchStatus().name()));
 
     entityManager.flush();
     entityManager.clear();
 
-    TaskEntity task = taskRepository.findById(targetTaskId).orElse(null);
+    TaskEntity task = taskRepository.findById(form.getId()).orElse(null);
     Assertions.assertNull(task);
   }
 
@@ -187,9 +188,9 @@ public class TaskControllerTest {
         .param("searchStatus", form.getSearchStatus().name())).andDo(print());
   }
 
-  private ResultActions performDeleteRequest(int taskId) throws Exception {
-    return mockMvc.perform(
-        post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("id", String.valueOf(taskId)))
-        .andDo(print());
+  private ResultActions performDeleteRequest(TaskForm form) throws Exception {
+    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "")
+        .param("id", String.valueOf(form.getId()))
+        .param("searchStatus", form.getSearchStatus().name())).andDo(print());
   }
 }
