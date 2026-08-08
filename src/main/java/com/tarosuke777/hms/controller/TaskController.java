@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RequiredArgsConstructor
@@ -39,7 +38,6 @@ public class TaskController {
     }
 
     model.addAttribute("tasks", taskService.getTaskList(user.getId(), taskForm.getSearchStatus()));
-    model.addAttribute("status", taskForm.getSearchStatus());
     return LIST_VIEW;
   }
 
@@ -66,7 +64,6 @@ public class TaskController {
 
     if (bindingResult.hasErrors()) {
       // エラー時は一覧を再取得して戻る
-      model.addAttribute("status", taskForm.getSearchStatus());
       model.addAttribute("tasks",
           taskService.getTaskList(user.getId(), taskForm.getSearchStatus()));
       return LIST_VIEW;
@@ -75,23 +72,18 @@ public class TaskController {
     // ServiceのupdateTask(TaskForm)を呼び出す
     taskService.updateTask(taskForm, user.getId());
 
-    if (taskForm.getSearchStatus() != null) {
-      redirectAttributes.addAttribute("status", taskForm.getSearchStatus());
-    }
+    redirectAttributes.addAttribute("searchStatus", taskForm.getSearchStatus());
 
     return REDIRECT_LIST;
   }
 
   @PostMapping("/delete")
-  public String delete(@RequestParam("id") Integer id, @AuthenticationPrincipal LoginUser user,
-      @RequestParam(required = false, name = "searchStatus") TaskStatus searchStatus,
+  public String delete(@ModelAttribute TaskForm taskForm, @AuthenticationPrincipal LoginUser user,
       RedirectAttributes redirectAttributes) {
+    taskService.deleteTask(Objects.requireNonNull(taskForm.getId()), user.getId());
 
-    if (searchStatus != null) {
-      redirectAttributes.addAttribute("status", searchStatus);
-    }
+    redirectAttributes.addAttribute("searchStatus", taskForm.getSearchStatus());
 
-    taskService.deleteTask(Objects.requireNonNull(id), user.getId());
     return REDIRECT_LIST;
   }
 }

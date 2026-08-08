@@ -30,14 +30,14 @@
             th:action="@{/task/list}"
             method="get"
             class="row g-2 align-items-center"
+            th:object="${taskForm}"
           >
             <div class="col-auto">
-              <select class="form-select" name="searchStatus">
+              <select class="form-select" th:field="*{searchStatus}">
                 <option
                   th:each="g : ${T(com.tarosuke777.hms.enums.TaskStatus).values()}"
                   th:value="${g}"
                   th:text="${g.label}"
-                  th:selected="${status != null and g.code == status.code}"
                 ></option>
               </select>
             </div>
@@ -73,7 +73,11 @@
                   name="version"
                   th:value="${task.version}"
                 />
-                <input type="hidden" name="searchStatus" th:value="${status}" />
+                <input
+                  type="hidden"
+                  name="searchStatus"
+                  th:value="${taskForm.searchStatus}"
+                />
                 <div class="card-header">
                   <input
                     type="text"
@@ -117,7 +121,7 @@
                   <input
                     type="hidden"
                     name="searchStatus"
-                    th:value="${status}"
+                    th:value="${taskForm.searchStatus}"
                   />
                   <button
                     type="submit"

@@ -138,6 +138,7 @@ public class TaskControllerTest {
     form.setName("Try to Update");
     form.setVersion(currentVersion);
     form.setStatus(TaskStatus.TODO);
+    form.setSearchStatus(TaskStatus.TODO);
 
     // When & Then
     performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
@@ -182,8 +183,8 @@ public class TaskControllerTest {
   private ResultActions performUpdateRequest(TaskForm form) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
         .param("id", form.getId().toString()).param("name", form.getName())
-        .param("version", form.getVersion().toString()).param("status", form.getStatus().name()))
-        .andDo(print());
+        .param("version", form.getVersion().toString()).param("status", form.getStatus().name())
+        .param("searchStatus", form.getSearchStatus().name())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(int taskId) throws Exception {
