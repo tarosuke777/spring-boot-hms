@@ -4,6 +4,8 @@ import com.tarosuke777.hms.entity.UserEntity;
 import com.tarosuke777.hms.entity.WebAuthnCredentialEntity;
 import com.tarosuke777.hms.repository.UserRepository;
 import com.tarosuke777.hms.repository.WebAuthnCredentialRepository;
+
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -39,17 +41,13 @@ public class WebAuthnService
   public CredentialRecord findByCredentialId(Bytes credentialId) {
 
     String searchKey = credentialId.toBase64UrlString();
-    // log.info("[DEBUG] Searching WebAuthn Credential by credentialId (Base64Url): '{}'",
-    // searchKey);
-
     return credentialRepository.findByCredentialId(searchKey).map(this::toUserCredential)
         .orElse(null);
   }
 
   @Override
   public List<CredentialRecord> findByUserId(Bytes userId) {
-    int id = Integer.parseInt(new String(userId.getBytes()));
-    log.info("[DEBUG] Searching WebAuthn Credentials by userId: {}", id);
+    int id = bytesToUserId(userId);
     return credentialRepository.findByUserId(id).stream().map(this::toUserCredential)
         .collect(Collectors.toList());
   }
@@ -62,7 +60,7 @@ public class WebAuthnService
     WebAuthnCredentialEntity entity = credentialRepository.findByCredentialId(credentialIdStr)
         .orElseGet(WebAuthnCredentialEntity::new);
 
-    entity.setUserId(Integer.parseInt(new String(credential.getUserEntityUserId().getBytes())));
+    entity.setUserId(bytesToUserId(credential.getUserEntityUserId()));
     entity.setCredentialId(credential.getCredentialId().toBase64UrlString());
     entity.setPublicKey(credential.getPublicKey().getBytes());
     entity.setCount(credential.getSignatureCount());
@@ -77,27 +75,6 @@ public class WebAuthnService
     credentialRepository.deleteByCredentialId(credentialId.toBase64UrlString());
   }
 
-  private CredentialRecord toUserCredential(WebAuthnCredentialEntity entity) {
-
-    Bytes credentialIdBytes = Bytes.fromBase64(entity.getCredentialId());
-    Bytes userIdBytes = new Bytes(
-        String.valueOf(entity.getUserId()).getBytes(java.nio.charset.StandardCharsets.UTF_8));
-    Bytes publicKeyBytes = new Bytes(entity.getPublicKey());
-
-    // log.info("[DEBUG] toUserCredential - CredentialId (Base64Url): {}",
-    // entity.getCredentialId());
-    // log.info("[DEBUG] toUserCredential - UserId: {}", entity.getUserId());
-    // log.info("[DEBUG] toUserCredential - PublicKey Length: {} bytes", entity.getPublicKey() !=
-    // null ? entity.getPublicKey().length : 0);
-
-    return ImmutableCredentialRecord.builder().credentialId(credentialIdBytes)
-        .credentialType(PublicKeyCredentialType.PUBLIC_KEY)
-        .publicKey(new ImmutablePublicKeyCose(publicKeyBytes.getBytes()))
-        .userEntityUserId(userIdBytes).signatureCount(entity.getCount())
-        .attestationObject(new Bytes(entity.getAttestationObject())).build();
-
-  }
-
   // --- PublicKeyCredentialUserEntityRepository の実装 ---
 
   @Override
@@ -107,22 +84,44 @@ public class WebAuthnService
 
   @Override
   public PublicKeyCredentialUserEntity findById(Bytes userId) {
-    // userId (Bytes) から UserEntity の ID (Integer) に変換して取得
-    int id = Integer.parseInt(new String(userId.getBytes()));
+    int id = bytesToUserId(userId);
     return userRepository.findById(id).map(this::toUserEntity).orElse(null);
   }
 
   @Override
   public void save(PublicKeyCredentialUserEntity userEntity) {
-    // 既存の UserEntity (JPA) のプライマリキー(id)を WebAuthn ID としてそのまま流用しているため、
-    // パキー登録時に新しい UserEntity を作成・保存する必要はありません。
-    // 空実装でOKです。
+    // 既存の UserEntity (JPA) の ID をそのまま流用するため処理不要
+  }
+
+
+  // --- 変換ヘルパーメソッド ---
+
+  private CredentialRecord toUserCredential(WebAuthnCredentialEntity entity) {
+
+    Bytes credentialIdBytes = Bytes.fromBase64(entity.getCredentialId());
+    Bytes userIdBytes = userIdToBytes(entity.getUserId());
+    Bytes publicKeyBytes = new Bytes(entity.getPublicKey());
+
+    return ImmutableCredentialRecord.builder().credentialId(credentialIdBytes)
+        .credentialType(PublicKeyCredentialType.PUBLIC_KEY)
+        .publicKey(new ImmutablePublicKeyCose(publicKeyBytes.getBytes()))
+        .userEntityUserId(userIdBytes).signatureCount(entity.getCount())
+        .attestationObject(new Bytes(entity.getAttestationObject())).build();
+
   }
 
   private PublicKeyCredentialUserEntity toUserEntity(UserEntity user) {
-    return ImmutablePublicKeyCredentialUserEntity.builder()
-        .id(new Bytes(String.valueOf(user.getId()).getBytes())).name(user.getName())
-        .displayName(user.getName()).build();
+    return ImmutablePublicKeyCredentialUserEntity.builder().id(userIdToBytes(user.getId()))
+        .name(user.getName()).displayName(user.getName()).build();
+  }
+
+  private Bytes userIdToBytes(Integer userId) {
+    return new Bytes(String.valueOf(userId).getBytes(StandardCharsets.UTF_8));
+  }
+
+  private Integer bytesToUserId(Bytes bytes) {
+    String idStr = new String(bytes.getBytes(), StandardCharsets.UTF_8);
+    return Integer.parseInt(idStr);
   }
 
 }
