@@ -21,10 +21,11 @@ class ArchitectureTest {
   }
 
   @ArchTest
-  static final ArchRule layer_dependencies_are_respected = layeredArchitecture()
-      .consideringAllDependencies().layer("Controller").definedBy("..controller..").layer("Service")
-      .definedBy("..service..").layer("Repository").definedBy("..repository..").layer("Runner")
-      .definedBy("..runner..").whereLayer("Controller").mayNotBeAccessedByAnyLayer()
-      .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller", "Runner")
-      .whereLayer("Repository").mayOnlyBeAccessedByLayers("Service");
+  static final ArchRule layer_dependencies_are_respected =
+      layeredArchitecture().consideringAllDependencies().layer("Controller")
+          .definedBy("..controller..").layer("Service").definedBy("..service..").layer("Repository")
+          .definedBy("..repository..").layer("Runner").definedBy("..runner..").layer("Security")
+          .definedBy("..security..").whereLayer("Controller").mayNotBeAccessedByAnyLayer()
+          .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller", "Runner", "Security")
+          .whereLayer("Repository").mayOnlyBeAccessedByLayers("Service");
 }
