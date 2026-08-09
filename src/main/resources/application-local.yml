@@ -15,3 +15,8 @@ spring:
     vector-store:
       mariadb:
         initialize-schema: false
+
+webauthn:
+  rp-name: "HMS App (Local)"
+  rp-id: "localhost"
+  allowed-origins: "http://localhost:8080"

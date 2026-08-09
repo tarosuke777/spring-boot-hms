@@ -18,3 +18,7 @@ spring:
       mariadb:
         initialize-schema: true
 
+webauthn:
+  rp-name: "HMS App"
+  rp-id: "192.168.10.10"
+  allowed-origins: "https://192.168.10.10"

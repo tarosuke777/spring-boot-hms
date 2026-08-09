@@ -1,6 +1,7 @@
 package com.tarosuke777.hms.config;
 
 import com.tarosuke777.hms.enums.Role;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+  @Value("${webauthn.rp-name}")
+  private String rpName;
+
+  @Value("${webauthn.rp-id}")
+  private String rpId;
+
+  @Value("${webauthn.allowed-origins}")
+  private String allowedOrigins;
 
   @Bean
   @Order(3)
@@ -36,10 +46,16 @@ public class SecurityConfig {
 
     http.logout(logout -> logout.logoutSuccessUrl("/login"));
 
+    http.webAuthn(webAuthn -> webAuthn.rpName(rpName) // ユーザーのデバイスに表示されるアプリ名
+        .rpId(rpId) // ドメイン名
+        .allowedOrigins(allowedOrigins) // アクセスを許可するオリジン
+    );
+
     http.authorizeHttpRequests(
         (authz) -> authz.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-            .permitAll().requestMatchers("/user/signup").permitAll().requestMatchers("/user/**")
-            .hasRole(Role.ADMIN.name()).anyRequest().authenticated());
+            .permitAll().requestMatchers("/user/signup").permitAll()
+            .requestMatchers("/webauthn/**", "/login/webauthn/**").permitAll()
+            .requestMatchers("/user/**").hasRole(Role.ADMIN.name()).anyRequest().authenticated());
 
     return http.build();
   }
