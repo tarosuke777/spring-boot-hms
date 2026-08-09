@@ -164,9 +164,6 @@
         </div>
       </div>
 
-      <!-- WebAuthnヘルパーライブラリ (CDN) -->
-      <script src="https://cdn.jsdelivr.net/npm/@github/webauthn-json@2.1.1/dist/browser-global/webauthn-json.browser-global.min.js"></script>
-
       <!-- パスキー登録処理のJS -->
       <script>
         document
@@ -174,15 +171,6 @@
           .addEventListener("click", async () => {
             const statusMsg = document.getElementById("passkey-status-msg");
             statusMsg.style.display = "none";
-
-            // ライブラリの参照（webauthnJSON または window.WebAuthnJson を取得）
-            const webauthnLib = window.webauthnJSON || window.WebAuthnJson;
-            if (!webauthnLib) {
-              alert(
-                "WebAuthn ライブラリの読み込みに失敗しました。ページを再読み込みしてください。"
-              );
-              return;
-            }
 
             // CSRFトークンの取得
             const token = document
@@ -212,9 +200,14 @@
               const options = await optionsRes.json();
 
               // 2. ブラウザで TouchID / FaceID 等の生成プロンプトを起動
-              const credential = await webauthnLib.create({
-                publicKey: options,
+              const credential = await navigator.credentials.create({
+                publicKey:
+                  PublicKeyCredential.parseCreationOptionsFromJSON(options),
               });
+
+              if (!credential) {
+                throw new Error("クレデンシャルの生成に失敗しました");
+              }
 
               // 3. 公開鍵情報をサーバーへ送信して保存（WebAuthnService.save が呼ばれます）
               const regRes = await fetch("/hms/webauthn/register", {
@@ -222,7 +215,7 @@
                 headers: headers,
                 body: JSON.stringify({
                   publicKey: {
-                    credential: credential,
+                    credential: credential.toJSON(),
                     label: "My Key", // 任意の識別用ラベル（省略可能）
                   },
                 }),

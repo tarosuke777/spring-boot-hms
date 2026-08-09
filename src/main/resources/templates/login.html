@@ -67,24 +67,12 @@
         </div>
       </div>
 
-      <!-- パスキー操作用のWebAuthnヘルパーライブラリ (CDN) -->
-      <script src="https://cdn.jsdelivr.net/npm/@github/webauthn-json@2.1.1/dist/browser-global/webauthn-json.browser-global.min.js"></script>
-
       <script>
         document
           .getElementById("passkey-login-btn")
           .addEventListener("click", async () => {
             const errorElement = document.getElementById("passkey-error");
             errorElement.style.display = "none";
-
-            // ライブラリの参照（webauthnJSON または window.WebAuthnJson を取得）
-            const webauthnLib = window.webauthnJSON || window.WebAuthnJson;
-            if (!webauthnLib) {
-              alert(
-                "WebAuthn ライブラリの読み込みに失敗しました。ページを再読み込みしてください。"
-              );
-              return;
-            }
 
             // CSRFトークンの取得
             const token = document
@@ -119,15 +107,20 @@
               const options = await optionsRes.json();
 
               // 2. ブラウザの Passkey 認証プロンプトを表示
-              const credential = await webauthnLib.get({
-                publicKey: options,
+              const credential = await navigator.credentials.get({
+                publicKey:
+                  PublicKeyCredential.parseRequestOptionsFromJSON(options),
               });
+
+              if (!credential) {
+                throw new Error("クレデンシャルの取得に失敗しました");
+              }
 
               // 3. 認証結果を Spring Security へ送信
               const loginRes = await fetch("/hms/login/webauthn", {
                 method: "POST",
                 headers: headers,
-                body: JSON.stringify(credential),
+                body: JSON.stringify(credential.toJSON()),
               });
 
               if (loginRes.ok) {
