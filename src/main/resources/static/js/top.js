@@ -1,6 +1,10 @@
 document
   .getElementById("passkey-register-btn")
-  .addEventListener("click", async () => {
+  .addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    const optionsUrl = btn.dataset.optionsUrl;
+    const registerUrl = btn.dataset.registerUrl;
+
     const statusMsg = document.getElementById("passkey-status-msg");
     statusMsg.style.display = "none";
 
@@ -21,7 +25,7 @@ document
 
     try {
       // 1. チャレンジ（登録用Options）をサーバーから取得
-      const optionsRes = await fetch("/hms/webauthn/register/options", {
+      const optionsRes = await fetch(optionsUrl, {
         method: "POST",
         headers: headers,
       });
@@ -41,7 +45,7 @@ document
       }
 
       // 3. 公開鍵情報をサーバーへ送信して保存（WebAuthnService.save が呼ばれます）
-      const regRes = await fetch("/hms/webauthn/register", {
+      const regRes = await fetch(registerUrl, {
         method: "POST",
         headers: headers,
         body: JSON.stringify({

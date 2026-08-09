@@ -1,6 +1,11 @@
 document
   .getElementById("passkey-login-btn")
-  .addEventListener("click", async () => {
+  .addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    const optionsUrl = btn.dataset.optionsUrl;
+    const loginUrl = btn.dataset.loginUrl;
+    const redirectUrl = btn.dataset.redirectUrl;
+
     const errorElement = document.getElementById("passkey-error");
     errorElement.style.display = "none";
 
@@ -21,7 +26,7 @@ document
 
     try {
       // 1. チャレンジ（Options）をサーバーから取得
-      const optionsRes = await fetch("/hms/webauthn/authenticate/options", {
+      const optionsRes = await fetch(optionsUrl, {
         method: "POST",
         headers: headers,
       });
@@ -43,7 +48,7 @@ document
       }
 
       // 3. 認証結果を Spring Security へ送信
-      const loginRes = await fetch("/hms/login/webauthn", {
+      const loginRes = await fetch(loginUrl, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(credential.toJSON()),
@@ -51,7 +56,7 @@ document
 
       if (loginRes.ok) {
         // ログイン成功時に /top へリダイレクト（SecurityConfigで指定した先）
-        window.location.href = "/hms/top";
+        window.location.href = redirectUrl;
       } else {
         errorElement.innerText = "パスキー認証に失敗しました。";
         errorElement.style.display = "block";

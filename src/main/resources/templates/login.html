@@ -60,6 +60,9 @@
                 type="button"
                 id="passkey-login-btn"
                 class="btn btn-outline-dark w-100"
+                th:data-options-url="@{/webauthn/authenticate/options}"
+                th:data-login-url="@{/login/webauthn}"
+                th:data-redirect-url="@{/top}"
               >
                 <i class="bi bi-shield-lock"></i> パスキーでログイン
               </button>
