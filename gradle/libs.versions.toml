@@ -21,7 +21,7 @@ jquery-ui = "1.14.1"
 archunit = "1.4.1"
 playwright = "1.61.0"
 errorprone-core = "2.50.0"
-webauthn4j = "0.28.5.RELEASE"
+webauthn4j = "0.29.7.RELEASE"
 
 [libraries]
 # --- Spring AI & AWS BOMs ---
