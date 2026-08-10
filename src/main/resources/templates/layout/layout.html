@@ -11,6 +11,10 @@
       content="width=device-width,initial-scale=1,shrink-to-fit=no"
     />
 
+    <!-- CSRFトークン（全画面で共通利用） -->
+    <meta th:name="_csrf" th:content="${_csrf.token}" />
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}" />
+
     <link
       rel="stylesheet"
       th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"

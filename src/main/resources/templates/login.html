@@ -6,12 +6,10 @@
 >
   <head>
     <th:block layout:fragment="page-scripts">
-      <script type="module" th:src="@{/js/login.js}"></script>
+      <script type="module" th:src="@{/js/passkey/index.js}"></script>
     </th:block>
 
     <title>Login</title>
-    <meta name="_csrf" th:content="${_csrf.token}" />
-    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
   </head>
 
   <body>

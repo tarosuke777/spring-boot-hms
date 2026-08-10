@@ -6,13 +6,10 @@
 >
   <head>
     <th:block layout:fragment="page-scripts">
-      <script type="module" th:src="@{/js/top.js}"></script>
+      <script type="module" th:src="@{/js/passkey/index.js}"></script>
     </th:block>
 
     <title>Top</title>
-    <!-- CSRFトークンをJavaScriptから参照するための meta タグ -->
-    <meta th:name="_csrf" th:content="${_csrf.token}" />
-    <meta th:name="_csrf_header" th:content="${_csrf.headerName}" />
   </head>
 
   <body>
