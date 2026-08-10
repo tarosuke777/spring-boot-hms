@@ -20,5 +20,5 @@ spring:
 
 webauthn:
   rp-name: "HMS App"
-  rp-id: "192.168.10.10"
-  allowed-origins: "https://192.168.10.10"
+  rp-id: "hms.home.arpa"
+  allowed-origins: "https://hms.home.arpa"
