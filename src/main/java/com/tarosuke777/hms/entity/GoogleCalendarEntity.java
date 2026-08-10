@@ -1,0 +1,62 @@
+package com.tarosuke777.hms.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@Entity
+@Table(name = "google_calendar")
+@EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class GoogleCalendarEntity {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
+
+  @Column(name = "calendar_id", nullable = false, length = 255)
+  private String calendarId;
+
+  @Column(length = 50)
+  private String name;
+
+  @Column(length = 7)
+  private String color;
+
+  @CreatedDate
+  @Column(updatable = false, nullable = false)
+  private LocalDateTime createdAt;
+
+  @LastModifiedDate
+  @Column(nullable = false)
+  private LocalDateTime updatedAt;
+
+  @CreatedBy
+  @Column(updatable = false, nullable = false)
+  private Integer createdBy;
+
+  @LastModifiedBy
+  @Column(nullable = false)
+  private Integer updatedBy;
+
+  @Version
+  private Integer version;
+}

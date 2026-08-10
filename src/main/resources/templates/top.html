@@ -140,6 +140,60 @@
           </div>
         </div>
       </div>
+
+      <!-- ★ 追加：Googleカレンダーカード -->
+      <div class="card mb-4 shadow-sm">
+        <div
+          class="card-header bg-dark text-white d-flex justify-content-between align-items-center"
+        >
+          <h2 class="h5 mb-0">📅 Googleカレンダー</h2>
+          <div>
+            <!-- Googleカレンダー本体を別タブで開くボタン -->
+            <a
+              href="https://calendar.google.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-sm btn-outline-light me-1"
+            >
+              Googleカレンダーで編集
+            </a>
+            <!-- カレンダーID設定画面へのリンク（※パスは適宜調整してください） -->
+            <a
+              th:href="@{/google-calendar/list}"
+              class="btn btn-sm btn-outline-light"
+            >
+              設定
+            </a>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <!-- カレンダーURLが存在する場合 -->
+          <div th:if="${!#strings.isEmpty(googleCalendarUrl)}">
+            <iframe
+              th:src="${googleCalendarUrl}"
+              style="border: 0; border-radius: 0 0 0.375rem 0.375rem"
+              width="100%"
+              height="600"
+              frameborder="0"
+              scrolling="no"
+            ></iframe>
+          </div>
+
+          <!-- カレンダーURLが存在しない（未登録）の場合 -->
+          <div
+            th:if="${#strings.isEmpty(googleCalendarUrl)}"
+            class="text-center py-5"
+          >
+            <p class="text-muted mb-3">
+              表示する Googleカレンダー が登録されていません。
+            </p>
+            <a th:href="@{/google-calendar/list}" class="btn btn-dark">
+              ＋ カレンダーIDを設定する
+            </a>
+          </div>
+        </div>
+      </div>
+
       <!-- ★ 追加：セキュリティ設定（パスキー登録）カード -->
       <div class="card mb-4 shadow-sm border-secondary">
         <div class="card-header bg-secondary text-white">
