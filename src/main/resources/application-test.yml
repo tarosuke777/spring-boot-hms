@@ -25,3 +25,8 @@ logging:
         orm:
           jdbc:
             bind: TRACE
+
+webauthn:
+  rp-name: "HMS App (Test)"
+  rp-id: "Test RP ID"
+  allowed-origins: "http://localhost:8080"

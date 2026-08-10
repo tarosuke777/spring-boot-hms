@@ -29,3 +29,16 @@ server:
     context-path: /hms
     session:
       timeout: 8h
+
+# logging:
+#   level:
+#     # Spring Security の内部処理・認証・フィルターログ
+#     org.springframework.security: DEBUG
+#     # HTTPリクエストの受け渡しの詳細ログ
+#     org.springframework.web: DEBUG
+#     # WebAuthn（パスキー）関連処理に絞ったログ
+#     org.springframework.security.web.webauthn: TRACE
+#     # Hibernate SQLのプレースホルダー(?)に入るパラメータ値を出力
+#     org.hibernate.orm.jdbc.bind: TRACE
+#     # 独自サービス（WebAuthnServiceのlog.info出力用）
+#     com.tarosuke777.hms: DEBUG

@@ -5,6 +5,10 @@
   layout:decorate="~{layout/layout}"
 >
   <head>
+    <th:block layout:fragment="page-scripts">
+      <script type="module" th:src="@{/js/passkey/index.js}"></script>
+    </th:block>
+
     <title>Login</title>
   </head>
 
@@ -40,6 +44,28 @@
                 <input type="submit" value="login" class="btn btn-dark" />
               </div>
             </form>
+
+            <hr class="my-4" />
+
+            <div
+              id="passkey-error"
+              class="alert alert-danger mb-3"
+              style="display: none"
+            ></div>
+
+            <div class="mb-3">
+              <button
+                type="button"
+                id="passkey-login-btn"
+                class="btn btn-outline-dark w-100"
+                th:data-options-url="@{/webauthn/authenticate/options}"
+                th:data-login-url="@{/login/webauthn}"
+                th:data-redirect-url="@{/top}"
+              >
+                <i class="bi bi-shield-lock"></i> パスキーでログイン
+              </button>
+            </div>
+
             <a th:href="@{/user/signup}">SignUp</a>
           </div>
         </div>

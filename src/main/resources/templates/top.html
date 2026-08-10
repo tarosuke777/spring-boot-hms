@@ -5,6 +5,10 @@
   layout:decorate="~{layout/layout}"
 >
   <head>
+    <th:block layout:fragment="page-scripts">
+      <script type="module" th:src="@{/js/passkey/index.js}"></script>
+    </th:block>
+
     <title>Top</title>
   </head>
 
@@ -134,6 +138,32 @@
               ＋ 本日の TODO を新規登録する
             </a>
           </div>
+        </div>
+      </div>
+      <!-- ★ 追加：セキュリティ設定（パスキー登録）カード -->
+      <div class="card mb-4 shadow-sm border-secondary">
+        <div class="card-header bg-secondary text-white">
+          <h2 class="h5 mb-0">🔑 パスキー（生体認証）設定</h2>
+        </div>
+        <div class="card-body">
+          <p class="card-text text-muted small mb-3">
+            この端末（Touch ID / Face ID / Windows Hello
+            など）をパスキーとして登録すると、次回からパスワード入力なしでログインできます。
+          </p>
+          <div
+            id="passkey-status-msg"
+            class="alert alert-info py-2"
+            style="display: none"
+          ></div>
+          <button
+            type="button"
+            id="passkey-register-btn"
+            class="btn btn-outline-dark"
+            th:data-options-url="@{/webauthn/register/options}"
+            th:data-register-url="@{/webauthn/register}"
+          >
+            ＋ この端末をパスキーに登録する
+          </button>
         </div>
       </div>
     </div>
