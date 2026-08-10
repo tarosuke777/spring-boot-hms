@@ -58,7 +58,7 @@ class UserFlowE2ETest {
   @Test
   void testLoginSuccess() {
     // 起動したSpringBootのURLへ遷移
-    String baseUrl = "http://localhost:" + port + "/hms";
+    String baseUrl = "http://localhost:" + port;
     page.navigate(baseUrl + "/login");
 
     // Thymeleafの入力フォーム（name属性やid属性で指定）に値を入力
