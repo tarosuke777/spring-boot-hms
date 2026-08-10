@@ -3,6 +3,7 @@ package com.tarosuke777.hms.controller;
 import com.tarosuke777.hms.form.DiaryForm;
 import com.tarosuke777.hms.security.LoginUser;
 import com.tarosuke777.hms.service.DiaryService;
+import com.tarosuke777.hms.service.GoogleCalendarService;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TopController {
 
   private final DiaryService diaryService;
+  private final GoogleCalendarService googleCalendarService;
 
   /**
    * TOP（ダッシュボード）画面を表示
@@ -29,6 +31,9 @@ public class TopController {
 
     model.addAttribute("today", today);
     model.addAttribute("todayDiary", todayDiary);
+
+    String embedUrl = googleCalendarService.getEmbedUrl(user.getId());
+    model.addAttribute("googleCalendarUrl", embedUrl);
 
     return "top";
   }

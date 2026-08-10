@@ -1,0 +1,11 @@
+CREATE TABLE google_calendar (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    calendar_id VARCHAR(255) NOT NULL,
+    name VARCHAR(50),
+    color VARCHAR(7),
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    created_by INT NOT NULL DEFAULT 0,
+    updated_by INT NOT NULL DEFAULT 0,
+    version INT NOT NULL DEFAULT 0
+);
