@@ -4,11 +4,10 @@ import com.tarosuke777.hms.entity.UserEntity;
 import com.tarosuke777.hms.entity.WebAuthnCredentialEntity;
 import com.tarosuke777.hms.repository.UserRepository;
 import com.tarosuke777.hms.repository.WebAuthnCredentialRepository;
-
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.web.webauthn.api.Bytes;
 import org.springframework.security.web.webauthn.api.CredentialRecord;
 import org.springframework.security.web.webauthn.api.ImmutableCredentialRecord;
@@ -21,47 +20,38 @@ import org.springframework.security.web.webauthn.management.UserCredentialReposi
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class WebAuthnService
     implements PublicKeyCredentialUserEntityRepository, UserCredentialRepository {
 
   private final UserRepository userRepository;
   private final WebAuthnCredentialRepository credentialRepository;
 
-  public WebAuthnService(UserRepository userRepository,
-      WebAuthnCredentialRepository credentialRepository) {
-    this.userRepository = userRepository;
-    this.credentialRepository = credentialRepository;
-  }
-
   // --- UserCredentialRepository の実装 ---
 
   @Override
   public CredentialRecord findByCredentialId(Bytes credentialId) {
-
-    String searchKey = credentialId.toBase64UrlString();
-    return credentialRepository.findByCredentialId(searchKey).map(this::toUserCredential)
-        .orElse(null);
+    return credentialRepository.findByCredentialId(credentialIdToString(credentialId))
+        .map(this::toUserCredential).orElse(null);
   }
 
   @Override
   public List<CredentialRecord> findByUserId(Bytes userId) {
-    int id = bytesToUserId(userId);
-    return credentialRepository.findByUserId(id).stream().map(this::toUserCredential)
-        .collect(Collectors.toList());
+    return credentialRepository.findByUserId(bytesToUserId(userId)).stream()
+        .map(this::toUserCredential).collect(Collectors.toList());
   }
 
   @Override
   public void save(CredentialRecord credential) {
 
-    String credentialIdStr = credential.getCredentialId().toBase64UrlString();
+    String credentialIdStr = credentialIdToString(credential.getCredentialId());
 
     WebAuthnCredentialEntity entity = credentialRepository.findByCredentialId(credentialIdStr)
         .orElseGet(WebAuthnCredentialEntity::new);
 
     entity.setUserId(bytesToUserId(credential.getUserEntityUserId()));
-    entity.setCredentialId(credential.getCredentialId().toBase64UrlString());
+    entity.setCredentialId(credentialIdStr);
     entity.setPublicKey(credential.getPublicKey().getBytes());
     entity.setCount(credential.getSignatureCount());
     entity.setAttestationObject(credential.getAttestationObject().getBytes());
@@ -72,7 +62,7 @@ public class WebAuthnService
   @Override
   @Transactional
   public void delete(Bytes credentialId) {
-    credentialRepository.deleteByCredentialId(credentialId.toBase64UrlString());
+    credentialRepository.deleteByCredentialId(credentialIdToString(credentialId));
   }
 
   // --- PublicKeyCredentialUserEntityRepository の実装 ---
@@ -84,8 +74,7 @@ public class WebAuthnService
 
   @Override
   public PublicKeyCredentialUserEntity findById(Bytes userId) {
-    int id = bytesToUserId(userId);
-    return userRepository.findById(id).map(this::toUserEntity).orElse(null);
+    return userRepository.findById(bytesToUserId(userId)).map(this::toUserEntity).orElse(null);
   }
 
   @Override
@@ -95,6 +84,10 @@ public class WebAuthnService
 
 
   // --- 変換ヘルパーメソッド ---
+
+  private String credentialIdToString(Bytes credentialId) {
+    return credentialId.toBase64UrlString();
+  }
 
   private CredentialRecord toUserCredential(WebAuthnCredentialEntity entity) {
 
