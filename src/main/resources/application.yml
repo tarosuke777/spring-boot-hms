@@ -46,12 +46,12 @@ app:
   base-domain: home.arpa
 
   services:
-    chat-url: http://www.${app.base-domain}/hc/
-    blog-url: http://www.${app.base-domain}/hb/
-    videos-url: http://www.${app.base-domain}/hv/videos/
-    books-url: http://www.${app.base-domain}/hv/books/
-    jenkins-url: http://www.${app.base-domain}/jenkins/
-    grafana-url: http://www.${app.base-domain}/grafana/
+    chat-url: https://www.${app.base-domain}/hc/
+    blog-url: https://www.${app.base-domain}/hb/
+    videos-url: https://www.${app.base-domain}/hv/videos/
+    books-url: https://www.${app.base-domain}/hv/books/
+    jenkins-url: https://www.${app.base-domain}/jenkins/
+    grafana-url: https://www.${app.base-domain}/grafana/
 
 jwt:
   access-token-expiration-ms: 86400000 # 1日 (ミリ秒) 
