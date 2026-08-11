@@ -1,6 +1,5 @@
-package com.tarosuke777.hms.config;
+package com.tarosuke777.hms.security;
 
-import com.tarosuke777.hms.security.LoginUser;
 import com.tarosuke777.hms.service.UserDetailServiceImpl;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -39,9 +38,10 @@ public class AuditorAwareImpl implements AuditorAware<Integer> {
 
           // WebAuthn認証の場合
           if (principal instanceof PublicKeyCredentialUserEntity userEntity) {
-            LoginUser user =
-                (LoginUser) userDetailsService.loadUserByUsername(userEntity.getName());
-            return user.getId();
+            var loadedUser = userDetailsService.loadUserByUsername(userEntity.getName());
+            if (loadedUser instanceof LoginUser user) {
+              return user.getId();
+            }
           }
 
           // 「ログインしていない」または「匿名ユーザー」の状態
