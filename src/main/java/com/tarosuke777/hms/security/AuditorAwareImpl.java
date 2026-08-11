@@ -1,8 +1,9 @@
 package com.tarosuke777.hms.security;
 
-import com.tarosuke777.hms.service.UserDetailServiceImpl;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
@@ -11,11 +12,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.webauthn.api.PublicKeyCredentialUserEntity;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AuditorAwareImpl implements AuditorAware<Integer> {
 
-  private final UserDetailServiceImpl userDetailsService;
+  // private final UserDetailServiceImpl userDetailsService;
 
   @Override
   @NonNull
@@ -36,12 +38,10 @@ public class AuditorAwareImpl implements AuditorAware<Integer> {
             return user.getId();
           }
 
-          // WebAuthn認証の場合
+          // // WebAuthn認証の場合
           if (principal instanceof PublicKeyCredentialUserEntity userEntity) {
-            var loadedUser = userDetailsService.loadUserByUsername(userEntity.getName());
-            if (loadedUser instanceof LoginUser user) {
-              return user.getId();
-            }
+            String idStr = new String(userEntity.getId().getBytes(), StandardCharsets.UTF_8);
+            return Integer.parseInt(idStr);
           }
 
           // 「ログインしていない」または「匿名ユーザー」の状態
