@@ -20,3 +20,7 @@ webauthn:
   rp-name: "HMS App (Local)"
   rp-id: "localhost"
   allowed-origins: "http://localhost:8080"
+
+jwt:
+  # 32バイト以上の固定ダミーキー（HS256要件を満たすもの）
+  secret: "local-dev-dummy-secret-key-must-be-at-least-32-chars-long"

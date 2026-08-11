@@ -22,6 +22,8 @@ archunit = "1.4.1"
 playwright = "1.61.0"
 errorprone-core = "2.50.0"
 webauthn4j = "0.29.7.RELEASE"
+jjwt = "0.13.0"
+springdoc-openapi = "2.8.17"
 
 [libraries]
 # --- Spring AI & AWS BOMs ---
@@ -52,6 +54,11 @@ webjars-bootstrap = { group = "org.webjars", name = "bootstrap", version.ref = "
 webjars-jquery = { group = "org.webjars", name = "jquery", version.ref = "jquery" }
 webjars-jquery-ui = { group = "org.webjars", name = "jquery-ui", version.ref = "jquery-ui" }
 
+# --- JWT ---
+jjwt-api = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { group = "io.jsonwebtoken", name = "jjwt-jackson", version.ref = "jjwt" }
+
 # --- Persistence & Migration ---
 flyway-core = { group = "org.flywaydb", name = "flyway-core" }
 flyway-mysql = { group = "org.flywaydb", name = "flyway-mysql" }
@@ -75,6 +82,9 @@ playwright = { group = "com.microsoft.playwright", name = "playwright", version.
 
 # --- Static Analysis ---
 errorprone-core = { group = "com.google.errorprone", name = "error_prone_core", version.ref = "errorprone-core" }
+
+# --- API Documentation ---
+springdoc-openapi-starter-webmvc-ui = { group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

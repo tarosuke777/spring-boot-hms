@@ -52,3 +52,7 @@ app:
     books-url: http://www.${app.base-domain}/hv/books/
     jenkins-url: http://www.${app.base-domain}/jenkins/
     grafana-url: http://www.${app.base-domain}/grafana/
+
+jwt:
+  access-token-expiration-ms: 86400000 # 1日 (ミリ秒) 
+  refresh-token-expiration-ms: 2592000000 # 30日 (ミリ秒)
