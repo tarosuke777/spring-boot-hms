@@ -54,7 +54,5 @@ app:
     grafana-url: http://www.${app.base-domain}/grafana/
 
 jwt:
-  # 256bit(32バイト)以上のランダムな英数字を設定
-  secret: "your-very-strong-and-long-secret-key-must-be-at-least-32-chars-long"
-  access-token-expiration-ms: 86400000 # 1日 (ミリ秒) ※個人利用なら長めでもOK
+  access-token-expiration-ms: 86400000 # 1日 (ミリ秒) 
   refresh-token-expiration-ms: 2592000000 # 30日 (ミリ秒)
