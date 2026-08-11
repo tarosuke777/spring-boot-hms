@@ -41,3 +41,14 @@ server:
 #     org.hibernate.orm.jdbc.bind: TRACE
 #     # 独自サービス（WebAuthnServiceのlog.info出力用）
 #     com.tarosuke777.hms: DEBUG
+
+app:
+  base-domain: home.arpa
+
+  services:
+    chat-url: http://www.${app.base-domain}/hc/
+    blog-url: http://www.${app.base-domain}/hb/
+    videos-url: http://www.${app.base-domain}/hv/videos/
+    books-url: http://www.${app.base-domain}/hv/books/
+    jenkins-url: http://www.${app.base-domain}/jenkins/
+    grafana-url: http://www.${app.base-domain}/grafana/

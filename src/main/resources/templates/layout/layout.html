@@ -130,7 +130,8 @@
         type="button"
         id="chatFloatingBtn"
         class="btn btn-primary rounded-circle shadow-lg"
-        onclick="openChatModal()"
+        th:data-chat-url="${@appProperties.services['chat-url']}"
+        onclick="openChatModal(this)"
         title="Chatを開く"
       >
         💬
@@ -151,7 +152,7 @@
             <button
               type="button"
               class="btn-close btn-close-white"
-              onclick="closeChatModal()"
+              onclick="closeChatModal(this)"
               aria-label="Close"
             ></button>
           </div>
@@ -248,11 +249,13 @@
 
       <!-- チャット用JavaScript -->
       <script>
-        function openChatModal() {
+        function openChatModal(e) {
           const iframe = document.getElementById("chatIframe");
+
+          const url = e.dataset.chatUrl;
           // 未読み込みの場合のみURLをセット（2回目以降は表示をスムーズにするため）
           if (!iframe.src || iframe.src === window.location.href) {
-            iframe.src = "/hc/";
+            iframe.src = url;
           }
           document.getElementById("chatModal").style.display = "flex";
         }
