@@ -23,7 +23,7 @@ playwright = "1.61.0"
 errorprone-core = "2.50.0"
 webauthn4j = "0.29.7.RELEASE"
 jjwt = "0.13.0"
-springdoc-openapi = "2.8.4"
+springdoc-openapi = "2.8.17"
 
 [libraries]
 # --- Spring AI & AWS BOMs ---
