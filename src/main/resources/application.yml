@@ -63,5 +63,8 @@ springdoc:
   api-docs:
     path: /v3/api-docs
   # ここでサーバーのURLを強制指定する
-  server:
-    url: https://hms.home.arpa
+  servers:
+    - url: https://hms.home.arpa
+      description: Production server (https)
+    - url: http://hms.home.arpa
+      description: Production server (http)

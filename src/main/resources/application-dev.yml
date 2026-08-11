@@ -25,3 +25,15 @@ webauthn:
 
 jwt:
   secret: ${jwt_secret}
+
+springdoc:
+  swagger-ui:
+    # 必要であればここを調整
+  api-docs:
+    path: /v3/api-docs
+  # ここでサーバーのURLを強制指定する
+  servers:
+    - url: https://hms.home.arpa
+      description: Production server (https)
+    - url: http://hms.home.arpa
+      description: Production server (http)
