@@ -24,4 +24,4 @@ webauthn:
   allowed-origins: "https://hms.home.arpa"
 
 jwt:
-  secret: ${jwt_secret}
+  secret: ${/run/secrets/jwt_secret}
