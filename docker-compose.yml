@@ -19,7 +19,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mariadb://home-db-mariadb:3306/hms
     secrets:
       - mysql_user_password
-      - jwt_secret
+      - jwt_secret_file
     networks:
       - home_network
     restart: always
