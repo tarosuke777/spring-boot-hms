@@ -46,6 +46,11 @@ public class SecurityConfig {
   }
 
   @Bean
+  public PasswordEncoder passwordEncoder() {
+    return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+  }
+
+  @Bean
   @Order(3)
   public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
     http.securityMatcher("/api/**") // /api/ で始まるリクエストにだけ適用
@@ -83,8 +88,4 @@ public class SecurityConfig {
     return http.build();
   }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-  }
 }
