@@ -7,6 +7,59 @@
   <head>
     <th:block layout:fragment="page-scripts">
       <script type="module" th:src="@{/js/passkey/index.js}"></script>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const timeElem = document.getElementById("current-time");
+          const countdownElem = document.getElementById("day-countdown");
+          if (!timeElem || !countdownElem) return;
+
+          function updateClocks() {
+            const now = new Date();
+
+            // 1. 現在時刻の更新 (HH:mm:ss)
+            const curHours = String(now.getHours()).padStart(2, "0");
+            const curMinutes = String(now.getMinutes()).padStart(2, "0");
+            // const curSeconds = String(now.getSeconds()).padStart(2, '0');
+            // timeElem.textContent = `${curHours}:${curMinutes}:${curSeconds}`;
+            timeElem.textContent = `${curHours}:${curMinutes}`;
+
+            // 2. 残り時間の更新 (23:59:59.999 までの差分)
+            const endOfDay = new Date(
+              now.getFullYear(),
+              now.getMonth(),
+              now.getDate(),
+              23,
+              59,
+              59,
+              999
+            );
+            const diffMs = endOfDay - now;
+
+            if (diffMs <= 0) {
+              // countdownElem.textContent = '00:00:00';
+              countdownElem.textContent = "00:00";
+              return;
+            }
+
+            const remHours = String(
+              Math.floor(diffMs / (1000 * 60 * 60))
+            ).padStart(2, "0");
+            const remMinutes = String(
+              Math.floor((diffMs / (1000 * 60)) % 60)
+            ).padStart(2, "0");
+            // const remSeconds = String(
+            //   Math.floor((diffMs / 1000) % 60)
+            // ).padStart(2, '0');
+
+            // countdownElem.textContent = `${remHours}:${remMinutes}:${remSeconds}`;
+            countdownElem.textContent = `${remHours}:${remMinutes}`;
+          }
+
+          updateClocks();
+          setInterval(updateClocks, 1000);
+        });
+      </script>
     </th:block>
 
     <title>Top</title>
@@ -18,11 +71,26 @@
         class="mt-3 mb-3 border-bottom d-flex justify-content-between align-items-center"
       >
         <h1 class="h2">Dashboard</h1>
-        <span
-          class="text-muted fw-bold"
-          th:text="${#temporals.format(today, 'yyyy-MM-dd (E)')}"
-          >2026-08-03 (月)</span
-        >
+        <div class="d-flex align-items-center gap-3">
+          <!-- 残り時間 -->
+          <span class="text-muted fw-bold tabular-nums">
+            <span>残り</span>
+            <span id="day-countdown">--:--</span>
+          </span>
+
+          <!-- 日付 -->
+          <span
+            class="text-muted fw-bold"
+            th:text="${#temporals.format(today, 'yyyy-MM-dd (E)')}"
+          >
+            2026-08-11 (火)
+          </span>
+
+          <!-- 現在時刻 -->
+          <span id="current-time" class="text-muted fw-bold tabular-nums">
+            00:00
+          </span>
+        </div>
       </div>
 
       <!-- 本日のDiaryカード -->
