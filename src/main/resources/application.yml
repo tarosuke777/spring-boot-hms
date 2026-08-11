@@ -46,9 +46,9 @@ app:
   base-domain: home.arpa
 
   services:
-    chat-url: http://${app.base-domain}/hc/
-    blog-url: http://${app.base-domain}/hb/
-    videos-url: http://${app.base-domain}/hv/videos/
-    books-url: http://${app.base-domain}/hv/books/
-    jenkins-url: http://${app.base-domain}/jenkins/
-    grafana-url: http://${app.base-domain}/grafana/
+    chat-url: http://www.${app.base-domain}/hc/
+    blog-url: http://www.${app.base-domain}/hb/
+    videos-url: http://www.${app.base-domain}/hv/videos/
+    books-url: http://www.${app.base-domain}/hv/books/
+    jenkins-url: http://www.${app.base-domain}/jenkins/
+    grafana-url: http://www.${app.base-domain}/grafana/
