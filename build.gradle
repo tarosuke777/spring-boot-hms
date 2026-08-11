@@ -67,6 +67,11 @@ dependencies {
     implementation libs.webjars.jquery
     implementation libs.webjars.jquery.ui
 
+    // --- JWT ---
+    implementation libs.jjwt.api
+    runtimeOnly libs.jjwt.impl
+    runtimeOnly libs.jjwt.jackson
+
     // --- Persistence & Migration ---
     implementation libs.flyway.core
     implementation libs.flyway.mysql
@@ -100,6 +105,9 @@ dependencies {
 
     // --- Static Analysis Tools ---
     errorprone libs.errorprone.core
+
+    // --- API Documentation ---
+    implementation libs.springdoc.openapi.starter.webmvc.ui
 }
 
 // =============================================================================
