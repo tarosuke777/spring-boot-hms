@@ -56,3 +56,12 @@ app:
 jwt:
   access-token-expiration-ms: 86400000 # 1日 (ミリ秒) 
   refresh-token-expiration-ms: 2592000000 # 30日 (ミリ秒)
+
+springdoc:
+  swagger-ui:
+    # 必要であればここを調整
+  api-docs:
+    path: /v3/api-docs
+  # ここでサーバーのURLを強制指定する
+  server:
+    url: https://hms.home.arpa
