@@ -151,7 +151,8 @@
             <button
               type="button"
               class="btn-close btn-close-white"
-              onclick="closeChatModal()"
+              th:data-chat-url="${@serviceUrls.services['chat-url']}"
+              onclick="closeChatModal(this)"
               aria-label="Close"
             ></button>
           </div>
@@ -248,11 +249,13 @@
 
       <!-- チャット用JavaScript -->
       <script>
-        function openChatModal() {
+        function openChatModal(element) {
           const iframe = document.getElementById("chatIframe");
+
+          const url = element.dataset.chatUrl;
           // 未読み込みの場合のみURLをセット（2回目以降は表示をスムーズにするため）
           if (!iframe.src || iframe.src === window.location.href) {
-            iframe.src = "/hc/";
+            iframe.src = url;
           }
           document.getElementById("chatModal").style.display = "flex";
         }
