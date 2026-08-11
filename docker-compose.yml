@@ -28,7 +28,7 @@ secrets:
     file: C:\\dev\\secrets\\mysql_root_password.txt
   mysql_user_password:
     file: C:\\dev\\secrets\\mysql_hms_user_password.txt
-  jwt_secret:
+  jwt_secret_file:
     file: C:\\dev\\secrets\\hms_jwt_secret.txt
 
 networks:

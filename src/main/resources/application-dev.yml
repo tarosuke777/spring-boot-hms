@@ -17,11 +17,11 @@ spring:
     vector-store:
       mariadb:
         initialize-schema: true
-  jwt:
-    secret: ${jwt_secret}
 
 webauthn:
   rp-name: "HMS App"
   rp-id: "hms.home.arpa"
   allowed-origins: "https://hms.home.arpa"
 
+jwt:
+  secret: ${jwt_secret_file}
