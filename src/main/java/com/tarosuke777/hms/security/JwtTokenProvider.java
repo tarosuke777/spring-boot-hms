@@ -6,6 +6,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,11 +51,12 @@ public class JwtTokenProvider {
   }
 
   private String generateToken(String username, long expirationMs) {
-    Date now = new Date();
-    Date expiryDate = new Date(now.getTime() + expirationMs);
 
-    return Jwts.builder().subject(username).issuedAt(now).expiration(expiryDate).signWith(secretKey)
-        .compact();
+    Instant now = Instant.now();
+    Instant expiryDate = now.plus(expirationMs, ChronoUnit.MILLIS);
+
+    return Jwts.builder().subject(username).issuedAt(Date.from(now))
+        .expiration(Date.from(expiryDate)).signWith(secretKey).compact();
   }
 
   /**
