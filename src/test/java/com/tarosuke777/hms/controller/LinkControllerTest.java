@@ -28,6 +28,9 @@ public class LinkControllerTest {
   @Test
   void getList_ShouldReturnLinkList() throws Exception {
     mockMvc.perform(get("/link/list")).andDo(print()).andExpect(status().isOk())
-        .andExpect(view().name("link/list"));
+        .andExpect(view().name("link/list"))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("AdGuard Home")))
+        .andExpect(content()
+            .string(org.hamcrest.Matchers.containsString("https://adg.home.arpa/login.html")));
   }
 }
