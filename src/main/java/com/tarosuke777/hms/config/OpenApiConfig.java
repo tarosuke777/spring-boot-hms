@@ -9,9 +9,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
-@Profile("dev")
 @Configuration
 public class OpenApiConfig {
 
@@ -20,7 +18,8 @@ public class OpenApiConfig {
     final String securitySchemeName = "bearerAuth";
 
     return new OpenAPI()
-        .servers(List.of(new Server().url("https://hms.home.arpa").description("HTTPS")))
+        .servers(List.of(new Server().url("https://hms.home.arpa").description("HTTPS"),
+            new Server().url("http://localhost:8080").description("localhost HTTP")))
         // タイトルやバージョン情報
         .info(new Info().title("My API").version("1.0.0"))
         // 1. JWTのセキュリティスキームを定義
