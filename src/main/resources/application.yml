@@ -8,7 +8,7 @@ spring:
   flyway:
     enabled: true
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: none
   cloud:
@@ -50,9 +50,9 @@ app:
     blog-url: https://www.${app.base-domain}/hb/
     videos-url: https://www.${app.base-domain}/hv/videos/
     books-url: https://www.${app.base-domain}/hv/books/
-    jenkins-url: https://www.${app.base-domain}/jenkins/
-    grafana-url: https://www.${app.base-domain}/grafana/
-    adguardhome-url: https://adg.${app.base-domain}/login.html
+    jenkins-url: https://jnk.${app.base-domain}/
+    grafana-url: https://grf.${app.base-domain}/
+    adguardhome-url: https://adg.${app.base-domain}/
 
 jwt:
   access-token-expiration-ms: 86400000 # 1日 (ミリ秒) 
