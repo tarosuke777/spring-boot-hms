@@ -69,6 +69,7 @@ public class TrainingMenuController {
   public String update(@ModelAttribute @Validated(UpdateGroup.class) TrainingMenuForm form,
       BindingResult bindingResult, Model model, @AuthenticationPrincipal LoginUser user) {
     if (bindingResult.hasErrors()) {
+      model.addAttribute("targetAreaMap", TargetArea.getTargetAreaMap());
       return DETAIL_VIEW;
     }
     trainingMenuService.updateTrainingMenu(form, user.getId());

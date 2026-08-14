@@ -5,17 +5,11 @@
             "label": "Watch Classes",
             "type": "shell",
             "command": "./gradlew classes --continuous",
-            "presentation": {
-                "group": "groupA"
-            }
         },
         {
             "label": "Run Boot",
             "type": "shell",
             "command": "./gradlew bootRun",
-            "presentation": {
-                "group": "groupA"
-            }
         },
         {
             "label": "Start Dev Environment",
