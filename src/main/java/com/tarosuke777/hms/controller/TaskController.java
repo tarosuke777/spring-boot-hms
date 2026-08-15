@@ -1,5 +1,6 @@
 package com.tarosuke777.hms.controller;
 
+import com.tarosuke777.hms.enums.TaskCategory;
 import com.tarosuke777.hms.enums.TaskStatus;
 import com.tarosuke777.hms.form.TaskForm;
 import com.tarosuke777.hms.security.LoginUser;
@@ -37,7 +38,12 @@ public class TaskController {
       taskForm.setSearchStatus(TaskStatus.TODO);
     }
 
-    model.addAttribute("tasks", taskService.getTaskList(user.getId(), taskForm.getSearchStatus()));
+    if (taskForm.getSearchCategory() == null) {
+      taskForm.setSearchCategory(TaskCategory.IMMEDIATE);
+    }
+
+    model.addAttribute("tasks", taskService.getTaskList(user.getId(), taskForm.getSearchStatus(),
+        taskForm.getSearchCategory()));
     return LIST_VIEW;
   }
 
@@ -64,8 +70,8 @@ public class TaskController {
 
     if (bindingResult.hasErrors()) {
       // エラー時は一覧を再取得して戻る
-      model.addAttribute("tasks",
-          taskService.getTaskList(user.getId(), taskForm.getSearchStatus()));
+      model.addAttribute("tasks", taskService.getTaskList(user.getId(), taskForm.getSearchStatus(),
+          taskForm.getSearchCategory()));
       return LIST_VIEW;
     }
 
@@ -73,7 +79,9 @@ public class TaskController {
     taskService.updateTask(taskForm, user.getId());
 
     redirectAttributes.addAttribute("searchStatus", taskForm.getSearchStatus());
-
+    if (taskForm.getSearchCategory() != null) {
+      redirectAttributes.addAttribute("searchCategory", taskForm.getSearchCategory());
+    }
     return REDIRECT_LIST;
   }
 
@@ -83,7 +91,9 @@ public class TaskController {
     taskService.deleteTask(Objects.requireNonNull(taskForm.getId()), user.getId());
 
     redirectAttributes.addAttribute("searchStatus", taskForm.getSearchStatus());
-
+    if (taskForm.getSearchCategory() != null) {
+      redirectAttributes.addAttribute("searchCategory", taskForm.getSearchCategory());
+    }
     return REDIRECT_LIST;
   }
 }

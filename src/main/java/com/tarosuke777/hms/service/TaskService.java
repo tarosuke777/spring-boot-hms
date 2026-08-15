@@ -1,6 +1,7 @@
 package com.tarosuke777.hms.service;
 
 import com.tarosuke777.hms.entity.TaskEntity;
+import com.tarosuke777.hms.enums.TaskCategory;
 import com.tarosuke777.hms.enums.TaskStatus;
 import com.tarosuke777.hms.form.TaskForm;
 import com.tarosuke777.hms.mapper.TaskMapper;
@@ -19,9 +20,10 @@ public class TaskService {
   private final TaskRepository taskRepository;
   private final TaskMapper taskMapper;
 
-  public List<TaskForm> getTaskList(Integer currentUserId, TaskStatus status) {
+  public List<TaskForm> getTaskList(Integer currentUserId, TaskStatus status,
+      TaskCategory category) {
 
-    var spec = TaskSpecifications.withFilters(currentUserId, status);
+    var spec = TaskSpecifications.withFilters(currentUserId, status, category);
 
     return taskRepository.findAll(spec).stream().map(taskMapper::toForm).toList();
   }

@@ -13,6 +13,7 @@ public interface TaskMapper {
   TaskEntity toEntity(TaskForm form);
 
   @Mapping(target = "searchStatus", ignore = true)
+  @Mapping(target = "searchCategory", ignore = true)
   TaskForm toForm(TaskEntity entity);
 
   TaskEntity copy(TaskEntity entity);
