@@ -93,4 +93,12 @@ public class TrainingService {
         Map.of("2025-01-01", "チェストプレス", "2025-01-02", "ランニング", "2025-01-03", "水泳");
     return dateWithTraining.getOrDefault(date, "No training scheduled for this date");
   }
+
+  public List<TrainingForm> getLatestTrainings(Integer currentUserId, int limit) {
+    org.springframework.data.domain.Pageable pageable =
+        org.springframework.data.domain.PageRequest.of(0, limit);
+    return trainingRepository
+        .findByCreatedByOrderByTrainingDateDescTrainingIdDesc(currentUserId, pageable).stream()
+        .map(this::convertToForm).toList();
+  }
 }

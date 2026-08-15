@@ -3,6 +3,7 @@ package com.tarosuke777.hms.repository;
 import com.tarosuke777.hms.entity.TrainingEntity;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,8 @@ public interface TrainingRepository extends JpaRepository<TrainingEntity, Intege
   List<TrainingEntity> findByCreatedBy(Integer createdBy, Sort sort);
 
   boolean existsByTrainingIdAndCreatedBy(Integer trainingId, Integer createdBy);
+
+  @EntityGraph(attributePaths = {"trainingMenu"})
+  List<TrainingEntity> findByCreatedByOrderByTrainingDateDescTrainingIdDesc(Integer createdBy,
+      Pageable pageable);
 }
