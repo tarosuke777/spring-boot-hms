@@ -209,6 +209,85 @@
         </div>
       </div>
 
+      <!-- ★ 追加：直近のトレーニング状況カード -->
+      <div class="card mb-4 shadow-sm">
+        <div
+          class="card-header bg-dark text-white d-flex justify-content-between align-items-center"
+        >
+          <h2 class="h5 mb-0">💪 直近のトレーニング状況</h2>
+          <div>
+            <a th:href="@{/training/list}" class="btn btn-sm btn-outline-light">
+              トレーニング一覧・登録
+            </a>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- 記録が存在する場合 -->
+          <div th:if="${latestTrainings != null and !latestTrainings.empty}">
+            <div class="table-responsive">
+              <table class="table table-sm table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>実施日</th>
+                    <th>部位 ID</th>
+                    <th>メニュー ID</th>
+                    <th class="text-end">重量 / 回数 / セット</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="training : ${latestTrainings}">
+                    <td class="fw-bold" th:text="${training.trainingDate}">
+                      2026-08-12
+                    </td>
+                    <td>
+                      <span
+                        class="badge bg-secondary"
+                        th:text="${training.trainingAreaId != null ? trainingAreaMap.get(training.trainingAreaId) : '-'}"
+                      >
+                      </span>
+                    </td>
+
+                    <!-- メニューIDを日本語名称に変換 -->
+                    <td
+                      th:text="${training.trainingMenuId != null ? trainingMenuMap.get(training.trainingMenuId) : '-'}"
+                    ></td>
+                    <td class="text-end text-muted small">
+                      <span
+                        th:text="${training.weight != null ? training.weight + 'kg' : '-'}"
+                        >-</span
+                      >
+                      /
+                      <span
+                        th:text="${training.reps != null ? training.reps + '回' : '-'}"
+                        >-</span
+                      >
+                      /
+                      <span
+                        th:text="${training.sets != null ? training.sets + 'セット' : '-'}"
+                        >-</span
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 記録が存在しない場合 -->
+          <div
+            th:if="${latestTrainings == null or latestTrainings.empty}"
+            class="text-center py-3"
+          >
+            <p class="text-muted mb-2 small">
+              直近のトレーニング記録はまだありません。
+            </p>
+            <a th:href="@{/training/register}" class="btn btn-sm btn-dark">
+              ＋ トレーニングを新規登録する
+            </a>
+          </div>
+        </div>
+      </div>
+
       <!-- ★ 追加：Googleカレンダーカード -->
       <div class="card mb-4 shadow-sm">
         <div
