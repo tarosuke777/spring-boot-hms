@@ -1,6 +1,5 @@
 package com.tarosuke777.hms.controller;
 
-import com.tarosuke777.hms.enums.TaskCategory;
 import com.tarosuke777.hms.enums.TaskStatus;
 import com.tarosuke777.hms.form.TaskForm;
 import com.tarosuke777.hms.security.LoginUser;
@@ -36,10 +35,6 @@ public class TaskController {
 
     if (taskForm.getSearchStatus() == null) {
       taskForm.setSearchStatus(TaskStatus.TODO);
-    }
-
-    if (taskForm.getSearchCategory() == null) {
-      taskForm.setSearchCategory(TaskCategory.IMMEDIATE);
     }
 
     model.addAttribute("tasks", taskService.getTaskList(user.getId(), taskForm.getSearchStatus(),
