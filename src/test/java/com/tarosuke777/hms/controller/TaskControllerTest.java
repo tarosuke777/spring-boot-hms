@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.tarosuke777.hms.entity.TaskEntity;
+import com.tarosuke777.hms.enums.TaskCategory;
 import com.tarosuke777.hms.enums.TaskStatus;
 import com.tarosuke777.hms.form.TaskForm;
 import com.tarosuke777.hms.mapper.TaskMapper;
@@ -85,10 +86,12 @@ public class TaskControllerTest {
   void register_WithValidData_ShouldRedirectToList() throws Exception {
 
     // Given
-    String taskName = "TestTaskName";
+    TaskForm form = new TaskForm();
+    form.setName("TestTaskName");
+    form.setCategory(TaskCategory.IMMEDIATE);
 
     // When & Then
-    performRegisterRequest(taskName).andExpect(status().is3xxRedirection())
+    performRegisterRequest(form).andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(LIST_URL));
 
     entityManager.flush();
@@ -96,7 +99,8 @@ public class TaskControllerTest {
 
     List<TaskEntity> tasks = taskRepository.findAll();
     TaskEntity lastTask = tasks.get(tasks.size() - 1);
-    Assertions.assertEquals(taskName, lastTask.getName());
+    Assertions.assertEquals(form.getName(), lastTask.getName());
+    Assertions.assertEquals(form.getCategory(), lastTask.getCategory());
   }
 
   @Test
@@ -106,6 +110,7 @@ public class TaskControllerTest {
     TaskEntity task = taskRepository.findAll().getFirst();
     TaskForm form = taskMapper.toForm(task);
     form.setName("UpdatedName");
+    form.setCategory(TaskCategory.IMMEDIATE);
     form.setSearchStatus(TaskStatus.TODO);
 
     // When & Then
@@ -137,6 +142,7 @@ public class TaskControllerTest {
     form.setId(currentId);
     form.setName("Try to Update");
     form.setVersion(currentVersion);
+    form.setCategory(TaskCategory.IMMEDIATE);
     form.setStatus(TaskStatus.TODO);
     form.setSearchStatus(TaskStatus.TODO);
 
@@ -176,16 +182,20 @@ public class TaskControllerTest {
         .andDo(print());
   }
 
-  private ResultActions performRegisterRequest(String name) throws Exception {
-    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
-        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
+  private ResultActions performRegisterRequest(TaskForm form) throws Exception {
+    return mockMvc
+        .perform(
+            post(REGISTER_ENDPOINT).with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", form.getName()).param("category", form.getCategory().name()))
+        .andDo(print());
   }
 
   private ResultActions performUpdateRequest(TaskForm form) throws Exception {
     return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
         .param("id", form.getId().toString()).param("name", form.getName())
         .param("version", form.getVersion().toString()).param("status", form.getStatus().name())
-        .param("searchStatus", form.getSearchStatus().name())).andDo(print());
+        .param("searchStatus", form.getSearchStatus().name())
+        .param("category", form.getCategory().name())).andDo(print());
   }
 
   private ResultActions performDeleteRequest(TaskForm form) throws Exception {

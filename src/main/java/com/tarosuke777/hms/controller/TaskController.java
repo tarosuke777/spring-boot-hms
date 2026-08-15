@@ -37,7 +37,8 @@ public class TaskController {
       taskForm.setSearchStatus(TaskStatus.TODO);
     }
 
-    model.addAttribute("tasks", taskService.getTaskList(user.getId(), taskForm.getSearchStatus()));
+    model.addAttribute("tasks", taskService.getTaskList(user.getId(), taskForm.getSearchStatus(),
+        taskForm.getSearchCategory()));
     return LIST_VIEW;
   }
 
@@ -64,8 +65,8 @@ public class TaskController {
 
     if (bindingResult.hasErrors()) {
       // エラー時は一覧を再取得して戻る
-      model.addAttribute("tasks",
-          taskService.getTaskList(user.getId(), taskForm.getSearchStatus()));
+      model.addAttribute("tasks", taskService.getTaskList(user.getId(), taskForm.getSearchStatus(),
+          taskForm.getSearchCategory()));
       return LIST_VIEW;
     }
 
@@ -73,7 +74,9 @@ public class TaskController {
     taskService.updateTask(taskForm, user.getId());
 
     redirectAttributes.addAttribute("searchStatus", taskForm.getSearchStatus());
-
+    if (taskForm.getSearchCategory() != null) {
+      redirectAttributes.addAttribute("searchCategory", taskForm.getSearchCategory());
+    }
     return REDIRECT_LIST;
   }
 
@@ -83,7 +86,9 @@ public class TaskController {
     taskService.deleteTask(Objects.requireNonNull(taskForm.getId()), user.getId());
 
     redirectAttributes.addAttribute("searchStatus", taskForm.getSearchStatus());
-
+    if (taskForm.getSearchCategory() != null) {
+      redirectAttributes.addAttribute("searchCategory", taskForm.getSearchCategory());
+    }
     return REDIRECT_LIST;
   }
 }

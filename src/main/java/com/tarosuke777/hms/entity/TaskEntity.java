@@ -1,5 +1,7 @@
 package com.tarosuke777.hms.entity;
 
+import com.tarosuke777.hms.enums.PriorityLevel;
+import com.tarosuke777.hms.enums.TaskCategory;
 import com.tarosuke777.hms.enums.TaskStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,6 +44,22 @@ public class TaskEntity implements Serializable {
 
   @Column(nullable = false)
   private TaskStatus status;
+
+  /**
+   * タブ分類（例: 今すぐやるタスク / 将来やりたいこと など）
+   */
+  @Column(nullable = false)
+  private TaskCategory category;
+
+  /**
+   * 重要度（高・低）
+   */
+  private PriorityLevel importance;
+
+  /**
+   * 緊急度（高・低）
+   */
+  private PriorityLevel urgency;
 
   @CreatedDate
   @Column(updatable = false, nullable = false)

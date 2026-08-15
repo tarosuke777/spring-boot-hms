@@ -26,6 +26,64 @@
             <div class="invalid-feedback" th:errors="*{name}"></div>
           </div>
         </div>
+
+        <div class="mb-3 row">
+          <label for="category" class="col-sm-2 col-form-label">分類</label>
+          <div class="col-sm-10">
+            <select
+              class="form-select"
+              th:field="*{category}"
+              th:errorclass="is-invalid"
+            >
+              <option value="" disabled selected>選択してください</option>
+              <option
+                th:each="cat : ${T(com.tarosuke777.hms.enums.TaskCategory).values()}"
+                th:value="${cat}"
+                th:text="${cat.label}"
+              ></option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{category}"></div>
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="importance" class="col-sm-2 col-form-label">重要度</label>
+          <div class="col-sm-10">
+            <select
+              class="form-select"
+              th:field="*{importance}"
+              th:errorclass="is-invalid"
+            >
+              <option value="">未設定</option>
+              <option
+                th:each="imp : ${T(com.tarosuke777.hms.enums.PriorityLevel).values()}"
+                th:value="${imp}"
+                th:text="${imp.label}"
+              ></option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{importance}"></div>
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="urgency" class="col-sm-2 col-form-label">緊急度</label>
+          <div class="col-sm-10">
+            <select
+              class="form-select"
+              th:field="*{urgency}"
+              th:errorclass="is-invalid"
+            >
+              <option value="">未設定</option>
+              <option
+                th:each="urg : ${T(com.tarosuke777.hms.enums.PriorityLevel).values()}"
+                th:value="${urg}"
+                th:text="${urg.label}"
+              ></option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{urgency}"></div>
+          </div>
+        </div>
+
         <div class="mb-3 row">
           <label for="note" class="col-sm-2 col-form-label">備考</label>
           <div class="col-sm-10">
