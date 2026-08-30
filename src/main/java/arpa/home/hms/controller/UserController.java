@@ -1,0 +1,81 @@
+package arpa.home.hms.controller;
+
+import arpa.home.hms.enums.Role;
+import arpa.home.hms.form.UserForm;
+import arpa.home.hms.service.UserService;
+import arpa.home.hms.validation.InsertGroup;
+import arpa.home.hms.validation.UpdateGroup;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@Slf4j
+@RequestMapping("/user")
+@RequiredArgsConstructor
+public class UserController {
+
+  private final UserService userService;
+
+  @GetMapping("/signup")
+  public String getSignup(@ModelAttribute UserForm form) {
+    return "user/signup";
+  }
+
+  @PostMapping("/signup")
+  public String signup(@ModelAttribute @Validated(InsertGroup.class) UserForm form,
+      BindingResult bindingResult, @CurrentSecurityContext SecurityContext context) {
+
+    if (bindingResult.hasErrors()) {
+      return "user/signup";
+    }
+
+    userService.registerUser(form, Role.GENERAL);
+
+    if (context.getAuthentication() != null && context.getAuthentication().isAuthenticated()) {
+      return "redirect:/user/list";
+    }
+
+    return "redirect:/login";
+  }
+
+  @GetMapping("/list")
+  public String getList(Model model) {
+    model.addAttribute("userList", userService.getUserList());
+    return "user/list";
+  }
+
+  @GetMapping("/detail/{userId}")
+  public String getDetail(UserForm form, Model model, @PathVariable("userId") Integer userId) {
+    model.addAttribute("userForm", userService.getUser(Objects.requireNonNull(userId)));
+    return "user/detail";
+  }
+
+  @PostMapping(value = "detail", params = "update")
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) UserForm form,
+      BindingResult bindingResult, Model model) {
+    if (bindingResult.hasErrors()) {
+      log.warn("Validation errors: {}", bindingResult.getAllErrors());
+      return "user/detail";
+    }
+    userService.updateUser(form);
+    return "redirect:/user/list";
+  }
+
+  @PostMapping(value = "/detail", params = "delete")
+  public String delete(UserForm form, Model model) {
+    userService.deleteUser(Objects.requireNonNull(form.getId()));
+    return "redirect:/user/list";
+  }
+}

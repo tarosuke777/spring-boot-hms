@@ -50,7 +50,7 @@
                 th:selected="${movieForm.genre == null}"
               ></option>
               <option
-                th:each="g : ${T(com.tarosuke777.hms.enums.MovieGenre).values()}"
+                th:each="g : ${T(arpa.home.hms.enums.MovieGenre).values()}"
                 th:value="${g}"
                 th:text="${g.label}"
               ></option>

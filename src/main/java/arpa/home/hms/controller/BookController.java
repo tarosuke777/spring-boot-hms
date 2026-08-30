@@ -1,0 +1,149 @@
+package arpa.home.hms.controller;
+
+import arpa.home.hms.enums.BookGenre;
+import arpa.home.hms.exception.IllegalRequestException;
+import arpa.home.hms.form.BookForm;
+import arpa.home.hms.security.LoginUser;
+import arpa.home.hms.service.AuthorService;
+import arpa.home.hms.service.BookService;
+import arpa.home.hms.validation.DeleteGroup;
+import arpa.home.hms.validation.UpdateGroup;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriComponentsBuilder;
+
+@Controller
+@Slf4j
+@RequestMapping("/book")
+@RequiredArgsConstructor
+public class BookController {
+
+  private static final String REDIRECT_LIST = "redirect:/book/list";
+  private static final String LIST_VIEW = "book/list";
+  private static final String REDIRECT_DETAIL_VIEW = "redirect:/book/detail/{id}";
+  private static final String DETAIL_VIEW = "book/detail";
+  private static final String REGISTER_VIEW = "book/register";
+
+  private final BookService bookService;
+  private final AuthorService authorService;
+
+  @GetMapping("/list")
+  public String getList(@RequestParam(required = false) BookGenre genre,
+      @RequestParam(required = false) Integer authorId,
+      @RequestParam(required = false) Boolean isAdult,
+      @PageableDefault(size = 10) Pageable pageable, Model model,
+      @AuthenticationPrincipal LoginUser user) {
+
+    Page<BookForm> bookPage = bookService.getBookList(user.getId(), genre, authorId, isAdult,
+        Objects.requireNonNull(pageable));
+    Map<Integer, String> authorMap = authorService.getAuthorMap();
+
+    model.addAttribute("bookPage", bookPage);
+    model.addAttribute("authorMap", authorMap);
+    model.addAttribute("genre", genre);
+    model.addAttribute("authorId", authorId);
+    model.addAttribute("isAdult", isAdult != null && isAdult);
+
+    return LIST_VIEW;
+  }
+
+  @GetMapping("/detail/{id}")
+  public String getDetail(@PathVariable("id") Integer id, Model model,
+      @AuthenticationPrincipal LoginUser user) {
+
+    BookForm bookForm = bookService.getBookDetails(id, user.getId());
+    Map<Integer, String> authorMap = authorService.getAuthorMap();
+
+    addAttributesToModel(model, bookForm, authorMap);
+
+    return DETAIL_VIEW;
+  }
+
+  @GetMapping("/register")
+  public String getRegister(BookForm bookForm, Model model) {
+
+    Map<Integer, String> authorMap = authorService.getAuthorMap();
+
+    addAttributesToModel(model, authorMap);
+
+    return REGISTER_VIEW;
+  }
+
+  @PostMapping("/register")
+  public String register(@ModelAttribute @Validated BookForm form, BindingResult bindingResult,
+      Model model) {
+
+    if (bindingResult.hasErrors()) {
+      return getRegister(form, model);
+    }
+
+    bookService.registerBook(form);
+
+    return REDIRECT_LIST;
+  }
+
+  @PostMapping(value = "detail", params = "update")
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) BookForm form,
+      BindingResult bindingResult, Model model, @AuthenticationPrincipal LoginUser user) {
+
+    // id や version にエラーがある場合は、改ざんとみなしてシステムエラー
+    if (bindingResult.hasFieldErrors(BookForm.Fields.id)
+        || bindingResult.hasFieldErrors(BookForm.Fields.version)) {
+      throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
+    }
+
+    if (bindingResult.hasErrors()) {
+      Map<Integer, String> authorMap = authorService.getAuthorMap();
+      model.addAttribute("authorMap", authorMap);
+      return DETAIL_VIEW;
+    }
+
+    bookService.updateBook(form, user.getId());
+
+    final Map<String, Object> uriVariables = new HashMap<>();
+    uriVariables.put(BookForm.Fields.id, form.getId());
+    return UriComponentsBuilder.fromUriString(REDIRECT_DETAIL_VIEW).buildAndExpand(uriVariables)
+        .toUriString();
+  }
+
+  @PostMapping(value = "/detail", params = "delete")
+  public String delete(@Validated(DeleteGroup.class) BookForm form, BindingResult bindingResult,
+      @AuthenticationPrincipal LoginUser user) {
+
+    // id にエラーがある場合は改ざんとみなしてシステムエラー
+    if (bindingResult.hasFieldErrors(BookForm.Fields.id)) {
+      throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
+    }
+
+    bookService.deleteBook(Objects.requireNonNull(form.getId()), user.getId());
+
+    return REDIRECT_LIST;
+  }
+
+  private void addAttributesToModel(Model model, BookForm bookForm,
+      Map<Integer, String> authorMap) {
+    model.addAttribute("bookForm", bookForm);
+    model.addAttribute("authorMap", authorMap);
+  }
+
+  private void addAttributesToModel(Model model, Map<Integer, String> authorMap) {
+    model.addAttribute("authorMap", authorMap);
+  }
+}

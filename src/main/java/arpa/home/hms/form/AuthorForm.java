@@ -1,0 +1,28 @@
+package arpa.home.hms.form;
+
+import arpa.home.hms.validation.DeleteGroup;
+import arpa.home.hms.validation.UpdateGroup;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@FieldNameConstants
+public class AuthorForm {
+
+  @NotNull(groups = {UpdateGroup.class, DeleteGroup.class})
+  private Integer id;
+
+  @NotBlank
+  @Size(min = 1, max = 50)
+  private String name;
+
+  @NotNull(groups = UpdateGroup.class)
+  private Integer version;
+}

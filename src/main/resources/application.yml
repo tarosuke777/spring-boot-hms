@@ -40,7 +40,7 @@ server:
 #     # Hibernate SQLのプレースホルダー(?)に入るパラメータ値を出力
 #     org.hibernate.orm.jdbc.bind: TRACE
 #     # 独自サービス（WebAuthnServiceのlog.info出力用）
-#     com.tarosuke777.hms: DEBUG
+#     arpa.home.hms: DEBUG
 
 app:
   base-domain: home.arpa

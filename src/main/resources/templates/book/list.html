@@ -53,7 +53,7 @@
                   選択してください
                 </option>
                 <option
-                  th:each="g : ${T(com.tarosuke777.hms.enums.BookGenre).values()}"
+                  th:each="g : ${T(arpa.home.hms.enums.BookGenre).values()}"
                   th:value="${g}"
                   th:text="${g.label}"
                   th:selected="${genre != null and g.code == genre.code}"

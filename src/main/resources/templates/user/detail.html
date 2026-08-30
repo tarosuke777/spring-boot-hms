@@ -47,7 +47,7 @@
           <div class="col-sm-10">
             <select class="form-control" th:field="*{role}">
               <option
-                th:each="r : ${T(com.tarosuke777.hms.enums.Role).values()}"
+                th:each="r : ${T(arpa.home.hms.enums.Role).values()}"
                 th:value="${r.name()}"
                 th:text="${r.displayName}"
               >

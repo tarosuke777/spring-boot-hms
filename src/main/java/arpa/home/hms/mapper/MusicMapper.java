@@ -1,0 +1,24 @@
+package arpa.home.hms.mapper;
+
+import arpa.home.hms.entity.MusicEntity;
+import arpa.home.hms.form.MusicForm;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
+@Mapper(componentModel = "spring")
+public interface MusicMapper {
+
+  @IgnoreAuditFields
+  @Mapping(target = "artist", ignore = true)
+  MusicEntity toEntity(MusicForm form);
+
+  @Mapping(target = "artistId", ignore = true)
+  MusicForm toForm(MusicEntity entity);
+
+  MusicEntity copy(MusicEntity entity);
+
+  @IgnoreAuditFields
+  @Mapping(target = "artist", ignore = true)
+  void updateEntityFromForm(MusicForm form, @MappingTarget MusicEntity entity);
+}
