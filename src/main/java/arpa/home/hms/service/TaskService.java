@@ -1,0 +1,62 @@
+package arpa.home.hms.service;
+
+import arpa.home.hms.entity.TaskEntity;
+import arpa.home.hms.enums.TaskCategory;
+import arpa.home.hms.enums.TaskStatus;
+import arpa.home.hms.form.TaskForm;
+import arpa.home.hms.mapper.TaskMapper;
+import arpa.home.hms.repository.TaskRepository;
+import arpa.home.hms.specification.TaskSpecifications;
+import java.util.List;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@RequiredArgsConstructor
+@Service
+public class TaskService {
+  private final TaskRepository taskRepository;
+  private final TaskMapper taskMapper;
+
+  public List<TaskForm> getTaskList(Integer currentUserId, TaskStatus status,
+      TaskCategory category) {
+
+    var spec = TaskSpecifications.withFilters(currentUserId, status, category);
+
+    return taskRepository.findAll(spec).stream().map(taskMapper::toForm).toList();
+  }
+
+  public TaskForm getTask(Integer id, Integer currentUserId) {
+    TaskEntity entity = taskRepository.findByIdAndCreatedBy(id, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
+    return taskMapper.toForm(entity);
+  }
+
+  @Transactional
+  public void createTask(TaskForm form) {
+    TaskEntity entity = Objects.requireNonNull(taskMapper.toEntity(form));
+    entity.setStatus(TaskStatus.TODO);
+    taskRepository.save(entity);
+  }
+
+  @Transactional
+  public void updateTask(TaskForm form, Integer currentUserId) {
+    TaskEntity existEntity = taskRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Task not found or unauthorized"));
+    TaskEntity entity = Objects.requireNonNull(taskMapper.copy(existEntity));
+    taskMapper.updateEntityFromForm(form, entity);
+    taskRepository.save(entity);
+  }
+
+  @Transactional
+  public void deleteTask(@NonNull Integer id, Integer currentUserId) {
+
+    if (!taskRepository.existsByIdAndCreatedBy(id, currentUserId)) {
+      throw new RuntimeException("Task not found or unauthorized");
+    }
+
+    taskRepository.deleteById(id);
+  }
+}

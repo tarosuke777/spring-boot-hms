@@ -1,0 +1,22 @@
+package arpa.home.hms.repository;
+
+import arpa.home.hms.entity.DiaryEntity;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface DiaryRepository extends JpaRepository<DiaryEntity, Integer> {
+
+  Optional<DiaryEntity> findByDiaryIdAndCreatedBy(Integer diaryId, Integer createdBy);
+
+  List<DiaryEntity> findByCreatedBy(Integer createdBy, Sort sort);
+
+  boolean existsByDiaryIdAndCreatedBy(Integer diaryId, Integer createdBy);
+
+  Optional<DiaryEntity> findByDiaryDateAndCreatedBy(LocalDate diaryDate, Integer createdBy);
+}

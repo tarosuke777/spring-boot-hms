@@ -1,0 +1,93 @@
+package arpa.home.hms.controller;
+
+import arpa.home.hms.form.MovieForm;
+import arpa.home.hms.security.LoginUser;
+import arpa.home.hms.service.CastService;
+import arpa.home.hms.service.MovieService;
+import arpa.home.hms.validation.DeleteGroup;
+import arpa.home.hms.validation.UpdateGroup;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@Slf4j
+@RequestMapping("/movie")
+@RequiredArgsConstructor
+public class MovieController {
+
+  private static final String REDIRECT_LIST = "redirect:/movie/list";
+  private static final String LIST_VIEW = "movie/list";
+  private static final String DETAIL_VIEW = "movie/detail";
+  private static final String REGISTER_VIEW = "movie/register";
+
+  private final MovieService movieService;
+  private final CastService castService;
+
+  @GetMapping("/list")
+  public String getList(@PageableDefault(size = 10) Pageable pageable, Model model,
+      @AuthenticationPrincipal LoginUser user) {
+    Page<MovieForm> moviePage =
+        movieService.getMoviePage(user.getId(), Objects.requireNonNull(pageable));
+    model.addAttribute("moviePage", moviePage);
+    model.addAttribute("castMap", castService.getCastMap());
+    return LIST_VIEW;
+  }
+
+  @GetMapping("/register")
+  public String getRegister(@ModelAttribute MovieForm form, Model model) {
+    model.addAttribute("castMap", castService.getCastMap());
+    return REGISTER_VIEW;
+  }
+
+  @PostMapping("/register")
+  public String register(@ModelAttribute @Validated MovieForm form, BindingResult bindingResult,
+      Model model) {
+    if (bindingResult.hasErrors()) {
+      model.addAttribute("castMap", castService.getCastMap());
+      return REGISTER_VIEW;
+    }
+    movieService.registerMovie(form);
+    return REDIRECT_LIST;
+  }
+
+  @GetMapping("/detail/{id}")
+  public String getDetail(@PathVariable("id") Integer id, Model model,
+      @AuthenticationPrincipal LoginUser user) {
+
+    model.addAttribute("castMap", castService.getCastMap());
+    model.addAttribute("movieForm", movieService.getMovie(id, user.getId()));
+    return DETAIL_VIEW;
+  }
+
+  @PostMapping(value = "detail", params = "update")
+  public String update(@ModelAttribute @Validated(UpdateGroup.class) MovieForm form,
+      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user, Model model) {
+    if (bindingResult.hasErrors()) {
+      model.addAttribute("castMap", castService.getCastMap());
+      return DETAIL_VIEW;
+    }
+    movieService.updateMovie(form, user.getId());
+    return REDIRECT_LIST;
+  }
+
+  @PostMapping(value = "/detail", params = "delete")
+  public String delete(@Validated(DeleteGroup.class) MovieForm form,
+      @AuthenticationPrincipal LoginUser user) {
+    movieService.deleteMovie(Objects.requireNonNull(form.getId()), user.getId());
+    return REDIRECT_LIST;
+  }
+}

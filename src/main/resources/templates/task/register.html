@@ -37,7 +37,7 @@
             >
               <option value="" disabled selected>選択してください</option>
               <option
-                th:each="cat : ${T(com.tarosuke777.hms.enums.TaskCategory).values()}"
+                th:each="cat : ${T(arpa.home.hms.enums.TaskCategory).values()}"
                 th:value="${cat}"
                 th:text="${cat.label}"
               ></option>
@@ -56,7 +56,7 @@
             >
               <option value="">未設定</option>
               <option
-                th:each="imp : ${T(com.tarosuke777.hms.enums.PriorityLevel).values()}"
+                th:each="imp : ${T(arpa.home.hms.enums.PriorityLevel).values()}"
                 th:value="${imp}"
                 th:text="${imp.label}"
               ></option>
@@ -75,7 +75,7 @@
             >
               <option value="">未設定</option>
               <option
-                th:each="urg : ${T(com.tarosuke777.hms.enums.PriorityLevel).values()}"
+                th:each="urg : ${T(arpa.home.hms.enums.PriorityLevel).values()}"
                 th:value="${urg}"
                 th:text="${urg.label}"
               ></option>

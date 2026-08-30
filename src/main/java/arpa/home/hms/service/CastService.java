@@ -1,0 +1,67 @@
+package arpa.home.hms.service;
+
+import arpa.home.hms.entity.CastEntity;
+import arpa.home.hms.form.CastForm;
+import arpa.home.hms.mapper.CastMapper;
+import arpa.home.hms.repository.CastRepository;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class CastService {
+
+  private final CastRepository castRepository;
+  private final CastMapper castMapper;
+
+  public List<CastForm> getCastList(Integer currentUserId) {
+    return castRepository.findByCreatedBy(currentUserId).stream().map(castMapper::toForm).toList();
+  }
+
+  public Page<CastForm> getCastPage(Integer currentUserId, @NonNull Pageable pageable) {
+    return castRepository.findByCreatedBy(currentUserId, pageable).map(castMapper::toForm);
+  }
+
+  public CastForm getCast(Integer castId, Integer currentUserId) {
+    CastEntity cast = castRepository.findByIdAndCreatedBy(castId, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Cast not found or access denied"));
+    return castMapper.toForm(cast);
+  }
+
+  @Transactional
+  public void registerCast(CastForm form) {
+    CastEntity entity = Objects.requireNonNull(castMapper.toEntity(form));
+    castRepository.save(entity);
+  }
+
+  @Transactional
+  public void updateCast(CastForm form, Integer currentUserId) {
+    CastEntity existEntity = castRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Cast not found or access denied"));
+    CastEntity entity = Objects.requireNonNull(castMapper.copy(existEntity));
+    castMapper.updateEntityFromForm(form, entity);
+    castRepository.save(entity);
+  }
+
+  @Transactional
+  public void deleteCast(@NonNull Integer castId, Integer currentUserId) {
+    if (!castRepository.existsByIdAndCreatedBy(castId, currentUserId)) {
+      throw new RuntimeException("Cast not found or access denied");
+    }
+    castRepository.deleteById(castId);
+  }
+
+  public Map<Integer, String> getCastMap() {
+    return castRepository.findAll().stream().collect(Collectors.toMap(CastEntity::getId,
+        CastEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
+  }
+}

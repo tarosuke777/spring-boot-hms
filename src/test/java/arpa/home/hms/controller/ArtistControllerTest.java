@@ -1,0 +1,229 @@
+package arpa.home.hms.controller;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import arpa.home.hms.entity.ArtistEntity;
+import arpa.home.hms.form.ArtistForm;
+import arpa.home.hms.mapper.ArtistMapper;
+import arpa.home.hms.repository.ArtistRepository;
+import jakarta.persistence.EntityManager;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.TestSecurityContextHolder;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Transactional
+@Sql
+@WithUserDetails("admin")
+public class ArtistControllerTest {
+
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private ArtistRepository artistRepository;
+  @Autowired
+  private EntityManager entityManager; // キャッシュクリア用
+  @Autowired
+  private ArtistMapper artistMapper;
+
+  private static final String LIST_ENDPOINT = "/artist/list";
+  private static final String LIST_VIEW = "artist/list";
+  private static final String LIST_URL = "/artist/list";
+
+  private static final String DETAIL_ENDPOINT = "/artist/detail/{id}";
+  private static final String DETAIL_VIEW = "artist/detail";
+
+  private static final String REGISTER_ENDPOINT = "/artist/register";
+  private static final String REGISTER_VIEW = "artist/register";
+
+  private static final String UPDATE_ENDPOINT = "/artist/detail";
+  private static final String DELETE_ENDPOINT = "/artist/detail";
+
+  @Test
+  void getList_ShouldReturnArtistPageWithPagination() throws Exception {
+
+    // Given
+
+    // When & Then
+    performGetListRequest().andExpect(status().isOk())
+        .andExpect(model().attributeExists("artistPage")).andExpect(view().name(LIST_VIEW));
+  }
+
+  @Test
+  void getList_WithPagination_ShouldReturnFirstPage() throws Exception {
+
+    // Given
+
+    // When & Then
+    performGetListRequestWithPage(0).andExpect(status().isOk())
+        .andExpect(model().attributeExists("artistPage")).andExpect(view().name(LIST_VIEW));
+  }
+
+  @Test
+  void getList_WithSecondPagePagination_ShouldReturnSecondPage() throws Exception {
+
+    // Given
+
+    // When & Then
+    performGetListRequestWithPage(1).andExpect(status().isOk())
+        .andExpect(model().attributeExists("artistPage")).andExpect(view().name(LIST_VIEW));
+  }
+
+  @Test
+  void getDetail_ShouldReturnArtistDetail() throws Exception {
+
+    // Given
+    ArtistEntity expectedArtistEntity = artistRepository.findAll().getFirst();
+    ArtistForm expectedArtistForm = artistMapper.toForm(expectedArtistEntity);
+
+    // When & Then
+    performGetDetailRequest(expectedArtistEntity.getId()).andExpect(status().isOk())
+        .andExpect(model().attribute("artistForm", expectedArtistForm))
+        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
+  }
+
+  @Test
+  void getRegister_ShouldReturnRegisterPage() throws Exception {
+
+    // Given
+
+    // When & Then
+    performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
+        .andExpect(model().hasNoErrors());
+  }
+
+  @Test
+  void register_WithValidData_ShouldRedirectToList() throws Exception {
+
+    // Given
+    String artistName = "TestArtistName";
+
+    // When & Then
+    performRegisterRequest(artistName).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
+
+    entityManager.flush();
+    entityManager.clear();
+
+    List<ArtistEntity> artists = artistRepository.findAll();
+    ArtistEntity lastArtist = artists.get(artists.size() - 1);
+    Assertions.assertEquals(artistName, lastArtist.getName());
+  }
+
+  @Test
+  void update_WithValidData_ShouldUpdateAndRedirectToList() throws Exception {
+
+    // Given
+    ArtistEntity targetArtist = artistRepository.findAll().getFirst();
+
+    ArtistForm artistForm = artistMapper.toForm(targetArtist);
+    artistForm.setName("UpdatedName");
+
+    // When & Then
+    performUpdateRequest(artistForm).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
+
+    TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
+    entityManager.flush();
+    entityManager.clear();
+
+    ArtistEntity updatedEntity = artistRepository.findById(targetArtist.getId()).orElse(null);
+    Assertions.assertEquals(updatedEntity.getName(), artistForm.getName());
+  }
+
+  @Test
+  void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
+
+    // Given: データベースから現在のデータを取得
+    ArtistEntity artist = artistRepository.findAll().getFirst();
+    Integer currentId = artist.getId();
+    Integer currentVersion = artist.getVersion(); // 現在のバージョンを取得
+
+    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
+    artist.setName("Concurrent Update");
+    artistRepository.saveAndFlush(artist); // これでDB上のバージョンが上がる
+    entityManager.clear();
+
+    ArtistForm artistForm = artistMapper.toForm(artist);
+    artistForm.setId(currentId);
+    artistForm.setName("Try to Update");
+    artistForm.setVersion(currentVersion); // 古いバージョンをセット
+
+    // When & Then
+    performUpdateRequest(artistForm).andExpect(status().isOk()).andExpect(view().name("error"))
+        .andExpect(model().attribute("isOptimisticLockError", true));
+  }
+
+  @Test
+  void delete_ExistingArtist_ShouldDeleteAndRedirectToList() throws Exception {
+
+    // Given
+    ArtistEntity targetArtist = artistRepository.findAll().getFirst();
+    Integer targetArtistId = targetArtist.getId();
+
+    // When & Then
+    performDeleteRequest(targetArtistId).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
+
+    entityManager.flush();
+    entityManager.clear();
+
+    ArtistEntity artist = artistRepository.findById(targetArtistId).orElse(null);
+    Assertions.assertNull(artist);
+  }
+
+  // --- Helper Methods ---
+
+  private ResultActions performGetDetailRequest(int artistId) throws Exception {
+    return mockMvc
+        .perform(
+            get(DETAIL_ENDPOINT, artistId).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andDo(print());
+  }
+
+  private ResultActions performGetListRequest() throws Exception {
+    return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
+  }
+
+  private ResultActions performGetListRequestWithPage(int page) throws Exception {
+    return mockMvc.perform(get(LIST_ENDPOINT).param("page", String.valueOf(page))).andDo(print());
+  }
+
+  private ResultActions performGetRegisterRequest() throws Exception {
+    return mockMvc
+        .perform(get(REGISTER_ENDPOINT).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andDo(print());
+  }
+
+  private ResultActions performRegisterRequest(String name) throws Exception {
+    return mockMvc.perform(post(REGISTER_ENDPOINT).with(csrf())
+        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", name)).andDo(print());
+  }
+
+  private ResultActions performUpdateRequest(ArtistForm artistForm) throws Exception {
+    return mockMvc.perform(post(UPDATE_ENDPOINT).with(csrf()).param("update", "")
+        .param("id", artistForm.getId().toString()).param("name", artistForm.getName())
+        .param("version", artistForm.getVersion().toString())).andDo(print());
+  }
+
+  private ResultActions performDeleteRequest(int artistId) throws Exception {
+    return mockMvc.perform(post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("id",
+        String.valueOf(artistId))).andDo(print());
+  }
+}

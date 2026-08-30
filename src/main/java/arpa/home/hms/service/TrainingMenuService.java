@@ -1,0 +1,73 @@
+package arpa.home.hms.service;
+
+import arpa.home.hms.entity.TrainingMenuEntity;
+import arpa.home.hms.form.SelectOptionTrainingMenu;
+import arpa.home.hms.form.TrainingMenuForm;
+import arpa.home.hms.mapper.TrainingMenuMapper;
+import arpa.home.hms.repository.TrainingMenuRepository;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class TrainingMenuService {
+
+  private final TrainingMenuRepository trainingMenuRepository;
+  private final TrainingMenuMapper trainingMenuMapper;
+
+  public List<TrainingMenuForm> getTrainingMenuList(Integer currentUserId) {
+    return trainingMenuRepository.findByCreatedBy(currentUserId).stream()
+        .map(trainingMenuMapper::toForm).toList();
+  }
+
+  public TrainingMenuForm getTrainingMenuDetails(Integer id, Integer currentUserId) {
+    TrainingMenuEntity entity = trainingMenuRepository.findByIdAndCreatedBy(id, currentUserId)
+        .orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
+    return trainingMenuMapper.toForm(entity);
+  }
+
+  @Transactional
+  public void registerTrainingMenu(TrainingMenuForm form) {
+    TrainingMenuEntity entity = Objects.requireNonNull(trainingMenuMapper.toEntity(form));
+    trainingMenuRepository.save(entity);
+  }
+
+  @Transactional
+  public void updateTrainingMenu(TrainingMenuForm form, Integer currentUserId) {
+    TrainingMenuEntity existEntity =
+        trainingMenuRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
+            .orElseThrow(() -> new RuntimeException("Menu not found or access denied"));
+    TrainingMenuEntity entity = Objects.requireNonNull(trainingMenuMapper.copy(existEntity));
+    trainingMenuMapper.updateEntityFromForm(form, entity);
+    trainingMenuRepository.save(entity);
+  }
+
+  @Transactional
+  public void deleteTrainingMenu(@NonNull Integer id, Integer currentUserId) {
+    if (!trainingMenuRepository.existsByIdAndCreatedBy(id, currentUserId)) {
+      throw new RuntimeException("Menu not found or access denied");
+    }
+    trainingMenuRepository.deleteById(id);
+  }
+
+  public Map<Integer, String> getTrainingMenuMap() {
+    return trainingMenuRepository.findAll().stream()
+        .collect(Collectors.toMap(TrainingMenuEntity::getId, TrainingMenuEntity::getName,
+            (existing, replacement) -> existing, LinkedHashMap::new));
+  }
+
+  public List<SelectOptionTrainingMenu> getTrainingMenuSelectList() {
+    return trainingMenuRepository.findAll().stream()
+        .map(entity -> new SelectOptionTrainingMenu(entity.getId().toString(), entity.getName(),
+            entity.getTargetAreaId(), entity.getMaxWeight(), entity.getMaxReps(),
+            entity.getMaxSets()))
+        .collect(Collectors.toList());
+  }
+}

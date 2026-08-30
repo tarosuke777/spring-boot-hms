@@ -1,0 +1,266 @@
+package arpa.home.hms.controller;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import arpa.home.hms.entity.AuthorEntity;
+import arpa.home.hms.entity.BookEntity;
+import arpa.home.hms.enums.BookGenre;
+import arpa.home.hms.form.BookForm;
+import arpa.home.hms.mapper.BookMapper;
+import arpa.home.hms.repository.AuthorRepository;
+import arpa.home.hms.repository.BookRepository;
+import arpa.home.hms.security.LoginUser;
+import arpa.home.hms.specification.BookSpecifications;
+import jakarta.persistence.EntityManager;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.TestSecurityContextHolder;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Transactional
+@Sql
+@WithUserDetails("admin")
+public class BookControllerTest {
+
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private BookRepository bookRepository;
+  @Autowired
+  private AuthorRepository authorRepository;
+  @Autowired
+  private EntityManager entityManager;
+  @Autowired
+  private BookMapper bookMapper;
+
+  private static final String LIST_ENDPOINT = "/book/list";
+  private static final String LIST_VIEW = "book/list";
+  private static final String LIST_URL = "/book/list";
+
+  private static final String DETAIL_ENDPOINT = "/book/detail/{id}";
+  private static final String DETAIL_VIEW = "book/detail";
+
+  private static final String REGISTER_ENDPOINT = "/book/register";
+  private static final String REGISTER_VIEW = "book/register";
+
+  private static final String UPDATE_ENDPOINT = "/book/detail";
+  private static final String DELETE_ENDPOINT = "/book/detail";
+
+  @Test
+  void getList_ShouldReturnBookListAndAuthorMap() throws Exception {
+
+    // Given
+    LoginUser loginUser =
+        (LoginUser) TestSecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    Integer currentUserId = loginUser.getId();
+
+    Pageable pageable = Pageable.ofSize(10);
+    BookGenre genre = null;
+    Boolean isAdult = null;
+    Integer authorId = null;
+
+    var spec = BookSpecifications.withFilters(currentUserId, genre, authorId, isAdult);
+
+    // Page<Entity> を取得
+    Page<BookEntity> bookPage = bookRepository.findAll(spec, pageable);
+
+    // Pageの中身(Entity)をFormに詰め替える
+    Page<BookForm> expectedBookPage = bookPage.map(book -> {
+      BookForm form = bookMapper.toForm(book);
+      if (book.getAuthor() != null) {
+        form.setAuthorId(book.getAuthor().getId());
+      }
+      return form;
+    });
+
+    Map<Integer, String> expectedAuthorMap = getAuthorMap();
+
+    // When & Then
+    performGetListRequest().andExpect(status().isOk())
+        .andExpect(model().attribute("authorMap", expectedAuthorMap))
+        .andExpect(model().attribute("bookPage", expectedBookPage))
+        .andExpect(view().name(LIST_VIEW));
+  }
+
+  @Test
+  void getDetail_ShouldReturnBookDetailAndAuthorMap() throws Exception {
+    // Given
+    BookEntity bookEntity = bookRepository.findAll().getFirst();
+    BookForm expectedBookForm = bookMapper.toForm(bookEntity);
+    expectedBookForm.setAuthorId(bookEntity.getAuthor().getId());
+    Map<Integer, String> expectedAuthorMap = getAuthorMap();
+
+    // When & Then
+    performGetDetailRequest(bookEntity.getId()).andExpect(status().isOk())
+        .andExpect(model().attribute("authorMap", expectedAuthorMap))
+        .andExpect(model().attribute("bookForm", expectedBookForm))
+        .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
+  }
+
+  @Test
+  void getRegister_ShouldReturnRegisterPageWithAuthorMap() throws Exception {
+
+    // Given
+    Map<Integer, String> expectedAuthorMap = getAuthorMap();
+    // When & Then
+    performGetRegisterRequest().andExpect(status().isOk())
+        .andExpect(model().attribute("authorMap", expectedAuthorMap))
+        .andExpect(view().name(REGISTER_VIEW)).andExpect(model().hasNoErrors());
+  }
+
+  @Test
+  void register_WithValidData_ShouldRedirectToList() throws Exception {
+
+    // Given
+    AuthorEntity authorEntity = authorRepository.findAll().get(0);
+    BookForm bookForm =
+        new BookForm(null, "test", authorEntity.getId(), null, BookGenre.MANGA, true, null, null);
+
+    // When & Then
+    performRegisterRequest(bookForm).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
+
+    entityManager.flush();
+    entityManager.clear();
+
+    List<BookEntity> books = bookRepository.findAll();
+    BookEntity savedBook = books.get(books.size() - 1);
+
+    Assertions.assertEquals(bookForm.getName(), savedBook.getName());
+    Assertions.assertEquals(bookForm.getAuthorId(), savedBook.getAuthor().getId());
+  }
+
+  @Test
+  void update_WithValidData_ShouldUpdateAndRedirectToDetail() throws Exception {
+
+    // Given
+    BookEntity book = bookRepository.findAll().get(0);
+    BookForm form = bookMapper.toForm(book);
+    form.setAuthorId(book.getAuthor().getId());
+    form.setName("更新後の本タイトル");
+
+    // When & Then
+    performUpdateRequest(form).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl("/book/detail/" + form.getId()));
+
+    TestSecurityContextHolder.setContext(TestSecurityContextHolder.getContext());
+    entityManager.flush();
+    entityManager.clear();
+
+    BookEntity updatedBook = bookRepository.findById(form.getId()).orElse(null);
+    assertEquals(form.getName(), updatedBook.getName());
+  }
+
+  @Test
+  void update_WithConflictVersion_ShouldHandleOptimisticLockingFailure() throws Exception {
+
+    // Given: データベースから現在のデータを取得
+    BookEntity book = bookRepository.findAll().getFirst();
+    Integer currentId = book.getId();
+    Integer currentVersion = book.getVersion(); // 現在のバージョンを取得
+    AuthorEntity currentAuthor = book.getAuthor();
+
+    // 別スレッドや別の処理で既にバージョンが更新されたと仮定し、リクエストを送る直前にDB側のバージョンだけを上げておく
+    book.setName("Concurrent Update");
+    bookRepository.saveAndFlush(book); // これでDB上のバージョンが上がる
+    entityManager.clear();
+
+    BookForm form = new BookForm();
+    form.setId(currentId);
+    form.setName("Try to Update");
+    form.setGenre(BookGenre.NOVEL);
+    form.setAdult(true);
+    form.setVersion(currentVersion);
+    form.setAuthorId(currentAuthor.getId());
+    // When & Then
+    performUpdateRequest(form).andExpect(status().isOk()).andExpect(view().name("error"))
+        .andExpect(model().attribute("isOptimisticLockError", true));
+  }
+
+  @Test
+  void delete_ExistingBook_ShouldDeleteAndRedirectToList() throws Exception {
+
+    // Given
+    BookEntity expectedBook = bookRepository.findAll().get(0);
+
+    // When & Then
+    performDeleteRequest(expectedBook.getId()).andExpect(status().is3xxRedirection())
+        .andExpect(redirectedUrl(LIST_URL));
+
+    entityManager.flush();
+    entityManager.clear();
+
+    BookEntity book = bookRepository.findById(expectedBook.getId()).orElse(null);
+    assertNull(book);
+  }
+
+  // --- Helper Methods ---
+  private Map<Integer, String> getAuthorMap() {
+    return authorRepository.findAll().stream().collect(Collectors.toMap(AuthorEntity::getId,
+        AuthorEntity::getName, (existing, replacement) -> existing, LinkedHashMap::new));
+  }
+
+  private ResultActions performGetListRequest() throws Exception {
+    return mockMvc.perform(get(LIST_ENDPOINT)).andDo(print());
+  }
+
+  private ResultActions performGetDetailRequest(int id) throws Exception {
+    return mockMvc
+        .perform(get(DETAIL_ENDPOINT, id).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andDo(print());
+  }
+
+  private ResultActions performGetRegisterRequest() throws Exception {
+    return mockMvc
+        .perform(get(REGISTER_ENDPOINT).accept(MediaType.TEXT_HTML).characterEncoding("UTF-8"))
+        .andDo(print());
+  }
+
+  private ResultActions performRegisterRequest(BookForm form) throws Exception {
+    return mockMvc.perform(
+        post(REGISTER_ENDPOINT).with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("name", form.getName()).param("authorId", String.valueOf(form.getAuthorId()))
+            .param("genre", String.valueOf(form.getGenre()))
+            .param("isAdult", String.valueOf(form.isAdult())))
+        .andDo(print());
+  }
+
+  private ResultActions performUpdateRequest(BookForm form) throws Exception {
+    return mockMvc.perform(
+        post(UPDATE_ENDPOINT).with(csrf()).param("update", "").param("id", form.getId().toString())
+            .param("name", form.getName()).param("authorId", String.valueOf(form.getAuthorId()))
+            .param("genre", String.valueOf(form.getGenre()))
+            .param("isAdult", String.valueOf(form.isAdult()))
+            .param("version", form.getVersion().toString()))
+        .andDo(print());
+  }
+
+  private ResultActions performDeleteRequest(int id) throws Exception {
+    return mockMvc
+        .perform(
+            post(DELETE_ENDPOINT).with(csrf()).param("delete", "").param("id", String.valueOf(id)))
+        .andDo(print());
+  }
+}

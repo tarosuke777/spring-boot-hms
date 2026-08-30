@@ -15,7 +15,7 @@ plugins {
 // =============================================================================
 // 2. Project Metadata & Java Toolchain
 // =============================================================================
-group = 'com.tarosuke777.hms'
+group = 'arpa.home.hms'
 version = '0.0.1-SNAPSHOT'
 
 java {
