@@ -1,5 +1,6 @@
 package arpa.home.hms.controller;
 
+import arpa.home.hms.enums.TaskCategory;
 import arpa.home.hms.enums.TaskStatus;
 import arpa.home.hms.form.TaskForm;
 import arpa.home.hms.security.LoginUser;
@@ -35,6 +36,10 @@ public class TaskController {
 
     if (taskForm.getSearchStatus() == null) {
       taskForm.setSearchStatus(TaskStatus.TODO);
+    }
+
+    if (taskForm.getSearchCategory() == null) {
+      taskForm.setSearchCategory(TaskCategory.IMMEDIATE);
     }
 
     model.addAttribute("tasks", taskService.getTaskList(user.getId(), taskForm.getSearchStatus(),
