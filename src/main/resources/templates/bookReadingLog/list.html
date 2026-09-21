@@ -44,13 +44,16 @@
         <table class="table table-bordered table-hover align-middle">
           <thead>
             <tr class="table-dark">
-              <th>書籍名</th>
               <th>読んだ日</th>
+              <th>書籍名</th>
               <th>メモ</th>
             </tr>
           </thead>
           <tbody>
             <tr th:each="log: ${bookReadingLogPage.content}">
+              <td
+                th:text="${#temporals.format(log.readDate, 'yyyy-MM-dd')}"
+              ></td>
               <td>
                 <a
                   th:href="@{'/bookReadingLog/detail/' + ${log.id}}"
@@ -58,9 +61,6 @@
                   class="text-decoration-none"
                 ></a>
               </td>
-              <td
-                th:text="${#temporals.format(log.readDate, 'yyyy-MM-dd')}"
-              ></td>
               <td th:text="${log.memo}"></td>
             </tr>
           </tbody>
