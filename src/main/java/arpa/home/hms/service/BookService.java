@@ -117,6 +117,12 @@ public class BookService {
     }).toList();
   }
 
+  public Map<Integer, String> getBookMap(Integer currentUserId) {
+    return bookRepository.findByCreatedByOrderByIdAsc(currentUserId).stream()
+        .collect(java.util.stream.Collectors.toMap(BookEntity::getId, BookEntity::getName,
+            (existing, replacement) -> existing, java.util.LinkedHashMap::new));
+  }
+
   /** Entity の内容をベクトルストアに同期する共通メソッド */
   public void syncVectorStore(BookEntity entity) {
 

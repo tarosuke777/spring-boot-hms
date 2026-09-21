@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS book_reading_log (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  book_id INT NOT NULL,
+  read_date DATE NOT NULL,
+  memo TEXT,
+  created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  created_by INT NOT NULL DEFAULT 0,
+  updated_by INT NOT NULL DEFAULT 0,
+  version INT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_book_reading_log_book FOREIGN KEY (book_id) REFERENCES book(id)
+);
