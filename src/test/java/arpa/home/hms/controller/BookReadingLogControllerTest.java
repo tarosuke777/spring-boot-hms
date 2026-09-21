@@ -69,6 +69,16 @@ public class BookReadingLogControllerTest {
   }
 
   @Test
+  void getDetail_ShouldReturnBookReadingLogDetail() throws Exception {
+    BookReadingLogEntity log = bookReadingLogRepository.findAll().getFirst();
+
+    mockMvc.perform(get("/bookReadingLog/detail/" + log.getId())).andExpect(status().isOk())
+        .andExpect(model().attributeExists("bookReadingLogForm"))
+        .andExpect(model().attributeExists("bookMap"))
+        .andExpect(view().name("bookReadingLog/detail"));
+  }
+
+  @Test
   void register_WithValidData_ShouldRedirectToList() throws Exception {
     Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
     BookEntity book = bookRepository.findByCreatedByOrderByIdAsc(adminId).getFirst();

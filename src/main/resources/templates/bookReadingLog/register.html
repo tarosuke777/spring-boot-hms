@@ -6,6 +6,13 @@
 >
   <head>
     <title>読書履歴登録</title>
+    <script>
+      $(function () {
+        $("#jsiDatepicker").datepicker({
+          dateFormat: "yy-mm-dd",
+        });
+      });
+    </script>
   </head>
 
   <body>
@@ -23,17 +30,13 @@
         <div class="col-md-6">
           <label for="readDate" class="form-label">読んだ日</label>
           <input
-            type="date"
-            id="readDate"
+            type="text"
+            id="jsiDatepicker"
             class="form-control"
             th:field="*{readDate}"
+            th:errorclass="is-invalid"
           />
-          <div
-            th:if="${#fields.hasErrors('readDate')}"
-            class="text-danger small"
-          >
-            <span th:errors="*{readDate}"></span>
-          </div>
+          <div class="invalid-feedback" th:errors="*{readDate}"></div>
         </div>
 
         <div class="col-md-6">
