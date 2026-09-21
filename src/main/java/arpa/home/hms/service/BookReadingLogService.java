@@ -1,11 +1,10 @@
 package arpa.home.hms.service;
 
-import arpa.home.hms.entity.BookEntity;
 import arpa.home.hms.entity.BookReadingLogEntity;
 import arpa.home.hms.form.BookReadingLogForm;
 import arpa.home.hms.mapper.BookReadingLogMapper;
 import arpa.home.hms.repository.BookReadingLogRepository;
-import jakarta.persistence.EntityManager;
+import arpa.home.hms.repository.BookRepository;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookReadingLogService {
 
   private final BookReadingLogRepository bookReadingLogRepository;
+  private final BookRepository bookRepository;
   private final BookReadingLogMapper bookReadingLogMapper;
-  private final EntityManager entityManager;
 
   public Page<BookReadingLogForm> getBookReadingLogList(Integer currentUserId,
       @NonNull Pageable pageable) {
@@ -42,9 +41,10 @@ public class BookReadingLogService {
   }
 
   @Transactional
-  public void registerBookReadingLog(BookReadingLogForm form) {
+  public void registerBookReadingLog(BookReadingLogForm form, Integer currentUserId) {
     BookReadingLogEntity entity = Objects.requireNonNull(bookReadingLogMapper.toEntity(form));
-    entity.setBook(entityManager.getReference(BookEntity.class, form.getBookId()));
+    entity.setBook(bookRepository.findByIdAndCreatedBy(form.getBookId(), currentUserId)
+        .orElseThrow(() -> new RuntimeException("Book not found or access denied")));
     bookReadingLogRepository.save(entity);
   }
 
@@ -57,7 +57,8 @@ public class BookReadingLogService {
     BookReadingLogEntity entity = Objects.requireNonNull(bookReadingLogMapper.copy(existEntity));
     bookReadingLogMapper.updateEntityFromForm(form, entity);
     if (form.getBookId() != null) {
-      entity.setBook(entityManager.getReference(BookEntity.class, form.getBookId()));
+      entity.setBook(bookRepository.findByIdAndCreatedBy(form.getBookId(), currentUserId)
+          .orElseThrow(() -> new RuntimeException("Book not found or access denied")));
     }
     bookReadingLogRepository.save(entity);
   }

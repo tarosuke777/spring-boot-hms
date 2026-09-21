@@ -14,6 +14,7 @@ import arpa.home.hms.entity.BookEntity;
 import arpa.home.hms.entity.BookReadingLogEntity;
 import arpa.home.hms.repository.BookReadingLogRepository;
 import arpa.home.hms.repository.BookRepository;
+import arpa.home.hms.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,9 @@ public class BookReadingLogControllerTest {
   private BookRepository bookRepository;
 
   @Autowired
+  private UserRepository userRepository;
+
+  @Autowired
   private EntityManager entityManager;
 
   @Test
@@ -56,7 +60,8 @@ public class BookReadingLogControllerTest {
 
   @Test
   void register_WithValidData_ShouldRedirectToList() throws Exception {
-    BookEntity book = bookRepository.findByCreatedByOrderByIdAsc(1).getFirst();
+    Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
+    BookEntity book = bookRepository.findByCreatedByOrderByIdAsc(adminId).getFirst();
 
     mockMvc
         .perform(post("/bookReadingLog/register").with(csrf())

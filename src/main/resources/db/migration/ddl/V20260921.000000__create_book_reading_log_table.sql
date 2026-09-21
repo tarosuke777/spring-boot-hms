@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS book_reading_log (
   created_by INT NOT NULL DEFAULT 0,
   updated_by INT NOT NULL DEFAULT 0,
   version INT NOT NULL DEFAULT 0,
-  CONSTRAINT fk_book_reading_log_book FOREIGN KEY (book_id) REFERENCES book(id)
+  CONSTRAINT fk_book_reading_log_book FOREIGN KEY (book_id) REFERENCES book(id) ON DELETE CASCADE
 );

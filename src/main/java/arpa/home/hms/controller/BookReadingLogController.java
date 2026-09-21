@@ -76,7 +76,7 @@ public class BookReadingLogController {
       return REGISTER_VIEW;
     }
 
-    bookReadingLogService.registerBookReadingLog(form);
+    bookReadingLogService.registerBookReadingLog(form, user.getId());
     return REDIRECT_LIST;
   }
 
