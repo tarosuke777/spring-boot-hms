@@ -51,12 +51,16 @@
           </thead>
           <tbody>
             <tr th:each="log: ${bookReadingLogPage.content}">
-              <td
-                th:text="${#temporals.format(log.readDate, 'yyyy-MM-dd')}"
-              ></td>
               <td>
                 <a
                   th:href="@{'/bookReadingLog/detail/' + ${log.id}}"
+                  th:text="${#temporals.format(log.readDate, 'yyyy-MM-dd')}"
+                  class="text-decoration-none"
+                ></a>
+              </td>
+              <td>
+                <a
+                  th:href="@{'/book/detail/' + ${log.bookId}}"
                   th:text="${bookMap.get(log.bookId)}"
                   class="text-decoration-none"
                 ></a>

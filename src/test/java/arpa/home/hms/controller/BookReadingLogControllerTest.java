@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,6 +57,9 @@ public class BookReadingLogControllerTest {
     mockMvc.perform(get("/bookReadingLog/list")).andExpect(status().isOk())
         .andExpect(model().attributeExists("bookMap"))
         .andExpect(model().attributeExists("bookReadingLogPage"))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("/bookReadingLog/detail/")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("/book/detail/")))
         .andExpect(view().name("bookReadingLog/list"));
   }
 
