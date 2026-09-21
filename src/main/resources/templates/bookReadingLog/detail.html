@@ -24,22 +24,6 @@
         <input type="hidden" th:field="*{version}" />
 
         <div class="col-md-6">
-          <label for="bookId" class="form-label">書籍</label>
-          <select id="bookId" class="form-select" th:field="*{bookId}">
-            <option value="" selected>選択してください</option>
-            <option
-              th:each="entry : ${bookMap}"
-              th:value="${entry.key}"
-              th:text="${entry.value}"
-              th:selected="${entry.key == bookReadingLogForm.bookId}"
-            ></option>
-          </select>
-          <div th:if="${#fields.hasErrors('bookId')}" class="text-danger small">
-            <span th:errors="*{bookId}"></span>
-          </div>
-        </div>
-
-        <div class="col-md-6">
           <label for="readDate" class="form-label">読んだ日</label>
           <input
             type="date"
@@ -52,6 +36,22 @@
             class="text-danger small"
           >
             <span th:errors="*{readDate}"></span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <label for="bookId" class="form-label">書籍</label>
+          <select id="bookId" class="form-select" th:field="*{bookId}">
+            <option value="" selected>選択してください</option>
+            <option
+              th:each="entry : ${bookMap}"
+              th:value="${entry.key}"
+              th:text="${entry.value}"
+              th:selected="${entry.key == bookReadingLogForm.bookId}"
+            ></option>
+          </select>
+          <div th:if="${#fields.hasErrors('bookId')}" class="text-danger small">
+            <span th:errors="*{bookId}"></span>
           </div>
         </div>
 

@@ -7,6 +7,8 @@ import arpa.home.hms.service.BookReadingLogService;
 import arpa.home.hms.service.BookService;
 import arpa.home.hms.validation.DeleteGroup;
 import arpa.home.hms.validation.UpdateGroup;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +66,9 @@ public class BookReadingLogController {
   @GetMapping("/register")
   public String getRegister(@ModelAttribute BookReadingLogForm bookReadingLogForm, Model model,
       @AuthenticationPrincipal LoginUser user) {
+    if (bookReadingLogForm.getReadDate() == null) {
+      bookReadingLogForm.setReadDate(LocalDate.now(ZoneId.systemDefault()));
+    }
     model.addAttribute("bookMap", bookService.getBookMap(user.getId()));
     return REGISTER_VIEW;
   }

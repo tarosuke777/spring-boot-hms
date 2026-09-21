@@ -17,6 +17,7 @@ import arpa.home.hms.repository.BookRepository;
 import arpa.home.hms.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -56,6 +57,15 @@ public class BookReadingLogControllerTest {
         .andExpect(model().attributeExists("bookMap"))
         .andExpect(model().attributeExists("bookReadingLogPage"))
         .andExpect(view().name("bookReadingLog/list"));
+  }
+
+  @Test
+  void getRegister_ShouldSetTodayAsDefaultReadDate() throws Exception {
+    mockMvc.perform(get("/bookReadingLog/register")).andExpect(status().isOk())
+        .andExpect(model().attribute("bookReadingLogForm",
+            org.hamcrest.Matchers.hasProperty("readDate",
+                org.hamcrest.Matchers.equalTo(LocalDate.now(ZoneId.systemDefault())))))
+        .andExpect(view().name("bookReadingLog/register"));
   }
 
   @Test
