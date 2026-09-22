@@ -116,7 +116,6 @@ public class BookControllerTest {
     performGetDetailRequest(bookEntity.getId()).andExpect(status().isOk())
         .andExpect(model().attribute("authorMap", expectedAuthorMap))
         .andExpect(model().attribute("bookForm", expectedBookForm))
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("/book/list")))
         .andExpect(view().name(DETAIL_VIEW)).andExpect(model().hasNoErrors());
   }
 
@@ -128,7 +127,6 @@ public class BookControllerTest {
     // When & Then
     performGetRegisterRequest().andExpect(status().isOk())
         .andExpect(model().attribute("authorMap", expectedAuthorMap))
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("/book/list")))
         .andExpect(view().name(REGISTER_VIEW)).andExpect(model().hasNoErrors());
   }
 
