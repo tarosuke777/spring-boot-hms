@@ -1,6 +1,7 @@
 package arpa.home.hms.repository;
 
 import arpa.home.hms.entity.BookReadingLogEntity;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,10 @@ public interface BookReadingLogRepository extends JpaRepository<BookReadingLogEn
 
   @EntityGraph(attributePaths = {"book"})
   Page<BookReadingLogEntity> findByCreatedByOrderByReadDateDesc(Integer createdBy,
+      Pageable pageable);
+
+  @EntityGraph(attributePaths = {"book"})
+  List<BookReadingLogEntity> findByCreatedByOrderByReadDateDescIdDesc(Integer createdBy,
       Pageable pageable);
 
   @EntityGraph(attributePaths = {"book"})

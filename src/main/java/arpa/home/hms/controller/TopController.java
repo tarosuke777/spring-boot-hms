@@ -1,15 +1,19 @@
 package arpa.home.hms.controller;
 
 import arpa.home.hms.enums.TargetArea;
+import arpa.home.hms.form.BookReadingLogForm;
 import arpa.home.hms.form.DiaryForm;
 import arpa.home.hms.form.TrainingForm;
 import arpa.home.hms.security.LoginUser;
+import arpa.home.hms.service.BookReadingLogService;
+import arpa.home.hms.service.BookService;
 import arpa.home.hms.service.DiaryService;
 import arpa.home.hms.service.GoogleCalendarService;
 import arpa.home.hms.service.TrainingMenuService;
 import arpa.home.hms.service.TrainingService;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -23,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TopController {
 
   private final DiaryService diaryService;
+  private final BookReadingLogService bookReadingLogService;
+  private final BookService bookService;
   private final GoogleCalendarService googleCalendarService;
   private final TrainingService trainingService;
   private final TrainingMenuService trainingMenuService;
@@ -46,6 +52,12 @@ public class TopController {
     model.addAttribute("latestTrainings", latestTrainings);
     model.addAttribute("trainingAreaMap", TargetArea.getTargetAreaMap());
     model.addAttribute("trainingMenuMap", trainingMenuService.getTrainingMenuMap());
+
+    List<BookReadingLogForm> latestBookReadingLogs =
+        bookReadingLogService.getLatestBookReadingLogs(user.getId(), 5);
+    model.addAttribute("latestBookReadingLogs", latestBookReadingLogs);
+    Map<Integer, String> bookMap = bookService.getBookMap(user.getId());
+    model.addAttribute("bookMap", bookMap);
 
     return "top";
   }
