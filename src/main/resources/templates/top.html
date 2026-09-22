@@ -288,6 +288,76 @@
         </div>
       </div>
 
+      <!-- 追加：直近の読書履歴カード -->
+      <div class="card mb-4 shadow-sm">
+        <div
+          class="card-header bg-dark text-white d-flex justify-content-between align-items-center"
+        >
+          <h2 class="h5 mb-0">📚 直近の読書履歴</h2>
+          <div>
+            <a
+              th:href="@{/bookReadingLog/list}"
+              class="btn btn-sm btn-outline-light"
+            >
+              読書履歴一覧・登録
+            </a>
+          </div>
+        </div>
+        <div class="card-body">
+          <div
+            th:if="${latestBookReadingLogs != null and !latestBookReadingLogs.empty}"
+          >
+            <div class="table-responsive">
+              <table class="table table-sm table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>読んだ日</th>
+                    <th>書籍</th>
+                    <th>メモ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="log : ${latestBookReadingLogs}">
+                    <td
+                      class="fw-bold"
+                      th:text="${#temporals.format(log.readDate, 'yyyy-MM-dd')}"
+                    >
+                      2026-08-12
+                    </td>
+                    <td
+                      th:text="${log.bookId != null ? bookMap.get(log.bookId) : '-'}"
+                    >
+                      -
+                    </td>
+                    <td
+                      class="text-break"
+                      th:text="${#strings.isEmpty(log.memo) ? '-' : log.memo}"
+                    >
+                      -
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div
+            th:if="${latestBookReadingLogs == null or latestBookReadingLogs.empty}"
+            class="text-center py-3"
+          >
+            <p class="text-muted mb-2 small">
+              直近の読書履歴はまだありません。
+            </p>
+            <a
+              th:href="@{/bookReadingLog/register}"
+              class="btn btn-sm btn-dark"
+            >
+              ＋ 読書履歴を新規登録する
+            </a>
+          </div>
+        </div>
+      </div>
+
       <!-- ★ 追加：Googleカレンダーカード -->
       <div class="card mb-4 shadow-sm">
         <div

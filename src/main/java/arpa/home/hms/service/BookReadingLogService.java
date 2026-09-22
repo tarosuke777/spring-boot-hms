@@ -5,9 +5,11 @@ import arpa.home.hms.form.BookReadingLogForm;
 import arpa.home.hms.mapper.BookReadingLogMapper;
 import arpa.home.hms.repository.BookReadingLogRepository;
 import arpa.home.hms.repository.BookRepository;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,16 @@ public class BookReadingLogService {
           form.setBookId(log.getBook().getId());
           return form;
         });
+  }
+
+  public List<BookReadingLogForm> getLatestBookReadingLogs(Integer currentUserId, int limit) {
+    return bookReadingLogRepository
+        .findByCreatedByOrderByReadDateDescIdDesc(currentUserId, PageRequest.of(0, limit)).stream()
+        .map(log -> {
+          BookReadingLogForm form = bookReadingLogMapper.toForm(log);
+          form.setBookId(log.getBook().getId());
+          return form;
+        }).toList();
   }
 
   public BookReadingLogForm getBookReadingLogDetails(Integer id, Integer currentUserId) {
