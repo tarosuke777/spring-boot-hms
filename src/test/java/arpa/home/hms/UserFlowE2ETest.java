@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -25,6 +26,7 @@ import org.springframework.test.context.jdbc.SqlConfig;
 @Sql(scripts = "/arpa/home/hms/UserFlowE2ETest_cleanup.sql",
     executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
     config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
+@Disabled("Playwright E2E is covered by the e2e Playwright project")
 class UserFlowE2ETest {
 
   @LocalServerPort
