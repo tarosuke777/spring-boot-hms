@@ -1,0 +1,85 @@
+name: Playwright E2E
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: "25"
+          distribution: "temurin"
+          cache: gradle
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Install E2E dependencies
+        working-directory: e2e
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Start Spring Boot application
+        env:
+          SPRING_PROFILES_ACTIVE: local
+        run: |
+          nohup ./gradlew bootRun --no-daemon > /tmp/hms-bootRun.log 2>&1 &
+          echo $! > /tmp/hms-bootRun.pid
+
+      - name: Wait for Spring Boot application
+        run: |
+          for attempt in {1..300}; do
+            if curl --fail --silent http://localhost:8080/login > /dev/null; then
+              exit 0
+            fi
+            if ! kill -0 "$(cat /tmp/hms-bootRun.pid)" 2>/dev/null; then
+              cat /tmp/hms-bootRun.log
+              exit 1
+            fi
+            sleep 2
+          done
+          cat /tmp/hms-bootRun.log
+          exit 1
+
+      - name: Run Playwright E2E tests
+        working-directory: e2e
+        run: npm test
+
+      - name: Upload E2E artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-e2e-artifacts
+          path: |
+            e2e/screenshots/
+            e2e/test-results/
+            /tmp/hms-bootRun.log
+          if-no-files-found: ignore
+
+      - name: Stop Spring Boot application
+        if: ${{ always() }}
+        run: |
+          if [ -f /tmp/hms-bootRun.pid ]; then
+            kill "$(cat /tmp/hms-bootRun.pid)" || true
+          fi
