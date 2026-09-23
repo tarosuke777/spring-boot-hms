@@ -1,22 +1,18 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 
-test("ログイン後の対象画面を撮影する", async ({ page }) => {
-  const userName = "admin";
-  const password = "password";
-  const targetPagePath = process.env.TARGET_PAGE_PATH ?? "/top";
-
-  if (!userName || !password) {
-    throw new Error(
-      "E2E_USERNAME と E2E_PASSWORD にログイン情報を指定してください。"
-    );
-  }
-
+const loginAsAdmin = async (page: Page) => {
   await page.goto("/login");
-  await page.getByPlaceholder("Name").fill(userName);
-  await page.getByPlaceholder("Password").fill(password);
+  await page.getByPlaceholder("Name").fill("admin");
+  await page.getByPlaceholder("Password").fill("password");
   await page.locator('input[type="submit"]').click();
   await expect(page).toHaveURL(/\/top$/);
+};
+
+test("ログイン後の対象画面を撮影する", async ({ page }) => {
+  const targetPagePath = process.env.TARGET_PAGE_PATH ?? "/top";
+
+  await loginAsAdmin(page);
 
   await page.goto(targetPagePath);
   await expect(page).toHaveURL(
@@ -26,5 +22,20 @@ test("ログイン後の対象画面を撮影する", async ({ page }) => {
   await page.screenshot({
     path: "screenshots/target-page.png",
     fullPage: true,
+  });
+});
+
+test("TOP画面のスナップショットが一致する", async ({ page }) => {
+  await loginAsAdmin(page);
+
+  await expect(page).toHaveScreenshot("top-page.png", {
+    fullPage: true,
+    mask: [
+      page.locator("#day-countdown"),
+      page.locator("#current-time"),
+      page.locator("span.text-muted.fw-bold").filter({
+        hasText: /^\d{4}-\d{2}-\d{2}/,
+      }),
+    ],
   });
 });
