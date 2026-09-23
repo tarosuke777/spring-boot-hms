@@ -2,8 +2,8 @@ import { expect, test } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 
 test("ログイン後の対象画面を撮影する", async ({ page }) => {
-  const userName = process.env.E2E_USERNAME;
-  const password = process.env.E2E_PASSWORD;
+  const userName = "admin";
+  const password = "password";
   const targetPagePath = process.env.TARGET_PAGE_PATH ?? "/top";
 
   if (!userName || !password) {
