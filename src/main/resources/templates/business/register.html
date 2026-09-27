@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout}"
+>
+  <head>
+    <title>事業登録</title>
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <div class="mt-3 mb-3 border-bottom">
+        <h1 class="h2">新規事業登録</h1>
+      </div>
+
+      <form
+        method="post"
+        th:action="@{/business/register}"
+        th:object="${businessForm}"
+      >
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="form-label">事業名</label>
+            <input
+              type="text"
+              class="form-control"
+              th:field="*{name}"
+              th:errorclass="is-invalid"
+            />
+            <div class="invalid-feedback" th:errors="*{name}"></div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">ジャンル</label>
+            <select
+              class="form-select"
+              th:field="*{genre}"
+              th:errorclass="is-invalid"
+            >
+              <option value="">選択してください</option>
+              <option
+                th:each="item : ${T(arpa.home.hms.enums.BusinessGenre).values()}"
+                th:value="${item}"
+                th:text="${item.getLabel()}"
+              ></option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{genre}"></div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">ステータス</label>
+            <select
+              class="form-select"
+              th:field="*{status}"
+              th:errorclass="is-invalid"
+            >
+              <option value="">選択してください</option>
+              <option
+                th:each="item : ${T(arpa.home.hms.enums.BusinessStatus).values()}"
+                th:value="${item}"
+                th:text="${item.getLabel()}"
+              ></option>
+            </select>
+            <div class="invalid-feedback" th:errors="*{status}"></div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">事業概要</label>
+          <textarea
+            class="form-control"
+            rows="4"
+            th:field="*{overview}"
+            th:errorclass="is-invalid"
+          ></textarea>
+          <div class="invalid-feedback" th:errors="*{overview}"></div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-dark text-white">
+            Business Model Canvas
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">顧客セグメント</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{customerSegments}"
+                ></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">価値提案</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{valueProposition}"
+                ></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">チャネル</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{channels}"
+                ></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">顧客との関係</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{customerRelationships}"
+                ></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">収益の流れ</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{revenueStreams}"
+                ></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">経営資源</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{keyResources}"
+                ></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">主要活動</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{keyActivities}"
+                ></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">パートナー</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{keyPartners}"
+                ></textarea>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">コスト構造</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{costStructure}"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <button class="btn btn-dark" type="submit">登録する</button>
+          <a th:href="@{/business/list}" class="btn btn-secondary"
+            >一覧へ戻る</a
+          >
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

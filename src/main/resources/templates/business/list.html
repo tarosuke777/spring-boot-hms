@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout}"
+>
+  <head>
+    <title>事業一覧</title>
+  </head>
+  <body>
+    <div layout:fragment="content">
+      <div
+        class="mt-3 mb-3 border-bottom d-flex justify-content-between align-items-center"
+      >
+        <h1 class="h2">事業一覧</h1>
+        <a class="btn btn-dark" th:href="@{/business/register}"
+          >新規事業を作成</a
+        >
+      </div>
+
+      <form
+        th:action="@{/business/list}"
+        method="get"
+        class="row g-3 align-items-end mb-4"
+      >
+        <div class="col-md-4">
+          <label class="form-label">キーワード</label>
+          <input
+            type="text"
+            class="form-control"
+            name="keyword"
+            th:value="${keyword}"
+            placeholder="事業名・概要"
+          />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">ジャンル</label>
+          <select class="form-select" name="genre">
+            <option value="">すべて</option>
+            <option
+              th:each="item : ${T(arpa.home.hms.enums.BusinessGenre).values()}"
+              th:value="${item}"
+              th:text="${item.getLabel()}"
+              th:selected="${genre != null and item == genre}"
+            ></option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">ステータス</label>
+          <select class="form-select" name="status">
+            <option value="">すべて</option>
+            <option
+              th:each="item : ${T(arpa.home.hms.enums.BusinessStatus).values()}"
+              th:value="${item}"
+              th:text="${item.getLabel()}"
+              th:selected="${status != null and item == status}"
+            ></option>
+          </select>
+        </div>
+        <div class="col-md-2 text-end">
+          <button type="submit" class="btn btn-dark">検索</button>
+          <a th:href="@{/business/list}" class="btn btn-secondary">リセット</a>
+        </div>
+      </form>
+
+      <div
+        th:replace="~{parts/pagination :: pagination(page=${businessPage})}"
+      ></div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+          <thead>
+            <tr class="table-dark">
+              <th style="width: 18%">事業名</th>
+              <th style="width: 12%">ジャンル</th>
+              <th style="width: 14%">ステータス</th>
+              <th>概要</th>
+              <th style="width: 18%">更新日時</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="business : ${businessPage.content}">
+              <td>
+                <a
+                  th:href="@{'/business/detail/' + ${business.id}}"
+                  class="text-decoration-none fw-bold"
+                  th:text="${business.name}"
+                  >事業名</a
+                >
+              </td>
+              <td
+                th:text="${business.genre != null ? business.genre.getLabel() : '-'}"
+              >
+                ジャンル
+              </td>
+              <td>
+                <span
+                  class="badge bg-primary-subtle text-primary-emphasis"
+                  th:text="${business.status != null ? business.status.getLabel() : '-'}"
+                  >ステータス</span
+                >
+              </td>
+              <td class="text-break" th:text="${business.overview}">概要</td>
+              <td
+                th:text="${#temporals.format(business.updatedAt, 'yyyy-MM-dd HH:mm')}"
+              >
+                2026-01-01
+              </td>
+            </tr>
+            <tr th:if="${businessPage.totalElements == 0}">
+              <td colspan="5" class="text-center text-muted py-4">
+                該当する事業はありません。
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
