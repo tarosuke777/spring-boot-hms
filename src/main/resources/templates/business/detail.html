@@ -6,6 +6,79 @@
 >
   <head>
     <title>事業詳細</title>
+    <th:block layout:fragment="page-css">
+      <style>
+        .bmc-grid {
+          display: grid;
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+          grid-template-rows: repeat(2, minmax(14rem, 1fr)) minmax(12rem, 1fr);
+          grid-template-areas:
+            "partners activities value relationships segments"
+            "partners resources value channels segments"
+            "cost cost cost revenue revenue";
+          gap: 1rem;
+        }
+
+        .bmc-field {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+
+        .bmc-field textarea {
+          flex: 1;
+          min-height: 8rem;
+          resize: vertical;
+        }
+
+        .bmc-field--key-partners {
+          grid-area: partners;
+        }
+
+        .bmc-field--key-activities {
+          grid-area: activities;
+        }
+
+        .bmc-field--key-resources {
+          grid-area: resources;
+        }
+
+        .bmc-field--value-proposition {
+          grid-area: value;
+        }
+
+        .bmc-field--customer-relationships {
+          grid-area: relationships;
+        }
+
+        .bmc-field--channels {
+          grid-area: channels;
+        }
+
+        .bmc-field--customer-segments {
+          grid-area: segments;
+        }
+
+        .bmc-field--cost-structure {
+          grid-area: cost;
+        }
+
+        .bmc-field--revenue-streams {
+          grid-area: revenue;
+        }
+
+        @media (max-width: 992px) {
+          .bmc-grid {
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: none;
+          }
+
+          .bmc-field {
+            grid-area: auto;
+          }
+        }
+      </style>
+    </th:block>
   </head>
   <body>
     <div layout:fragment="content">
@@ -82,64 +155,8 @@
             Business Model Canvas
           </div>
           <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-4">
-                <label class="form-label">顧客セグメント</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{customerSegments}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">価値提案</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{valueProposition}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">チャネル</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{channels}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">顧客との関係</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{customerRelationships}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">収益の流れ</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{revenueStreams}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">経営資源</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{keyResources}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">主要活動</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{keyActivities}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
+            <div class="bmc-grid">
+              <div class="bmc-field bmc-field--key-partners">
                 <label class="form-label">パートナー</label>
                 <textarea
                   class="form-control"
@@ -147,12 +164,68 @@
                   th:field="*{keyPartners}"
                 ></textarea>
               </div>
-              <div class="col-md-4">
+              <div class="bmc-field bmc-field--key-activities">
+                <label class="form-label">主要活動</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{keyActivities}"
+                ></textarea>
+              </div>
+              <div class="bmc-field bmc-field--key-resources">
+                <label class="form-label">経営資源</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{keyResources}"
+                ></textarea>
+              </div>
+              <div class="bmc-field bmc-field--value-proposition">
+                <label class="form-label">価値提案</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{valueProposition}"
+                ></textarea>
+              </div>
+              <div class="bmc-field bmc-field--customer-relationships">
+                <label class="form-label">顧客との関係</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{customerRelationships}"
+                ></textarea>
+              </div>
+              <div class="bmc-field bmc-field--channels">
+                <label class="form-label">チャネル</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{channels}"
+                ></textarea>
+              </div>
+              <div class="bmc-field bmc-field--customer-segments">
+                <label class="form-label">顧客セグメント</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{customerSegments}"
+                ></textarea>
+              </div>
+              <div class="bmc-field bmc-field--cost-structure">
                 <label class="form-label">コスト構造</label>
                 <textarea
                   class="form-control"
                   rows="5"
                   th:field="*{costStructure}"
+                ></textarea>
+              </div>
+              <div class="bmc-field bmc-field--revenue-streams">
+                <label class="form-label">収益の流れ</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{revenueStreams}"
                 ></textarea>
               </div>
             </div>

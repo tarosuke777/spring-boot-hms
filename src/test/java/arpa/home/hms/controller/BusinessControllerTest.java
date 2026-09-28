@@ -16,6 +16,7 @@ import arpa.home.hms.form.BusinessForm;
 import arpa.home.hms.mapper.BusinessMapper;
 import arpa.home.hms.repository.BusinessRepository;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -85,9 +87,21 @@ public class BusinessControllerTest {
     BusinessEntity entity = businessRepository.findAll().stream().findFirst().orElseThrow();
     BusinessForm expected = businessMapper.toForm(entity);
 
-    mockMvc.perform(get("/business/detail/{id}", entity.getId()).accept(MediaType.TEXT_HTML))
-        .andExpect(status().isOk()).andExpect(view().name("business/detail"))
-        .andExpect(model().attribute("businessForm", expected));
+    MvcResult result =
+        mockMvc.perform(get("/business/detail/{id}", entity.getId()).accept(MediaType.TEXT_HTML))
+            .andExpect(status().isOk()).andExpect(view().name("business/detail"))
+            .andExpect(model().attribute("businessForm", expected)).andReturn();
+
+    String html = result.getResponse().getContentAsString();
+    Assertions.assertTrue(html.contains("grid-template-columns: repeat(5"));
+    Assertions.assertTrue(html.contains("\"partners activities value relationships segments\""));
+    Assertions.assertTrue(html.contains("@media (max-width: 992px)"));
+    Assertions.assertTrue(html.contains("flex: 1"));
+    for (String field : List.of("keyPartners", "keyActivities", "keyResources", "valueProposition",
+        "customerRelationships", "channels", "customerSegments", "costStructure",
+        "revenueStreams")) {
+      Assertions.assertTrue(html.contains("name=\"" + field + "\""), field + " binding missing");
+    }
   }
 
   @Test
