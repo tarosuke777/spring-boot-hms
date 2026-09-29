@@ -64,7 +64,7 @@ public class BusinessControllerTest {
     Assertions.assertTrue(headerEnd > headerStart, "business list header markup is incomplete");
     String header = html.substring(headerStart, headerEnd);
     Assertions.assertTrue(header.contains("<h1 class=\"h2 m-0\">事業一覧</h1>"));
-    Assertions.assertTrue(header.contains("btn btn-primary btn-sm px-3"));
+    Assertions.assertTrue(header.contains("btn btn-dark btn-sm px-3"));
     Assertions.assertTrue(header.contains("href=\"/business/register\""));
     Assertions.assertTrue(header.contains("aria-hidden=\"true\">+</span>新規事業を作成"));
     Assertions.assertFalse(header.contains("justify-content-between"));
