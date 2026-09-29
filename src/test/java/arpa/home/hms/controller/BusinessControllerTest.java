@@ -52,8 +52,22 @@ public class BusinessControllerTest {
 
   @Test
   void getList_ShouldReturnBusinessPage() throws Exception {
-    mockMvc.perform(get("/business/list")).andDo(print()).andExpect(status().isOk())
-        .andExpect(view().name("business/list")).andExpect(model().attributeExists("businessPage"));
+    MvcResult result = mockMvc.perform(get("/business/list")).andDo(print())
+        .andExpect(status().isOk()).andExpect(view().name("business/list"))
+        .andExpect(model().attributeExists("businessPage")).andReturn();
+
+    String html = result.getResponse().getContentAsString();
+    int headerStart =
+        html.indexOf("class=\"mt-3 mb-3 pb-2 border-bottom d-flex align-items-center gap-3\"");
+    int headerEnd = html.indexOf("</div>", headerStart);
+    Assertions.assertTrue(headerStart >= 0, "business list header classes missing");
+    Assertions.assertTrue(headerEnd > headerStart, "business list header markup is incomplete");
+    String header = html.substring(headerStart, headerEnd);
+    Assertions.assertTrue(header.contains("<h1 class=\"h2 m-0\">事業一覧</h1>"));
+    Assertions.assertTrue(header.contains("btn btn-primary btn-sm px-3"));
+    Assertions.assertTrue(header.contains("href=\"/business/register\""));
+    Assertions.assertTrue(header.contains("aria-hidden=\"true\">+</span>新規事業を作成"));
+    Assertions.assertFalse(header.contains("justify-content-between"));
   }
 
   @Test
