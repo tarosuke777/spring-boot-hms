@@ -1,0 +1,69 @@
+.bmc-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(14rem, 1fr)) minmax(12rem, 1fr);
+  grid-template-areas:
+    "partners activities value relationships segments"
+    "partners resources value channels segments"
+    "cost cost cost revenue revenue";
+  gap: 1rem;
+}
+
+.bmc-box {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.bmc-box textarea {
+  flex: 1;
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.bmc-kp {
+  grid-area: partners;
+}
+
+.bmc-ka {
+  grid-area: activities;
+}
+
+.bmc-kr {
+  grid-area: resources;
+}
+
+.bmc-vp {
+  grid-area: value;
+}
+
+.bmc-cr {
+  grid-area: relationships;
+}
+
+.bmc-ch {
+  grid-area: channels;
+}
+
+.bmc-cs {
+  grid-area: segments;
+}
+
+.bmc-cost {
+  grid-area: cost;
+}
+
+.bmc-rev {
+  grid-area: revenue;
+}
+
+@media (max-width: 992px) {
+  .bmc-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+  }
+
+  .bmc-box {
+    grid-area: auto;
+  }
+}
