@@ -66,13 +66,15 @@ public class BusinessControllerTest {
 
   @Test
   void register_WithValidData_ShouldSaveBusinessAndCanvas() throws Exception {
-    mockMvc.perform(post("/business/register").with(csrf())
-        .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", "テスト事業")
-        .param("genre", BusinessGenre.SAAS.name()).param("status", BusinessStatus.IDEA.name())
-        .param("overview", "テスト概要").param("customerSegments", "B2B").param("valueProposition", "価値")
-        .param("channels", "Web").param("customerRelationships", "メール")
-        .param("revenueStreams", "月額").param("keyResources", "開発者").param("keyActivities", "開発")
-        .param("keyPartners", "提携先").param("costStructure", "人件費"))
+    mockMvc
+        .perform(post("/business/register").with(csrf())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("name", "テスト事業")
+            .param("genre", BusinessGenre.SAAS_SERVICE.name())
+            .param("status", BusinessStatus.IDEA.name()).param("overview", "テスト概要")
+            .param("customerSegments", "B2B").param("valueProposition", "価値")
+            .param("channels", "Web").param("customerRelationships", "メール")
+            .param("revenueStreams", "月額").param("keyResources", "開発者").param("keyActivities", "開発")
+            .param("keyPartners", "提携先").param("costStructure", "人件費"))
         .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/business/list"));
 
     entityManager.flush();
