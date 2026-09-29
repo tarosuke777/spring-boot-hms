@@ -6,6 +6,9 @@
 >
   <head>
     <title>事業登録</title>
+    <th:block layout:fragment="page-css">
+      <link rel="stylesheet" th:href="@{/css/business/bmc.css}" />
+    </th:block>
   </head>
   <body>
     <div layout:fragment="content">
@@ -75,68 +78,12 @@
         </div>
 
         <div class="card shadow-sm mb-4">
-          <div class="card-header bg-dark text-white">
+          <div class="card-header bg-dark text-white fw-bold">
             Business Model Canvas
           </div>
-          <div class="card-body">
-            <div class="row g-3">
-              <div class="col-md-4">
-                <label class="form-label">顧客セグメント</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{customerSegments}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">価値提案</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{valueProposition}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">チャネル</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{channels}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">顧客との関係</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{customerRelationships}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">収益の流れ</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{revenueStreams}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">経営資源</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{keyResources}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label">主要活動</label>
-                <textarea
-                  class="form-control"
-                  rows="5"
-                  th:field="*{keyActivities}"
-                ></textarea>
-              </div>
-              <div class="col-md-4">
+          <div class="card-body p-3">
+            <div class="bmc-grid">
+              <div class="bmc-box bmc-kp">
                 <label class="form-label">パートナー</label>
                 <textarea
                   class="form-control"
@@ -144,12 +91,68 @@
                   th:field="*{keyPartners}"
                 ></textarea>
               </div>
-              <div class="col-md-4">
+              <div class="bmc-box bmc-ka">
+                <label class="form-label">主要活動</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{keyActivities}"
+                ></textarea>
+              </div>
+              <div class="bmc-box bmc-kr">
+                <label class="form-label">経営資源</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{keyResources}"
+                ></textarea>
+              </div>
+              <div class="bmc-box bmc-vp">
+                <label class="form-label">価値提案</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{valueProposition}"
+                ></textarea>
+              </div>
+              <div class="bmc-box bmc-cr">
+                <label class="form-label">顧客との関係</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{customerRelationships}"
+                ></textarea>
+              </div>
+              <div class="bmc-box bmc-ch">
+                <label class="form-label">チャネル</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{channels}"
+                ></textarea>
+              </div>
+              <div class="bmc-box bmc-cs">
+                <label class="form-label">顧客セグメント</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{customerSegments}"
+                ></textarea>
+              </div>
+              <div class="bmc-box bmc-cost">
                 <label class="form-label">コスト構造</label>
                 <textarea
                   class="form-control"
                   rows="5"
                   th:field="*{costStructure}"
+                ></textarea>
+              </div>
+              <div class="bmc-box bmc-rev">
+                <label class="form-label">収益の流れ</label>
+                <textarea
+                  class="form-control"
+                  rows="5"
+                  th:field="*{revenueStreams}"
                 ></textarea>
               </div>
             </div>

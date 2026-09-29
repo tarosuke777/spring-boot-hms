@@ -58,8 +58,10 @@ public class BusinessControllerTest {
 
   @Test
   void getRegister_ShouldReturnRegisterPage() throws Exception {
-    mockMvc.perform(get("/business/register").accept(MediaType.TEXT_HTML))
-        .andExpect(status().isOk()).andExpect(view().name("business/register"));
+    MvcResult result = mockMvc.perform(get("/business/register").accept(MediaType.TEXT_HTML))
+        .andExpect(status().isOk()).andExpect(view().name("business/register")).andReturn();
+
+    assertBusinessCanvasMarkup(result.getResponse().getContentAsString());
   }
 
   @Test
@@ -92,15 +94,31 @@ public class BusinessControllerTest {
             .andExpect(status().isOk()).andExpect(view().name("business/detail"))
             .andExpect(model().attribute("businessForm", expected)).andReturn();
 
-    String html = result.getResponse().getContentAsString();
-    Assertions.assertTrue(html.contains("grid-template-columns: repeat(5"));
-    Assertions.assertTrue(html.contains("\"partners activities value relationships segments\""));
-    Assertions.assertTrue(html.contains("@media (max-width: 992px)"));
-    Assertions.assertTrue(html.contains("flex: 1"));
+    assertBusinessCanvasMarkup(result.getResponse().getContentAsString());
+  }
+
+  private void assertBusinessCanvasMarkup(String html) {
+    Assertions.assertTrue(html.contains("/css/business/bmc.css"));
+    int canvasStart = html.indexOf("Business Model Canvas");
+    int buttonsStart = html.indexOf("class=\"text-center\"", canvasStart);
+    Assertions.assertTrue(canvasStart >= 0, "BMC card header missing");
+    Assertions.assertTrue(buttonsStart > canvasStart, "BMC card markup is incomplete");
+    String canvasMarkup = html.substring(canvasStart, buttonsStart);
+    Assertions.assertTrue(canvasMarkup.contains("class=\"bmc-grid\""));
+    Assertions.assertFalse(canvasMarkup.contains("class=\"row"));
+    Assertions.assertFalse(canvasMarkup.contains("class=\"col-"));
+
+    for (String boxClass : List.of("bmc-kp", "bmc-ka", "bmc-kr", "bmc-vp", "bmc-cr", "bmc-ch",
+        "bmc-cs", "bmc-cost", "bmc-rev")) {
+      Assertions.assertTrue(canvasMarkup.contains("class=\"bmc-box " + boxClass + "\""),
+          boxClass + " grid item missing");
+    }
+
     for (String field : List.of("keyPartners", "keyActivities", "keyResources", "valueProposition",
         "customerRelationships", "channels", "customerSegments", "costStructure",
         "revenueStreams")) {
-      Assertions.assertTrue(html.contains("name=\"" + field + "\""), field + " binding missing");
+      Assertions.assertTrue(canvasMarkup.contains("name=\"" + field + "\""),
+          field + " binding missing");
     }
   }
 
