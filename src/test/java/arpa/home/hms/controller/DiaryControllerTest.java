@@ -108,6 +108,9 @@ public class DiaryControllerTest {
     // When & Then
     performGetRegisterRequest().andExpect(status().isOk()).andExpect(view().name(REGISTER_VIEW))
         .andExpect(model().hasNoErrors())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("登録する")))
+        .andExpect(content()
+            .string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Register"))))
         .andExpect(model().attribute("diaryForm", org.hamcrest.Matchers.hasProperty("todoPlan",
             org.hamcrest.Matchers.is(expectedDefaultTodoPlan))));
   }
