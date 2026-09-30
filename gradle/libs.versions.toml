@@ -69,7 +69,7 @@ mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstr
 mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
 lombok = { group = "org.projectlombok", name = "lombok" }
 lombok-mapstruct-binding = { group = "org.projectlombok", name = "lombok-mapstruct-binding", version.ref = "lombok-mapstruct-binding" }
-hibernate-jpamodelgen = { group = "org.hibernate.orm", name = "hibernate-processor" }
+hibernate-processor = { group = "org.hibernate.orm", name = "hibernate-processor" }
 
 # --- Testing ---
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }

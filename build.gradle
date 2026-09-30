@@ -87,7 +87,7 @@ dependencies {
 
     annotationProcessor libs.mapstruct.processor
     annotationProcessor libs.lombok.mapstruct.binding
-    annotationProcessor libs.hibernate.jpamodelgen
+    annotationProcessor libs.hibernate.processor
 
     testCompileOnly libs.lombok
     testAnnotationProcessor libs.lombok
