@@ -62,7 +62,11 @@ public class AuthorControllerTest {
 
     // When & Then
     performGetListRequest().andExpect(status().isOk())
-        .andExpect(model().attributeExists("authorPage")).andExpect(view().name(LIST_VIEW));
+        .andExpect(model().attributeExists("authorPage"))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("読書履歴")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("href=\"/bookReadingLog/list\"")))
+        .andExpect(view().name(LIST_VIEW));
   }
 
   @Test
