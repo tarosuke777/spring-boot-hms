@@ -73,7 +73,10 @@ public class DiaryControllerTest {
     // When & Then
     performGetListRequest().andExpect(status().isOk())
         .andExpect(model().attribute("diaryList", expectedDiaryList))
-        .andExpect(view().name(LIST_VIEW));
+        .andExpect(view().name(LIST_VIEW))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString(">日報</a")))
+        .andExpect(content()
+            .string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString(">日報一覧</a"))));
   }
 
   @Test
