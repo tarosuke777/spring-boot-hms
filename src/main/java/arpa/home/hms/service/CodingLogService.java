@@ -4,9 +4,11 @@ import arpa.home.hms.entity.CodingLogEntity;
 import arpa.home.hms.form.CodingLogForm;
 import arpa.home.hms.mapper.CodingLogMapper;
 import arpa.home.hms.repository.CodingLogRepository;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,12 @@ public class CodingLogService {
   public Page<CodingLogForm> getCodingLogList(Integer currentUserId, @NonNull Pageable pageable) {
     return codingLogRepository.findByCreatedByOrderBySolvedDateDescIdDesc(currentUserId, pageable)
         .map(codingLogMapper::toForm);
+  }
+
+  public List<CodingLogForm> getLatestCodingLogs(Integer currentUserId, int limit) {
+    return codingLogRepository
+        .findByCreatedByOrderBySolvedDateDescIdDesc(currentUserId, PageRequest.of(0, limit))
+        .map(codingLogMapper::toForm).toList();
   }
 
   public CodingLogForm getCodingLogDetails(Integer id, Integer currentUserId) {

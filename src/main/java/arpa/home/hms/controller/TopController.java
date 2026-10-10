@@ -2,11 +2,13 @@ package arpa.home.hms.controller;
 
 import arpa.home.hms.enums.TargetArea;
 import arpa.home.hms.form.BookReadingLogForm;
+import arpa.home.hms.form.CodingLogForm;
 import arpa.home.hms.form.DiaryForm;
 import arpa.home.hms.form.TrainingForm;
 import arpa.home.hms.security.LoginUser;
 import arpa.home.hms.service.BookReadingLogService;
 import arpa.home.hms.service.BookService;
+import arpa.home.hms.service.CodingLogService;
 import arpa.home.hms.service.DiaryService;
 import arpa.home.hms.service.GoogleCalendarService;
 import arpa.home.hms.service.TrainingMenuService;
@@ -28,6 +30,7 @@ public class TopController {
 
   private final DiaryService diaryService;
   private final BookReadingLogService bookReadingLogService;
+  private final CodingLogService codingLogService;
   private final BookService bookService;
   private final GoogleCalendarService googleCalendarService;
   private final TrainingService trainingService;
@@ -58,6 +61,9 @@ public class TopController {
     model.addAttribute("latestBookReadingLogs", latestBookReadingLogs);
     Map<Integer, String> bookMap = bookService.getBookMap(user.getId());
     model.addAttribute("bookMap", bookMap);
+
+    List<CodingLogForm> latestCodingLogs = codingLogService.getLatestCodingLogs(user.getId(), 5);
+    model.addAttribute("latestCodingLogs", latestCodingLogs);
 
     return "top";
   }
