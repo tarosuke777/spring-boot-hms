@@ -40,11 +40,22 @@ class TopControllerTest {
             .string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("oldest"))))
         .andExpect(content()
             .string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("other-user"))))
+        .andExpect(model().attribute("latestCodingLogs", org.hamcrest.Matchers.hasSize(5)))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("直近のコーディング履歴")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("coding-newest")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("coding-oldest"))))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("other-coding-user"))))
         .andExpect(result -> {
           String html = result.getResponse().getContentAsString();
           assertTrue(html.indexOf("same-day-later") < html.indexOf("same-day-earlier"));
+          assertTrue(
+              html.indexOf("coding-same-day-later") < html.indexOf("coding-same-day-earlier"));
           assertFalse(html.contains("oldest"));
+          assertFalse(html.contains("coding-oldest"));
         }).andExpect(content().string(org.hamcrest.Matchers.containsString("/bookReadingLog/list")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("/codingLog/list")))
         .andExpect(view().name("top"));
   }
 }
