@@ -6,6 +6,13 @@
 >
   <head>
     <title>コーディング履歴登録</title>
+    <script>
+      $(function () {
+        $("#jsiDatepicker").datepicker({
+          dateFormat: "yy-mm-dd",
+        });
+      });
+    </script>
   </head>
 
   <body>
@@ -21,10 +28,10 @@
         class="row g-3"
       >
         <div class="col-md-6">
-          <label for="solvedDate" class="form-label">解いた日</label>
+          <label for="jsiDatepicker" class="form-label">解いた日</label>
           <input
-            type="date"
-            id="solvedDate"
+            type="text"
+            id="jsiDatepicker"
             class="form-control"
             th:field="*{solvedDate}"
             th:errorclass="is-invalid"

@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,6 +23,7 @@ public class CodingLogForm {
   private Integer id;
 
   @NotNull
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate solvedDate;
 
   @NotBlank

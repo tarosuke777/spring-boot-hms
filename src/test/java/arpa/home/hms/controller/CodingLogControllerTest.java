@@ -71,6 +71,8 @@ class CodingLogControllerTest {
         .andExpect(model().attribute("codingLogForm",
             org.hamcrest.Matchers.hasProperty("solvedDate",
                 org.hamcrest.Matchers.equalTo(LocalDate.now(ZoneId.systemDefault())))))
+        .andExpect(content().string(org.hamcrest.Matchers
+            .containsString("value=\"" + LocalDate.now(ZoneId.systemDefault()) + "\"")))
         .andExpect(view().name("codingLog/register"));
   }
 
