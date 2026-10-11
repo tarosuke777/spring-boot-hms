@@ -11,6 +11,27 @@
         $("#jsiDatepicker").datepicker({
           dateFormat: "yy-mm-dd",
         });
+
+        const targetType = $("#targetType");
+        const bookSelect = $("#bookTargetId");
+        const videoSelect = $("#videoTargetId");
+        const updateTargetSelect = () => {
+          const isBook = targetType.val() === "BOOK";
+          bookSelect.prop("hidden", !isBook).prop("disabled", !isBook);
+          videoSelect
+            .prop("hidden", isBook || !targetType.val())
+            .prop("disabled", isBook || !targetType.val());
+          if (!targetType.val()) {
+            bookSelect.prop("hidden", true).prop("disabled", true);
+            videoSelect.prop("hidden", true).prop("disabled", true);
+          }
+        };
+        targetType.on("change", () => {
+          bookSelect.val("");
+          videoSelect.val("");
+          updateTargetSelect();
+        });
+        updateTargetSelect();
       });
     </script>
   </head>
@@ -59,15 +80,39 @@
         </div>
 
         <div class="col-md-6">
-          <label for="targetId" class="form-label">対象ID</label>
-          <input
-            type="number"
-            id="targetId"
-            class="form-control"
-            th:field="*{targetId}"
-            th:errorclass="is-invalid"
-            min="1"
-          />
+          <label for="bookTargetId" class="form-label">対象タイトル</label>
+          <select
+            id="bookTargetId"
+            name="targetId"
+            class="form-select"
+            th:classappend="${#fields.hasErrors('targetId')} ? 'is-invalid'"
+            th:disabled="${activityLogForm.targetType != 'BOOK'}"
+            th:hidden="${activityLogForm.targetType != 'BOOK'}"
+          >
+            <option value="">書籍を選択してください</option>
+            <option
+              th:each="book : ${bookMap}"
+              th:value="${book.key}"
+              th:text="${book.value}"
+              th:selected="${activityLogForm.targetType == 'BOOK' and activityLogForm.targetId == book.key}"
+            ></option>
+          </select>
+          <select
+            id="videoTargetId"
+            name="targetId"
+            class="form-select"
+            th:classappend="${#fields.hasErrors('targetId')} ? 'is-invalid'"
+            th:disabled="${activityLogForm.targetType != 'VIDEO'}"
+            th:hidden="${activityLogForm.targetType != 'VIDEO'}"
+          >
+            <option value="">動画を選択してください</option>
+            <option
+              th:each="movie : ${movieMap}"
+              th:value="${movie.key}"
+              th:text="${movie.value}"
+              th:selected="${activityLogForm.targetType == 'VIDEO' and activityLogForm.targetId == movie.key}"
+            ></option>
+          </select>
           <div class="invalid-feedback" th:errors="*{targetId}"></div>
         </div>
 

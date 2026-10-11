@@ -5,6 +5,8 @@ import arpa.home.hms.enums.ActivityLogTargetType;
 import arpa.home.hms.form.ActivityLogForm;
 import arpa.home.hms.mapper.ActivityLogMapper;
 import arpa.home.hms.repository.ActivityLogRepository;
+import arpa.home.hms.repository.BookRepository;
+import arpa.home.hms.repository.MovieRepository;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,8 @@ public class ActivityLogService {
 
   private final ActivityLogRepository activityLogRepository;
   private final ActivityLogMapper activityLogMapper;
+  private final BookRepository bookRepository;
+  private final MovieRepository movieRepository;
 
   public Page<ActivityLogForm> getActivityLogList(Integer currentUserId,
       @NonNull Pageable pageable) {
@@ -44,21 +48,39 @@ public class ActivityLogService {
   }
 
   @Transactional
-  public void registerActivityLog(ActivityLogForm form, Integer currentUserId) {
+  public boolean registerActivityLog(ActivityLogForm form, Integer currentUserId) {
+    if (!isTargetOwnedByUser(form, currentUserId)) {
+      return false;
+    }
     ActivityLogEntity entity = Objects.requireNonNull(activityLogMapper.toEntity(form));
     entity.setCreatedBy(currentUserId);
     entity.setUpdatedBy(currentUserId);
     activityLogRepository.save(entity);
+    return true;
   }
 
   @Transactional
-  public void updateActivityLog(ActivityLogForm form, Integer currentUserId) {
+  public boolean updateActivityLog(ActivityLogForm form, Integer currentUserId) {
     ActivityLogEntity existingEntity =
         activityLogRepository.findByIdAndCreatedBy(form.getId(), currentUserId)
             .orElseThrow(() -> new RuntimeException("Activity log not found or access denied"));
+    if (!isTargetOwnedByUser(form, currentUserId)) {
+      return false;
+    }
     ActivityLogEntity entity = Objects.requireNonNull(activityLogMapper.copy(existingEntity));
     activityLogMapper.updateEntityFromForm(form, entity);
     activityLogRepository.save(entity);
+    return true;
+  }
+
+  private boolean isTargetOwnedByUser(ActivityLogForm form, Integer currentUserId) {
+    if (ActivityLogTargetType.BOOK.name().equals(form.getTargetType())) {
+      return bookRepository.existsByIdAndCreatedBy(form.getTargetId(), currentUserId);
+    }
+    if (ActivityLogTargetType.VIDEO.name().equals(form.getTargetType())) {
+      return movieRepository.existsByIdAndCreatedBy(form.getTargetId(), currentUserId);
+    }
+    return false;
   }
 
   @Transactional

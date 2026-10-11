@@ -60,41 +60,59 @@ public class ActivityLogController {
       @AuthenticationPrincipal LoginUser user) {
     model.addAttribute("activityLogForm",
         activityLogService.getActivityLogDetails(id, user.getId()));
+    addTargetOptions(model, user);
     return DETAIL_VIEW;
   }
 
   @GetMapping("/register")
-  public String getRegister(@ModelAttribute ActivityLogForm activityLogForm) {
+  public String getRegister(@ModelAttribute ActivityLogForm activityLogForm, Model model,
+      @AuthenticationPrincipal LoginUser user) {
     if (activityLogForm.getActivityDate() == null) {
       activityLogForm.setActivityDate(LocalDate.now(ZoneId.systemDefault()));
     }
+    addTargetOptions(model, user);
     return REGISTER_VIEW;
   }
 
   @PostMapping("/register")
   public String register(@ModelAttribute @Validated ActivityLogForm form,
-      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
+      BindingResult bindingResult, Model model, @AuthenticationPrincipal LoginUser user) {
     if (bindingResult.hasErrors()) {
+      addTargetOptions(model, user);
       return REGISTER_VIEW;
     }
 
-    activityLogService.registerActivityLog(form, user.getId());
+    if (!activityLogService.registerActivityLog(form, user.getId())) {
+      bindingResult.rejectValue("targetId", "activityLog.targetId.invalid", "選択されたタイトルが見つかりません。");
+      addTargetOptions(model, user);
+      return REGISTER_VIEW;
+    }
     return REDIRECT_LIST;
   }
 
   @PostMapping(value = "/detail", params = "update")
   public String update(@ModelAttribute @Validated(UpdateGroup.class) ActivityLogForm form,
-      BindingResult bindingResult, @AuthenticationPrincipal LoginUser user) {
+      BindingResult bindingResult, Model model, @AuthenticationPrincipal LoginUser user) {
     if (bindingResult.hasFieldErrors(ActivityLogForm.Fields.id)
         || bindingResult.hasFieldErrors(ActivityLogForm.Fields.version)) {
       throw new IllegalRequestException("不正なリクエストを検出しました（改ざんの疑い）");
     }
     if (bindingResult.hasErrors()) {
+      addTargetOptions(model, user);
       return DETAIL_VIEW;
     }
 
-    activityLogService.updateActivityLog(form, user.getId());
+    if (!activityLogService.updateActivityLog(form, user.getId())) {
+      bindingResult.rejectValue("targetId", "activityLog.targetId.invalid", "選択されたタイトルが見つかりません。");
+      addTargetOptions(model, user);
+      return DETAIL_VIEW;
+    }
     return REDIRECT_LIST;
+  }
+
+  private void addTargetOptions(Model model, LoginUser user) {
+    model.addAttribute("bookMap", bookService.getBookMap(user.getId()));
+    model.addAttribute("movieMap", movieService.getMovieMap(user.getId()));
   }
 
   @PostMapping(value = "/detail", params = "delete")

@@ -16,6 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import arpa.home.hms.entity.ActivityLogEntity;
 import arpa.home.hms.form.ActivityLogForm;
 import arpa.home.hms.repository.ActivityLogRepository;
+import arpa.home.hms.repository.BookRepository;
+import arpa.home.hms.repository.MovieRepository;
 import arpa.home.hms.repository.UserRepository;
 import arpa.home.hms.service.ActivityLogService;
 import jakarta.persistence.EntityManager;
@@ -44,6 +46,12 @@ class ActivityLogControllerTest {
 
   @Autowired
   private ActivityLogRepository activityLogRepository;
+
+  @Autowired
+  private BookRepository bookRepository;
+
+  @Autowired
+  private MovieRepository movieRepository;
 
   @Autowired
   private UserRepository userRepository;
@@ -76,16 +84,33 @@ class ActivityLogControllerTest {
             .containsString("value=\"" + LocalDate.now(ZoneId.systemDefault()) + "\"")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("書籍")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("動画")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Book")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Video")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"bookTargetId\"")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"videoTargetId\"")))
         .andExpect(view().name("activityLog/register"));
+  }
+
+  @Test
+  void getRegister_ShouldOnlyOfferCurrentUsersTitles() throws Exception {
+    mockMvc.perform(get("/activityLog/register")).andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Book")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Video")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Other User Book"))))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Other User Video"))));
   }
 
   @Test
   void register_WithValidData_ShouldPersistActivityLog() throws Exception {
     Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
+    Integer bookId = bookRepository.findByCreatedByOrderByIdAsc(adminId).getFirst().getId();
 
     mockMvc
         .perform(post("/activityLog/register").with(csrf()).param("activityDate", "2026-10-08")
-            .param("targetType", "BOOK").param("targetId", "1").param("memo", "Daily note"))
+            .param("targetType", "BOOK").param("targetId", String.valueOf(bookId))
+            .param("memo", "Daily note"))
         .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/activityLog/list"));
 
     entityManager.flush();
@@ -98,8 +123,27 @@ class ActivityLogControllerTest {
         .orElseThrow();
     assertEquals(LocalDate.of(2026, 10, 8), saved.getActivityDate());
     assertEquals("BOOK", saved.getTargetType());
-    assertEquals(1, saved.getTargetId());
+    assertEquals(bookId, saved.getTargetId());
     assertEquals("Daily note", saved.getMemo());
+  }
+
+  @Test
+  void register_WithAnotherUsersTitle_ShouldReturnTargetIdError() throws Exception {
+    Integer otherUserId = userRepository.findByName("user").orElseThrow().getId();
+    Integer otherBookId =
+        bookRepository.findByCreatedByOrderByIdAsc(otherUserId).getFirst().getId();
+    Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
+
+    mockMvc
+        .perform(post("/activityLog/register").with(csrf()).param("activityDate", "2026-10-08")
+            .param("targetType", "BOOK").param("targetId", String.valueOf(otherBookId))
+            .param("memo", "foreign book"))
+        .andExpect(status().isOk())
+        .andExpect(model().attributeHasFieldErrors("activityLogForm", "targetId"))
+        .andExpect(view().name("activityLog/register"));
+
+    assertEquals(7, activityLogRepository.findByCreatedByOrderByActivityDateDescIdDesc(adminId,
+        org.springframework.data.domain.PageRequest.of(0, 10)).getTotalElements());
   }
 
   @Test
@@ -132,6 +176,7 @@ class ActivityLogControllerTest {
     ActivityLogEntity log =
         activityLogRepository.findByCreatedByOrderByActivityDateDescIdDesc(adminId,
             org.springframework.data.domain.PageRequest.of(0, 10)).getContent().getFirst();
+    Integer videoId = movieRepository.findByCreatedBy(adminId).getFirst().getId();
 
     mockMvc.perform(get("/activityLog/detail/" + log.getId())).andExpect(status().isOk())
         .andExpect(model().attributeExists("activityLogForm"))
@@ -141,7 +186,7 @@ class ActivityLogControllerTest {
         .perform(post("/activityLog/detail").with(csrf()).param("update", "")
             .param("id", String.valueOf(log.getId())).param("version", "0")
             .param("activityDate", "2026-10-07").param("targetType", "VIDEO")
-            .param("targetId", "10").param("memo", "Updated"))
+            .param("targetId", String.valueOf(videoId)).param("memo", "Updated"))
         .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/activityLog/list"));
 
     entityManager.flush();
@@ -150,7 +195,7 @@ class ActivityLogControllerTest {
     assertEquals("Updated", updated.getMemo());
     assertEquals(LocalDate.of(2026, 10, 7), updated.getActivityDate());
     assertEquals("VIDEO", updated.getTargetType());
-    assertEquals(10, updated.getTargetId());
+    assertEquals(videoId, updated.getTargetId());
 
     mockMvc
         .perform(post("/activityLog/detail").with(csrf()).param("delete", "").param("id",
@@ -158,6 +203,28 @@ class ActivityLogControllerTest {
         .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/activityLog/list"));
 
     assertFalse(activityLogRepository.existsByIdAndCreatedBy(log.getId(), adminId));
+  }
+
+  @Test
+  void detail_UpdateWithAnotherUsersTitle_ShouldReturnTargetIdError() throws Exception {
+    Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
+    Integer otherUserId = userRepository.findByName("user").orElseThrow().getId();
+    ActivityLogEntity log =
+        activityLogRepository.findByCreatedByOrderByActivityDateDescIdDesc(adminId,
+            org.springframework.data.domain.PageRequest.of(0, 10)).getContent().getFirst();
+    Integer otherMovieId = movieRepository.findByCreatedBy(otherUserId).getFirst().getId();
+
+    mockMvc
+        .perform(post("/activityLog/detail").with(csrf()).param("update", "")
+            .param("id", String.valueOf(log.getId())).param("version", "0")
+            .param("activityDate", "2026-10-07").param("targetType", "VIDEO")
+            .param("targetId", String.valueOf(otherMovieId)).param("memo", "foreign video"))
+        .andExpect(status().isOk())
+        .andExpect(model().attributeHasFieldErrors("activityLogForm", "targetId"))
+        .andExpect(view().name("activityLog/detail"));
+
+    assertFalse(activityLogRepository.findByIdAndCreatedBy(log.getId(), adminId).orElseThrow()
+        .getMemo().equals("foreign video"));
   }
 
   @Test
@@ -173,6 +240,7 @@ class ActivityLogControllerTest {
         .andExpect(model().attribute("activityLogForm",
             org.hamcrest.Matchers.hasProperty("targetType",
                 org.hamcrest.Matchers.equalTo("VIDEO"))))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Video")))
         .andExpect(view().name("activityLog/detail"));
 
     mockMvc

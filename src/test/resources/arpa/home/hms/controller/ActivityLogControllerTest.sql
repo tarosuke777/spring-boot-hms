@@ -15,6 +15,16 @@ SELECT 'Test Activity Video', 1, false, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(
 FROM user u
 WHERE u.name = 'admin';
 
+INSERT INTO book (name, created_at, updated_at, created_by, updated_by, version, genre, is_adult)
+SELECT 'Other User Book', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), u.id, u.id, 0, 3, false
+FROM user u
+WHERE u.name = 'user';
+
+INSERT INTO movie (name, genre, is_adult, created_at, updated_at, created_by, updated_by, version)
+SELECT 'Other User Video', 1, false, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), u.id, u.id, 0
+FROM user u
+WHERE u.name = 'user';
+
 INSERT INTO activity_log (activity_date, target_type, target_id, memo, created_at, updated_at,
                           created_by, updated_by, version)
 SELECT DATE '2026-09-25', 'BOOK', b.id, 'activity-newest', CURRENT_TIMESTAMP(6),
