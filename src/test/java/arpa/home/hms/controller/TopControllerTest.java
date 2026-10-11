@@ -40,6 +40,13 @@ class TopControllerTest {
             .string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("oldest"))))
         .andExpect(content()
             .string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("other-user"))))
+        .andExpect(model().attribute("latestActivityLogs", org.hamcrest.Matchers.hasSize(5)))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("直近の活動ログ")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("activity-newest")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("activity-oldest"))))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("other-activity-user"))))
         .andExpect(model().attribute("latestCodingLogs", org.hamcrest.Matchers.hasSize(5)))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("直近のコーディング履歴")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("coding-newest")))
@@ -51,10 +58,14 @@ class TopControllerTest {
           String html = result.getResponse().getContentAsString();
           assertTrue(html.indexOf("same-day-later") < html.indexOf("same-day-earlier"));
           assertTrue(
+              html.indexOf("activity-same-day-later") < html.indexOf("activity-same-day-earlier"));
+          assertTrue(
               html.indexOf("coding-same-day-later") < html.indexOf("coding-same-day-earlier"));
           assertFalse(html.contains("oldest"));
+          assertFalse(html.contains("activity-oldest"));
           assertFalse(html.contains("coding-oldest"));
         }).andExpect(content().string(org.hamcrest.Matchers.containsString("/bookReadingLog/list")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("/activityLog/list")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("/codingLog/list")))
         .andExpect(view().name("top"));
   }
