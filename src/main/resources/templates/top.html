@@ -404,9 +404,25 @@
                     </td>
                     <td
                       th:with="targetTitle=${log.targetType == 'BOOK' ? bookMap.get(log.targetId) : (log.targetType == 'VIDEO' or log.targetType == 'MOVIE' ? movieMap.get(log.targetId) : log.targetId)}"
-                      th:text="${targetTitle != null ? targetTitle : '-'}"
                     >
-                      -
+                      <a
+                        th:if="${targetTitle != null and log.targetType == 'BOOK'}"
+                        th:href="@{/book/detail/{id}(id=${log.targetId})}"
+                        th:text="${targetTitle}"
+                        class="text-decoration-none"
+                      ></a>
+                      <a
+                        th:if="${targetTitle != null and (log.targetType == 'VIDEO' or log.targetType == 'MOVIE')}"
+                        th:href="@{/movie/detail/{id}(id=${log.targetId})}"
+                        th:text="${targetTitle}"
+                        class="text-decoration-none"
+                      ></a>
+                      <span
+                        th:if="${targetTitle == null or (log.targetType != 'BOOK' and log.targetType != 'VIDEO' and log.targetType != 'MOVIE')}"
+                        th:text="${targetTitle != null ? targetTitle : '-'}"
+                      >
+                        -
+                      </span>
                     </td>
                     <td
                       class="text-break"

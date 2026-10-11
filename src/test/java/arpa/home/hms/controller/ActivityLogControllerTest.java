@@ -69,6 +69,8 @@ class ActivityLogControllerTest {
         .andExpect(content().string(org.hamcrest.Matchers.containsString("activity-newest")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Book")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Video")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("/book/detail/")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("/movie/detail/")))
         .andExpect(content().string(
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("other-activity-user"))))
         .andExpect(view().name("activityLog/list"));

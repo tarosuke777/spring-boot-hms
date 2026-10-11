@@ -46,6 +46,8 @@ class TopControllerTest {
         .andExpect(content().string(org.hamcrest.Matchers.containsString("activity-newest")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Book 01 - A")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Movie 01 - A")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("/book/detail/")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("/movie/detail/")))
         .andExpect(content().string(
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("activity-oldest"))))
         .andExpect(content().string(
