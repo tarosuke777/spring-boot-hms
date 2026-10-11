@@ -28,7 +28,7 @@
             <tr class="table-dark">
               <th>活動日</th>
               <th>対象種別</th>
-              <th>対象ID</th>
+              <th>対象</th>
               <th>メモ</th>
             </tr>
           </thead>
@@ -41,8 +41,15 @@
                   class="text-decoration-none"
                 ></a>
               </td>
-              <td th:text="${log.targetType}"></td>
-              <td th:text="${log.targetId}"></td>
+              <td
+                th:text="${log.targetType == 'BOOK' ? '書籍' : (log.targetType == 'VIDEO' or log.targetType == 'MOVIE' ? '動画' : log.targetType)}"
+              ></td>
+              <td
+                th:with="targetTitle=${log.targetType == 'BOOK' ? bookMap.get(log.targetId) : (log.targetType == 'VIDEO' or log.targetType == 'MOVIE' ? movieMap.get(log.targetId) : log.targetId)}"
+                th:text="${targetTitle != null ? targetTitle : '-'}"
+              >
+                -
+              </td>
               <td class="text-break" th:text="${log.memo}"></td>
             </tr>
           </tbody>

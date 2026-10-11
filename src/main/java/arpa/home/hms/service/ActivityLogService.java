@@ -1,6 +1,7 @@
 package arpa.home.hms.service;
 
 import arpa.home.hms.entity.ActivityLogEntity;
+import arpa.home.hms.enums.ActivityLogTargetType;
 import arpa.home.hms.form.ActivityLogForm;
 import arpa.home.hms.mapper.ActivityLogMapper;
 import arpa.home.hms.repository.ActivityLogRepository;
@@ -37,7 +38,9 @@ public class ActivityLogService {
   public ActivityLogForm getActivityLogDetails(Integer id, Integer currentUserId) {
     ActivityLogEntity log = activityLogRepository.findByIdAndCreatedBy(id, currentUserId)
         .orElseThrow(() -> new RuntimeException("Activity log not found or access denied"));
-    return activityLogMapper.toForm(log);
+    ActivityLogForm form = activityLogMapper.toForm(log);
+    form.setTargetType(ActivityLogTargetType.normalizeLegacyValue(form.getTargetType()));
+    return form;
   }
 
   @Transactional

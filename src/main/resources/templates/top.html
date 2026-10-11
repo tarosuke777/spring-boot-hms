@@ -383,7 +383,7 @@
                   <tr>
                     <th>活動日</th>
                     <th>対象種別</th>
-                    <th>対象ID</th>
+                    <th>対象</th>
                     <th>メモ</th>
                   </tr>
                 </thead>
@@ -398,11 +398,16 @@
                     <td>
                       <span
                         class="badge bg-info text-dark"
-                        th:text="${log.targetType}"
-                        >BOOK</span
+                        th:text="${log.targetType == 'BOOK' ? '書籍' : (log.targetType == 'VIDEO' or log.targetType == 'MOVIE' ? '動画' : log.targetType)}"
+                        >書籍</span
                       >
                     </td>
-                    <td th:text="${log.targetId}">1</td>
+                    <td
+                      th:with="targetTitle=${log.targetType == 'BOOK' ? bookMap.get(log.targetId) : (log.targetType == 'VIDEO' or log.targetType == 'MOVIE' ? movieMap.get(log.targetId) : log.targetId)}"
+                      th:text="${targetTitle != null ? targetTitle : '-'}"
+                    >
+                      -
+                    </td>
                     <td
                       class="text-break"
                       th:text="${#strings.isEmpty(log.memo) ? '-' : log.memo}"

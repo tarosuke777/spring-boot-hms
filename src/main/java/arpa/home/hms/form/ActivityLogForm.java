@@ -4,6 +4,7 @@ import arpa.home.hms.validation.DeleteGroup;
 import arpa.home.hms.validation.UpdateGroup;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ public class ActivityLogForm {
 
   @NotBlank
   @Size(max = 32)
+  @Pattern(regexp = "BOOK|VIDEO")
   private String targetType;
 
   @NotNull

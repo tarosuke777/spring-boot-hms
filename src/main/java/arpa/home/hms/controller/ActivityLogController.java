@@ -1,9 +1,12 @@
 package arpa.home.hms.controller;
 
+import arpa.home.hms.enums.ActivityLogTargetType;
 import arpa.home.hms.exception.IllegalRequestException;
 import arpa.home.hms.form.ActivityLogForm;
 import arpa.home.hms.security.LoginUser;
 import arpa.home.hms.service.ActivityLogService;
+import arpa.home.hms.service.BookService;
+import arpa.home.hms.service.MovieService;
 import arpa.home.hms.validation.DeleteGroup;
 import arpa.home.hms.validation.UpdateGroup;
 import java.time.LocalDate;
@@ -34,12 +37,21 @@ public class ActivityLogController {
   private static final String REGISTER_VIEW = "activityLog/register";
 
   private final ActivityLogService activityLogService;
+  private final BookService bookService;
+  private final MovieService movieService;
+
+  @ModelAttribute("activityLogTargetTypes")
+  public ActivityLogTargetType[] getActivityLogTargetTypes() {
+    return ActivityLogTargetType.values();
+  }
 
   @GetMapping("/list")
   public String getList(@PageableDefault(size = 10) Pageable pageable, Model model,
       @AuthenticationPrincipal LoginUser user) {
     model.addAttribute("activityLogPage",
         activityLogService.getActivityLogList(user.getId(), pageable));
+    model.addAttribute("bookMap", bookService.getBookMap(user.getId()));
+    model.addAttribute("movieMap", movieService.getMovieMap(user.getId()));
     return LIST_VIEW;
   }
 

@@ -13,6 +13,7 @@ import arpa.home.hms.service.BookService;
 import arpa.home.hms.service.CodingLogService;
 import arpa.home.hms.service.DiaryService;
 import arpa.home.hms.service.GoogleCalendarService;
+import arpa.home.hms.service.MovieService;
 import arpa.home.hms.service.TrainingMenuService;
 import arpa.home.hms.service.TrainingService;
 import java.time.LocalDate;
@@ -35,6 +36,7 @@ public class TopController {
   private final ActivityLogService activityLogService;
   private final CodingLogService codingLogService;
   private final BookService bookService;
+  private final MovieService movieService;
   private final GoogleCalendarService googleCalendarService;
   private final TrainingService trainingService;
   private final TrainingMenuService trainingMenuService;
@@ -68,6 +70,7 @@ public class TopController {
     List<ActivityLogForm> latestActivityLogs =
         activityLogService.getLatestActivityLogs(user.getId(), 5);
     model.addAttribute("latestActivityLogs", latestActivityLogs);
+    model.addAttribute("movieMap", movieService.getMovieMap(user.getId()));
 
     List<CodingLogForm> latestCodingLogs = codingLogService.getLatestCodingLogs(user.getId(), 5);
     model.addAttribute("latestCodingLogs", latestCodingLogs);

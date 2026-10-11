@@ -59,6 +59,8 @@ class ActivityLogControllerTest {
     mockMvc.perform(get("/activityLog/list")).andExpect(status().isOk())
         .andExpect(model().attributeExists("activityLogPage"))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("activity-newest")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Book")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Video")))
         .andExpect(content().string(
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("other-activity-user"))))
         .andExpect(view().name("activityLog/list"));
@@ -72,6 +74,8 @@ class ActivityLogControllerTest {
                 org.hamcrest.Matchers.equalTo(LocalDate.now(ZoneId.systemDefault())))))
         .andExpect(content().string(org.hamcrest.Matchers
             .containsString("value=\"" + LocalDate.now(ZoneId.systemDefault()) + "\"")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("書籍")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("動画")))
         .andExpect(view().name("activityLog/register"));
   }
 
@@ -113,6 +117,16 @@ class ActivityLogControllerTest {
   }
 
   @Test
+  void register_WithUnsupportedTargetType_ShouldReturnFormErrors() throws Exception {
+    mockMvc
+        .perform(post("/activityLog/register").with(csrf()).param("activityDate", "2026-10-08")
+            .param("targetType", "UNSUPPORTED").param("targetId", "1").param("memo", "invalid"))
+        .andExpect(status().isOk())
+        .andExpect(model().attributeHasFieldErrors("activityLogForm", "targetType"))
+        .andExpect(view().name("activityLog/register"));
+  }
+
+  @Test
   void detail_UpdateThenDelete_ShouldChangeOnlyOwnedLog() throws Exception {
     Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
     ActivityLogEntity log =
@@ -144,6 +158,35 @@ class ActivityLogControllerTest {
         .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/activityLog/list"));
 
     assertFalse(activityLogRepository.existsByIdAndCreatedBy(log.getId(), adminId));
+  }
+
+  @Test
+  void detail_LegacyMovieTarget_ShouldNormalizeAndAllowUpdate() throws Exception {
+    Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
+    ActivityLogEntity legacyMovieLog = activityLogRepository
+        .findByCreatedByOrderByActivityDateDescIdDesc(adminId,
+            org.springframework.data.domain.PageRequest.of(0, 10))
+        .getContent().stream().filter(log -> "activity-oldest".equals(log.getMemo())).findFirst()
+        .orElseThrow();
+
+    mockMvc.perform(get("/activityLog/detail/" + legacyMovieLog.getId())).andExpect(status().isOk())
+        .andExpect(model().attribute("activityLogForm",
+            org.hamcrest.Matchers.hasProperty("targetType",
+                org.hamcrest.Matchers.equalTo("VIDEO"))))
+        .andExpect(view().name("activityLog/detail"));
+
+    mockMvc
+        .perform(post("/activityLog/detail").with(csrf()).param("update", "")
+            .param("id", String.valueOf(legacyMovieLog.getId())).param("version", "0")
+            .param("activityDate", "2026-09-20").param("targetType", "VIDEO")
+            .param("targetId", String.valueOf(legacyMovieLog.getTargetId()))
+            .param("memo", "activity-oldest"))
+        .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/activityLog/list"));
+
+    entityManager.flush();
+    entityManager.clear();
+    assertEquals("VIDEO",
+        activityLogRepository.findById(legacyMovieLog.getId()).orElseThrow().getTargetType());
   }
 
   @Test

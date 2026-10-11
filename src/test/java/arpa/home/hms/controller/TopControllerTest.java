@@ -41,8 +41,11 @@ class TopControllerTest {
         .andExpect(content()
             .string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("other-user"))))
         .andExpect(model().attribute("latestActivityLogs", org.hamcrest.Matchers.hasSize(5)))
+        .andExpect(model().attributeExists("movieMap"))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("直近の活動ログ")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("activity-newest")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Book 01 - A")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Movie 01 - A")))
         .andExpect(content().string(
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("activity-oldest"))))
         .andExpect(content().string(

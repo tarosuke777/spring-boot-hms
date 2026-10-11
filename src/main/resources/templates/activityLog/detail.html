@@ -45,14 +45,19 @@
 
         <div class="col-md-6">
           <label for="targetType" class="form-label">対象種別</label>
-          <input
-            type="text"
+          <select
             id="targetType"
-            class="form-control"
+            class="form-select"
             th:field="*{targetType}"
             th:errorclass="is-invalid"
-            maxlength="32"
-          />
+          >
+            <option value="">選択してください</option>
+            <option
+              th:each="type : ${activityLogTargetTypes}"
+              th:value="${type}"
+              th:text="${type.label}"
+            ></option>
+          </select>
           <div class="invalid-feedback" th:errors="*{targetType}"></div>
         </div>
 
