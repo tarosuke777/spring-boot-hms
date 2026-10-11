@@ -6,7 +6,9 @@ import arpa.home.hms.form.MovieForm;
 import arpa.home.hms.mapper.MovieMapper;
 import arpa.home.hms.repository.MovieRepository;
 import jakarta.persistence.EntityManager;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,12 @@ public class MovieService {
       }
       return form;
     }).toList();
+  }
+
+  public Map<Integer, String> getMovieMap(Integer currentUserId) {
+    return movieRepository.findByCreatedBy(currentUserId).stream()
+        .collect(java.util.stream.Collectors.toMap(MovieEntity::getId, MovieEntity::getName,
+            (existing, replacement) -> existing, LinkedHashMap::new));
   }
 
   /** ページング一覧取得 */
