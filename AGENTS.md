@@ -60,7 +60,172 @@
 ### Step 5: UI改修時の画像・動画取得
 画面表示やユーザー操作に影響する改修を行った場合は、実装とテストの確認に加えて、改修箇所が分かる画像と操作動画をPlaywrightで取得すること。
 
-1. 既存のE2EテストとPlaywright設定を優先して利用し、対象画面を表示するために必要な操作を実行する。アプリケーションを起動できないなど取得できない事情がある場合は、理由を明記する。
-2. 改修した画面・状態が分かるフルページのPNG画像と、その状態に至る操作を含むWebM動画を取得する。画面遷移を伴う改修では、遷移前から改修後の画面が表示されるまでを録画する。
-3. 画像・動画はリポジトリ内に保存せず、一時ディレクトリに出力する。GitHubのユーザー添付機能へアップロードし、画像は `![画面名](URL)`、動画は添付URL単独の行としてPR説明に埋め込み、PR上で表示できるようにする。アップロード成功とURLを確認した後、一時ファイルを削除する。アップロードに失敗した場合はエラーを明記し、ローカルパスを成果物として報告しない。
-4. Playwrightの動画はブラウザーコンテキストを閉じてファイルへの保存を完了してから、アップロード前に存在とサイズを確認する。PR説明には実際の添付メディアを含め、ローカルパスは記載しない。
+1. 次の準備コマンドはリポジトリルートで実行する。Playwrightは `e2e/` のロックファイルに従ってインストールし、Chromiumも用意する。
+
+   ```sh
+   cd e2e
+   npm ci
+   npx playwright install chromium
+   cd ..
+   ```
+
+   Linux上でPlaywrightのブラウザー依存ライブラリが不足している場合は、`cd e2e && npx playwright install --with-deps chromium` を実行する（OSパッケージのインストール権限が必要）。
+
+2. 別のターミナルでリポジトリルートからアプリケーションを起動し、ログイン画面が応答するまで待つ。ローカルプロファイルとH2データベースは既定で使用される。
+
+   ```sh
+   ./gradlew bootRun
+   ```
+
+   ```sh
+   for i in $(seq 1 60); do
+     if curl --silent --fail http://localhost:8080/login -o /dev/null; then
+       break
+     fi
+     sleep 2
+   done
+   curl --fail --silent --show-error http://localhost:8080/login -o /dev/null
+   ```
+
+   撮影後はアプリケーションを起動したターミナルで `Ctrl+C` を押して停止する。
+
+3. リポジトリルートのターミナルで一時ディレクトリを作り、Playwrightでログインから対象画面までを録画する。以下はこのプロジェクトの `admin` / `password` でログインしてTOPをフルページ撮影する例。別画面や別の操作を撮影する場合は、URL、操作、期待する画面を改修内容に合わせて変更する。
+
+   ```sh
+   set -euo pipefail
+   CAPTURE_DIR="$(mktemp -d)"
+   export CAPTURE_DIR
+   cd e2e
+   node <<'NODE'
+   const fs = require("node:fs/promises");
+   const path = require("node:path");
+   const { chromium } = require("@playwright/test");
+
+   (async () => {
+     const outputDir = process.env.CAPTURE_DIR;
+     if (!outputDir) throw new Error("CAPTURE_DIR is required");
+
+     const browser = await chromium.launch();
+     let context;
+     let video;
+     try {
+       context = await browser.newContext({
+         viewport: { width: 1280, height: 900 },
+         recordVideo: {
+           dir: outputDir,
+           size: { width: 1280, height: 900 },
+         },
+       });
+       const page = await context.newPage();
+       await page.goto("http://localhost:8080/login");
+       await page.getByPlaceholder("Name").fill("admin");
+       await page.getByPlaceholder("Password").fill("password");
+       await page.locator('input[type="submit"]').click();
+       await page.waitForURL("**/top");
+       await page.waitForTimeout(1000);
+       await page.screenshot({
+         path: path.join(outputDir, "top.png"),
+         fullPage: true,
+       });
+       video = page.video();
+     } finally {
+       if (context) await context.close();
+       await browser.close();
+     }
+
+     if (!video) throw new Error("Playwright did not create a video");
+     await fs.rename(
+       await video.path(),
+       path.join(outputDir, "login-to-top.webm")
+     );
+   })().catch((error) => {
+     console.error(error);
+     process.exitCode = 1;
+   });
+   NODE
+   cd ..
+   test -s "$CAPTURE_DIR/top.png" && test -s "$CAPTURE_DIR/login-to-top.webm"
+   ls -lh "$CAPTURE_DIR/top.png" "$CAPTURE_DIR/login-to-top.webm"
+   ```
+
+4. `gh` CLIで対象リポジトリに認証済みであることを確認し、GitHubのユーザー添付機能へ画像と動画をアップロードする。次のコマンドの `REPO` と `PR_URL` は実際の対象に置き換える。認証トークンをコマンド本文やログへ出力しないこと。
+
+   ```sh
+   set -euo pipefail
+   gh auth status
+   REPO='OWNER/REPO'
+   PR_URL='https://github.com/OWNER/REPO/pull/123'
+   REPO_ID="$(gh api "repos/$REPO" --jq .id)"
+   case "$REPO_ID" in
+     ''|*[!0-9]*) echo "Invalid repository ID for $REPO" >&2; exit 1 ;;
+   esac
+   TOKEN="$(gh auth token)"
+
+   upload_attachment() {
+     file="$1"
+     name="$(basename -- "$file")"
+     mime="$2"
+     curl --fail-with-body --silent --show-error -X POST \
+       'https://uploads.github.com/user-attachments/assets' \
+       --url-query "name=$name" \
+       --url-query "content_type=$mime" \
+       --url-query "repository_id=$REPO_ID" \
+       -H 'Content-Type: application/octet-stream' \
+       -H 'X-GitHub-Api-Version: 2022-11-28' \
+       -H "Authorization: Bearer $TOKEN" \
+       --data-binary "@$file" |
+       node -e '
+         let body = "";
+         process.stdin.on("data", (chunk) => body += chunk);
+         process.stdin.on("end", () => {
+           try {
+             const url = JSON.parse(body).url;
+             if (typeof url !== "string" || !url.startsWith("https://")) {
+               throw new Error("GitHub did not return an attachment URL");
+             }
+             process.stdout.write(url);
+           } catch (error) {
+             console.error(error.message);
+             process.exitCode = 1;
+           }
+         });
+       '
+   }
+
+   IMAGE_URL="$(upload_attachment "$CAPTURE_DIR/top.png" image/png)"
+   VIDEO_URL="$(upload_attachment "$CAPTURE_DIR/login-to-top.webm" video/webm)"
+   printf 'Image: %s\nVideo: %s\n' "$IMAGE_URL" "$VIDEO_URL"
+   ```
+
+   `curl` はGitHub.com用のURLを使用している。GitHub Enterprise Serverでは、そのインスタンスのユーザー添付アップロードURLに置き換える。
+
+5. PR本文の既存内容を保持したまま、画像はMarkdown画像、動画はURL単独行で追加する。本文を更新した後、同じPRから本文を取得して両方のURLが含まれていることを確認する。
+
+   ```sh
+   set -euo pipefail
+   BODY_FILE="$(mktemp)"
+   gh pr view "$PR_URL" --repo "$REPO" --json body --jq .body > "$BODY_FILE"
+   cat >> "$BODY_FILE" <<EOF
+
+   ### UI改修のスクリーンショット
+
+   ![ログイン後のTOP画面]($IMAGE_URL)
+
+   ### UI操作動画
+
+   $VIDEO_URL
+   EOF
+   gh pr edit "$PR_URL" --repo "$REPO" --body-file "$BODY_FILE"
+   gh pr view "$PR_URL" --repo "$REPO" --json body --jq .body > "$BODY_FILE"
+   grep -F "$IMAGE_URL" "$BODY_FILE"
+   grep -F "$VIDEO_URL" "$BODY_FILE"
+   rm -- "$BODY_FILE"
+   ```
+
+6. PR本文に実際の画像と動画が表示され、両方の添付URLが確認できた後にだけ、一時メディアを削除する。撮影・アップロード・PR更新のいずれかが失敗した場合はエラーを明記し、確認前に成果物を削除しない。
+
+   ```sh
+   rm -- "$CAPTURE_DIR/top.png" "$CAPTURE_DIR/login-to-top.webm"
+   rmdir -- "$CAPTURE_DIR"
+   unset CAPTURE_DIR TOKEN IMAGE_URL VIDEO_URL REPO_ID
+   ```
