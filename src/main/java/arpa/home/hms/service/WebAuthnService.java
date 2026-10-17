@@ -6,6 +6,7 @@ import arpa.home.hms.repository.UserRepository;
 import arpa.home.hms.repository.WebAuthnCredentialRepository;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.web.webauthn.api.Bytes;
@@ -98,7 +99,7 @@ public class WebAuthnService
     return ImmutableCredentialRecord.builder().credentialId(credentialIdBytes)
         .credentialType(PublicKeyCredentialType.PUBLIC_KEY)
         .publicKey(new ImmutablePublicKeyCose(publicKeyBytes.getBytes()))
-        .userEntityUserId(userIdBytes).signatureCount(entity.getCount())
+        .userEntityUserId(userIdBytes).signatureCount(entity.getCount()).transports(Set.of())
         .attestationObject(new Bytes(entity.getAttestationObject())).build();
 
   }
