@@ -16,10 +16,6 @@ spring:
       mariadb:
         initialize-schema: false
 
-app:
-  services:
-    videos-url: http://192.168.10.199:8080/videos/
-
 webauthn:
   rp-name: "HMS App (Local)"
   rp-id: "localhost"
