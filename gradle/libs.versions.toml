@@ -36,6 +36,7 @@ spring-boot-starter-security = { group = "org.springframework.boot", name = "spr
 spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
 spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
 spring-boot-starter-flyway = { group = "org.springframework.boot", name = "spring-boot-starter-flyway" }
+spring-boot-h2console = { group = "org.springframework.boot", name = "spring-boot-h2console" }
 spring-security-webauthn = { group = "org.springframework.security", name = "spring-security-webauthn" }
 spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
 

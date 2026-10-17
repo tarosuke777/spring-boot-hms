@@ -35,6 +35,8 @@ class TopControllerTest {
         .andExpect(model().attribute("latestBookReadingLogs", org.hamcrest.Matchers.hasSize(5)))
         .andExpect(model().attributeExists("bookMap"))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("直近の読書履歴")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.containsString("data-chat-url=\"https://hc.home.arpa/\"")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("newest")))
         .andExpect(content()
             .string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("oldest"))))
