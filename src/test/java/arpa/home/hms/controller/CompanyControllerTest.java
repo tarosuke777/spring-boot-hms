@@ -200,6 +200,8 @@ public class CompanyControllerTest {
         // UpdateGroup)
         .param("name", "Some Name").param("version", targetCompany.getVersion().toString()))
         .andExpect(status().isOk()).andExpect(view().name("error"))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("chatFloatingBtn"))))
         .andExpect(model().attribute("isNotDisplayMenu", true));
   }
 

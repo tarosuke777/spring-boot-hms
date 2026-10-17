@@ -1,6 +1,5 @@
 package arpa.home.hms.exception;
 
-import arpa.home.hms.config.AppProperties;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -11,12 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-  private final AppProperties appProperties;
-
-  public GlobalExceptionHandler(AppProperties appProperties) {
-    this.appProperties = appProperties;
-  }
 
   /** 不正なリクエスト（改ざん等）のハンドリング */
   @ExceptionHandler(IllegalRequestException.class)
@@ -30,7 +23,6 @@ public class GlobalExceptionHandler {
     model.addAttribute("exception", e.getClass().getSimpleName());
     // 改ざんの疑いがあるため、メニューなどは一切出さない（システムエラー扱い）
     model.addAttribute("isNotDisplayMenu", true);
-    addAppServices(model);
 
     return "error";
   }
@@ -43,7 +35,6 @@ public class GlobalExceptionHandler {
     // 排他制御エラーであることを示すフラグやメッセージを渡す
     model.addAttribute("isOptimisticLockError", true);
     model.addAttribute("isNotDisplayMenu", false);
-    addAppServices(model);
 
     return "error";
   }
@@ -60,12 +51,7 @@ public class GlobalExceptionHandler {
     model.addAttribute("errorId", errorId);
     model.addAttribute("exception", e.getClass().getSimpleName());
     model.addAttribute("isNotDisplayMenu", true);
-    addAppServices(model);
 
     return "error";
-  }
-
-  private void addAppServices(Model model) {
-    model.addAttribute("appServices", appProperties.getServices());
   }
 }

@@ -81,7 +81,7 @@
     <!-- ========================================== -->
     <!-- チャットモーダル ＆ フローティングボタン (ここから追加) -->
     <!-- ========================================== -->
-    <div sec:authorize="isAuthenticated()">
+    <div sec:authorize="isAuthenticated()" th:if="${isNotDisplayMenu == null}">
       <!-- 画面右下のフローティングボタン -->
       <button
         type="button"
