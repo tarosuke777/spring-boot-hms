@@ -13,8 +13,8 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
@@ -200,6 +200,8 @@ public class CompanyControllerTest {
         // UpdateGroup)
         .param("name", "Some Name").param("version", targetCompany.getVersion().toString()))
         .andExpect(status().isOk()).andExpect(view().name("error"))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("chatFloatingBtn"))))
         .andExpect(model().attribute("isNotDisplayMenu", true));
   }
 

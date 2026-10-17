@@ -7,7 +7,7 @@ import org.springframework.ai.ollama.OllamaEmbeddingModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
-import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
+import org.springframework.boot.http.client.HttpClientSettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -21,7 +21,7 @@ public class OllamaConfig {
   public OllamaEmbeddingModel ollamaEmbeddingModel(OllamaConnectionProperties connectionProperties,
       OllamaEmbeddingProperties embeddingProperties) {
 
-    ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.defaults()
+    HttpClientSettings settings = HttpClientSettings.defaults()
         .withConnectTimeout(Duration.ofSeconds(3)).withReadTimeout(Duration.ofSeconds(30));
 
     ClientHttpRequestFactory requestFactory =
@@ -33,6 +33,6 @@ public class OllamaConfig {
         .restClientBuilder(restClientBuilder).build();
 
     return OllamaEmbeddingModel.builder().ollamaApi(ollamaApi)
-        .defaultOptions(embeddingProperties.getOptions()).build();
+        .options(embeddingProperties.toOptions()).build();
   }
 }

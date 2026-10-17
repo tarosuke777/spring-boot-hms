@@ -23,10 +23,10 @@
 ### バックエンド
 
 - Java 25
-- Spring Boot 3.5.6
+- Spring Boot 4.1.1
 - Spring Security
 - MyBatis 3.0.4
-- Flyway 11.3.0
+- Flyway 12.4.0
 
 ### フロントエンド
 

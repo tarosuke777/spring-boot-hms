@@ -81,13 +81,13 @@
     <!-- ========================================== -->
     <!-- チャットモーダル ＆ フローティングボタン (ここから追加) -->
     <!-- ========================================== -->
-    <div sec:authorize="isAuthenticated()">
+    <div sec:authorize="isAuthenticated()" th:if="${isNotDisplayMenu == null}">
       <!-- 画面右下のフローティングボタン -->
       <button
         type="button"
         id="chatFloatingBtn"
         class="btn btn-primary rounded-circle shadow-lg"
-        th:data-chat-url="${@appProperties.services['chat-url']}"
+        th:data-chat-url="${appServices['chat-url']}"
         onclick="openChatModal(this)"
         title="Chatを開く"
       >
