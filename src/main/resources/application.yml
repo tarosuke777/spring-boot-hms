@@ -54,6 +54,10 @@ app:
     grafana-url: https://grf.${app.base-domain}/
     adguardhome-url: https://adg.${app.base-domain}/
 
+  file-server:
+    base-url: http://192.168.10.199:8080/
+    videos-path: videos/
+
 jwt:
   access-token-expiration-ms: 86400000 # 1日 (ミリ秒) 
   refresh-token-expiration-ms: 2592000000 # 30日 (ミリ秒)
