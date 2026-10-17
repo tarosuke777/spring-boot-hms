@@ -1,11 +1,14 @@
 package arpa.home.hms.exception;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.ui.Model;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @ControllerAdvice
@@ -37,6 +40,20 @@ public class GlobalExceptionHandler {
     model.addAttribute("isNotDisplayMenu", false);
 
     return "error";
+  }
+
+  @ExceptionHandler(ResponseStatusException.class)
+  public String handleResponseStatusException(ResponseStatusException e, Model model,
+      HttpServletResponse response) {
+    response.setStatus(e.getStatusCode().value());
+    return handleException(e, model);
+  }
+
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  public String handleHttpRequestMethodNotSupportedException(
+      HttpRequestMethodNotSupportedException e, Model model, HttpServletResponse response) {
+    response.setStatus(e.getStatusCode().value());
+    return handleException(e, model);
   }
 
   @ExceptionHandler({Exception.class})

@@ -7,7 +7,7 @@ spring:
     username: hms
     password: ${mysql_user_password}
   flyway:
-    locations: classpath:db/migration/ddl
+    locations: classpath:db/migration/ddl,classpath:db/migration/game-video
     baseline-on-migrate: true
     baseline-version: 0
   h2:
