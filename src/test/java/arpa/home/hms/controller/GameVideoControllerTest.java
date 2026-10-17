@@ -36,8 +36,8 @@ class GameVideoControllerTest {
         .andExpect(MockMvcResultMatchers.model().attributeExists("gameVideoPage"))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Game C")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("<video")))
-        .andExpect(content().string(
-            org.hamcrest.Matchers.containsString("https://hv.home.arpa/videos/game%20sample.mp4")))
+        .andExpect(content().string(org.hamcrest.Matchers
+            .containsString("http://192.168.10.199:8080/videos/game%20sample.mp4")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("ゲーム動画")));
   }
 
@@ -47,8 +47,8 @@ class GameVideoControllerTest {
         .andExpect(view().name("gameVideo/detail"))
         .andExpect(MockMvcResultMatchers.model().attributeExists("gameVideo"))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Game B")))
-        .andExpect(content()
-            .string(org.hamcrest.Matchers.containsString("https://hv.home.arpa/videos/second.mp4")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.containsString("http://192.168.10.199:8080/videos/second.mp4")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("<video")));
   }
 

@@ -17,12 +17,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class GameVideoService {
 
   private final GameVideoRepository gameVideoRepository;
-  private final String videosBaseUrl;
+  private final String fileServerBaseUrl;
+  private final String videosPath;
 
   public GameVideoService(GameVideoRepository gameVideoRepository,
-      @Value("${app.services.videos-url}") String videosBaseUrl) {
+      @Value("${app.file-server.base-url}") String fileServerBaseUrl,
+      @Value("${app.file-server.videos-path}") String videosPath) {
     this.gameVideoRepository = gameVideoRepository;
-    this.videosBaseUrl = videosBaseUrl;
+    this.fileServerBaseUrl = fileServerBaseUrl;
+    this.videosPath = videosPath;
   }
 
   public Page<GameVideoForm> getGameVideoPage(Pageable pageable) {
@@ -37,7 +40,7 @@ public class GameVideoService {
   }
 
   private GameVideoForm toForm(GameVideoEntity video) {
-    String videoUrl = UriComponentsBuilder.fromUriString(videosBaseUrl)
+    String videoUrl = UriComponentsBuilder.fromUriString(fileServerBaseUrl).path(videosPath)
         .pathSegment(video.getFileName()).encode(StandardCharsets.UTF_8).toUriString();
     return new GameVideoForm(video.getId(), video.getTitle(), video.getName(), video.getFileName(),
         video.getCreatedAt(), video.getUpdatedAt(), videoUrl);

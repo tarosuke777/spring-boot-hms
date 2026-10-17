@@ -57,7 +57,6 @@ app:
   file-server:
     base-url: http://192.168.10.199:8080/
     videos-path: videos/
-    images-path: images/
 
 jwt:
   access-token-expiration-ms: 86400000 # 1日 (ミリ秒) 

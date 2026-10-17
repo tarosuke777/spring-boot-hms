@@ -34,12 +34,12 @@ class GameVideoServiceTest {
     when(gameVideoRepository.findAllByOrderByCreatedAtDescIdDesc(pageable))
         .thenReturn(new PageImpl<>(List.of(video), pageable, 1));
     GameVideoService service =
-        new GameVideoService(gameVideoRepository, "https://hv.home.arpa/videos/");
+        new GameVideoService(gameVideoRepository, "http://192.168.10.199:8080/", "videos/");
 
     var result = service.getGameVideoPage(pageable);
 
     assertEquals(1, result.getTotalElements());
-    assertEquals("https://hv.home.arpa/videos/recording%20one.mp4",
+    assertEquals("http://192.168.10.199:8080/videos/recording%20one.mp4",
         result.getContent().getFirst().videoUrl());
     assertEquals("Game", result.getContent().getFirst().title());
     verify(gameVideoRepository).findAllByOrderByCreatedAtDescIdDesc(pageable);
@@ -49,7 +49,7 @@ class GameVideoServiceTest {
   void getGameVideo_WhenMissing_ReturnsNotFound() {
     when(gameVideoRepository.findById(100L)).thenReturn(Optional.empty());
     GameVideoService service =
-        new GameVideoService(gameVideoRepository, "https://hv.home.arpa/videos/");
+        new GameVideoService(gameVideoRepository, "http://192.168.10.199:8080/", "videos/");
 
     ResponseStatusException exception =
         assertThrows(ResponseStatusException.class, () -> service.getGameVideo(100L));
