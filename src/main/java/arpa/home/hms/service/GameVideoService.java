@@ -4,12 +4,14 @@ import arpa.home.hms.entity.GameVideoEntity;
 import arpa.home.hms.form.GameVideoForm;
 import arpa.home.hms.repository.GameVideoRepository;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -28,9 +30,18 @@ public class GameVideoService {
     this.videosPath = videosPath;
   }
 
-  public Page<GameVideoForm> getGameVideoPage(Pageable pageable) {
-    return gameVideoRepository.findAllByOrderByCreatedAtDescIdDesc(Objects.requireNonNull(pageable))
+  public Page<GameVideoForm> getGameVideoPage(Pageable pageable, String title, String name) {
+    return gameVideoRepository
+        .findAllByTitleAndName(normalize(title), normalize(name), Objects.requireNonNull(pageable))
         .map(this::toForm);
+  }
+
+  public List<String> getGameVideoTitles() {
+    return gameVideoRepository.findDistinctTitles();
+  }
+
+  public List<String> getGameVideoNames(String title) {
+    return gameVideoRepository.findDistinctNamesByTitle(normalize(title));
   }
 
   public GameVideoForm getGameVideo(Long id) {
@@ -44,5 +55,9 @@ public class GameVideoService {
         .pathSegment(video.getFileName()).encode(StandardCharsets.UTF_8).toUriString();
     return new GameVideoForm(video.getId(), video.getTitle(), video.getName(), video.getFileName(),
         video.getCreatedAt(), video.getUpdatedAt(), videoUrl);
+  }
+
+  private String normalize(String value) {
+    return StringUtils.hasText(value) ? value.trim() : null;
   }
 }

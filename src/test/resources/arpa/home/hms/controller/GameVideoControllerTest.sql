@@ -13,4 +13,6 @@ INSERT INTO v_game_videos (id, title, name, file_name, created_at, updated_at)
 VALUES
     (1, 'Test Game A', 'First recording', 'first.mp4', TIMESTAMP '2026-10-01 10:00:00', TIMESTAMP '2026-10-01 10:00:00'),
     (2, 'Test Game B', NULL, 'second.mp4', TIMESTAMP '2026-10-02 10:00:00', TIMESTAMP '2026-10-02 10:00:00'),
-    (3, 'Test Game C', 'Latest recording', 'game sample.mp4', TIMESTAMP '2026-10-03 10:00:00', TIMESTAMP '2026-10-03 10:00:00');
+    (3, 'Test Game C', 'Latest recording', 'game sample.mp4', TIMESTAMP '2026-10-03 10:00:00', TIMESTAMP '2026-10-03 10:00:00'),
+    (4, 'Test Game A', 'Alternate recording', 'alternate.mp4', TIMESTAMP '2026-10-01 11:00:00', TIMESTAMP '2026-10-01 11:00:00'),
+    (5, 'Test Game A', 'Alternate recording', 'alternate copy.mp4', TIMESTAMP '2026-10-01 09:00:00', TIMESTAMP '2026-10-01 09:00:00');

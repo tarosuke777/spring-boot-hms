@@ -1,6 +1,8 @@
 package arpa.home.hms.thymeleaf.dialect;
 
 
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.engine.AttributeName;
@@ -43,8 +45,17 @@ public class PageHrefAttributeTagProcessor extends AbstractAttributeTagProcessor
     }
 
     // 現在のURLをベースに page パラメータを差し替えたURLを生成
-    String targetUrl = ServletUriComponentsBuilder.fromCurrentRequest()
-        .replaceQueryParam("page", pageNumber).build().encode().toUriString();
+    ServletUriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromCurrentRequestUri();
+    if (RequestContextHolder
+        .getRequestAttributes() instanceof ServletRequestAttributes attributes) {
+      attributes.getRequest().getParameterMap().forEach((name, values) -> {
+        if (!"page".equals(name)) {
+          uriBuilder.queryParam(name, (Object[]) values);
+        }
+      });
+    }
+    String targetUrl =
+        uriBuilder.replaceQueryParam("page", pageNumber).build().encode().toUriString();
 
     // HTMLタグに href 属性を書き込み/更新
     structureHandler.setAttribute("href", targetUrl);
