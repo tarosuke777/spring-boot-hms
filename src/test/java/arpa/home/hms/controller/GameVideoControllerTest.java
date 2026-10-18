@@ -47,10 +47,11 @@ class GameVideoControllerTest {
 
   @Test
   void getList_FiltersByTitleAndNameAndPreservesFiltersInPagination() throws Exception {
-    MvcResult result = mockMvc
-        .perform(get("/gameVideo/list").param("title", "Test Game A")
-            .param("name", "Alternate recording").param("size", "1"))
-        .andExpect(status().isOk())
+    MvcResult result = mockMvc.perform(get("/gameVideo/list").param("title", "Test Game A")
+        .param("name", "Alternate recording").param("size", "1").with(request -> {
+          request.setQueryString("title=Test Game A&name=Alternate recording&size=1");
+          return request;
+        })).andExpect(status().isOk())
         .andExpect(content().string(org.hamcrest.Matchers.containsString("title=Test%20Game%20A")))
         .andExpect(
             content().string(org.hamcrest.Matchers.containsString("name=Alternate%20recording")))
