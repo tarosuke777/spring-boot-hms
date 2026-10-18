@@ -31,18 +31,18 @@ class GameVideoServiceTest {
     Pageable pageable = PageRequest.of(0, 10);
     GameVideoEntity video = new GameVideoEntity(1L, "Game", null, "recording one.mp4",
         LocalDateTime.parse("2026-10-03T10:00:00"), LocalDateTime.parse("2026-10-03T10:00:00"));
-    when(gameVideoRepository.findAllByOrderByCreatedAtDescIdDesc(pageable))
+    when(gameVideoRepository.findAllByTitleAndName(null, null, pageable))
         .thenReturn(new PageImpl<>(List.of(video), pageable, 1));
     GameVideoService service =
         new GameVideoService(gameVideoRepository, "http://192.168.10.199:8080/", "videos/");
 
-    var result = service.getGameVideoPage(pageable);
+    var result = service.getGameVideoPage(pageable, null, null);
 
     assertEquals(1, result.getTotalElements());
     assertEquals("http://192.168.10.199:8080/videos/recording%20one.mp4",
         result.getContent().getFirst().videoUrl());
     assertEquals("Game", result.getContent().getFirst().title());
-    verify(gameVideoRepository).findAllByOrderByCreatedAtDescIdDesc(pageable);
+    verify(gameVideoRepository).findAllByTitleAndName(null, null, pageable);
   }
 
   @Test

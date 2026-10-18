@@ -14,6 +14,54 @@
         <h1 class="h2">ゲーム動画</h1>
       </div>
 
+      <form
+        th:action="@{/gameVideo/list}"
+        method="get"
+        class="card card-body mb-4"
+      >
+        <div class="row g-3 align-items-end">
+          <div class="col-12 col-md-5">
+            <label class="form-label" for="game-video-title">タイトル</label>
+            <select
+              class="form-select"
+              id="game-video-title"
+              name="title"
+              th:data-names-url="@{/gameVideo/names}"
+            >
+              <option value="">すべてのタイトル</option>
+              <option
+                th:each="option : ${titles}"
+                th:value="${option}"
+                th:text="${option}"
+                th:selected="${option == title}"
+              ></option>
+            </select>
+          </div>
+          <div class="col-12 col-md-5">
+            <label class="form-label" for="game-video-name">名前</label>
+            <select class="form-select" id="game-video-name" name="name">
+              <option value="">すべての名前</option>
+              <option
+                th:each="option : ${names}"
+                th:value="${option}"
+                th:text="${option}"
+                th:selected="${option == name}"
+              ></option>
+            </select>
+          </div>
+          <div class="col-12 col-md-2">
+            <button type="submit" class="btn btn-dark">検索</button>
+            <a th:href="@{/gameVideo/list}" class="btn btn-secondary">クリア</a>
+          </div>
+        </div>
+        <p
+          id="game-video-filter-error"
+          class="text-danger mt-2 mb-0"
+          role="alert"
+          hidden
+        ></p>
+      </form>
+
       <div
         th:replace="~{parts/pagination :: pagination(page=${gameVideoPage})}"
       ></div>
@@ -63,6 +111,7 @@
           </tbody>
         </table>
       </div>
+      <script type="module" th:src="@{/js/gameVideo/list.js}"></script>
     </div>
   </body>
 </html>
