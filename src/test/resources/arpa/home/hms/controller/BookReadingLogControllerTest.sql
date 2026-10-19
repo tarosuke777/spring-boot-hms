@@ -16,6 +16,10 @@ INSERT INTO book (name, author_id, created_at, updated_at, created_by, updated_b
 SELECT 'Test Book 02 - A', id, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), (SELECT id FROM user WHERE name = 'admin'), (SELECT id FROM user WHERE name = 'admin'), 0, 2, true
 FROM author WHERE name = 'Test Author A';
 
+INSERT INTO book (name, author_id, created_at, updated_at, created_by, updated_by, version, genre, is_adult)
+SELECT 'Test Book 03 - Technical', id, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), (SELECT id FROM user WHERE name = 'admin'), (SELECT id FROM user WHERE name = 'admin'), 0, 1, false
+FROM author WHERE name = 'Test Author A';
+
 INSERT INTO book_reading_log (book_id, read_date, memo, created_at, updated_at, created_by, updated_by, version)
 SELECT b.id, DATE '2026-09-20', 'テストメモ', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), u.id, u.id, 0
 FROM book b

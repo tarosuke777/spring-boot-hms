@@ -1,6 +1,7 @@
 package arpa.home.hms.repository;
 
 import arpa.home.hms.entity.BookEntity;
+import arpa.home.hms.enums.BookGenre;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,9 @@ public interface BookRepository
 
   @EntityGraph(attributePaths = {"author"})
   List<BookEntity> findByCreatedByOrderByIdAsc(Integer createdBy);
+
+  @EntityGraph(attributePaths = {"author"})
+  List<BookEntity> findByCreatedByAndGenreOrderByIdAsc(Integer createdBy, BookGenre genre);
 
   boolean existsByIdAndCreatedBy(Integer id, Integer createdBy);
 

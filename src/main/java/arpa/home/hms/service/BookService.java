@@ -123,6 +123,12 @@ public class BookService {
             (existing, replacement) -> existing, java.util.LinkedHashMap::new));
   }
 
+  public Map<Integer, String> getBookMap(Integer currentUserId, BookGenre genre) {
+    return bookRepository.findByCreatedByAndGenreOrderByIdAsc(currentUserId, genre).stream()
+        .collect(java.util.stream.Collectors.toMap(BookEntity::getId, BookEntity::getName,
+            (existing, replacement) -> existing, java.util.LinkedHashMap::new));
+  }
+
   /** Entity の内容をベクトルストアに同期する共通メソッド */
   public void syncVectorStore(BookEntity entity) {
 
