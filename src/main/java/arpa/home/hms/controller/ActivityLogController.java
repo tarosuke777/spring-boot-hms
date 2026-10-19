@@ -70,7 +70,7 @@ public class ActivityLogController {
     if (activityLogForm.getActivityDate() == null) {
       activityLogForm.setActivityDate(LocalDate.now(ZoneId.systemDefault()));
     }
-    addRegisterTargetOptions(model, user);
+    addTargetOptions(model, user);
     return REGISTER_VIEW;
   }
 
@@ -78,13 +78,13 @@ public class ActivityLogController {
   public String register(@ModelAttribute @Validated ActivityLogForm form,
       BindingResult bindingResult, Model model, @AuthenticationPrincipal LoginUser user) {
     if (bindingResult.hasErrors()) {
-      addRegisterTargetOptions(model, user);
+      addTargetOptions(model, user);
       return REGISTER_VIEW;
     }
 
     if (!activityLogService.registerActivityLog(form, user.getId())) {
       bindingResult.rejectValue("targetId", "activityLog.targetId.invalid", "選択されたタイトルが見つかりません。");
-      addRegisterTargetOptions(model, user);
+      addTargetOptions(model, user);
       return REGISTER_VIEW;
     }
     return REDIRECT_LIST;
@@ -111,11 +111,6 @@ public class ActivityLogController {
   }
 
   private void addTargetOptions(Model model, LoginUser user) {
-    model.addAttribute("bookMap", bookService.getBookMap(user.getId()));
-    model.addAttribute("movieMap", movieService.getMovieMap(user.getId()));
-  }
-
-  private void addRegisterTargetOptions(Model model, LoginUser user) {
     model.addAttribute("bookMap", bookService.getAdultBookMap(user.getId()));
     model.addAttribute("movieMap", movieService.getAdultMovieMap(user.getId()));
   }

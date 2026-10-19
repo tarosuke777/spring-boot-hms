@@ -204,6 +204,14 @@ class ActivityLogControllerTest {
 
     mockMvc.perform(get("/activityLog/detail/" + log.getId())).andExpect(status().isOk())
         .andExpect(model().attributeExists("activityLogForm"))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Book")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Video"))))
         .andExpect(view().name("activityLog/detail"));
 
     mockMvc
@@ -245,6 +253,14 @@ class ActivityLogControllerTest {
             .param("targetId", String.valueOf(otherMovieId)).param("memo", "foreign video"))
         .andExpect(status().isOk())
         .andExpect(model().attributeHasFieldErrors("activityLogForm", "targetId"))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Book")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Video"))))
         .andExpect(view().name("activityLog/detail"));
 
     assertFalse(activityLogRepository.findByIdAndCreatedBy(log.getId(), adminId).orElseThrow()
@@ -264,7 +280,10 @@ class ActivityLogControllerTest {
         .andExpect(model().attribute("activityLogForm",
             org.hamcrest.Matchers.hasProperty("targetType",
                 org.hamcrest.Matchers.equalTo("VIDEO"))))
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Video")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Video"))))
         .andExpect(view().name("activityLog/detail"));
 
     mockMvc
