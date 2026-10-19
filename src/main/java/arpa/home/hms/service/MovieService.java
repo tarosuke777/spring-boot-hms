@@ -42,6 +42,12 @@ public class MovieService {
             (existing, replacement) -> existing, LinkedHashMap::new));
   }
 
+  public Map<Integer, String> getAdultMovieMap(Integer currentUserId) {
+    return movieRepository.findByCreatedByAndIsAdultTrueOrderByIdAsc(currentUserId).stream()
+        .collect(java.util.stream.Collectors.toMap(MovieEntity::getId, MovieEntity::getName,
+            (existing, replacement) -> existing, LinkedHashMap::new));
+  }
+
   /** ページング一覧取得 */
   public Page<MovieForm> getMoviePage(Integer currentUserId, @NonNull Pageable pageable) {
     return movieRepository.findByCreatedBy(currentUserId, pageable).map(movie -> {
