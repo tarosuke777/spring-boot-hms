@@ -31,6 +31,9 @@ public interface BookRepository
   List<BookEntity> findByCreatedByOrderByIdAsc(Integer createdBy);
 
   @EntityGraph(attributePaths = {"author"})
+  List<BookEntity> findByCreatedByAndIsAdultTrueOrderByIdAsc(Integer createdBy);
+
+  @EntityGraph(attributePaths = {"author"})
   List<BookEntity> findByCreatedByAndGenreOrderByIdAsc(Integer createdBy, BookGenre genre);
 
   boolean existsByIdAndCreatedBy(Integer id, Integer createdBy);

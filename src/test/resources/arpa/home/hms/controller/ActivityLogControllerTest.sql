@@ -10,8 +10,18 @@ SELECT 'Test Activity Book', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), u.id, u
 FROM user u
 WHERE u.name = 'admin';
 
+INSERT INTO book (name, created_at, updated_at, created_by, updated_by, version, genre, is_adult)
+SELECT 'Test Adult Activity Book', CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), u.id, u.id, 0, 3, true
+FROM user u
+WHERE u.name = 'admin';
+
 INSERT INTO movie (name, genre, is_adult, created_at, updated_at, created_by, updated_by, version)
 SELECT 'Test Activity Video', 1, false, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), u.id, u.id, 0
+FROM user u
+WHERE u.name = 'admin';
+
+INSERT INTO movie (name, genre, is_adult, created_at, updated_at, created_by, updated_by, version)
+SELECT 'Test Adult Activity Video', 1, true, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), u.id, u.id, 0
 FROM user u
 WHERE u.name = 'admin';
 
@@ -21,7 +31,7 @@ FROM user u
 WHERE u.name = 'user';
 
 INSERT INTO movie (name, genre, is_adult, created_at, updated_at, created_by, updated_by, version)
-SELECT 'Other User Video', 1, false, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), u.id, u.id, 0
+SELECT 'Other User Video', 1, true, CURRENT_TIMESTAMP(6), CURRENT_TIMESTAMP(6), u.id, u.id, 0
 FROM user u
 WHERE u.name = 'user';
 

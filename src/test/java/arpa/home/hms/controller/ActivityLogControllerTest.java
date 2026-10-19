@@ -86,8 +86,14 @@ class ActivityLogControllerTest {
             .containsString("value=\"" + LocalDate.now(ZoneId.systemDefault()) + "\"")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("書籍")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("動画")))
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Book")))
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Video")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Book")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Video"))))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"bookTargetId\"")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"videoTargetId\"")))
         .andExpect(view().name("activityLog/register"));
@@ -96,18 +102,25 @@ class ActivityLogControllerTest {
   @Test
   void getRegister_ShouldOnlyOfferCurrentUsersTitles() throws Exception {
     mockMvc.perform(get("/activityLog/register")).andExpect(status().isOk())
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Book")))
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Video")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Book")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
         .andExpect(content().string(
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Other User Book"))))
         .andExpect(content().string(
-            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Other User Video"))));
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Other User Video"))))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
+        .andExpect(content().string(org.hamcrest.Matchers
+            .not(org.hamcrest.Matchers.containsString("Test Activity Video"))));
   }
 
   @Test
   void register_WithValidData_ShouldPersistActivityLog() throws Exception {
     Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
-    Integer bookId = bookRepository.findByCreatedByOrderByIdAsc(adminId).getFirst().getId();
+    Integer bookId =
+        bookRepository.findByCreatedByAndIsAdultTrueOrderByIdAsc(adminId).getFirst().getId();
 
     mockMvc
         .perform(post("/activityLog/register").with(csrf()).param("activityDate", "2026-10-08")
@@ -155,6 +168,14 @@ class ActivityLogControllerTest {
             .param("targetType", "").param("targetId", "1").param("memo", "invalid"))
         .andExpect(status().isOk())
         .andExpect(model().attributeHasFieldErrors("activityLogForm", "targetType"))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Book")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Video"))))
         .andExpect(view().name("activityLog/register"));
 
     Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
@@ -178,10 +199,19 @@ class ActivityLogControllerTest {
     ActivityLogEntity log =
         activityLogRepository.findByCreatedByOrderByActivityDateDescIdDesc(adminId,
             org.springframework.data.domain.PageRequest.of(0, 10)).getContent().getFirst();
-    Integer videoId = movieRepository.findByCreatedBy(adminId).getFirst().getId();
+    Integer videoId =
+        movieRepository.findByCreatedByAndIsAdultTrueOrderByIdAsc(adminId).getFirst().getId();
 
     mockMvc.perform(get("/activityLog/detail/" + log.getId())).andExpect(status().isOk())
         .andExpect(model().attributeExists("activityLogForm"))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Book")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Video"))))
         .andExpect(view().name("activityLog/detail"));
 
     mockMvc
@@ -223,6 +253,14 @@ class ActivityLogControllerTest {
             .param("targetId", String.valueOf(otherMovieId)).param("memo", "foreign video"))
         .andExpect(status().isOk())
         .andExpect(model().attributeHasFieldErrors("activityLogForm", "targetId"))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Book")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Video"))))
         .andExpect(view().name("activityLog/detail"));
 
     assertFalse(activityLogRepository.findByIdAndCreatedBy(log.getId(), adminId).orElseThrow()
@@ -242,7 +280,10 @@ class ActivityLogControllerTest {
         .andExpect(model().attribute("activityLogForm",
             org.hamcrest.Matchers.hasProperty("targetType",
                 org.hamcrest.Matchers.equalTo("VIDEO"))))
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Activity Video")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Video"))))
         .andExpect(view().name("activityLog/detail"));
 
     mockMvc

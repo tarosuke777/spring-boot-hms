@@ -19,6 +19,9 @@ public interface MovieRepository extends JpaRepository<MovieEntity, Integer> {
   List<MovieEntity> findByCreatedBy(Integer createdBy);
 
   @EntityGraph(attributePaths = {"cast"})
+  List<MovieEntity> findByCreatedByAndIsAdultTrueOrderByIdAsc(Integer createdBy);
+
+  @EntityGraph(attributePaths = {"cast"})
   Page<MovieEntity> findByCreatedBy(Integer createdBy, Pageable pageable);
 
   boolean existsByIdAndCreatedBy(Integer id, Integer createdBy);
