@@ -1,5 +1,6 @@
 package arpa.home.hms.controller;
 
+import arpa.home.hms.enums.BookGenre;
 import arpa.home.hms.exception.IllegalRequestException;
 import arpa.home.hms.form.BookReadingLogForm;
 import arpa.home.hms.security.LoginUser;
@@ -69,7 +70,7 @@ public class BookReadingLogController {
     if (bookReadingLogForm.getReadDate() == null) {
       bookReadingLogForm.setReadDate(LocalDate.now(ZoneId.systemDefault()));
     }
-    model.addAttribute("bookMap", bookService.getBookMap(user.getId()));
+    model.addAttribute("bookMap", bookService.getBookMap(user.getId(), BookGenre.TECHNICAL));
     return REGISTER_VIEW;
   }
 
@@ -77,7 +78,7 @@ public class BookReadingLogController {
   public String register(@ModelAttribute @Validated BookReadingLogForm form,
       BindingResult bindingResult, Model model, @AuthenticationPrincipal LoginUser user) {
     if (bindingResult.hasErrors()) {
-      model.addAttribute("bookMap", bookService.getBookMap(user.getId()));
+      model.addAttribute("bookMap", bookService.getBookMap(user.getId(), BookGenre.TECHNICAL));
       return REGISTER_VIEW;
     }
 

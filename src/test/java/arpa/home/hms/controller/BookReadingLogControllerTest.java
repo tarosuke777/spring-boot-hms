@@ -13,12 +13,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import arpa.home.hms.entity.BookEntity;
 import arpa.home.hms.entity.BookReadingLogEntity;
+import arpa.home.hms.enums.BookGenre;
 import arpa.home.hms.repository.BookReadingLogRepository;
 import arpa.home.hms.repository.BookRepository;
 import arpa.home.hms.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -65,10 +67,29 @@ public class BookReadingLogControllerTest {
 
   @Test
   void getRegister_ShouldSetTodayAsDefaultReadDate() throws Exception {
+    Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
+    BookEntity technicalBook = bookRepository.findByCreatedByOrderByIdAsc(adminId).stream()
+        .filter(book -> book.getGenre() == BookGenre.TECHNICAL).findFirst().orElseThrow();
+
     mockMvc.perform(get("/bookReadingLog/register")).andExpect(status().isOk())
         .andExpect(model().attribute("bookReadingLogForm",
             org.hamcrest.Matchers.hasProperty("readDate",
                 org.hamcrest.Matchers.equalTo(LocalDate.now(ZoneId.systemDefault())))))
+        .andExpect(
+            model().attribute("bookMap", Map.of(technicalBook.getId(), technicalBook.getName())))
+        .andExpect(view().name("bookReadingLog/register"));
+  }
+
+  @Test
+  void register_WithValidationErrors_ShouldOnlyShowTechnicalBooks() throws Exception {
+    Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
+    BookEntity technicalBook = bookRepository.findByCreatedByOrderByIdAsc(adminId).stream()
+        .filter(book -> book.getGenre() == BookGenre.TECHNICAL).findFirst().orElseThrow();
+
+    mockMvc.perform(post("/bookReadingLog/register").with(csrf()).param("readDate", "2026-09-21"))
+        .andExpect(status().isOk())
+        .andExpect(
+            model().attribute("bookMap", Map.of(technicalBook.getId(), technicalBook.getName())))
         .andExpect(view().name("bookReadingLog/register"));
   }
 
