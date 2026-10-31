@@ -6,6 +6,7 @@ import arpa.home.hms.form.ActivityLogForm;
 import arpa.home.hms.mapper.ActivityLogMapper;
 import arpa.home.hms.repository.ActivityLogRepository;
 import arpa.home.hms.repository.BookRepository;
+import arpa.home.hms.repository.GameVideoRepository;
 import arpa.home.hms.repository.MovieRepository;
 import java.util.List;
 import java.util.Objects;
@@ -25,6 +26,7 @@ public class ActivityLogService {
   private final ActivityLogMapper activityLogMapper;
   private final BookRepository bookRepository;
   private final MovieRepository movieRepository;
+  private final GameVideoRepository gameVideoRepository;
 
   public Page<ActivityLogForm> getActivityLogList(Integer currentUserId,
       @NonNull Pageable pageable) {
@@ -79,6 +81,9 @@ public class ActivityLogService {
     }
     if (ActivityLogTargetType.VIDEO.name().equals(form.getTargetType())) {
       return movieRepository.existsByIdAndCreatedBy(form.getTargetId(), currentUserId);
+    }
+    if (ActivityLogTargetType.GAME_VIDEO.name().equals(form.getTargetType())) {
+      return gameVideoRepository.findById(form.getTargetId().longValue()).isPresent();
     }
     return false;
   }

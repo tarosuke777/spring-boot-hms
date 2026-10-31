@@ -1,7 +1,7 @@
 package arpa.home.hms.enums;
 
 public enum ActivityLogTargetType {
-  BOOK("書籍"), VIDEO("動画");
+  BOOK("書籍"), VIDEO("動画"), GAME_VIDEO("ゲーム動画");
 
   private final String label;
 

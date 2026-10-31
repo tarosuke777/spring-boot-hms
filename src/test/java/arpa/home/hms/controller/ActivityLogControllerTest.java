@@ -86,16 +86,20 @@ class ActivityLogControllerTest {
             .containsString("value=\"" + LocalDate.now(ZoneId.systemDefault()) + "\"")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("書籍")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("動画")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("ゲーム動画")))
         .andExpect(
             content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Book")))
         .andExpect(
             content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Game Video")))
         .andExpect(content().string(
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
         .andExpect(content().string(
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Video"))))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"bookTargetId\"")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"videoTargetId\"")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("id=\"gameVideoTargetId\"")))
         .andExpect(view().name("activityLog/register"));
   }
 
@@ -114,6 +118,42 @@ class ActivityLogControllerTest {
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
         .andExpect(content().string(org.hamcrest.Matchers
             .not(org.hamcrest.Matchers.containsString("Test Activity Video"))));
+  }
+
+  @Test
+  void register_WithGameVideo_ShouldPersistActivityLog() throws Exception {
+    Integer adminId = userRepository.findByName("admin").orElseThrow().getId();
+
+    mockMvc
+        .perform(post("/activityLog/register").with(csrf()).param("activityDate", "2026-10-08")
+            .param("targetType", "GAME_VIDEO").param("targetId", "1")
+            .param("memo", "Watched game video"))
+        .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/activityLog/list"));
+
+    entityManager.flush();
+    entityManager.clear();
+
+    ActivityLogEntity saved = activityLogRepository
+        .findByCreatedByOrderByActivityDateDescIdDesc(adminId,
+            org.springframework.data.domain.PageRequest.of(0, 10))
+        .getContent().stream().filter(log -> "Watched game video".equals(log.getMemo())).findFirst()
+        .orElseThrow();
+    assertEquals("GAME_VIDEO", saved.getTargetType());
+    assertEquals(1, saved.getTargetId());
+
+    mockMvc.perform(get("/activityLog/list")).andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Game Video")));
+  }
+
+  @Test
+  void register_WithMissingGameVideo_ShouldReturnTargetIdError() throws Exception {
+    mockMvc
+        .perform(post("/activityLog/register").with(csrf()).param("activityDate", "2026-10-08")
+            .param("targetType", "GAME_VIDEO").param("targetId", "999")
+            .param("memo", "missing game video"))
+        .andExpect(status().isOk())
+        .andExpect(model().attributeHasFieldErrors("activityLogForm", "targetId"))
+        .andExpect(view().name("activityLog/register"));
   }
 
   @Test

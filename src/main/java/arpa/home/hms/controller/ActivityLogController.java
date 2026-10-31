@@ -6,6 +6,7 @@ import arpa.home.hms.form.ActivityLogForm;
 import arpa.home.hms.security.LoginUser;
 import arpa.home.hms.service.ActivityLogService;
 import arpa.home.hms.service.BookService;
+import arpa.home.hms.service.GameVideoService;
 import arpa.home.hms.service.MovieService;
 import arpa.home.hms.validation.DeleteGroup;
 import arpa.home.hms.validation.UpdateGroup;
@@ -39,6 +40,7 @@ public class ActivityLogController {
   private final ActivityLogService activityLogService;
   private final BookService bookService;
   private final MovieService movieService;
+  private final GameVideoService gameVideoService;
 
   @ModelAttribute("activityLogTargetTypes")
   public ActivityLogTargetType[] getActivityLogTargetTypes() {
@@ -52,6 +54,7 @@ public class ActivityLogController {
         activityLogService.getActivityLogList(user.getId(), pageable));
     model.addAttribute("bookMap", bookService.getBookMap(user.getId()));
     model.addAttribute("movieMap", movieService.getMovieMap(user.getId()));
+    model.addAttribute("gameVideoMap", gameVideoService.getGameVideoMap());
     return LIST_VIEW;
   }
 
@@ -113,6 +116,7 @@ public class ActivityLogController {
   private void addTargetOptions(Model model, LoginUser user) {
     model.addAttribute("bookMap", bookService.getAdultBookMap(user.getId()));
     model.addAttribute("movieMap", movieService.getAdultMovieMap(user.getId()));
+    model.addAttribute("gameVideoMap", gameVideoService.getGameVideoMap());
   }
 
   @PostMapping(value = "/detail", params = "delete")

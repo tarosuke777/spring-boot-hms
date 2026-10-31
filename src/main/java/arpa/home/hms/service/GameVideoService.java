@@ -4,8 +4,11 @@ import arpa.home.hms.entity.GameVideoEntity;
 import arpa.home.hms.form.GameVideoForm;
 import arpa.home.hms.repository.GameVideoRepository;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +41,12 @@ public class GameVideoService {
 
   public List<String> getGameVideoTitles() {
     return gameVideoRepository.findDistinctTitles();
+  }
+
+  public Map<Integer, String> getGameVideoMap() {
+    return gameVideoRepository.findAllByOrderByTitleAscIdAsc().stream()
+        .collect(Collectors.toMap(video -> Math.toIntExact(video.getId()),
+            GameVideoEntity::getTitle, (first, ignored) -> first, LinkedHashMap::new));
   }
 
   public List<String> getGameVideoNames(String title) {

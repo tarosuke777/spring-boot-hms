@@ -26,7 +26,7 @@ public class ActivityLogForm {
 
   @NotBlank
   @Size(max = 32)
-  @Pattern(regexp = "BOOK|VIDEO")
+  @Pattern(regexp = "BOOK|VIDEO|GAME_VIDEO")
   private String targetType;
 
   @NotNull
