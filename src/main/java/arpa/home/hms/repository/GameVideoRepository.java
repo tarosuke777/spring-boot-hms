@@ -26,5 +26,7 @@ public interface GameVideoRepository extends Repository<GameVideoEntity, Long> {
       + "AND (:title IS NULL OR video.title = :title) ORDER BY video.name")
   List<String> findDistinctNamesByTitle(@Param("title") String title);
 
+  List<GameVideoEntity> findAllByOrderByTitleAscIdAsc();
+
   Optional<GameVideoEntity> findById(Long id);
 }

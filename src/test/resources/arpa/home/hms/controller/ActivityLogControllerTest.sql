@@ -1,3 +1,18 @@
+CREATE TABLE IF NOT EXISTS v_game_videos (
+    id BIGINT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    name VARCHAR(255),
+    file_name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+DELETE FROM v_game_videos;
+
+INSERT INTO v_game_videos (id, title, name, file_name, created_at, updated_at)
+VALUES (1, 'Test Game Video', 'Test recording', 'test-game.mp4',
+        TIMESTAMP '2026-10-01 10:00:00', TIMESTAMP '2026-10-01 10:00:00');
+
 INSERT INTO user(name, password, role, created_at, updated_at, created_by, updated_by, version)
 VALUES('admin', '{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92u.e5m', 1,
        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1, 0);

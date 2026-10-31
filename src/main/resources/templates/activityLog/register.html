@@ -15,20 +15,22 @@
         const targetType = $("#targetType");
         const bookSelect = $("#bookTargetId");
         const videoSelect = $("#videoTargetId");
+        const gameVideoSelect = $("#gameVideoTargetId");
+        const targetSelects = {
+          BOOK: bookSelect,
+          VIDEO: videoSelect,
+          GAME_VIDEO: gameVideoSelect,
+        };
         const updateTargetSelect = () => {
-          const isBook = targetType.val() === "BOOK";
-          bookSelect.prop("hidden", !isBook).prop("disabled", !isBook);
-          videoSelect
-            .prop("hidden", isBook || !targetType.val())
-            .prop("disabled", isBook || !targetType.val());
-          if (!targetType.val()) {
-            bookSelect.prop("hidden", true).prop("disabled", true);
-            videoSelect.prop("hidden", true).prop("disabled", true);
-          }
+          Object.entries(targetSelects).forEach(([type, select]) => {
+            const isSelectedType = targetType.val() === type;
+            select
+              .prop("hidden", !isSelectedType)
+              .prop("disabled", !isSelectedType);
+          });
         };
         targetType.on("change", () => {
-          bookSelect.val("");
-          videoSelect.val("");
+          Object.values(targetSelects).forEach((select) => select.val(""));
           updateTargetSelect();
         });
         updateTargetSelect();
@@ -111,6 +113,22 @@
               th:value="${movie.key}"
               th:text="${movie.value}"
               th:selected="${activityLogForm.targetType == 'VIDEO' and activityLogForm.targetId == movie.key}"
+            ></option>
+          </select>
+          <select
+            id="gameVideoTargetId"
+            name="targetId"
+            class="form-select"
+            th:classappend="${#fields.hasErrors('targetId')} ? 'is-invalid'"
+            th:disabled="${activityLogForm.targetType != 'GAME_VIDEO'}"
+            th:hidden="${activityLogForm.targetType != 'GAME_VIDEO'}"
+          >
+            <option value="">ゲーム動画を選択してください</option>
+            <option
+              th:each="gameVideo : ${gameVideoMap}"
+              th:value="${gameVideo.key}"
+              th:text="${gameVideo.value}"
+              th:selected="${activityLogForm.targetType == 'GAME_VIDEO' and activityLogForm.targetId == gameVideo.key}"
             ></option>
           </select>
           <div class="invalid-feedback" th:errors="*{targetId}"></div>

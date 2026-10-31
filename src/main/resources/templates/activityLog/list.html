@@ -42,10 +42,10 @@
                 ></a>
               </td>
               <td
-                th:text="${log.targetType == 'BOOK' ? '書籍' : (log.targetType == 'VIDEO' or log.targetType == 'MOVIE' ? '動画' : log.targetType)}"
+                th:text="${log.targetType == 'BOOK' ? '書籍' : (log.targetType == 'VIDEO' or log.targetType == 'MOVIE' ? '動画' : (log.targetType == 'GAME_VIDEO' ? 'ゲーム動画' : log.targetType))}"
               ></td>
               <td
-                th:with="targetTitle=${log.targetType == 'BOOK' ? bookMap.get(log.targetId) : (log.targetType == 'VIDEO' or log.targetType == 'MOVIE' ? movieMap.get(log.targetId) : log.targetId)}"
+                th:with="targetTitle=${log.targetType == 'BOOK' ? bookMap.get(log.targetId) : (log.targetType == 'VIDEO' or log.targetType == 'MOVIE' ? movieMap.get(log.targetId) : (log.targetType == 'GAME_VIDEO' ? gameVideoMap.get(log.targetId) : log.targetId))}"
               >
                 <a
                   th:if="${targetTitle != null and log.targetType == 'BOOK'}"
@@ -59,8 +59,14 @@
                   th:text="${targetTitle}"
                   class="text-decoration-none"
                 ></a>
+                <a
+                  th:if="${targetTitle != null and log.targetType == 'GAME_VIDEO'}"
+                  th:href="@{/gameVideo/detail/{id}(id=${log.targetId})}"
+                  th:text="${targetTitle}"
+                  class="text-decoration-none"
+                ></a>
                 <span
-                  th:if="${targetTitle == null or (log.targetType != 'BOOK' and log.targetType != 'VIDEO' and log.targetType != 'MOVIE')}"
+                  th:if="${targetTitle == null or (log.targetType != 'BOOK' and log.targetType != 'VIDEO' and log.targetType != 'MOVIE' and log.targetType != 'GAME_VIDEO')}"
                   th:text="${targetTitle != null ? targetTitle : '-'}"
                 >
                   -
