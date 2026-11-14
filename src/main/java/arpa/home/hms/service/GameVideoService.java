@@ -4,6 +4,7 @@ import arpa.home.hms.entity.GameVideoEntity;
 import arpa.home.hms.form.GameVideoForm;
 import arpa.home.hms.repository.GameVideoRepository;
 import java.nio.charset.StandardCharsets;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class GameVideoService {
+
+  private static final DateTimeFormatter GAME_VIDEO_DATE_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
   private final GameVideoRepository gameVideoRepository;
   private final String fileServerBaseUrl;
@@ -49,6 +53,12 @@ public class GameVideoService {
             GameVideoEntity::getTitle, (first, ignored) -> first, LinkedHashMap::new));
   }
 
+  public Map<Integer, String> getGameVideoTargetMap() {
+    return gameVideoRepository.findAllByOrderByTitleAscIdAsc().stream()
+        .collect(Collectors.toMap(video -> Math.toIntExact(video.getId()),
+            this::toGameVideoTargetLabel, (first, ignored) -> first, LinkedHashMap::new));
+  }
+
   public List<String> getGameVideoNames(String title) {
     return gameVideoRepository.findDistinctNamesByTitle(normalize(title));
   }
@@ -64,6 +74,13 @@ public class GameVideoService {
         .pathSegment(video.getFileName()).encode(StandardCharsets.UTF_8).toUriString();
     return new GameVideoForm(video.getId(), video.getTitle(), video.getName(), video.getFileName(),
         video.getCreatedAt(), video.getUpdatedAt(), videoUrl);
+  }
+
+  private String toGameVideoTargetLabel(GameVideoEntity video) {
+    String name = StringUtils.hasText(video.getName()) ? video.getName() : "-";
+    String registrationDate =
+        video.getCreatedAt() == null ? "-" : video.getCreatedAt().format(GAME_VIDEO_DATE_FORMATTER);
+    return video.getTitle() + " / " + name + " / " + registrationDate;
   }
 
   private String normalize(String value) {

@@ -12,6 +12,8 @@ DELETE FROM v_game_videos;
 INSERT INTO v_game_videos (id, title, name, file_name, created_at, updated_at)
 VALUES (1, 'Test Game Video', 'Test recording', 'test-game.mp4',
         TIMESTAMP '2026-10-01 10:00:00', TIMESTAMP '2026-10-01 10:00:00');
+INSERT INTO v_game_videos (id, title, name, file_name, created_at, updated_at)
+VALUES (2, 'Test Game Video without metadata', NULL, 'test-game-no-metadata.mp4', NULL, NULL);
 
 INSERT INTO user(name, password, role, created_at, updated_at, created_by, updated_by, version)
 VALUES('admin', '{bcrypt}$2a$10$dviiOZlbvIyWQiYM3pWEy.sgwZ7n30mmWOOl1hzP6RQJ9M92u.e5m', 1,
