@@ -44,7 +44,7 @@ public class PageHrefAttributeTagProcessor extends AbstractAttributeTagProcessor
 
     // 現在のURLをベースに page パラメータを差し替えたURLを生成
     String targetUrl = ServletUriComponentsBuilder.fromCurrentRequest()
-        .replaceQueryParam("page", pageNumber).build().encode().toUriString();
+        .replaceQueryParam("page", pageNumber).build(true).toUriString();
 
     // HTMLタグに href 属性を書き込み/更新
     structureHandler.setAttribute("href", targetUrl);
