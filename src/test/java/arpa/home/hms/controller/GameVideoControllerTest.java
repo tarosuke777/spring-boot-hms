@@ -42,7 +42,31 @@ class GameVideoControllerTest {
         .andExpect(content().string(org.hamcrest.Matchers.containsString("<video")))
         .andExpect(content().string(org.hamcrest.Matchers
             .containsString("http://192.168.10.199:8080/videos/game%20sample.mp4")))
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("ゲーム動画")));
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("ゲーム動画")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("data-game-video-id"))));
+  }
+
+  @Test
+  void getList_InSelectionModeShowsPreviewAndSelectionAction() throws Exception {
+    mockMvc
+        .perform(get("/gameVideo/list").param("select", "true").param("size", "1").with(request -> {
+          request.setQueryString("select=true&size=1");
+          return request;
+        })).andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.model().attribute("selectMode", true))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("ゲーム動画を選択")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("<video")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("data-game-video-id=\"3\"")))
+        .andExpect(content()
+            .string(org.hamcrest.Matchers.containsString("data-game-video-title=\"Test Game C\"")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("選択")))
+        .andExpect(content().string(org.hamcrest.Matchers.containsString("select=true")))
+        .andExpect(content().string(org.hamcrest.Matchers
+            .matchesPattern("(?s).*href=\"[^\"]*select=true[^\"]*page=[^\"]*\".*")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("/js/gameVideo/select.js")));
   }
 
   @Test

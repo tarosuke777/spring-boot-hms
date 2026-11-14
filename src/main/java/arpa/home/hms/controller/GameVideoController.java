@@ -31,8 +31,10 @@ public class GameVideoController {
 
   @GetMapping("/list")
   public String getList(@RequestParam(required = false) String title,
-      @RequestParam(required = false) String name, @PageableDefault(size = 10,
-          sort = {"createdAt", "id"}, direction = Direction.DESC) Pageable pageable,
+      @RequestParam(required = false) String name,
+      @RequestParam(name = "select", defaultValue = "false") boolean selectMode,
+      @PageableDefault(size = 10, sort = {"createdAt", "id"},
+          direction = Direction.DESC) Pageable pageable,
       Model model) {
     Page<GameVideoForm> gameVideoPage =
         gameVideoService.getGameVideoPage(Objects.requireNonNull(pageable), title, name);
@@ -41,6 +43,7 @@ public class GameVideoController {
     model.addAttribute("names", gameVideoService.getGameVideoNames(title));
     model.addAttribute("title", title);
     model.addAttribute("name", name);
+    model.addAttribute("selectMode", selectMode);
     return LIST_VIEW;
   }
 

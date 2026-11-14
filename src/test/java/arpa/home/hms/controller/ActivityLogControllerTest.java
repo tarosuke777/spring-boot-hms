@@ -91,11 +91,6 @@ class ActivityLogControllerTest {
             content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Book")))
         .andExpect(
             content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Game Video")))
-        .andExpect(content().string(
-            org.hamcrest.Matchers.containsString("Test Game Video / Test recording / 2026/10/01")))
-        .andExpect(content().string(
-            org.hamcrest.Matchers.containsString("Test Game Video without metadata / - / -")))
         .andExpect(content().string(
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
         .andExpect(content().string(
@@ -104,6 +99,12 @@ class ActivityLogControllerTest {
         .andExpect(content().string(org.hamcrest.Matchers.containsString("id=\"videoTargetId\"")))
         .andExpect(
             content().string(org.hamcrest.Matchers.containsString("id=\"gameVideoTargetId\"")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("id=\"gameVideoTargetLabel\"")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("id=\"selectGameVideoButton\"")))
+        .andExpect(content().string(org.hamcrest.Matchers
+            .not(org.hamcrest.Matchers.containsString("<select id=\"gameVideoTargetId\""))))
         .andExpect(view().name("activityLog/register"));
   }
 
@@ -122,6 +123,19 @@ class ActivityLogControllerTest {
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
         .andExpect(content().string(org.hamcrest.Matchers
             .not(org.hamcrest.Matchers.containsString("Test Activity Video"))));
+  }
+
+  @Test
+  void getRegister_WithGameVideoTarget_ShouldShowSelectedVideoLabel() throws Exception {
+    mockMvc
+        .perform(
+            get("/activityLog/register").param("targetType", "GAME_VIDEO").param("targetId", "1"))
+        .andExpect(status().isOk())
+        .andExpect(content().string(org.hamcrest.Matchers
+            .containsString("value=\"Test Game Video / Test recording / 2026/10/01\"")))
+        .andExpect(
+            content().string(org.hamcrest.Matchers.containsString("id=\"gameVideoTargetId\"")))
+        .andExpect(view().name("activityLog/register"));
   }
 
   @Test

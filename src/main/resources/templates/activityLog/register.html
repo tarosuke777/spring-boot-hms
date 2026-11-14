@@ -16,10 +16,12 @@
         const bookSelect = $("#bookTargetId");
         const videoSelect = $("#videoTargetId");
         const gameVideoSelect = $("#gameVideoTargetId");
+        const gameVideoSelector = $("#gameVideoTargetSelector");
+        const gameVideoTargetLabel = $("#gameVideoTargetLabel");
+        const gameVideoPopupError = $("#gameVideoPopupError");
         const targetSelects = {
           BOOK: bookSelect,
           VIDEO: videoSelect,
-          GAME_VIDEO: gameVideoSelect,
         };
         const updateTargetSelect = () => {
           Object.entries(targetSelects).forEach(([type, select]) => {
@@ -28,9 +30,15 @@
               .prop("hidden", !isSelectedType)
               .prop("disabled", !isSelectedType);
           });
+          const isGameVideoSelected = targetType.val() === "GAME_VIDEO";
+          gameVideoSelector.prop("hidden", !isGameVideoSelected);
+          gameVideoSelect.prop("disabled", !isGameVideoSelected);
         };
         targetType.on("change", () => {
           Object.values(targetSelects).forEach((select) => select.val(""));
+          gameVideoSelect.val("");
+          gameVideoTargetLabel.val("");
+          gameVideoPopupError.prop("hidden", true).text("");
           updateTargetSelect();
         });
         updateTargetSelect();
@@ -115,23 +123,47 @@
               th:selected="${activityLogForm.targetType == 'VIDEO' and activityLogForm.targetId == movie.key}"
             ></option>
           </select>
-          <select
-            id="gameVideoTargetId"
-            name="targetId"
-            class="form-select"
-            th:classappend="${#fields.hasErrors('targetId')} ? 'is-invalid'"
-            th:disabled="${activityLogForm.targetType != 'GAME_VIDEO'}"
+          <div
+            id="gameVideoTargetSelector"
+            class="input-group"
             th:hidden="${activityLogForm.targetType != 'GAME_VIDEO'}"
           >
-            <option value="">ゲーム動画を選択してください</option>
-            <option
-              th:each="gameVideo : ${gameVideoMap}"
-              th:value="${gameVideo.key}"
-              th:text="${gameVideo.value}"
-              th:selected="${activityLogForm.targetType == 'GAME_VIDEO' and activityLogForm.targetId == gameVideo.key}"
-            ></option>
-          </select>
-          <div class="invalid-feedback" th:errors="*{targetId}"></div>
+            <input
+              type="hidden"
+              id="gameVideoTargetId"
+              name="targetId"
+              th:value="${activityLogForm.targetId}"
+              th:disabled="${activityLogForm.targetType != 'GAME_VIDEO'}"
+            />
+            <input
+              type="text"
+              id="gameVideoTargetLabel"
+              class="form-control"
+              placeholder="ゲーム動画を選択してください"
+              th:value="${activityLogForm.targetId != null ? gameVideoMap.get(activityLogForm.targetId) : ''}"
+              th:classappend="${#fields.hasErrors('targetId')} ? 'is-invalid'"
+              readonly
+            />
+            <button
+              type="button"
+              id="selectGameVideoButton"
+              class="btn btn-outline-dark"
+            >
+              ゲーム動画を選択
+            </button>
+          </div>
+          <p
+            id="gameVideoPopupError"
+            class="text-danger small mt-1"
+            role="alert"
+            hidden
+          ></p>
+          <div
+            th:if="${#fields.hasErrors('targetId')}"
+            class="text-danger small"
+          >
+            <span th:errors="*{targetId}"></span>
+          </div>
         </div>
 
         <div class="col-12">
@@ -155,6 +187,10 @@
           >
         </div>
       </form>
+      <script
+        type="module"
+        th:src="@{/js/activityLog/gameVideoSelector.js}"
+      ></script>
     </div>
   </body>
 </html>
