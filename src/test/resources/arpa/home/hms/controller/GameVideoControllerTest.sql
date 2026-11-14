@@ -16,5 +16,5 @@ VALUES
     (3, 'Test Game C', 'Latest recording', 'game sample.mp4', TIMESTAMP '2026-10-03 10:00:00', TIMESTAMP '2026-10-03 10:00:00'),
     (4, 'Test Game A', 'Alternate recording', 'alternate.mp4', TIMESTAMP '2026-10-01 11:00:00', TIMESTAMP '2026-10-01 11:00:00'),
     (5, 'Test Game A', 'Alternate recording', 'alternate copy.mp4', TIMESTAMP '2026-10-01 09:00:00', TIMESTAMP '2026-10-01 09:00:00'),
-    (6, 'Bunny''sママ代行サービス', 'First recording', 'japanese-first.mp4', TIMESTAMP '2026-09-30 10:00:00', TIMESTAMP '2026-09-30 10:00:00'),
-    (7, 'Bunny''sママ代行サービス', 'Second recording', 'japanese-second.mp4', TIMESTAMP '2026-09-30 09:00:00', TIMESTAMP '2026-09-30 09:00:00');
+    (6, 'テスト''日本語', 'First recording', 'japanese-first.mp4', TIMESTAMP '2026-09-30 10:00:00', TIMESTAMP '2026-09-30 10:00:00'),
+    (7, 'テスト''日本語', 'Second recording', 'japanese-second.mp4', TIMESTAMP '2026-09-30 09:00:00', TIMESTAMP '2026-09-30 09:00:00');

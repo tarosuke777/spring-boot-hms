@@ -66,9 +66,8 @@ class GameVideoControllerTest {
 
   @Test
   void getList_PaginationPreservesEncodedJapaneseTitle() throws Exception {
-    String title = "Bunny'sママ代行サービス";
-    String encodedTitle =
-        "Bunny%27s%E3%83%9E%E3%83%9E%E4%BB%A3%E8%A1%8C%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9";
+    String title = "テスト'日本語";
+    String encodedTitle = "%E3%83%86%E3%82%B9%E3%83%88%27%E6%97%A5%E6%9C%AC%E8%AA%9E";
 
     mockMvc.perform(get("/gameVideo/list").param("title", title).param("name", "")
         .param("size", "1").with(request -> {
@@ -78,7 +77,7 @@ class GameVideoControllerTest {
         .andExpect(content().string(
             org.hamcrest.Matchers.containsString("title=" + encodedTitle + "&name=&size=1&page=1")))
         .andExpect(content().string(
-            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("title=Bunny%2527s"))));
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("title=%25E3"))));
   }
 
   @Test
