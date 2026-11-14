@@ -93,6 +93,10 @@ class ActivityLogControllerTest {
             content().string(org.hamcrest.Matchers.containsString("Test Adult Activity Video")))
         .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Game Video")))
         .andExpect(content().string(
+            org.hamcrest.Matchers.containsString("Test Game Video / Test recording / 2026/10/01")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.containsString("Test Game Video without metadata / - / -")))
+        .andExpect(content().string(
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Book"))))
         .andExpect(content().string(
             org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Test Activity Video"))))
@@ -141,8 +145,8 @@ class ActivityLogControllerTest {
     assertEquals("GAME_VIDEO", saved.getTargetType());
     assertEquals(1, saved.getTargetId());
 
-    mockMvc.perform(get("/activityLog/list")).andExpect(status().isOk())
-        .andExpect(content().string(org.hamcrest.Matchers.containsString("Test Game Video")));
+    mockMvc.perform(get("/activityLog/list")).andExpect(status().isOk()).andExpect(content().string(
+        org.hamcrest.Matchers.containsString("Test Game Video / Test recording / 2026/10/01")));
   }
 
   @Test

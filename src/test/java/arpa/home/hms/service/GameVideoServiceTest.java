@@ -56,4 +56,22 @@ class GameVideoServiceTest {
 
     assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
   }
+
+  @Test
+  void getGameVideoTargetMap_FormatsNameAndRegistrationDateWithFallbacks() {
+    GameVideoEntity video = new GameVideoEntity(1L, "Game", "Recording", "recording.mp4",
+        LocalDateTime.parse("2026-10-03T10:00:00"), LocalDateTime.parse("2026-10-03T10:00:00"));
+    GameVideoEntity videoWithoutMetadata =
+        new GameVideoEntity(2L, "Another Game", null, "another-recording.mp4", null, null);
+    when(gameVideoRepository.findAllByOrderByTitleAscIdAsc())
+        .thenReturn(List.of(video, videoWithoutMetadata));
+    GameVideoService service =
+        new GameVideoService(gameVideoRepository, "http://192.168.10.199:8080/", "videos/");
+
+    var result = service.getGameVideoTargetMap();
+
+    assertEquals("Game / Recording / 2026/10/03", result.get(1));
+    assertEquals("Another Game / - / -", result.get(2));
+    verify(gameVideoRepository).findAllByOrderByTitleAscIdAsc();
+  }
 }

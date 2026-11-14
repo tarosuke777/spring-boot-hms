@@ -54,7 +54,7 @@ public class ActivityLogController {
         activityLogService.getActivityLogList(user.getId(), pageable));
     model.addAttribute("bookMap", bookService.getBookMap(user.getId()));
     model.addAttribute("movieMap", movieService.getMovieMap(user.getId()));
-    model.addAttribute("gameVideoMap", gameVideoService.getGameVideoMap());
+    model.addAttribute("gameVideoMap", gameVideoService.getGameVideoTargetMap());
     return LIST_VIEW;
   }
 
@@ -116,7 +116,7 @@ public class ActivityLogController {
   private void addTargetOptions(Model model, LoginUser user) {
     model.addAttribute("bookMap", bookService.getAdultBookMap(user.getId()));
     model.addAttribute("movieMap", movieService.getAdultMovieMap(user.getId()));
-    model.addAttribute("gameVideoMap", gameVideoService.getGameVideoMap());
+    model.addAttribute("gameVideoMap", gameVideoService.getGameVideoTargetMap());
   }
 
   @PostMapping(value = "/detail", params = "delete")
