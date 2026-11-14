@@ -49,7 +49,7 @@ class GameVideoControllerTest {
   void getList_FiltersByTitleAndNameAndPreservesFiltersInPagination() throws Exception {
     MvcResult result = mockMvc.perform(get("/gameVideo/list").param("title", "Test Game A")
         .param("name", "Alternate recording").param("size", "1").with(request -> {
-          request.setQueryString("title=Test Game A&name=Alternate recording&size=1");
+          request.setQueryString("title=Test%20Game%20A&name=Alternate%20recording&size=1");
           return request;
         })).andExpect(status().isOk())
         .andExpect(content().string(org.hamcrest.Matchers.containsString("title=Test%20Game%20A")))
@@ -62,6 +62,22 @@ class GameVideoControllerTest {
     Page<?> page = (Page<?>) pageAttribute;
     org.assertj.core.api.Assertions.assertThat(page.getContent())
         .extracting(video -> ((GameVideoForm) video).name()).containsExactly("Alternate recording");
+  }
+
+  @Test
+  void getList_PaginationPreservesEncodedJapaneseTitle() throws Exception {
+    String title = "テスト'日本語";
+    String encodedTitle = "%E3%83%86%E3%82%B9%E3%83%88%27%E6%97%A5%E6%9C%AC%E8%AA%9E";
+
+    mockMvc.perform(get("/gameVideo/list").param("title", title).param("name", "")
+        .param("size", "1").with(request -> {
+          request.setQueryString("title=" + encodedTitle + "&name=&size=1");
+          return request;
+        })).andExpect(status().isOk())
+        .andExpect(content().string(
+            org.hamcrest.Matchers.containsString("title=" + encodedTitle + "&name=&size=1&page=1")))
+        .andExpect(content().string(
+            org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("title=%25E3"))));
   }
 
   @Test
